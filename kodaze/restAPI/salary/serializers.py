@@ -211,7 +211,6 @@ class MaasGoruntulemeSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(), source='isci', write_only=True
     )
 
-
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 

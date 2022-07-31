@@ -273,17 +273,15 @@ class OfficeLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            # mehsul = Mehsullar.objects.filter(mehsulun_adi="SU FILTERI")[0]
-
-            # mehsul = serializer.validated_data.get("mehsul")
-            # satis_meblegi = serializer.validated_data.get("satis_meblegi")
-            # if (satis_meblegi == None) or (satis_meblegi == ""):
-            #     satis_meblegi = mehsul.qiymet
-
-            # vezife = Vezifeler.objects.filter(vezife_adi="OFFICE LEADER")[0]
-            serializer.save()
-
-            return Response({"detail": "Prim əlavə edildi"})
+            prim_status = serializer.validated_data.get("prim_status")
+            vezife = serializer.validated_data.get("vezife")
+            prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, vezife=vezife)
+            print(f"{prim=}")
+            if len(prim)>0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save()
+                return Response({"detail": "Prim əlavə edildi"})
 
 
 class OfficeLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -386,14 +384,15 @@ class VanLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            # mehsul = serializer.validated_data.get("mehsul")
-            # satis_meblegi = serializer.validated_data.get("satis_meblegi")
-            # if (satis_meblegi == None) or (satis_meblegi == ""):
-            #     satis_meblegi = mehsul.qiymet
-            
-            serializer.save()
-
-            return Response({"detail": "Prim əlavə edildi"})
+            prim_status = serializer.validated_data.get("prim_status")
+            vezife = serializer.validated_data.get("vezife")
+            prim = VanLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            print(f"{prim=}")
+            if len(prim)>0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save()
+                return Response({"detail": "Prim əlavə edildi"})
 
 
 class VanLeaderPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -444,15 +443,15 @@ class CanvasserPrimListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            # mehsul = serializer.validated_data.get("mehsul")
-            # satis_meblegi = serializer.validated_data.get("satis_meblegi")
-
-            # if (satis_meblegi == None) or (satis_meblegi == ""):
-            #     satis_meblegi = mehsul.qiymet
-            
-            serializer.save()
-
-            return Response({"detail": "Prim əlavə edildi"})
+            prim_status = serializer.validated_data.get("prim_status")
+            vezife = serializer.validated_data.get("vezife")
+            prim = CanvasserPrim.objects.filter(prim_status=prim_status, vezife=vezife)
+            print(f"{prim=}")
+            if len(prim)>0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save()
+                return Response({"detail": "Prim əlavə edildi"})
 
 class CanvasserPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CanvasserPrim.objects.all()
@@ -554,14 +553,15 @@ class DealerPrimNewListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            # mehsul = serializer.validated_data.get("mehsul")
-            # satis_meblegi = serializer.validated_data.get("satis_meblegi")
-            # if (satis_meblegi == None) or (satis_meblegi == ""):
-            #     satis_meblegi = mehsul.qiymet
-            
-            serializer.save()
-
-            return Response({"detail": "Prim əlavə edildi"})
+            prim_status = serializer.validated_data.get("prim_status")
+            vezife = serializer.validated_data.get("vezife")
+            prim = DealerPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            print(f"{prim=}")
+            if len(prim)>0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save()
+                return Response({"detail": "Prim əlavə edildi"})
 
 class DealerPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DealerPrimNew.objects.all()

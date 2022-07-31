@@ -1,0 +1,132 @@
+version: "3.3"
+
+services:
+  web:
+    build:
+      context: ./kodaze
+      dockerfile: ./Dockerfile
+      args:
+        STATIC_URL: "/static/"
+        STATIC_ROOT: os.path.join(BASE_DIR, 'static')
+    restart: unless-stopped
+    image: kodaze_web
+    networks:
+      - kodaze-network
+    # '/start' is the shell script used to run the service
+    #command: python manage.py runserver 0.0.0.0:8000
+    # command: gunicorn --bind 0.0.0.0:8000 --timeout 200 core.wsgi --worker-class gevent
+    command: gunicorn --bind 0.0.0.0:8000 --worker-class=gevent --worker-connections=1000 --workers=5 core.wsgi
+    # this volume is used to map the files and folders on the host to the container
+    # so if we change code on the host, code in the docker container will also be changed
+    volumes:
+      - ./kodaze/core:/app/core
+      - media:/app/media
+    ports:
+      - 8000:8000
+    # env_file is used to manage the env variables of our project
+    depends_on:
+      - redis
+      - db
+    env_file:
+      - .env
+    environment:
+      - STATIC_ROOT=/app/static
+      #- DATABASE_URL=postgres://alliance:vEoe1l3oYBFfTJK@postgres:5432/crm
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - CELERY_BACKEND=${CELERY_BACKEND}
+      - MEDIA_URL=/app/media/
+    links:
+      - db
+      - redis
+
+  db:
+    image: library/postgres:13.2-alpine
+    restart: unless-stopped
+    networks:
+      - kodaze-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  redis:
+    image: redis:7.0.0-alpine
+    restart: unless-stopped
+    command: redis-server --save 20 1 --port 6379 --loglevel warning --requirepass ENA7eWv7s58AZCDm4MtyKVPe8oNd2690 --appendonly yes
+    ports:
+      - 6379:6379
+    expose:
+      - "6379"
+    env_file:
+      - .env
+    environment:
+     - REDIS_HOST=${REDIS_HOST}
+    networks:
+      - kodaze-network
+    volumes:
+      - kodaze-redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+  worker:
+    build:
+      context: ./kodaze
+      dockerfile: ./Dockerfile
+    image: kodaze_worker
+    restart: unless-stopped
+    command: celery -A core worker --beat --scheduler django --loglevel=info 
+    env_file:
+      - .env
+    environment:
+     - CELERY_BROKER=${CELERY_BROKER}
+     - RESULT_BACKEND=${CELERY_BACKEND}
+     - REDIS_HOST=${REDIS_HOST}
+     - REDIS_PORT=${REDIS_PORT}
+     - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - kodaze-network
+    links:
+      - redis
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build: ./kodaze
+    command: celery -A core beat -l info
+    volumes:
+      - ./kodaze:/app/
+    env_file:
+      - .env
+    environment:
+      - DEBUG=0
+      - SECRET_KEY=${SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - CELERY_BROKER=${CELERY_BROKER}
+      - RESULT_BACKEND=${CELERY_BACKEND}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD} 
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
+    driver: local
+  kodaze-redis:
+    driver: local
+  media:  
+    driver: local
+  celery_beat:
+    driver: local
+
+networks:
+  kodaze-network:
+    driver: bridge
