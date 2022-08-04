@@ -1,3 +1,4 @@
+import datetime
 from rest_framework import serializers
 from restAPI.v1.company.serializers import OfisSerializer, ShirketSerializer, ShobeSerializer
 
@@ -97,6 +98,12 @@ class MuqavileSerializer(serializers.ModelSerializer):
         
         representation['muqavile_kreditor'] = kreditor
         return representation
+
+    def create(self, validated_data):
+        muqavile_tarixi = validated_data.get('muqavile_tarixi')
+        if muqavile_tarixi == None:
+            validated_data['muqavile_tarixi'] = datetime.date.today()
+        return super(MuqavileSerializer, self).create(validated_data)
 
     class Meta:
         model = Muqavile

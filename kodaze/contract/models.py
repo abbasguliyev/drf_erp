@@ -73,7 +73,7 @@ class Muqavile(models.Model):
     mehsul_sayi = models.PositiveIntegerField(default=1, blank=True)
     muqavile_umumi_mebleg = models.FloatField(default=0, blank=True)
     elektron_imza = models.ImageField(upload_to="media/muqavile/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    muqavile_tarixi = models.DateField(default=django.utils.timezone.now, blank=True)
+    muqavile_tarixi = models.DateField(null=True, blank=True)
     muqavile_imzalanma_tarixi = models.DateField(auto_now_add=True, null=True)
     shirket = models.ForeignKey('company.Shirket', on_delete=models.CASCADE, related_name="muqavile", null=True, blank=True)
     ofis = models.ForeignKey('company.Ofis', on_delete=models.CASCADE, related_name="muqavile", null=True, blank=True)
@@ -131,7 +131,7 @@ class Muqavile(models.Model):
     kredit_muddeti = models.IntegerField(default=0, blank=True)
     ilkin_odenis = models.FloatField(blank=True, default=0)
     ilkin_odenis_qaliq = models.FloatField(blank=True, default=0)
-    ilkin_odenis_tarixi = models.DateField(default=django.utils.timezone.now, blank=True, null=True)
+    ilkin_odenis_tarixi = models.DateField(blank=True, null=True)
     ilkin_odenis_qaliq_tarixi = models.DateField(blank=True, null=True)
 
     ilkin_odenis_status = models.CharField(
