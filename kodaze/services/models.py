@@ -8,7 +8,7 @@ class Servis(models.Model):
     kredit_muddeti = models.IntegerField(default=0, blank=True)
     endirim = models.FloatField(default=0, blank=True)
     muqavile = models.ForeignKey("contract.Muqavile", related_name="servis_muqavile", null=True, on_delete=models.CASCADE)
-    mehsullar = models.ManyToManyField("contract.Muqavile", related_name="servis_mehsul")
+    mehsullar = models.ManyToManyField("product.Mehsullar", related_name="servis_mehsul")
     servis_tarix = models.DateField(default=django.utils.timezone.now, blank=True)
     yerine_yetirildi = models.BooleanField(default=False)
     servis_qiymeti = models.FloatField(default=0, blank=True)
