@@ -4,14 +4,14 @@ from django.dispatch import receiver
 
 from .tasks import create_odeme_tarix_task, demo_satis_sayi_task
 
-from restAPI.utils.ocean_muqavile_pdf_create import (
+from restAPI.v1.utils.ocean_muqavile_pdf_create import (
     okean_create_muqavile_pdf, 
     okean_muqavile_pdf_canvas, 
     ocean_kredit_create_muqavile_pdf,
     ocean_kredit_muqavile_pdf_canvas
 )
 
-from restAPI.utils.magnus_muqavile_pdf_create import (
+from restAPI.v1.utils.magnus_muqavile_pdf_create import (
     magnus_create_muqavile_pdf,
     magnus_muqavile_pdf_canvas,
     magnus_kredit_create_muqavile_pdf,
