@@ -48,6 +48,13 @@ class ShirketSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError({"detail": 'Bu ad ilə şirkət artıq əlavə olunub'})
 
+    def update(self, instance, validated_data):
+        instance.shirket_adi = validated_data.get('shirket_adi', instance.shirket_adi).upper()
+        instance.holding = validated_data.get('holding', instance.holding)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.save()
+        return instance
+
 
 class KomandaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,6 +97,13 @@ class OfisSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError({"detail": 'Bu ad ilə ofis artıq əlavə olunub'})
 
+    def update(self, instance, validated_data):
+        instance.ofis_adi = validated_data.get('ofis_adi', instance.ofis_adi).upper()
+        instance.shirket = validated_data.get('shirket', instance.shirket)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.save()
+        return instance
+
 
 class ShobeSerializer(serializers.ModelSerializer):
     ofis = OfisSerializer(read_only=True)
@@ -100,6 +114,20 @@ class ShobeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shobe
         fields = "__all__"
+
+    def create(self, validated_data):
+        shobe_adi = validated_data.get('shobe_adi')
+        validated_data['shobe_adi'] = shobe_adi.upper()
+        ofis = validated_data['ofis']
+        print(f"{ofis=}")
+        try:
+            shobe_qs = Ofis.objects.filter(shobe_adi=shobe_adi.upper(), ofis=ofis)
+            print(f"{shobe_qs=}")
+            if len(shobe_qs)>0:
+                raise ValidationError
+            return super(ShobeSerializer, self).create(validated_data)
+        except:
+            raise ValidationError({"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
 
 class VezifelerSerializer(serializers.ModelSerializer):
     shobe = ShobeSerializer(read_only=True, required=False)
@@ -128,7 +156,7 @@ class HoldingSerializer(serializers.ModelSerializer):
         try:
             return super(HoldingSerializer, self).create(validated_data)
         except:
-            raise ValidationError('Bu ad ilə holding artıq əlavə olunub')
+            raise ValidationError({"detail": 'Bu ad ilə holding artıq əlavə olunub'})
 
 class VezifePermissionSerializer(serializers.ModelSerializer):
     vezife = VezifelerSerializer(read_only=True)
