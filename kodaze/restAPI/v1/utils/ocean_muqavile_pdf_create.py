@@ -55,8 +55,8 @@ def okean_muqavile_pdf_canvas(musteri, muqavile) -> list:
     tarix_year = muqavile.muqavile_tarixi.year
     mehsul_adi = muqavile.mehsul.mehsulun_adi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+    # imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
     # imza = f"http://67.205.154.217:8000/media/{muqavile.elektron_imza}"
     
     # imza = ImageReader(f"http://67.205.154.217:8000/media/media/{muqavile.elektron_imza}")
@@ -243,8 +243,8 @@ def ocean_kredit_muqavile_pdf_canvas(muqavile) -> list:
     mehsul_adi = muqavile.mehsul.mehsulun_adi
     mehsul_sayi = muqavile.mehsul_sayi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+    # imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
     # imza = f"http://67.205.154.217:8000/media/{muqavile.elektron_imza}"
     
     mehsul_qiymeti = muqavile.mehsul.qiymet * mehsul_sayi

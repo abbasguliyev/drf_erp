@@ -35,12 +35,9 @@ class AnbarSerializer(serializers.ModelSerializer):
         queryset=Ofis.objects.all(), source='ofis', write_only=True
     )
 
-    is_active =serializers.BooleanField(read_only=True)
-
     class Meta:
         model = Anbar
         fields = "__all__"
-        read_only = ('is_active',)
 
     def create(self, validated_data):
         ad = validated_data.get('ad')

@@ -21,11 +21,11 @@ class MehsullarSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         mehsulun_adi = validated_data.get('mehsulun_adi')
-        validated_data['mehsulun_adi'] = mehsulun_adi.upper()
+        validated_data['mehsulun_adi'] = mehsulun_adi
         shirket = validated_data['shirket']
         print(f"{shirket=}")
         try:
-            mehsul = Mehsullar.objects.filter(mehsulun_adi=mehsulun_adi.upper(), shirket=shirket)
+            mehsul = Mehsullar.objects.filter(mehsulun_adi=mehsulun_adi, shirket=shirket)
             print(f"{mehsul=}")
             if len(mehsul)>0:
                 raise ValidationError

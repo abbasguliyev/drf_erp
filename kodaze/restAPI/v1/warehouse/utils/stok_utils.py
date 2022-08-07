@@ -16,6 +16,6 @@ def stok_update(self, request, *args, **kwargs):
         stok.say = stok.say + say
         stok.save()
         # super(StokSerializer, self).update(request, *args, **kwargs)
-        return Response({"detail" : "Məhsulun sayı artırıldı."}, status=status.HTTP_200_OK)
+        return Response({"detail" : "Məlumatlar yeniləndi"}, status=status.HTTP_200_OK)
     except:
         return Response({"Problem"}, status=status.HTTP_404_NOT_FOUND)

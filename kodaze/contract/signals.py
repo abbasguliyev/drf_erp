@@ -21,7 +21,8 @@ from restAPI.v1.utils.magnus_muqavile_pdf_create import (
 @receiver(post_save, sender=Muqavile)
 def create_odeme_tarix(sender, instance, created, **kwargs):
     if created:
-        create_odeme_tarix_task.delay(instance.id, True)
+        instance_id = instance.id
+        create_odeme_tarix_task.delay(instance_id, True)
 
 @receiver(post_save, sender=Muqavile)
 def create_and_add_pdf_to_muqavile(sender, instance, created, **kwargs):
@@ -70,4 +71,5 @@ def create_and_add_pdf_to_muqavile_kredit(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Muqavile)
 def demo_satis_sayi(sender, instance, created, **kwargs):
     if created:
-        demo_satis_sayi_task.delay(instance.id)
+        instance_id = instance.id
+        demo_satis_sayi_task.delay(instance_id)

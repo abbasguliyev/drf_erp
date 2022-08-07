@@ -79,6 +79,15 @@ class AnbarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     filterset_class = AnbarFilter
     permission_classes = [muqavile_permissions.AnbarPermissions]
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Anbar məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
+
     def destroy(self, request, *args, **kwargs):
         anbar = self.get_object()
         anbar.is_active = False
@@ -243,3 +252,4 @@ class StokDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
