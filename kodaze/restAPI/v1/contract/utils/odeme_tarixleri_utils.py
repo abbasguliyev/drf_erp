@@ -1,6 +1,5 @@
 import traceback
 from cashbox.models import OfisKassa
-from income_expense.models import OfisKassaMedaxil
 from contract.models import  OdemeTarix
 from rest_framework.exceptions import ValidationError
 import datetime
@@ -9,87 +8,17 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 import pandas as pd
 
-from restAPI.v1.contract.serializers import OdemeTarixSerializer
-
-from restAPI.v1.utils.ocean_muqavile_pdf_create import (
-    okean_create_muqavile_pdf, 
-    okean_muqavile_pdf_canvas, 
-    ocean_kredit_create_muqavile_pdf,
-    ocean_kredit_muqavile_pdf_canvas
-)
-
-from restAPI.v1.utils.magnus_muqavile_pdf_create import (
-    magnus_create_muqavile_pdf,
-    magnus_muqavile_pdf_canvas,
-    magnus_kredit_create_muqavile_pdf,
-    magnus_kredit_muqavile_pdf_canvas
-)
-
 from restAPI.v1.cashbox.utils import (
     holding_umumi_balans_hesabla, 
     pul_axini_create, 
     ofis_balans_hesabla
 )
 
-def create_and_add_pdf_when_muqavile_updated(sender, instance, created, **kwargs):
-    if created:
-        print("create_and_add_pdf_when_muqavile_updated  işə düşdü")
-
-        okean = "OCEAN"
-        magnus = "MAGNUS"
-
-        if instance.ofis.shirket.shirket_adi == okean:
-            muqavile_pdf_canvas_list = okean_muqavile_pdf_canvas(
-                muqavile=instance, musteri=instance.musteri
-            )
-            muqavile_pdf = okean_create_muqavile_pdf(muqavile_pdf_canvas_list, instance)
-        elif instance.ofis.shirket.shirket_adi == magnus:
-            muqavile_pdf_canvas_list = magnus_muqavile_pdf_canvas(
-                muqavile=instance, musteri=instance.musteri
-            )
-            muqavile_pdf = magnus_create_muqavile_pdf(muqavile_pdf_canvas_list, instance)
-        instance.pdf = muqavile_pdf
-        instance.save()
-
-def create_and_add_pdf_when_muqavile_kredit_updated(sender, instance, created, **kwargs):
-    if created:
-        print("create_and_add_pdf_when_muqavile_kredit_updated işə düşdü")
-
-        okean = "OCEAN"
-        magnus = "MAGNUS"
-
-        if instance.ofis.shirket.shirket_adi == okean:
-            muqavile_pdf_canvas_list = ocean_kredit_muqavile_pdf_canvas(
-                muqavile=instance
-            )
-            muqavile_pdf = ocean_kredit_create_muqavile_pdf(muqavile_pdf_canvas_list, instance)
-        elif instance.ofis.shirket.shirket_adi == magnus:
-            muqavile_pdf_canvas_list = magnus_kredit_muqavile_pdf_canvas(
-                muqavile=instance
-            )
-            muqavile_pdf = magnus_kredit_create_muqavile_pdf(muqavile_pdf_canvas_list, instance)
-        instance.pdf_elave = muqavile_pdf
-        instance.save()
-
-def pdf_create_when_muqavile_updated(sender, instance, created):
-    create_and_add_pdf_when_muqavile_updated(sender=sender, instance=instance, created=created) 
-    create_and_add_pdf_when_muqavile_kredit_updated(sender=sender, instance=instance, created=created)
-
-def k_medaxil(company_kassa, daxil_edilecek_mebleg, vanleader, qeyd):
-    yekun_balans = float(daxil_edilecek_mebleg) + float(company_kassa.balans)
-    company_kassa.balans = yekun_balans
-    company_kassa.save()
-    tarix = datetime.date.today()
-
-    medaxil = OfisKassaMedaxil.objects.create(
-        medaxil_eden=vanleader,
-        ofis_kassa=company_kassa,
-        mebleg=daxil_edilecek_mebleg,
-        medaxil_tarixi=tarix,
-        qeyd=qeyd
-    )
-    medaxil.save()
-    return medaxil
+from restAPI.v1.contract.utils.muqavile_utils import (
+    k_medaxil, 
+    k_mexaric,
+    pdf_create_when_muqavile_updated
+)
 
 # PATCH sorgusu
 def odeme_tarixi_patch(self, request, *args, **kwargs):
@@ -518,45 +447,49 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                     return Response({"detail": "Artıq ödəmə statusunda qalıq borcunuzdan artıq məbləğ ödəyə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
                 artiqdan_normalda_odenmeli_olani_cixan_ferq = odemek_istediyi_mebleg - normalda_odenmeli_olan
-
+                print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
                 odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
 
                 indiki_ay.qiymet = odemek_istediyi_mebleg
-                # indiki_ay.odenme_status = "ÖDƏNƏN"
                 indiki_ay.sertli_odeme_status = "ARTIQ ÖDƏMƏ"
                 indiki_ay.artiq_odeme_alt_status = "ARTIQ BİR AY"
-                # indiki_ay.qeyd = qeyd
                 indiki_ay.save()
                 
-                
                 qaliq_borc = float(qaliq_borc) - float(odemek_istediyi_mebleg)
-                # muqavile.qaliq_borc = qaliq_borc
                 muqavile.save()
 
                 sonuncu_ay = odenmeyen_odemetarixler[len(odenmeyen_odemetarixler)-1]
                 sonuncudan_bir_evvelki_ay = odenmeyen_odemetarixler[len(odenmeyen_odemetarixler)-2]
                 
                 sonuncu_aydan_qalan = sonuncu_ay.qiymet - artiqdan_normalda_odenmeli_olani_cixan_ferq
+                while(artiqdan_normalda_odenmeli_olani_cixan_ferq>0):
+                    if(sonuncu_ay.qiymet > artiqdan_normalda_odenmeli_olani_cixan_ferq):
+                        print(f"1")
+                        sonuncu_ay.qiymet = sonuncu_ay.qiymet - artiqdan_normalda_odenmeli_olani_cixan_ferq
+                        sonuncu_ay.save()
+                        artiqdan_normalda_odenmeli_olani_cixan_ferq = 0
+                        print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
 
-                if(sonuncu_ay.qiymet > artiqdan_normalda_odenmeli_olani_cixan_ferq):
-                    sonuncu_ay.qiymet = sonuncu_ay.qiymet - artiqdan_normalda_odenmeli_olani_cixan_ferq
-                    sonuncu_ay.save()
-                elif(sonuncu_ay.qiymet == artiqdan_normalda_odenmeli_olani_cixan_ferq):
-                    sonuncu_ay.delete()
-                    muqavile.kredit_muddeti = muqavile.kredit_muddeti - 1
-                    muqavile.save()
-                elif(sonuncu_ay.qiymet < artiqdan_normalda_odenmeli_olani_cixan_ferq):
-                    qalan_mebleg = artiqdan_normalda_odenmeli_olani_cixan_ferq - sonuncu_ay.qiymet
-                    sonuncu_ay.delete()
-                    muqavile.kredit_muddeti = muqavile.kredit_muddeti - 1
-                    muqavile.save()
-                    if(sonuncudan_bir_evvelki_ay.qiymet > qalan_mebleg):
-                        sonuncudan_bir_evvelki_ay.qiymet = sonuncudan_bir_evvelki_ay.qiymet - qalan_mebleg
-                        sonuncudan_bir_evvelki_ay.save()
-                    if(sonuncudan_bir_evvelki_ay.qiymet == qalan_mebleg):
-                        sonuncudan_bir_evvelki_ay.delete()
+                    elif(sonuncu_ay.qiymet == artiqdan_normalda_odenmeli_olani_cixan_ferq):
+                        print(f"2")
+                        sonuncu_ay.delete()
                         muqavile.kredit_muddeti = muqavile.kredit_muddeti - 1
                         muqavile.save()
+                        artiqdan_normalda_odenmeli_olani_cixan_ferq = 0
+                        print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
+                    elif(sonuncu_ay.qiymet < artiqdan_normalda_odenmeli_olani_cixan_ferq):
+                        print(f"3")
+                        artiqdan_normalda_odenmeli_olani_cixan_ferq = artiqdan_normalda_odenmeli_olani_cixan_ferq - sonuncu_ay.qiymet
+                        print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
+                        sonuncu_ay.delete()
+                        muqavile.kredit_muddeti = muqavile.kredit_muddeti - 1
+                        muqavile.save()
+                        odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
+                        sonuncu_ay = odenmeyen_odemetarixler[len(odenmeyen_odemetarixler)-1]
+                        sonuncudan_bir_evvelki_ay = odenmeyen_odemetarixler[len(odenmeyen_odemetarixler)-2]
+                        print(f"{sonuncu_ay.qiymet=}")
+                        print(f"{sonuncudan_bir_evvelki_ay.qiymet=}")
+
                 if(request.data.get("odenme_status") == "ÖDƏNƏN"):
                     qaliq_borc = float(qaliq_borc) - float(odemek_istediyi_mebleg)
                     muqavile.qaliq_borc = qaliq_borc
