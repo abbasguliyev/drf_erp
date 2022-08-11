@@ -17,6 +17,16 @@ class IsciGelibGetmeVaxtlari(models.Model):
     gelme_vaxti = models.TimeField()
     getme_vaxti = models.TimeField()
 
+    class Meta:
+        ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_iscigelibgetmevaxtlari", "Mövcud işçi gəlib-getmə vaxtlarına baxa bilər"),
+            ("add_iscigelibgetmevaxtlari", "İşçi gəlib-getmə vaxtı əlavə edə bilər"),
+            ("change_iscigelibgetmevaxtlari", "İşçi gəlib-getmə vaxtının məlumatlarını yeniləyə bilər"),
+            ("delete_iscigelibgetmevaxtlari", "İşçi gəlib-getmə vaxtını silə bilər")
+        )
+
     def __str__(self) -> str:
         return f"{self.isci} - {self.gelme_vaxti} - {self.getme_vaxti}"
 
@@ -34,6 +44,13 @@ class IsciGunler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_iscigunler", "Mövcud işçilərin tətil günlərinə baxa bilər"),
+            ("add_iscigunler", "İşçilərə tətil günü əlavə edə bilər"),
+            ("change_iscigunler", "İşçilərin tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_iscigunler", "İşçilərin tətil gününü silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.isci} - {self.is_gunleri_count} - {self.tarix}"
@@ -47,6 +64,13 @@ class HoldingGunler(models.Model):
     
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdinggunler", "Mövcud holdinq tətil günlərinə baxa bilər"),
+            ("add_holdinggunler", "Holdinqə tətil günü əlavə edə bilər"),
+            ("change_holdinggunler", "Holdinqin tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_holdinggunler", "Holdinqin tətil gününü silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.holding} - {self.is_gunleri_count} - {self.tarix}"
@@ -61,6 +85,13 @@ class ShirketGunler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketgunler", "Mövcud şirkət tətil günlərinə baxa bilər"),
+            ("add_shirketgunler", "Şirkət tətil günü əlavə edə bilər"),
+            ("change_shirketgunler", "Şirkətin tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_shirketgunler", "Şirkətin tətil gününü silə bilər")
+        )
   
     def __str__(self) -> str:
         return f"{self.shirket} - {self.is_gunleri_count} - {self.tarix}"
@@ -74,6 +105,13 @@ class OfisGunler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofisgunler", "Mövcud ofis tətil günlərinə baxa bilər"),
+            ("add_ofisgunler", "Ofis tətil günü əlavə edə bilər"),
+            ("change_ofisgunler", "Ofisin tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_ofisgunler", "Ofisin tətil gününü silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.ofis} - {self.is_gunleri_count} - {self.tarix}"
@@ -87,6 +125,13 @@ class KomandaGunler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_komandagunler", "Mövcud komanda tətil günlərinə baxa bilər"),
+            ("add_komandagunler", "Komanda tətil günü əlavə edə bilər"),
+            ("change_komandagunler", "Komandanın tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_komandagunler", "Komandanın tətil gününü silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.komanda} - {self.is_gunleri_count} - {self.tarix}"
@@ -100,6 +145,13 @@ class VezifeGunler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_vezifegunler", "Mövcud vəzifə tətil günlərinə baxa bilər"),
+            ("add_vezifegunler", "Vəzifə tətil günü əlavə edə bilər"),
+            ("change_vezifegunler", "Vəzifənin tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_vezifegunler", "Vəzifənin tətil gününü silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.vezife} - {self.is_gunleri_count} - {self.tarix}"
@@ -113,6 +165,13 @@ class ShobeGunler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shobegunler", "Mövcud şöbə tətil günlərinə baxa bilər"),
+            ("add_shobegunler", "Şöbə tətil günü əlavə edə bilər"),
+            ("change_shobegunler", "Şöbənin tətil günü məlumatlarını yeniləyə bilər"),
+            ("delete_shobegunler", "Şöbənin tətil gününü silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shobe} - {self.is_gunleri_count} - {self.tarix}"
@@ -125,6 +184,13 @@ class HoldingIstisnaIsci(IstisnaIsci):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingistisnaisci", "Mövcud holdinq istisna işçilərə baxa bilər"),
+            ("add_holdingistisnaisci", "Holdinq istisna işçi əlavə edə bilər"),
+            ("change_holdingistisnaisci", "Holdinq istisna işçi məlumatlarını yeniləyə bilər"),
+            ("delete_holdingistisnaisci", "Holdinq istisna işçiməlumatalrını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
@@ -134,6 +200,13 @@ class ShirketIstisnaIsci(IstisnaIsci):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketistisnaisci", "Mövcud şirkət istisna işçilərə baxa bilər"),
+            ("add_shirketistisnaisci", "Şirkət istisna işçi əlavə edə bilər"),
+            ("change_shirketistisnaisci", "Şirkət istisna işçi məlumatlarını yeniləyə bilər"),
+            ("delete_shirketistisnaisci", "Şirkət istisna işçiməlumatalrını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
@@ -143,6 +216,13 @@ class OfisIstisnaIsci(IstisnaIsci):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofisistisnaisci", "Mövcud ofis istisna işçilərə baxa bilər"),
+            ("add_ofisistisnaisci", "Ofis istisna işçi əlavə edə bilər"),
+            ("change_ofisistisnaisci", "Ofis istisna işçi məlumatlarını yeniləyə bilər"),
+            ("delete_ofisistisnaisci", "Ofis istisna işçiməlumatalrını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
@@ -152,6 +232,13 @@ class ShobeIstisnaIsci(IstisnaIsci):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shobeistisnaisci", "Mövcud şöbə istisna işçilərə baxa bilər"),
+            ("add_shobeistisnaisci", "Şöbə istisna işçi əlavə edə bilər"),
+            ("change_shobeistisnaisci", "Şöbə istisna işçi məlumatlarını yeniləyə bilər"),
+            ("delete_shobeistisnaisci", "Şöbə istisna işçiməlumatalrını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
@@ -161,6 +248,13 @@ class KomandaIstisnaIsci(IstisnaIsci):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_komandaistisnaisci", "Mövcud komanda istisna işçilərə baxa bilər"),
+            ("add_komandaistisnaisci", "Komanda istisna işçi əlavə edə bilər"),
+            ("change_komandaistisnaisci", "Komanda istisna işçi məlumatlarını yeniləyə bilər"),
+            ("delete_komandaistisnaisci", "Komanda istisna işçiməlumatalrını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
@@ -170,6 +264,13 @@ class VezifeIstisnaIsci(IstisnaIsci):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_vezifeistisnaisci", "Mövcud vəzifə istisna işçilərə baxa bilər"),
+            ("add_vezifeistisnaisci", "Vəzifə istisna işçi əlavə edə bilər"),
+            ("change_vezifeistisnaisci", "Vəzifə istisna işçi məlumatlarını yeniləyə bilər"),
+            ("delete_vezifeistisnaisci", "Vəzifə istisna işçiməlumatalrını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"

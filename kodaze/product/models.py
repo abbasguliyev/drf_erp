@@ -29,6 +29,13 @@ class Mehsullar(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_mehsullar", "Mövcud məhsullara baxa bilər"),
+            ("add_mehsullar", "Məhsul əlavə edə bilər"),
+            ("change_mehsullar", "Məhsul məlumatlarını yeniləyə bilər"),
+            ("delete_mehsullar", "Məhsul silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shirket} şirkəti {self.mehsulun_adi} - {self.qiymet} AZN"

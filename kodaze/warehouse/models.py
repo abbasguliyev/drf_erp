@@ -15,6 +15,14 @@ class Anbar(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_anbar", "Mövcud anbarlara baxa bilər"),
+            ("add_anbar", "Anbar əlavə edə bilər"),
+            ("change_anbar", "Anbar məlumatlarını yeniləyə bilər"),
+            ("delete_anbar", "Anbar silə bilər")
+        )
+
 
     def __str__(self) -> str:
         return f"{self.ad} - {self.ofis}"
@@ -30,6 +38,13 @@ class AnbarQeydler(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_anbarqeydler", "Mövcud anbar sorğularına baxa bilər"),
+            ("add_anbarqeydler", "Anbar sorğu əlavə edə bilər"),
+            ("change_anbarqeydler", "Anbar sorğu məlumatlarını yeniləyə bilər"),
+            ("delete_anbarqeydler", "Anbar sorğu silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.anbar} - {self.qeyd[:30]}"
@@ -41,6 +56,13 @@ class Stok(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_stok", "Mövcud stoklara baxa bilər"),
+            ("add_stok", "Stok əlavə edə bilər"),
+            ("change_stok", "Stok məlumatlarını yeniləyə bilər"),
+            ("delete_stok", "Stok silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"stok -> {self.anbar} - {self.mehsul} - {self.say}"
@@ -59,6 +81,13 @@ class Emeliyyat(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_emeliyyat", "Mövcud əməliyyatlara baxa bilər"),
+            ("add_emeliyyat", "Əməliyyat əlavə edə bilər"),
+            ("change_emeliyyat", "Əməliyyat məlumatlarını yeniləyə bilər"),
+            ("delete_emeliyyat", "Əməliyyat silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"Əməliyyat ==> {self.gonderen} - {self.qebul_eden} {self.emeliyyat_tarixi}"

@@ -10,6 +10,13 @@ class OfisKassa(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofiskassa", "Mövcud ofis kassalara baxa bilər"),
+            ("add_ofiskassa", "Ofis kassa əlavə edə bilər"),
+            ("change_ofiskassa", "Ofis kassa məlumatlarını yeniləyə bilər"),
+            ("delete_ofiskassa", "Ofis kassa silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.ofis} -> {self.balans}"
@@ -21,6 +28,13 @@ class ShirketKassa(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketkassa", "Mövcud şirkət kassalara baxa bilər"),
+            ("add_shirketkassa", "Şirkət kassa əlavə edə bilər"),
+            ("change_shirketkassa", "Şirkət kassa məlumatlarını yeniləyə bilər"),
+            ("delete_shirketkassa", "Şirkət kassa silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shirket} -> {self.balans}"
@@ -32,6 +46,13 @@ class HoldingKassa(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingkassa", "Mövcud holdinq kassalara baxa bilər"),
+            ("add_holdingkassa", "Holdinq kassa əlavə edə bilər"),
+            ("change_holdingkassa", "Holdinq kassa məlumatlarını yeniləyə bilər"),
+            ("delete_holdingkassa", "Holdinq kassa silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.holding} -> {self.balans}"
@@ -72,3 +93,10 @@ class PulAxini(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_pulaxini", "Mövcud pul axınlarına baxa bilər"),
+            ("add_pulaxini", "Pul axını əlavə edə bilər"),
+            ("change_pulaxini", "Pul axını məlumatlarını yeniləyə bilər"),
+            ("delete_pulaxini", "Pul axını məlumatlarını silə bilər")
+        )

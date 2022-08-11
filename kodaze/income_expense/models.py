@@ -19,6 +19,13 @@ class HoldingKassaMedaxil(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingkassamedaxil", "Mövcud holdinq kassa mədaxillərə baxa bilər"),
+            ("add_holdingkassamedaxil", "Holdinq kassa mədaxil əlavə edə bilər"),
+            ("change_holdingkassamedaxil", "Holdinq kassa mədaxil məlumatlarını yeniləyə bilər"),
+            ("delete_holdingkassamedaxil", "Holdinq kassa mədaxil silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.holding_kassa} kassasına {self.mebleg} azn mədaxil edildi"
@@ -38,6 +45,13 @@ class HoldingKassaMexaric(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingkassamexaric", "Mövcud holdinq kassa məxariclərə baxa bilər"),
+            ("add_holdingkassamexaric", "Holdinq kassa məxaric əlavə edə bilər"),
+            ("change_holdingkassamexaric", "Holdinq kassa məxaric məlumatlarını yeniləyə bilər"),
+            ("delete_holdingkassamexaric", "Holdinq kassa məxaric silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.holding_kassa} kassasından {self.mebleg} azn məxaric edildi"
@@ -58,6 +72,13 @@ class ShirketKassaMedaxil(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketkassamedaxil", "Mövcud şirkət kassa mədaxillərə baxa bilər"),
+            ("add_shirketkassamedaxil", "Şirkət kassa mədaxil əlavə edə bilər"),
+            ("change_shirketkassamedaxil", "Şirkət kassa mədaxil məlumatlarını yeniləyə bilər"),
+            ("delete_shirketkassamedaxil", "Şirkət kassa mədaxil silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shirket_kassa} kassasına {self.mebleg} azn mədaxil edildi"
@@ -77,6 +98,13 @@ class ShirketKassaMexaric(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketkassamexaric", "Mövcud şirkət kassa məxariclərə baxa bilər"),
+            ("add_shirketkassamexaric", "Şirkət kassa məxaric əlavə edə bilər"),
+            ("change_shirketkassamexaric", "Şirkət kassa məxaric məlumatlarını yeniləyə bilər"),
+            ("delete_shirketkassamexaric", "Şirkət kassa məxaric silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shirket_kassa} kassasından {self.mebleg} azn məxaric edildi"
@@ -96,6 +124,13 @@ class OfisKassaMedaxil(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofiskassamedaxil", "Mövcud ofis kassa mədaxillərə baxa bilər"),
+            ("add_ofiskassamedaxil", "Ofis kassa mədaxil əlavə edə bilər"),
+            ("change_ofiskassamedaxil", "Ofis kassa mədaxil məlumatlarını yeniləyə bilər"),
+            ("delete_ofiskassamedaxil", "Ofis kassa mədaxil silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.ofis_kassa} kassasına {self.mebleg} azn mədaxil edildi"
@@ -114,6 +149,13 @@ class OfisKassaMexaric(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofiskassamexaric", "Mövcud ofis kassa məxariclərə baxa bilər"),
+            ("add_ofiskassamexaric", "Ofis kassa məxaric əlavə edə bilər"),
+            ("change_ofiskassamexaric", "Ofis kassa məxaric məlumatlarını yeniləyə bilər"),
+            ("delete_ofiskassamexaric", "Ofis kassa məxaric silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.ofis_kassa} kassasından {self.mebleg} azn məxaric edildi"

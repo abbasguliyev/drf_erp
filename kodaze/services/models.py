@@ -21,6 +21,13 @@ class Servis(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_servis", "Mövcud servislərə baxa bilər"),
+            ("add_servis", "Servis əlavə edə bilər"),
+            ("change_servis", "Servis məlumatlarını yeniləyə bilər"),
+            ("delete_servis", "Servis silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.pk}.servis-{self.muqavile}"
@@ -34,6 +41,13 @@ class ServisOdeme(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_servisodeme", "Mövcud servis ödəmələrinə baxa bilər"),
+            ("add_servisodeme", "Servis ödəmə əlavə edə bilər"),
+            ("change_servisodeme", "Servis ödəmə məlumatlarını yeniləyə bilər"),
+            ("delete_servisodeme", "Servis ödəmə silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"servis-{self.servis}-{self.odenilecek_mebleg}-{self.odendi}"

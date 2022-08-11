@@ -172,7 +172,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'kodaze-db',
+            'NAME': 'kodaze-test2',
             'USER': 'postgres',
             'PASSWORD': 'postgres',
             'HOST': 'localhost',

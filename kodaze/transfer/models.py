@@ -22,6 +22,13 @@ class OfisdenShirketeTransfer(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofisdenshirketetransfer", "Mövcud ofisdən şirkətə olan transferlərə baxa bilər"),
+            ("add_ofisdenshirketetransfer", "Ofisdən şirkətə transfer edə bilər"),
+            ("change_ofisdenshirketetransfer", "Ofisdən şirkətə olan transfer məlumatlarını yeniləyə bilər"),
+            ("delete_ofisdenshirketetransfer", "Ofisdən şirkətə olan transfer məlumatlarını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.ofis_kassa} -> {self.shirket_kassa} {self.transfer_meblegi} azn"
@@ -42,6 +49,14 @@ class ShirketdenOfislereTransfer(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketdenofisleretransfer", "Mövcud şirkətdən ofislərə olan transferlərə baxa bilər"),
+            ("add_shirketdenofisleretransfer", "Şirkətdən ofislərə transfer edə bilər"),
+            ("change_shirketdenofisleretransfer", "Şirkətdən ofislərə olan transfer məlumatlarını yeniləyə bilər"),
+            ("delete_shirketdenofisleretransfer", "Şirkətdən ofislərə olan transfer məlumatlarını silə bilər")
+        )
+        
 
     def __str__(self) -> str:
         return f"{self.shirket_kassa} -> {self.ofis_kassa} {self.transfer_meblegi} azn"
@@ -63,6 +78,13 @@ class ShirketdenHoldingeTransfer(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirketdenholdingetransfer", "Mövcud şirkətdən holdinqlərə olan transferlərə baxa bilər"),
+            ("add_shirketdenholdingetransfer", "Şirkətdən holdinqlərə transfer edə bilər"),
+            ("change_shirketdenholdingetransfer", "Şirkətdən holdinqlərə olan transfer məlumatlarını yeniləyə bilər"),
+            ("delete_shirketdenholdingetransfer", "Şirkətdən holdinqlərə olan transfer məlumatlarını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shirket_kassa} -> {self.holding_kassa} {self.transfer_meblegi} azn"
@@ -83,6 +105,13 @@ class HoldingdenShirketlereTransfer(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingdenshirketleretransfer", "Mövcud holdinqdən şirkətlərə olan transferlərə baxa bilər"),
+            ("add_holdingdenshirketleretransfer", "Holdinqdən şirkətlərə transfer edə bilər"),
+            ("change_holdingdenshirketleretransfer", "Holdinqdən şirkətlərə olan transfer məlumatlarını yeniləyə bilər"),
+            ("delete_holdingdenshirketleretransfer", "Holdinqdən şirkətlərə olan transfer məlumatlarını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.holding_kassa} -> {self.shirket_kassa} {self.transfer_meblegi} azn"

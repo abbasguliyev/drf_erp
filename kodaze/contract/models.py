@@ -157,6 +157,14 @@ class Muqavile(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_muqavile", "Mövcud müqavilələrə baxa bilər"),
+            ("add_muqavile", "Müqavilə əlavə edə bilər"),
+            ("change_muqavile", "Müqavilə məlumatlarını yeniləyə bilər"),
+            ("delete_muqavile", "Müqavilə silə bilər")
+        )
+        
 
     def __str__(self) -> str:
         return f"{self.pk}. muqavile {self.musteri} - {self.mehsul}"
@@ -170,6 +178,13 @@ class MuqavileHediyye(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_muqavilehediyye", "Mövcud müqavilə hədiyyələrə baxa bilər"),
+            ("add_muqavilehediyye", "Müqavilə hədiyyə əlavə edə bilər"),
+            ("change_muqavilehediyye", "Müqavilə hədiyyə məlumatlarını yeniləyə bilər"),
+            ("delete_muqavilehediyye", "Müqavilə hədiyyə silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"Hədiyyə --- {self.muqavile} - {self.mehsul}"
@@ -301,6 +316,13 @@ class OdemeTarix(models.Model):
     
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_odemetarix", "Mövcud ödəmələrə baxa bilər"),
+            ("add_odemetarix", "Ödəmə əlavə edə bilər"),
+            ("change_odemetarix", "Ödəmə məlumatlarını yeniləyə bilər"),
+            ("delete_odemetarix", "Ödəmə silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.pk}. {self.tarix} - {self.muqavile} - {self.qiymet}"
@@ -320,6 +342,13 @@ class Deyisim(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_deyisim", "Mövcud dəyişimlərə baxa bilər"),
+            ("add_deyisim", "Dəyişim əlavə edə bilər"),
+            ("change_deyisim", "Dəyişim məlumatlarını yeniləyə bilər"),
+            ("delete_deyisim", "Dəyişim silə bilər")
+        )
 
 class DemoSatis(models.Model):
     user = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="demos")
@@ -329,6 +358,13 @@ class DemoSatis(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_demosatis", "Mövcud demo satışlara baxa bilər"),
+            ("add_demosatis", "Demo satış əlavə edə bilər"),
+            ("change_demosatis", "Demo satış məlumatlarını yeniləyə bilər"),
+            ("delete_demosatis", "Demo satış silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.user.username}-{self.count} demo - {self.created_date}"
@@ -336,6 +372,16 @@ class DemoSatis(models.Model):
 class MuqavileKreditor(models.Model):
     kreditor = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="muqavile_kreditor")
     muqavile = models.ForeignKey(Muqavile, on_delete=models.CASCADE, related_name="kreditor")
+    
+    class Meta:
+        ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_muqavilekreditor", "Mövcud kreditorlara baxa bilər"),
+            ("add_muqavilekreditor", "Müqavilə Kreditor əlavə edə bilər"),
+            ("change_muqavilekreditor", "Müqavilə Kreditor məlumatlarını yeniləyə bilər"),
+            ("delete_muqavilekreditor", "Müqavilə Kreditor silə bilər")
+        )
     
     def __str__(self) -> str:
         return f"{self.kreditor.asa} {self.muqavile}"

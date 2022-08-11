@@ -10,6 +10,13 @@ class Holding(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holding", "Mövcud holdinqlərə baxa bilər"),
+            ("add_holding", "Holdinq əlavə edə bilər"),
+            ("change_holding", "Holdinq məlumatlarını yeniləyə bilər"),
+            ("delete_holding", "Holdinq silə bilər")
+        )
 
     def __str__(self) -> str:
         return self.holding_adi
@@ -22,6 +29,13 @@ class Shirket(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shirket", "Mövcud şirkətlərə baxa bilər"),
+            ("add_shirket", "Şirkət əlavə edə bilər"),
+            ("change_shirket", "Şirkət məlumatlarını yeniləyə bilər"),
+            ("delete_shirket", "Şirkət silə bilər")
+        )
 
     def __str__(self) -> str:
         return self.shirket_adi
@@ -34,6 +48,13 @@ class Ofis(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofis", "Mövcud ofislərə baxa bilər"),
+            ("add_ofis", "Ofis əlavə edə bilər"),
+            ("change_ofis", "Ofis məlumatlarını yeniləyə bilər"),
+            ("delete_ofis", "Ofis silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.ofis_adi} - {self.shirket}"
@@ -46,6 +67,13 @@ class Shobe(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_shobe", "Mövcud şöbələrə baxa bilər"),
+            ("add_shobe", "Şöbə əlavə edə bilər"),
+            ("change_shobe", "Şöbə məlumatlarını yeniləyə bilər"),
+            ("delete_shobe", "Şöbə silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.shobe_adi} - {self.ofis}"
@@ -63,6 +91,13 @@ class Vezifeler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_vezifeler", "Mövcud vəzifələrə baxa bilər"),
+            ("add_vezifeler", "Vəzifə əlavə edə bilər"),
+            ("change_vezifeler", "Vəzifə məlumatlarını yeniləyə bilər"),
+            ("delete_vezifeler", "Vəzifə silə bilər")
+        )
 
     def __str__(self):
         return f"{self.vezife_adi}-{self.shirket}"
@@ -76,6 +111,13 @@ class Komanda(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_komanda", "Mövcud komandalara baxa bilər"),
+            ("add_komanda", "Komanda əlavə edə bilər"),
+            ("change_komanda", "Komanda məlumatlarını yeniləyə bilər"),
+            ("delete_komanda", "Komanda silə bilər")
+        )
 
     def __str__(self):
         return self.komanda_adi
@@ -84,6 +126,16 @@ class Komanda(models.Model):
 class VezifePermission(models.Model):
     vezife = models.ForeignKey(Vezifeler, on_delete=models.CASCADE, related_name="vezife_permission")
     permission_group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="vezife_permission")
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_vezifepermission", "Mövcud Vəzifə icazələrinə baxa bilər"),
+            ("add_vezifepermission", "Vəzifə icazə əlavə edə bilər"),
+            ("change_vezifepermission", "Vəzifə icazə məlumatlarını yeniləyə bilər"),
+            ("delete_vezifepermission", "Vəzifə icazə məlumatlarını silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.vezife}-{self.permission_group}"

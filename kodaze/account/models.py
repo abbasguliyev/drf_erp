@@ -14,6 +14,16 @@ class IsciStatus(models.Model):
     def __str__(self) -> str:
         return self.status_adi
 
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_iscistatus", "Mövcud işçi statuslarına baxa bilər"),
+            ("add_iscistatus", "İşçi statusu əlavə edə bilər"),
+            ("change_iscistatus", "İşçi statusu məlumatlarını yeniləyə bilər"),
+            ("delete_iscistatus", "İşçi statusunu silə bilər")
+        )
+
 class User(AbstractUser):
     PRIM = 'PRİM'
     FIX = "FİX"
@@ -59,6 +69,13 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ("pk",)  
+        default_permissions = []
+        permissions = (
+            ("view_user", "Mövcud işçilərə baxa bilər"),
+            ("add_user", "İşçi əlavə edə bilər"),
+            ("change_user", "İşçi məlumatlarını yeniləyə bilər"),
+            ("delete_user", "İşçi silə bilər")
+        )
 
     def __str__(self):
         return f"{self.username}"
@@ -68,6 +85,13 @@ class Bolge(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_bolge", "Mövcud bölgələrə baxa bilər"),
+            ("add_bolge", "Bölgə əlavə edə bilər"),
+            ("change_bolge", "Bölgə məlumatlarını yeniləyə bilər"),
+            ("delete_bolge", "Bölgə silə bilər")
+        )
 
     def __str__(self) -> str:
         return self.bolge_adi
@@ -94,6 +118,13 @@ class Musteri(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_musteri", "Mövcud müştərilərə baxa bilər"),
+            ("add_musteri", "Müştəri əlavə edə bilər"),
+            ("change_musteri", "Müştəri məlumatlarını yeniləyə bilər"),
+            ("delete_musteri", "Müştəri silə bilər")
+        )
 
     def __str__(self):
         return self.asa
@@ -105,6 +136,13 @@ class MusteriQeydler(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_musteriqeydler", "Mövcud müştəri qeydlərinə baxa bilər"),
+            ("add_musteriqeydler", "Müştəri qeydi əlavə edə bilər"),
+            ("change_musteriqeydler", "Müştəri qeydinin məlumatlarını yeniləyə bilər"),
+            ("delete_musteriqeydler", "Müştəri qeydlərini silə bilər")
+        )
 
     def __str__(self):
         return f"{self.musteri} -- {self.qeyd[:20]}"
@@ -116,6 +154,13 @@ class IsciSatisSayi(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_iscisatissayi", "Mövcud işçi satış saylarına baxa bilər"),
+            ("add_iscisatissayi", "İşçi satış sayı əlavə edə bilər"),
+            ("change_iscisatissayi", "İşçi satış sayı məlumatlarını yeniləyə bilər"),
+            ("delete_iscisatissayi", "İşçi satış sayı silə bilər")
+        )
 
     def __str__(self) -> str:
         return f"{self.isci} {self.tarix}-də {self.satis_sayi} satış etmişdir"

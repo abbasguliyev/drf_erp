@@ -8,3 +8,10 @@ class BackupAndRestore(models.Model):
 
     class Meta:
         ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_backupandrestore", "Mövcud `backup and restore`lara baxa bilər"),
+            ("add_backupandrestore", "`Backup and restore` əlavə edə bilər"),
+            ("change_backupandrestore", "`Backup and restore` məlumatlarını yeniləyə bilər"),
+            ("delete_backupandrestore", "`Backup and restore` silə bilər")
+        )
