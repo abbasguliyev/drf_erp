@@ -84,7 +84,6 @@ class EmeliyyatSerializer(serializers.ModelSerializer):
 
         return representation
 
-
     class Meta:
         model = Emeliyyat
         fields = "__all__"
@@ -152,7 +151,6 @@ class AnbarQeydlerSerializer(serializers.ModelSerializer):
                     stok_list.append(stok_data)
         
         representation['mehsul'] = stok_list
-
 
         return representation
 
