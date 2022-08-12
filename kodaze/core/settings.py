@@ -31,11 +31,11 @@ load_dotenv(find_dotenv())
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-__PRODUCTION__ = False
+__PRODUCTION__ = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if __PRODUCTION__ == True:
-    DEBUG = True
+    DEBUG = False
 else:
     DEBUG = True
 
