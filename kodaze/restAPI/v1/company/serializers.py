@@ -121,7 +121,7 @@ class ShobeSerializer(serializers.ModelSerializer):
         ofis = validated_data['ofis']
         print(f"{ofis=}")
         try:
-            shobe_qs = Ofis.objects.filter(shobe_adi=shobe_adi.upper(), ofis=ofis)
+            shobe_qs = Shobe.objects.filter(shobe_adi=shobe_adi.upper(), ofis=ofis)
             print(f"{shobe_qs=}")
             if len(shobe_qs)>0:
                 raise ValidationError
