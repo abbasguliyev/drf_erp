@@ -63,7 +63,7 @@ def muqavile_hediyye_create(self, request, *args, **kwargs):
                 )
 
         serializer.save(ofis=ofis)
-        return Response({"detail": f"{muqavile} müqaviləsinə hədiyyə verildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": f"Müştəri {muqavile.musteri.asa} ilə müqaviləyə hədiyyə təyin olundu."}, status=status.HTTP_200_OK)
 
 
 def muqavile_hediyye_destroy(self, request, *args, **kwargs):

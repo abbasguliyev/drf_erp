@@ -10,7 +10,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from PIL import Image
 from contract.models import OdemeTarix
 
-from core.settings import BASE_DIR
+from core.settings import BASE_DIR, __PRODUCTION__
 module_dir = os.path.dirname(__file__)  # get current directory
 
 
@@ -52,8 +52,11 @@ def magnus_muqavile_pdf_canvas(musteri, muqavile) -> list:
     tarix_month = muqavile.muqavile_tarixi.month
     tarix_year = muqavile.muqavile_tarixi.year
     mehsul_adi = muqavile.mehsul.mehsulun_adi
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+
+    if __PRODUCTION__:
+        imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    else:
+        imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
 
     # asa = "Abbas Quliyev Azər"
     # asa_split = asa.split(" ")
@@ -237,8 +240,10 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
     mehsul_adi = muqavile.mehsul.mehsulun_adi
     mehsul_sayi = muqavile.mehsul_sayi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+    if __PRODUCTION__:
+        imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    else:
+        imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
     
     mehsul_qiymeti = muqavile.mehsul.qiymet
     ilkin_odenis = muqavile.ilkin_odenis

@@ -187,7 +187,7 @@ class MuqavileHediyyeListCreateAPIView(generics.ListCreateAPIView):
         return muqavile_hediyye_utils.muqavile_hediyye_create(self, request, *args, **kwargs)
 
 
-class MuqavileHediyyeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class MuqavileHediyyeDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = MuqavileHediyye.objects.all()
     serializer_class = MuqavileHediyyeSerializer
     filter_backends = [DjangoFilterBackend]

@@ -12,7 +12,7 @@ from contract.models import OdemeTarix
 
 from reportlab.lib.utils import ImageReader
 
-from core.settings import BASE_DIR
+from core.settings import BASE_DIR, __PRODUCTION__
 module_dir = os.path.dirname(__file__)  # get current directory
 
 
@@ -55,8 +55,10 @@ def okean_muqavile_pdf_canvas(musteri, muqavile) -> list:
     tarix_year = muqavile.muqavile_tarixi.year
     mehsul_adi = muqavile.mehsul.mehsulun_adi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+    if __PRODUCTION__:
+        imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    else:
+        imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
     
     # imza = ImageReader(f"http://67.205.154.217:8000/media/media/{muqavile.elektron_imza}")
 
@@ -242,9 +244,11 @@ def ocean_kredit_muqavile_pdf_canvas(muqavile) -> list:
     mehsul_adi = muqavile.mehsul.mehsulun_adi
     mehsul_sayi = muqavile.mehsul_sayi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
-    
+    if __PRODUCTION__:
+        imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    else:
+        imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+  
     mehsul_qiymeti = muqavile.mehsul.qiymet * mehsul_sayi
     ilkin_odenis = muqavile.ilkin_odenis
     if ilkin_odenis == None or ilkin_odenis == "":

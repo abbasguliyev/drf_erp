@@ -325,7 +325,7 @@ class OdemeTarix(models.Model):
         )
 
     def __str__(self) -> str:
-        return f"{self.pk}. {self.tarix} - {self.muqavile} - {self.qiymet}"
+        return f"{self.pk}. {self.ay_no}.ay-{self.tarix} - ({self.muqavile.id}) id-li muqavile - {self.muqavile.musteri.asa} - {self.qiymet}"
 
 class Deyisim(models.Model):
     kohne_muqavile = models.ForeignKey(Muqavile, related_name="deyisim", on_delete=models.CASCADE)
