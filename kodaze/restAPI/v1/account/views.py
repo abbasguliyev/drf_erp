@@ -381,20 +381,14 @@ class AllBolgeCreate(APIView):
     def post(self, request, *args, **kwargs):
         try:
             filename = os.path.join(BASE_DIR, 'cities.json')
-            print(f"{filename=}")
             with open(filename) as fp:
                 cities = json.load(fp)
-            print(f"{cities=}")
-            print(f"{type(cities)=}")
             for city in cities:
-                print(f"{city=}")
-                print(f"{city['name']=}")
                 bolgeler = Bolge.objects.filter(bolge_adi=city['name'])
                 if len(bolgeler)>0:
                     continue
                 bolge = Bolge.objects.create(bolge_adi=city['name'])
                 bolge.save()
-            
             return Response({"detail": "Bölgələr əlavə olundu"}, status=status.HTTP_201_CREATED)
         except:
             return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_404_NOT_FOUND)
