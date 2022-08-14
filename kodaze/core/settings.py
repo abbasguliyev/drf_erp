@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 3rd party library
+    # 3rd party libraries
     'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'dbbackup',
+    "corsheaders",
 
     # apps
     'account.apps.AccountConfig',
@@ -124,6 +125,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -179,7 +181,7 @@ else:
             'PORT': '5432',
         }
     }
-    
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -233,6 +235,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# CORS conf
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Static files (CSS, JavaScript, Images)
