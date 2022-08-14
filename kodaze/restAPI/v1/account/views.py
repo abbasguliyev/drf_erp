@@ -4,6 +4,7 @@ from django.contrib.auth import user_logged_in
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.views import APIView
 
 from restAPI.v1.account.serializers import (
     BolgeSerializer,
@@ -53,6 +54,9 @@ import traceback
 
 from company.models import VezifePermission
 from rest_framework.permissions import IsAuthenticated  
+import json
+import os
+from core.settings import BASE_DIR
 
 # ********************************** Password change **********************************
 class ChangePasswordView(generics.UpdateAPIView):
@@ -373,6 +377,27 @@ class BolgeListCreateAPIView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Bölgə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
+class AllBolgeCreate(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            filename = os.path.join(BASE_DIR, 'cities.json')
+            print(f"{filename=}")
+            with open(filename) as fp:
+                cities = json.load(fp)
+            print(f"{cities=}")
+            print(f"{type(cities)=}")
+            for city in cities:
+                print(f"{city=}")
+                print(f"{city['name']=}")
+                bolgeler = Bolge.objects.filter(bolge_adi=city['name'])
+                if len(bolgeler)>0:
+                    continue
+                bolge = Bolge.objects.create(bolge_adi=city['name'])
+                bolge.save()
+            
+            return Response({"detail": "Bölgələr əlavə olundu"}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_404_NOT_FOUND)
 
 class BolgeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Bolge.objects.all()

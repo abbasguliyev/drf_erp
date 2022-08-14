@@ -81,7 +81,7 @@ class User(AbstractUser):
         return f"{self.username}"
 
 class Bolge(models.Model):
-    bolge_adi = models.CharField(max_length=300)
+    bolge_adi = models.CharField(max_length=300, unique=True)
 
     class Meta:
         ordering = ("pk",)

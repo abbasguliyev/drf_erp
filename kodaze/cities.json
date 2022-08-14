@@ -1,0 +1,518 @@
+[
+  {
+    "objectId": 1,
+    "districtId": "403",
+    "name": "Qax",
+    "nameEn": "Gakh"
+  },
+  {
+    "objectId": 2,
+    "districtId": "402",
+    "name": "Zaqatala",
+    "nameEn": "Zagatala"
+  },
+  {
+    "objectId": 3,
+    "districtId": "607",
+    "name": "Beyləqan",
+    "nameEn": "Beylagan"
+  },
+  {
+    "objectId": 4,
+    "districtId": "408",
+    "name": "Göyçay",
+    "nameEn": "Goychay"
+  },
+  {
+    "objectId": 5,
+    "districtId": "508",
+    "name": "Göygöl",
+    "nameEn": "Goygol"
+  },
+  {
+    "objectId": 6,
+    "districtId": "510",
+    "name": "Naftalan",
+    "nameEn": "Naftalan"
+  },
+  {
+    "objectId": 7,
+    "districtId": "509",
+    "name": "Goranboy",
+    "nameEn": "Goranboy"
+  },
+  {
+    "objectId": 8,
+    "districtId": "407",
+    "name": "İsmayıllı",
+    "nameEn": "Ismayilli"
+  },
+  {
+    "objectId": 9,
+    "districtId": "901",
+    "name": "Yevlax",
+    "nameEn": "Yevlakh"
+  },
+  {
+    "objectId": 10,
+    "districtId": "903",
+    "name": "Ağdaş",
+    "nameEn": "Aghdash"
+  },
+  {
+    "objectId": 11,
+    "districtId": "405",
+    "name": "Oğuz",
+    "nameEn": "Oghuz"
+  },
+  {
+    "objectId": 12,
+    "districtId": "404",
+    "name": "Şəki",
+    "nameEn": "Shaki"
+  },
+  {
+    "objectId": 13,
+    "districtId": "507",
+    "name": "Samux",
+    "nameEn": "Samukh"
+  },
+  {
+    "objectId": 14,
+    "districtId": "401",
+    "name": "Balakən",
+    "nameEn": "Balakan"
+  },
+  {
+    "objectId": 15,
+    "districtId": "504",
+    "name": "Şəmkir",
+    "nameEn": "Shamkir"
+  },
+  {
+    "objectId": 16,
+    "districtId": "506",
+    "name": "Daşkəsən",
+    "nameEn": "Dashkasan"
+  },
+  {
+    "objectId": 17,
+    "districtId": "505",
+    "name": "Gədəbəy",
+    "nameEn": "Gadabey"
+  },
+  {
+    "objectId": 18,
+    "districtId": "503",
+    "name": "Tovuz",
+    "nameEn": "Tovuz"
+  },
+  {
+    "objectId": 19,
+    "districtId": "502",
+    "name": "Ağstafa",
+    "nameEn": "Aghstafa"
+  },
+  {
+    "objectId": 20,
+    "districtId": "905",
+    "name": "Zərdab",
+    "nameEn": "Zardab"
+  },
+  {
+    "objectId": 21,
+    "districtId": "301",
+    "name": "Qusar",
+    "nameEn": "Gusar"
+  },
+  {
+    "objectId": 22,
+    "districtId": "302",
+    "name": "Xaçmaz",
+    "nameEn": "Khachmaz"
+  },
+  {
+    "objectId": 23,
+    "districtId": "303",
+    "name": "Quba",
+    "nameEn": "Guba"
+  },
+  {
+    "objectId": 24,
+    "districtId": "304",
+    "name": "Şabran",
+    "nameEn": "Shabran"
+  },
+  {
+    "objectId": 25,
+    "districtId": "305",
+    "name": "Siyəzən",
+    "nameEn": "Siyazan"
+  },
+  {
+    "objectId": 26,
+    "districtId": "611",
+    "name": "Tərtər",
+    "nameEn": "Tartar"
+  },
+  {
+    "objectId": 27,
+    "districtId": "410",
+    "name": "Şamaxı",
+    "nameEn": "Shamakhi"
+  },
+  {
+    "objectId": 28,
+    "districtId": "409",
+    "name": "Ağsu",
+    "nameEn": "Aghsu"
+  },
+  {
+    "objectId": 29,
+    "districtId": "906",
+    "name": "Kürdəmir",
+    "nameEn": "Kurdamir"
+  },
+  {
+    "objectId": 30,
+    "districtId": "907",
+    "name": "İmişli",
+    "nameEn": "Imishli"
+  },
+  {
+    "objectId": 31,
+    "districtId": "808",
+    "name": "Biləsuvar",
+    "nameEn": "Bilasuvar"
+  },
+  {
+    "objectId": 32,
+    "districtId": "908",
+    "name": "Saatlı",
+    "nameEn": "Saatli"
+  },
+  {
+    "objectId": 33,
+    "districtId": "909",
+    "name": "Sabirabad",
+    "nameEn": "Sabirabad"
+  },
+  {
+    "objectId": 34,
+    "districtId": "911",
+    "name": "Şirvan",
+    "nameEn": "Shirvan"
+  },
+  {
+    "objectId": 35,
+    "districtId": "910",
+    "name": "Hacıqabul",
+    "nameEn": "Hajigabul"
+  },
+  {
+    "objectId": 36,
+    "districtId": "809",
+    "name": "Salyan",
+    "nameEn": "Salyan"
+  },
+  {
+    "objectId": 37,
+    "districtId": "806",
+    "name": "Cəlilabad",
+    "nameEn": "Jalilabad"
+  },
+  {
+    "objectId": 38,
+    "districtId": "804",
+    "name": "Yardımlı",
+    "nameEn": "Yardimli"
+  },
+  {
+    "objectId": 39,
+    "districtId": "803",
+    "name": "Lerik",
+    "nameEn": "Lerik"
+  },
+  {
+    "objectId": 40,
+    "districtId": "801",
+    "name": "Astara",
+    "nameEn": "Astara"
+  },
+  {
+    "objectId": 41,
+    "districtId": "805",
+    "name": "Masallı",
+    "nameEn": "Masalli"
+  },
+  {
+    "objectId": 42,
+    "districtId": "807",
+    "name": "Neftçala",
+    "nameEn": "Neftchala"
+  },
+  {
+    "objectId": 43,
+    "districtId": "802",
+    "name": "Lənkəran",
+    "nameEn": "Lankaran"
+  },
+  {
+    "objectId": 44,
+    "districtId": "701",
+    "name": "Xocalı",
+    "nameEn": "Khojali"
+  },
+  {
+    "objectId": 45,
+    "districtId": "602",
+    "name": "Laçın",
+    "nameEn": "Lachin"
+  },
+  {
+    "objectId": 46,
+    "districtId": "603",
+    "name": "Qubadlı",
+    "nameEn": "Gubadli"
+  },
+  {
+    "objectId": 47,
+    "districtId": "604",
+    "name": "Zəngilan",
+    "nameEn": "Zangilan"
+  },
+  {
+    "objectId": 48,
+    "districtId": "605",
+    "name": "Cəbrayıl",
+    "nameEn": "Jabrayil"
+  },
+  {
+    "objectId": 49,
+    "districtId": "606",
+    "name": "Füzuli",
+    "nameEn": "Fuzuli"
+  },
+  {
+    "objectId": 50,
+    "districtId": "501",
+    "name": "Qazax",
+    "nameEn": "Gazakh"
+  },
+  {
+    "objectId": 51,
+    "districtId": "2001",
+    "name": "Nizami(Gəncə)",
+    "nameEn": "Nizami(Ganja)"
+  },
+  {
+    "objectId": 52,
+    "districtId": "2002",
+    "name": "Kəpəz(Gəncə)",
+    "nameEn": "Kapaz(Ganja)"
+  },
+  {
+    "objectId": 53,
+    "districtId": "309",
+    "name": "Sumqayıt",
+    "nameEn": "Sumgayit"
+  },
+  {
+    "objectId": 54,
+    "districtId": "1001",
+    "name": "Binəqədi",
+    "nameEn": "Binagadi"
+  },
+  {
+    "objectId": 55,
+    "districtId": "1008",
+    "name": "Nərimanov",
+    "nameEn": "Narimanov"
+  },
+  {
+    "objectId": 56,
+    "districtId": "1009",
+    "name": "Nəsimi",
+    "nameEn": "Nasimi"
+  },
+  {
+    "objectId": 57,
+    "districtId": "406",
+    "name": "Qəbələ",
+    "nameEn": "Gabala"
+  },
+  {
+    "objectId": 58,
+    "districtId": "102",
+    "name": "Şərur",
+    "nameEn": "Sharur"
+  },
+  {
+    "objectId": 59,
+    "districtId": "105",
+    "name": "Şahbuz",
+    "nameEn": "Shahbuz"
+  },
+  {
+    "objectId": 60,
+    "districtId": "101",
+    "name": "Sədərək",
+    "nameEn": "Sadarak"
+  },
+  {
+    "objectId": 61,
+    "districtId": "107",
+    "name": "Ordubad",
+    "nameEn": "Ordubad"
+  },
+  {
+    "objectId": 62,
+    "districtId": "104",
+    "name": "Naxçıvan",
+    "nameEn": "Nakhchivan"
+  },
+  {
+    "objectId": 63,
+    "districtId": "108",
+    "name": "Kəngərli",
+    "nameEn": "Kangarli"
+  },
+  {
+    "objectId": 64,
+    "districtId": "106",
+    "name": "Culfa",
+    "nameEn": "Julfa"
+  },
+  {
+    "objectId": 65,
+    "districtId": "1010",
+    "name": "Nizami",
+    "nameEn": "Nizami"
+  },
+  {
+    "objectId": 66,
+    "districtId": "1012",
+    "name": "Pirallahı",
+    "nameEn": "Pirallahi"
+  },
+  {
+    "objectId": 67,
+    "districtId": "1002",
+    "name": "Qaradağ",
+    "nameEn": "Garadagh"
+  },
+  {
+    "objectId": 68,
+    "districtId": "1006",
+    "name": "Sabunçu",
+    "nameEn": "Sabunchu"
+  },
+  {
+    "objectId": 69,
+    "districtId": "1005",
+    "name": "Səbail",
+    "nameEn": "Sabail"
+  },
+  {
+    "objectId": 70,
+    "districtId": "1007",
+    "name": "Suraxanı",
+    "nameEn": "Surakhani"
+  },
+  {
+    "objectId": 71,
+    "districtId": "1004",
+    "name": "Xətai",
+    "nameEn": "Khatai"
+  },
+  {
+    "objectId": 72,
+    "districtId": "1003",
+    "name": "Xəzər",
+    "nameEn": "Khazar"
+  },
+  {
+    "objectId": 73,
+    "districtId": "1011",
+    "name": "Yasamal",
+    "nameEn": "Yasamal"
+  },
+  {
+    "objectId": 74,
+    "districtId": "308",
+    "name": "Abşeron",
+    "nameEn": "Absheron"
+  },
+  {
+    "objectId": 75,
+    "districtId": "103",
+    "name": "Babək",
+    "nameEn": "Babak"
+  },
+  {
+    "objectId": 76,
+    "districtId": "608",
+    "name": "Ağcabədi",
+    "nameEn": "Aghjabadi"
+  },
+  {
+    "objectId": 77,
+    "districtId": "609",
+    "name": "Ağdam",
+    "nameEn": "Aghdam"
+  },
+  {
+    "objectId": 78,
+    "districtId": "902",
+    "name": "Mingəçevir",
+    "nameEn": "Mingachevir"
+  },
+  {
+    "objectId": 79,
+    "districtId": "306",
+    "name": "Xızı",
+    "nameEn": "Khizi"
+  },
+  {
+    "objectId": 80,
+    "districtId": "307",
+    "name": "Qobustan",
+    "nameEn": "Gobustan"
+  },
+  {
+    "objectId": 81,
+    "districtId": "904",
+    "name": "Ucar",
+    "nameEn": "Ujar"
+  },
+  {
+    "objectId": 82,
+    "districtId": "610",
+    "name": "Bərdə",
+    "nameEn": "Barda"
+  },
+  {
+    "objectId": 83,
+    "districtId": "702",
+    "name": "Şuşa",
+    "nameEn": "Shusha"
+  },
+  {
+    "objectId": 84,
+    "districtId": "601",
+    "name": "Kəlbəcər",
+    "nameEn": "Kalbajar"
+  },
+  {
+    "objectId": 85,
+    "districtId": "704",
+    "name": "Xankəndi",
+    "nameEn": "Khankendi"
+  },
+  {
+    "objectId": 86,
+    "districtId": "703",
+    "name": "Xocavənd",
+    "nameEn": "Khojavand"
+  }
+]

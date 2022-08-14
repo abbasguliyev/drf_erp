@@ -43,6 +43,7 @@ urlpatterns=[
     path('musteri-qeydler/', account_views.MusteriQeydlerListCreateAPIView.as_view(), name="musteri_qeydler"),
     path('musteri-qeydler/<int:pk>', account_views.MusteriQeydlerDetailAPIView.as_view(), name="musteri_qeydler_detail"),
 
+    path('all-bolge-create/', account_views.AllBolgeCreate.as_view()),
     path('bolge/', account_views.BolgeListCreateAPIView.as_view(), name="bolge"),
     path('bolge/<int:pk>', account_views.BolgeDetailAPIView.as_view(), name="bolge_detail"),
 
