@@ -122,6 +122,9 @@ urlpatterns=[
     path('isci-gelib-getme-vaxtlari/<int:pk>', holiday_views.IsciGelibGetmeVaxtlariDetailAPIView.as_view()),
 
     # company views *****************************************
+    path('logo/', company_views.AppLogoListCreateAPIView.as_view()),
+    path('logo/<int:pk>', company_views.AppLogoDetailAPIView.as_view()),
+
     path('komanda/', company_views.KomandaListCreateAPIView.as_view(), name="komanda"),
     path('komanda/<int:pk>', company_views.KomandaDetailAPIView.as_view(), name="komanda_detail"),
 

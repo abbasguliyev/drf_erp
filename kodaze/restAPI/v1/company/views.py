@@ -1,9 +1,11 @@
+import os
 from rest_framework import status, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.response import Response
 
 from restAPI.v1.company.serializers import (
+    AppLogoSerializer,
     ShirketSerializer,
     KomandaSerializer,
     OfisSerializer,
@@ -16,6 +18,7 @@ from restAPI.v1.company.serializers import (
 from account.models import User
 
 from company.models import (
+    AppLogo,
     Holding,
     Shirket,
     Ofis,
@@ -37,6 +40,8 @@ from restAPI.v1.company.filters import (
 
 from restAPI.v1.company import permissions as company_permissions
 from django.contrib.auth.models import Group
+
+from core.settings import BASE_DIR
 
 # ********************************** komanda get post put delete **********************************
 
@@ -70,7 +75,8 @@ class KomandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -88,7 +94,6 @@ class KomandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"detail": "Komanda qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
 
-
 # ********************************** ofisler put delete post get **********************************
 
 
@@ -104,7 +109,8 @@ class OfisListCreateAPIView(generics.ListCreateAPIView):
             queryset = Ofis.objects.all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = Ofis.objects.filter(shirket=request.user.shirket, id=request.user.ofis.id)
+                queryset = Ofis.objects.filter(
+                    shirket=request.user.shirket, id=request.user.ofis.id)
             queryset = Ofis.objects.filter(shirket=request.user.shirket)
         else:
             queryset = Ofis.objects.all()
@@ -135,18 +141,19 @@ class OfisDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail":"Ofis məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Ofis məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.is_active = False
         instance.save()
-        return Response({"detail":"Ofis deaktiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Ofis deaktiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** vezifeler put delete post get **********************************
 
@@ -180,13 +187,13 @@ class VezifelerListCreateAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         vezife_adi = serializer.validated_data.get("vezife_adi")
         shirket = serializer.validated_data.get("shirket")
-        vezife_db = Vezifeler.objects.filter(vezife_adi=vezife_adi.upper(), shirket=shirket)
+        vezife_db = Vezifeler.objects.filter(
+            vezife_adi=vezife_adi.upper(), shirket=shirket)
         if len(vezife_db) > 0:
-            return Response({"detail":"Bu ad və şirkətə uyğun vəzifə artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Bu ad və şirkətə uyğun vəzifə artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Vəzifə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
 
 
 class VezifelerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -198,20 +205,23 @@ class VezifelerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail":"Vəzifə məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Vəzifə məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.is_active = False
         instance.save()
-        return Response({"detail":"Vəzifə deaktiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Vəzifə deaktiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** shirket put delete post get **********************************
+
+
 class ShirketListCreateAPIView(generics.ListCreateAPIView):
     queryset = Shirket.objects.all()
     serializer_class = ShirketSerializer
@@ -253,18 +263,19 @@ class ShirketDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail":"Şirkət məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Şirkət məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.is_active = False
         instance.save()
-        return Response({"detail":"Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** shobe put delete post get **********************************
 
@@ -281,7 +292,8 @@ class ShobeListCreateAPIView(generics.ListCreateAPIView):
             queryset = Shobe.objects.all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = Shobe.objects.filter(ofis__shirket=request.user.shirket, ofis=request.user.ofis)
+                queryset = Shobe.objects.filter(
+                    ofis__shirket=request.user.shirket, ofis=request.user.ofis)
             queryset = Shobe.objects.filter(ofis__shirket=request.user.shirket)
         else:
             queryset = Shobe.objects.all()
@@ -302,6 +314,7 @@ class ShobeListCreateAPIView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Şöbə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
+
 class ShobeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Shobe.objects.all()
     serializer_class = ShobeSerializer
@@ -311,18 +324,19 @@ class ShobeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail":"Şöbə məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Şöbə məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.is_active = False
         instance.save()
-        return Response({"detail":"Şöbə deaktiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Şöbə deaktiv edildi"}, status=status.HTTP_200_OK)
 
 
 # ********************************** holding put delete post get **********************************
@@ -347,14 +361,16 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail":"Holding məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Holding məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ********************************** VezifePermission put delete post get **********************************
+
 
 class VezifePermissionListCreateAPIView(generics.ListCreateAPIView):
     queryset = VezifePermission.objects.all()
@@ -367,7 +383,8 @@ class VezifePermissionListCreateAPIView(generics.ListCreateAPIView):
         if request.user.is_superuser:
             queryset = VezifePermission.objects.all()
         elif request.user.shirket is not None:
-            queryset = VezifePermission.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = VezifePermission.objects.filter(
+                vezife__shirket=request.user.shirket)
         else:
             queryset = VezifePermission.objects.all()
         queryset = self.filter_queryset(queryset)
@@ -383,7 +400,7 @@ class VezifePermissionListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         vezife_id = request.data.get("vezife_id")
-        vezife =Vezifeler.objects.get(pk=vezife_id)
+        vezife = Vezifeler.objects.get(pk=vezife_id)
         permission_group_id = request.data.get("permission_group_id")
         permission_group = Group.objects.get(pk=permission_group_id)
         users = User.objects.filter(vezife=vezife)
@@ -392,11 +409,11 @@ class VezifePermissionListCreateAPIView(generics.ListCreateAPIView):
                 user.groups.add(permission_group)
 
         VezifePermission.objects.create(
-            vezife = vezife,
+            vezife=vezife,
             permission_group=permission_group
         ).save()
-        return Response({"detail" : f"{vezife} üçün permission təyin olundu"}, status=status.HTTP_201_CREATED)
-        
+        return Response({"detail": f"{vezife} üçün permission təyin olundu"}, status=status.HTTP_201_CREATED)
+
 
 class VezifePermissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = VezifePermission.objects.all()
@@ -405,12 +422,14 @@ class VezifePermissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             vezife = instance.vezife
             users = User.objects.filter(vezife=vezife)
             permission_group = instance.permission_group
-            request_permission_group = serializer.validated_data.get("permission_group")
+            request_permission_group = serializer.validated_data.get(
+                "permission_group")
 
             if request_permission_group is not None or permission_group == list():
                 for user in users:
@@ -418,7 +437,7 @@ class VezifePermissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                     user.save()
 
             serializer.save()
-            return Response({"detail" : f"{vezife} üçün permission yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": f"{vezife} üçün permission yeniləndi"}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -430,4 +449,50 @@ class VezifePermissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             user.groups.remove(permission_group)
             user.save()
         instance.delete()
-        return Response({"detail" : f"Vəzifə permission silindi"}, status=status.HTTP_200_OK)
+        return Response({"detail": f"Vəzifə permission silindi"}, status=status.HTTP_200_OK)
+
+# -------------------- AppLogo Views -------------------------
+class AppLogoListCreateAPIView(generics.ListCreateAPIView):
+    queryset = AppLogo.objects.all()
+    serializer_class = AppLogoSerializer
+    permission_classes = [company_permissions.AppLogoPermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        logo = request.data.get("logo")
+        try:
+            app_logo = AppLogo.objects.all()
+            if len(app_logo) > 0:
+                print(f"{app_logo=}")
+                print(f"{app_logo[0]=}")
+                app_logo[0].logo = logo
+                app_logo[0].save()
+            else:
+                app_logo = AppLogo.objects.create(logo=logo)
+                app_logo.save()
+            return Response({"detail": "Logo əlavə edildi"}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({"detail": "Məlumatları doğru daxil edin!"}, status=status.HTTP_400_BAD_REQUEST)
+
+class AppLogoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AppLogo.objects.all()
+    serializer_class = AppLogoSerializer
+    permission_classes = [company_permissions.AppLogoPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": f"Logo yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil edin!"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        default_logo = os.path.join(BASE_DIR, "logo/default.jpg")
+        instance.logo = default_logo
+        instance.save()
+        return Response({"detail": f"Logo silindi"}, status=status.HTTP_200_OK)

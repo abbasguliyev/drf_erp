@@ -12,7 +12,8 @@ from company.models import (
     Komanda,
     Shobe,
     VezifePermission,
-    Vezifeler
+    Vezifeler,
+    AppLogo
 )
 from django.contrib.auth.models import Group
 
@@ -25,11 +26,13 @@ class VezifeUserSerializer(serializers.ModelSerializer):
         model = Vezifeler
         fields = ['vezife_adi']
 
+
 class UserEmeliyyatSerializer(serializers.ModelSerializer):
     """
     Bu Seriazlier Kassa Emeliyyatlarinda User-in(transferi eden ishcinin) melumatlarini gostermek ucun istifade olur
     """
     vezife = VezifeUserSerializer(read_only=True, many=True)
+
     class Meta:
         model = User
         fields = ['asa', 'vezife']
@@ -46,12 +49,15 @@ class ShirketSerializer(serializers.ModelSerializer):
         try:
             return super(ShirketSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail": 'Bu ad ilə şirkət artıq əlavə olunub'})
+            raise ValidationError(
+                {"detail": 'Bu ad ilə şirkət artıq əlavə olunub'})
 
     def update(self, instance, validated_data):
-        instance.shirket_adi = validated_data.get('shirket_adi', instance.shirket_adi).upper()
+        instance.shirket_adi = validated_data.get(
+            'shirket_adi', instance.shirket_adi).upper()
         instance.holding = validated_data.get('holding', instance.holding)
-        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.is_active = validated_data.get(
+            'is_active', instance.is_active)
         instance.save()
         return instance
 
@@ -65,12 +71,14 @@ class KomandaSerializer(serializers.ModelSerializer):
         komanda_adi = validated_data.get('komanda_adi')
         validated_data['komanda_adi'] = komanda_adi.upper()
         try:
-            k = Komanda.objects.filter(komanda_adi=komanda_adi.upper(), is_active=True)
+            k = Komanda.objects.filter(
+                komanda_adi=komanda_adi.upper(), is_active=True)
             if len(k) > 0:
                 raise ValidationError
             return super(KomandaSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail": 'Bu ad ilə komanda artıq əlavə olunub'})
+            raise ValidationError(
+                {"detail": 'Bu ad ilə komanda artıq əlavə olunub'})
 
 
 class OfisSerializer(serializers.ModelSerializer):
@@ -89,18 +97,22 @@ class OfisSerializer(serializers.ModelSerializer):
         shirket = validated_data['shirket']
         print(f"{shirket=}")
         try:
-            ofiss = Ofis.objects.filter(ofis_adi=ofis_adi.upper(), shirket=shirket)
+            ofiss = Ofis.objects.filter(
+                ofis_adi=ofis_adi.upper(), shirket=shirket)
             print(f"{ofiss=}")
-            if len(ofiss)>0:
+            if len(ofiss) > 0:
                 raise ValidationError
             return super(OfisSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail": 'Bu ad ilə ofis artıq əlavə olunub'})
+            raise ValidationError(
+                {"detail": 'Bu ad ilə ofis artıq əlavə olunub'})
 
     def update(self, instance, validated_data):
-        instance.ofis_adi = validated_data.get('ofis_adi', instance.ofis_adi).upper()
+        instance.ofis_adi = validated_data.get(
+            'ofis_adi', instance.ofis_adi).upper()
         instance.shirket = validated_data.get('shirket', instance.shirket)
-        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.is_active = validated_data.get(
+            'is_active', instance.is_active)
         instance.save()
         return instance
 
@@ -121,13 +133,16 @@ class ShobeSerializer(serializers.ModelSerializer):
         ofis = validated_data['ofis']
         print(f"{ofis=}")
         try:
-            shobe_qs = Shobe.objects.filter(shobe_adi=shobe_adi.upper(), ofis=ofis)
+            shobe_qs = Shobe.objects.filter(
+                shobe_adi=shobe_adi.upper(), ofis=ofis)
             print(f"{shobe_qs=}")
-            if len(shobe_qs)>0:
+            if len(shobe_qs) > 0:
                 raise ValidationError
             return super(ShobeSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
+            raise ValidationError(
+                {"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
+
 
 class VezifelerSerializer(serializers.ModelSerializer):
     shobe = ShobeSerializer(read_only=True, required=False)
@@ -145,6 +160,7 @@ class VezifelerSerializer(serializers.ModelSerializer):
         validated_data['vezife_adi'] = vezife_adi.upper()
         return super(VezifelerSerializer, self).create(validated_data)
 
+
 class HoldingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Holding
@@ -156,7 +172,9 @@ class HoldingSerializer(serializers.ModelSerializer):
         try:
             return super(HoldingSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail": 'Bu ad ilə holding artıq əlavə olunub'})
+            raise ValidationError(
+                {"detail": 'Bu ad ilə holding artıq əlavə olunub'})
+
 
 class VezifePermissionSerializer(serializers.ModelSerializer):
     vezife = VezifelerSerializer(read_only=True)
@@ -171,4 +189,10 @@ class VezifePermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VezifePermission
+        fields = '__all__'
+
+
+class AppLogoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppLogo
         fields = '__all__'
