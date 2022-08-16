@@ -489,10 +489,7 @@ class AppLogoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             return Response({"detail": f"Logo yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin!"}, status=status.HTTP_400_BAD_REQUEST)
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        default_logo = os.path.join(BASE_DIR, "logo/default.jpg")
-        instance.logo = default_logo
-        instance.save()
+        self.perform_destroy(instance)
         return Response({"detail": f"Logo silindi"}, status=status.HTTP_200_OK)
