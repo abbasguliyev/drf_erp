@@ -102,7 +102,7 @@ class StokSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Stok
-        fields = "__all__" 
+        fields = "__all__"
 
 
 class AnbarQeydlerSerializer(serializers.ModelSerializer):

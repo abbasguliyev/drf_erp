@@ -54,6 +54,7 @@ class Stok(models.Model):
     mehsul = models.ForeignKey("product.Mehsullar", null=True, on_delete=models.CASCADE)
     say = models.IntegerField(default=0)
     tarix = models.DateField(auto_now=True, blank=True)
+    qeyd = models.TextField(default="", null=True, blank=True)
 
     class Meta:
         ordering = ("pk",)
