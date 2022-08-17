@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'contract.apps.ContractConfig',
     'services.apps.ServicesConfig',
     'backup_restore.apps.BackupRestoreConfig',
+    'update.apps.UpdateConfig',
 ]
 
 
