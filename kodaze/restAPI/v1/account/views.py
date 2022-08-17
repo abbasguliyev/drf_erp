@@ -285,6 +285,8 @@ class MusteriListCreateAPIView(generics.ListCreateAPIView):
         if (serializer.is_valid()):
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail" : "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MusteriDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
