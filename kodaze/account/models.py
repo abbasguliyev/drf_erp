@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 import django
 from django.contrib.auth.models import AbstractUser
@@ -61,6 +62,7 @@ class User(AbstractUser):
     )
     maas = models.FloatField(default=0, null=True, blank=True)
     qeyd = models.TextField(null=True, blank=True)
+    profile_image = models.ImageField(upload_to="media/profile/%Y/%m/%d/", default="media/profile/default.jpeg", blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

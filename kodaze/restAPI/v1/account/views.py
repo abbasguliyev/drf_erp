@@ -181,12 +181,6 @@ class RegisterApi(generics.CreateAPIView):
                 komanda = komanda
             else:
                 komanda = None
-
-            # standart_status = IsciStatus.objects.get(status_adi="STANDART")
-            # if serializer.validated_data.get('isci_status') == None:
-            #     isci_status = standart_status
-            # else:
-            #     isci_status=serializer.validated_data.get('isci_status')
                 
             if serializer.validated_data.get('maas') == None:
                 maas = 0
