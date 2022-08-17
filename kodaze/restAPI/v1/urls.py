@@ -344,8 +344,8 @@ urlpatterns = [
          name="get_backup"),
 
     # update views *****************************************
-    path('update/', update_views.UpdateListCreateAPIView),
-    path('update/<int:pk>', update_views.UpdateDetailAPIView),
+    path('update/', update_views.UpdateListCreateAPIView.as_view()),
+    path('update/<int:pk>', update_views.UpdateDetailAPIView.as_view()),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
