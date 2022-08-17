@@ -62,7 +62,7 @@ class User(AbstractUser):
     )
     maas = models.FloatField(default=0, null=True, blank=True)
     qeyd = models.TextField(null=True, blank=True)
-    profile_image = models.ImageField(upload_to="media/profile/%Y/%m/%d/", default="media/profile/default.jpeg", blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    profile_image = models.ImageField(upload_to="media/profile/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
