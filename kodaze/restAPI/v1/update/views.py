@@ -9,13 +9,15 @@ from update.models import Update
 
 from restAPI.v1.update.filters import UpdateFilter
 
+from restAPI.v1.utils.permission_utils import IsAdminUserOrReadOnly
+
 
 class UpdateListCreateAPIView(generics.ListCreateAPIView):
     queryset = Update.objects.all()
     serializer_class = UpdateSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UpdateFilter
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUserOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -30,7 +32,7 @@ class UpdateDetailAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = UpdateSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UpdateFilter
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUserOrReadOnly]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
