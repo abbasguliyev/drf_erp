@@ -302,10 +302,10 @@ def muqavile_create(self, request, *args, **kwargs):
     #     ilkin_odenis_tarixi_date = indiki_tarix
     #     ilkin_odenis_tarixi_san = indiki_tarix_san
 
-    if (request.data.get("muqavile_tarixi") is not None):
-        muqavile_tarixi = request.data.get("muqavile_tarixi")
-    else:
-        muqavile_tarixi = datetime.date.today()
+    # if (request.data.get("muqavile_tarixi") is not None):
+    #     muqavile_tarixi = request.data.get("muqavile_tarixi")
+    # else:
+    #     muqavile_tarixi = datetime.date.today()
 
     if (request.data.get("ilkin_odenis_qaliq_tarixi") is not None):
         ilkin_odenis_qaliq_tarixi = request.data.get(
@@ -446,7 +446,7 @@ def muqavile_create(self, request, *args, **kwargs):
                         qaliq_borc = float(muqavile_umumi_mebleg)
 
                         serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
-                                        shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                        shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                         # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                         #                 status=status.HTTP_201_CREATED)
                         return Response(data=serializer.data,
@@ -503,7 +503,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_status="DAVAM EDƏN", qaliq_borc=qaliq_borc,
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, muqavile_tarixi=muqavile_tarixi)
+                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg)
                             # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                             #                 status=status.HTTP_201_CREATED)
                             return Response(data=serializer.data,
@@ -551,7 +551,7 @@ def muqavile_create(self, request, *args, **kwargs):
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="BİTMİŞ",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                             sonraki_balans = holding_umumi_balans_hesabla()
                             print(f"{sonraki_balans=}")
                             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
@@ -605,7 +605,7 @@ def muqavile_create(self, request, *args, **kwargs):
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="DAVAM EDƏN",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                             # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                             #                 status=status.HTTP_201_CREATED)
                             return Response(data=serializer.data,
@@ -623,7 +623,7 @@ def muqavile_create(self, request, *args, **kwargs):
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="DAVAM EDƏN",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                             # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                             #                 status=status.HTTP_201_CREATED)
                             return Response(data=serializer.data,
@@ -660,7 +660,7 @@ def muqavile_create(self, request, *args, **kwargs):
                 k_medaxil(ofis_kassa, float(muqavile_umumi_mebleg), user, qeyd)
 
                 serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
-                                muqavile_status="BİTMİŞ", shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg, muqavile_tarixi=muqavile_tarixi)
+                                muqavile_status="BİTMİŞ", shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg)
 
                 sonraki_balans = holding_umumi_balans_hesabla()
                 print(f"{sonraki_balans=}")
@@ -720,7 +720,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
                                             ofis=ofis, shobe=shobe, odenis_uslubu="İKİ DƏFƏYƏ NƏĞD",
                                             negd_odenis_1_status="BİTMİŞ", negd_odenis_2_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                             sonraki_balans = holding_umumi_balans_hesabla()
                             print(f"{sonraki_balans=}")
                             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
@@ -773,7 +773,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
                                             ofis=ofis, shobe=shobe, odenis_uslubu="İKİ DƏFƏYƏ NƏĞD",
                                             negd_odenis_1_status="DAVAM EDƏN", negd_odenis_2_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                             # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                             #                 status=status.HTTP_201_CREATED)
                             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
@@ -824,7 +824,7 @@ def muqavile_create(self, request, *args, **kwargs):
 
                         serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
                                         shobe=shobe, negd_odenis_1_status="BİTMİŞ", negd_odenis_2_status="DAVAM EDƏN",
-                                        muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                        muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                         sonraki_balans = holding_umumi_balans_hesabla()
                         print(f"{sonraki_balans=}")
                         ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
@@ -874,7 +874,7 @@ def muqavile_create(self, request, *args, **kwargs):
 
                         serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
                                         shobe=shobe, negd_odenis_1_status="DAVAM EDƏN",
-                                        negd_odenis_2_status="DAVAM EDƏN", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc, muqavile_tarixi=muqavile_tarixi)
+                                        negd_odenis_2_status="DAVAM EDƏN", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                         # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                         #                 status=status.HTTP_201_CREATED)
                         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
