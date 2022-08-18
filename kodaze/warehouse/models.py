@@ -7,10 +7,13 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class Anbar(models.Model):
     ad = models.CharField(max_length=100)
-    ofis = models.ForeignKey('company.Ofis', on_delete=models.CASCADE, null=True, related_name="ofis_anbar")
-    shirket = models.ForeignKey('company.Shirket', on_delete=models.CASCADE, null=True, related_name="shirket_anbar")
+    ofis = models.ForeignKey(
+        'company.Ofis', on_delete=models.CASCADE, null=True, related_name="ofis_anbar")
+    shirket = models.ForeignKey(
+        'company.Shirket', on_delete=models.CASCADE, null=True, related_name="shirket_anbar")
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -23,16 +26,17 @@ class Anbar(models.Model):
             ("delete_anbar", "Anbar silə bilər")
         )
 
-
     def __str__(self) -> str:
         return f"{self.ad} - {self.ofis}"
 
 
 class AnbarQeydler(models.Model):
-    gonderen_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="anbar_sorgu")
+    gonderen_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, related_name="anbar_sorgu")
     mehsul_ve_sayi = models.CharField(max_length=250, null=True, blank=True)
     qeyd = models.TextField()
-    anbar = models.ForeignKey(Anbar, on_delete=models.CASCADE, related_name="anbar_qeyd")
+    anbar = models.ForeignKey(
+        Anbar, on_delete=models.CASCADE, related_name="anbar_qeyd")
     yerine_yetirildi = models.BooleanField(default=False)
     gonderilme_tarixi = models.DateField(auto_now_add=True)
 
@@ -49,9 +53,11 @@ class AnbarQeydler(models.Model):
     def __str__(self) -> str:
         return f"{self.anbar} - {self.qeyd[:30]}"
 
+
 class Stok(models.Model):
     anbar = models.ForeignKey(Anbar, null=True, on_delete=models.CASCADE)
-    mehsul = models.ForeignKey("product.Mehsullar", null=True, on_delete=models.CASCADE)
+    mehsul = models.ForeignKey(
+        "product.Mehsullar", null=True, on_delete=models.CASCADE)
     say = models.IntegerField(default=0)
     tarix = models.DateField(auto_now=True, blank=True)
     qeyd = models.TextField(default="", null=True, blank=True)
@@ -69,17 +75,35 @@ class Stok(models.Model):
     def __str__(self) -> str:
         return f"stok -> {self.anbar} - {self.mehsul} - {self.say}"
 
+
 class Emeliyyat(models.Model):
     # mehsulun_sayi = models.IntegerField(default=0)
     # gonderilen_mehsul = models.ManyToManyField(Mehsullar, related_name="gonderilen_mehsul")
+    TRANSFER = 'transfer'
+    STOK_YENILEME = 'stok yeniləmə'
 
-    gonderen = models.ForeignKey(Anbar, on_delete=models.CASCADE, null=True, related_name="gonderen")
-    qebul_eden = models.ForeignKey(Anbar, on_delete=models.CASCADE, null=True, related_name="qebul_eden")
+    EMELIYYAT_NOVU_CHOICES = [
+        (TRANSFER, "transfer"),
+        (STOK_YENILEME, "stok yeniləmə"),
+    ]
+
+    gonderen = models.ForeignKey(
+        Anbar, on_delete=models.CASCADE, null=True, related_name="gonderen")
+    qebul_eden = models.ForeignKey(
+        Anbar, on_delete=models.CASCADE, null=True, related_name="qebul_eden")
 
     mehsul_ve_sayi = models.CharField(max_length=500, null=True, blank=True)
 
     qeyd = models.TextField(default="", null=True, blank=True)
-    emeliyyat_tarixi = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    emeliyyat_tarixi = models.DateField(
+        auto_now_add=True, null=True, blank=True)
+
+    emeliyyat_novu = models.CharField(
+        max_length=50, choices=EMELIYYAT_NOVU_CHOICES, default=TRANSFER)
+
+    say = models.IntegerField(default=0, blank=True, null=True)
+    icraci = models.ForeignKey(
+        User, related_name="emeliyyat", on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         ordering = ("pk",)

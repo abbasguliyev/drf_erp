@@ -48,6 +48,7 @@ class AnbarSerializer(serializers.ModelSerializer):
             raise ValidationError({"detail" : 'Bu ad ilə anbar artıq əlavə olunub'})
 
 class EmeliyyatSerializer(serializers.ModelSerializer):
+    icraci = UserSerializer(read_only=True)
     gonderen = AnbarSerializer(read_only=True)
     qebul_eden = AnbarSerializer(read_only=True)
 
@@ -62,23 +63,26 @@ class EmeliyyatSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         mehsul_ve_sayi = instance.mehsul_ve_sayi
+        emeliyyat_novu = instance.emeliyyat_novu
+        stok_ile_gelen_say = instance.say
         print(f"{mehsul_ve_sayi=}")
         data = dict()
         if(mehsul_ve_sayi is not None):
-            mehsul_ve_sayi_list = mehsul_ve_sayi.split(",")
-            print(f"{mehsul_ve_sayi_list=}")
+            if emeliyyat_novu == "transfer":
+                mehsul_ve_sayi_list = mehsul_ve_sayi.split(",")
+                print(f"{mehsul_ve_sayi_list=}")
 
-            
-
-            for m in mehsul_ve_sayi_list:
-                mehsul_ve_say = m.split("-")
-                print(f"{mehsul_ve_say=}--- {type(mehsul_ve_say)=}")
-                mehsul_id = int(mehsul_ve_say[0].strip())
-                say = int(mehsul_ve_say[1])
-                print(f"{mehsul_id=}")
-                print(f"{say=}")
-                mehsul = Mehsullar.objects.get(pk=mehsul_id)
-                data[mehsul.mehsulun_adi]=say
+                for m in mehsul_ve_sayi_list:
+                    mehsul_ve_say = m.split("-")
+                    print(f"{mehsul_ve_say=}--- {type(mehsul_ve_say)=}")
+                    mehsul_id = int(mehsul_ve_say[0].strip())
+                    say = int(mehsul_ve_say[1])
+                    print(f"{mehsul_id=}")
+                    print(f"{say=}")
+                    mehsul = Mehsullar.objects.get(pk=mehsul_id)
+                    data[mehsul.mehsulun_adi]=say
+            else:
+                data[mehsul_ve_sayi]=stok_ile_gelen_say
 
         representation['mehsul'] = data
 

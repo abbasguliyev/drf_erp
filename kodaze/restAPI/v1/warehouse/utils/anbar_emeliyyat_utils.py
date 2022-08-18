@@ -8,10 +8,12 @@ from product.models import (
 from warehouse.models import Stok
 from rest_framework.generics import get_object_or_404
 
+
 def emeliyyat_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     if serializer.is_valid():
         try:
+            icraci = request.user
             gonderen = serializer.validated_data.get("gonderen")
             qebul_eden = serializer.validated_data.get("qebul_eden")
 
@@ -20,10 +22,9 @@ def emeliyyat_create(self, request, *args, **kwargs):
 
             mehsul_ve_sayi = serializer.validated_data.get("mehsul_ve_sayi")
             print(f"{mehsul_ve_sayi=}")
-            
+
             mehsul_ve_sayi_list = mehsul_ve_sayi.split(",")
-            print(f"{mehsul_ve_sayi_list=}")    
-            
+            print(f"{mehsul_ve_sayi_list=}")
             for m in mehsul_ve_sayi_list:
                 mehsul_ve_say = m.split("-")
                 print(f"{mehsul_ve_say=}--- {type(mehsul_ve_say)=}")
@@ -34,7 +35,8 @@ def emeliyyat_create(self, request, *args, **kwargs):
                 mehsul = Mehsullar.objects.get(pk=mehsul_id)
                 print("1")
                 try:
-                    stok1 = get_object_or_404(Stok, anbar=gonderen, mehsul=mehsul)
+                    stok1 = get_object_or_404(
+                        Stok, anbar=gonderen, mehsul=mehsul)
                 except:
                     return Response({"detail": "Göndərən anbarda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
                 if stok1 == None:
@@ -43,7 +45,8 @@ def emeliyyat_create(self, request, *args, **kwargs):
                     return Response({"detail": "Göndərən anbarda yetəri qədər məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
                 print("2")
                 try:
-                    stok2 = get_object_or_404(Stok, anbar=qebul_eden, mehsul=mehsul)
+                    stok2 = get_object_or_404(
+                        Stok, anbar=qebul_eden, mehsul=mehsul)
                     if (stok1 == stok2):
                         return Response({"detail": "Göndərən və göndərilən anbar eynidir!"}, status=status.HTTP_404_NOT_FOUND)
                     stok1.say = stok1.say - say
@@ -54,9 +57,11 @@ def emeliyyat_create(self, request, *args, **kwargs):
                     stok2.say = stok2.say + say
                     stok2.save()
                     if (serializer.is_valid()):
-                        serializer.save(gonderen=gonderen)
+                        serializer.save(
+                            icraci=icraci, gonderen=gonderen, say=None, emeliyyat_novu="transfer")
                 except:
-                    stok2 = Stok.objects.create(anbar=qebul_eden, mehsul=mehsul, say=say)
+                    stok2 = Stok.objects.create(
+                        anbar=qebul_eden, mehsul=mehsul, say=say)
                     if (stok1 == stok2):
                         return Response({"detail": "Göndərən və göndərilən anbar eynidir!"}, status=status.HTTP_404_NOT_FOUND)
                     stok2.save()
@@ -64,7 +69,8 @@ def emeliyyat_create(self, request, *args, **kwargs):
                     stok1.say = stok1.say - say
                     stok1.save()
                     if (serializer.is_valid()):
-                        serializer.save(gonderen=gonderen)
+                        serializer.save(
+                            icraci=icraci, gonderen=gonderen, say=None, emeliyyat_novu="transfer")
         except:
             traceback.print_exc()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)

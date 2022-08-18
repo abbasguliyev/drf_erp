@@ -1,3 +1,4 @@
+import datetime
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework import generics
@@ -10,9 +11,9 @@ from restAPI.v1.warehouse.serializers import (
 )
 
 from warehouse.models import (
-    Emeliyyat, 
-    Anbar, 
-    AnbarQeydler, 
+    Emeliyyat,
+    Anbar,
+    AnbarQeydler,
     Stok
 )
 from restAPI.v1.warehouse.utils import (
@@ -32,6 +33,8 @@ from restAPI.v1.warehouse.filters import (
 from restAPI.v1.warehouse import permissions as muqavile_permissions
 
 # ********************************** anbar put get post delete **********************************
+
+
 class AnbarListCreateAPIView(generics.ListCreateAPIView):
     queryset = Anbar.objects.all()
     serializer_class = AnbarSerializer
@@ -44,11 +47,12 @@ class AnbarListCreateAPIView(generics.ListCreateAPIView):
             queryset = Anbar.objects.all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = Anbar.objects.filter(shirket=request.user.shirket, ofis=request.user.ofis)
+                queryset = Anbar.objects.filter(
+                    shirket=request.user.shirket, ofis=request.user.ofis)
             queryset = Anbar.objects.filter(shirket=request.user.shirket)
         else:
             queryset = Anbar.objects.all()
-        
+
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -65,11 +69,11 @@ class AnbarListCreateAPIView(generics.ListCreateAPIView):
             ofis = serializer.validated_data.get("ofis")
             is_have_anbar = Anbar.objects.filter(ofis=ofis)
             if len(is_have_anbar) > 0:
-                return Response({"detail":"Bir ofisin yalnız bir anbarı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Bir ofisin yalnız bir anbarı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
-            return Response({"detail":"Anbar quruldu"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Anbar quruldu"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AnbarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -81,7 +85,8 @@ class AnbarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"detail": "Anbar məlumatları yeniləndi"}, status=status.HTTP_200_OK)
@@ -95,6 +100,8 @@ class AnbarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"detail": "Anbar qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** anbar put delete post get **********************************
+
+
 class AnbarQeydlerListCreateAPIView(generics.ListCreateAPIView):
     queryset = AnbarQeydler.objects.all()
     serializer_class = AnbarQeydlerSerializer
@@ -107,11 +114,13 @@ class AnbarQeydlerListCreateAPIView(generics.ListCreateAPIView):
             queryset = AnbarQeydler.objects.all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = AnbarQeydler.objects.filter(anbar__shirket=request.user.shirket, anbar__ofis=request.user.ofis)
-            queryset = AnbarQeydler.objects.filter(anbar__shirket=request.user.shirket)
+                queryset = AnbarQeydler.objects.filter(
+                    anbar__shirket=request.user.shirket, anbar__ofis=request.user.ofis)
+            queryset = AnbarQeydler.objects.filter(
+                anbar__shirket=request.user.shirket)
         else:
             queryset = AnbarQeydler.objects.all()
-        
+
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -121,7 +130,6 @@ class AnbarQeydlerListCreateAPIView(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -142,19 +150,22 @@ class AnbarQeydlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"detail": "Sorğu yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** emeliyyat put delete post get **********************************
+
+
 class EmeliyyatListCreateAPIView(generics.ListCreateAPIView):
     queryset = Emeliyyat.objects.all()
     serializer_class = EmeliyyatSerializer
@@ -167,11 +178,13 @@ class EmeliyyatListCreateAPIView(generics.ListCreateAPIView):
             queryset = Emeliyyat.objects.all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = Emeliyyat.objects.filter(gonderen__shirket=request.user.shirket, gonderen__ofis=request.user.ofis, qebul_eden__shirket=request.user.shirket, qebul_eden__ofis=request.user.ofis)
-            queryset = Emeliyyat.objects.filter(gonderen__shirket=request.user.shirket, qebul_eden__shirket=request.user.shirket)
+                queryset = Emeliyyat.objects.filter(gonderen__shirket=request.user.shirket, gonderen__ofis=request.user.ofis,
+                                                    qebul_eden__shirket=request.user.shirket, qebul_eden__ofis=request.user.ofis)
+            queryset = Emeliyyat.objects.filter(
+                gonderen__shirket=request.user.shirket, qebul_eden__shirket=request.user.shirket)
         else:
             queryset = Emeliyyat.objects.all()
-        
+
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -184,6 +197,7 @@ class EmeliyyatListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         return anbar_emeliyyat_utils.emeliyyat_create(self, request, *args, **kwargs)
+
 
 class EmeliyyatDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = Emeliyyat.objects.all()
@@ -197,6 +211,7 @@ class EmeliyyatDetailAPIView(generics.RetrieveUpdateAPIView):
 
 # ********************************** stok put delete post get **********************************
 
+
 class StokListCreateAPIView(generics.ListCreateAPIView):
     queryset = Stok.objects.all()
     serializer_class = StokSerializer
@@ -209,11 +224,12 @@ class StokListCreateAPIView(generics.ListCreateAPIView):
             queryset = Stok.objects.all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = Stok.objects.filter(anbar__shirket=request.user.shirket, anbar__ofis=request.user.ofis)
+                queryset = Stok.objects.filter(
+                    anbar__shirket=request.user.shirket, anbar__ofis=request.user.ofis)
             queryset = Stok.objects.filter(anbar__shirket=request.user.shirket)
         else:
             queryset = Stok.objects.all()
-        
+
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -227,11 +243,27 @@ class StokListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
+            icraci = request.user
             anbar = serializer.validated_data.get("anbar")
             mehsul = serializer.validated_data.get("mehsul")
+            qeyd = serializer.validated_data.get("qeyd")
+            tarix = datetime.date.today()
             stok = Stok.objects.filter(anbar=anbar, mehsul=mehsul)
-            if len(stok)>0:
+            say = serializer.validated_data.get("say")
+            print(f"{say=}")
+            if len(stok) > 0:
                 return Response({"detail": "Bu adlı stok artıq var. Yenisini əlavə edə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
+            emeliyyat = Emeliyyat.objects.create(
+                icraci=icraci,
+                say=abs(say),
+                emeliyyat_novu="stok yeniləmə",
+                emeliyyat_tarixi=tarix,
+                qeyd=qeyd,
+                gonderen=None,
+                qebul_eden=None,
+                mehsul_ve_sayi=mehsul.mehsulun_adi
+            )
+            emeliyyat.save()
             serializer.save()
             return Response({"detail": "Stok əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
@@ -252,4 +284,3 @@ class StokDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
