@@ -63,6 +63,9 @@ class MaasGoruntulemeFilter(django_filters.FilterSet):
         fields = {
             'isci__asa': ['exact', 'icontains'],
 
+            'isci__is_superuser': ['exact'],
+
+
             'isci__ofis': ['exact'],
             'isci__ofis__id': ['exact'],
             'isci__ofis__ofis_adi': ['exact', 'icontains'],
