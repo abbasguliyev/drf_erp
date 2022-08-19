@@ -233,7 +233,9 @@ TIME_ZONE = 'Asia/Baku'
 
 USE_I18N = True
 
-USE_L10N = True
+DATE_FORMAT=['%m/%d/%Y']
+
+USE_L10N = False
 
 USE_TZ = True
 
@@ -275,11 +277,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
 
     ),
+    'DATE_INPUT_FORMATS': ["%d-%m-%Y", ],
+    'DATETIME_FORMAT':  "%d-%m-%Y",
+    'DATE_FORMAT':  "%d-%m-%Y",
+    'DATETIME_INPUT_FORMATS':  "%d-%m-%Y",
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 20
+    'PAGE_SIZE': 20,
 }
 
 CELERY_CACHE_BACKEND = 'default'

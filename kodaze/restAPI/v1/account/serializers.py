@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-
+import django
 from account.models import (
     IsciSatisSayi,
     MusteriQeydler,
@@ -28,8 +28,6 @@ from company.models import (
 )
 
 from django.contrib.auth.models import Permission, Group
-
-
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
@@ -102,13 +100,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         queryset=Vezifeler.objects.all(), required=True)
     tel1 = serializers.CharField(required=True)
 
+    ishe_baslama_tarixi = serializers.DateField(format="%d-%m-%Y", required=False, allow_null=True)
+
     class Meta:
         model = User
         fields = (
             'id', 'username', 'asa', 'dogum_tarixi',
             'tel1', 'tel2', 'sv_image', 'sv_image2', 'shirket', 'isci_status',
             'ofis', 'vezife', 'komanda', 'user_permissions', 'groups', 'profile_image',
-            'maas', 'qeyd', 'shobe', 'maas_uslubu', 'elektron_imza', 'password', 'password2',
+            'maas', 'qeyd', 'shobe', 'maas_uslubu', 'elektron_imza', 'password', 'password2','ishe_baslama_tarixi'
         )
 
     def validate(self, data):
@@ -160,6 +160,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.elektron_imza = validated_data['elektron_imza']
         except:
             user.elektron_imza = None
+
+        try:
+            user.ishe_baslama_tarixi = validated_data['ishe_baslama_tarixi']
+        except:
+            user.ishe_baslama_tarixi = django.utils.timezone.now()
 
         if validated_data['maas'] == None:
             user.maas = 0

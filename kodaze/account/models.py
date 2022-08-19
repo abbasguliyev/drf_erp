@@ -42,7 +42,7 @@ class User(AbstractUser):
     asa= models.CharField(max_length=200)
     dogum_tarixi= models.DateField(null=True, blank=True)
     ishe_baslama_tarixi= models.DateField(default=django.utils.timezone.now, null=True, blank=True)
-    ishden_cixma_tarixi= models.DateField(default=django.utils.timezone.now, null=True)
+    ishden_cixma_tarixi= models.DateField(null=True, blank=True)
     last_login = models.DateTimeField(auto_now = True, null=True, blank=True)
     tel1=models.CharField(max_length=200)
     tel2=models.CharField(max_length=200, null=True, blank=True)
