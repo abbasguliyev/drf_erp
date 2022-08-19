@@ -101,8 +101,15 @@ class MuqavileSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         muqavile_tarixi = validated_data.get('muqavile_tarixi')
+        ilkin_odenis_tarixi = validated_data.get('ilkin_odenis_tarixi')
+        odenis_uslubu = validated_data.get('odenis_uslubu')
+        ilkin_odenis = validated_data.get('ilkin_odenis')
         if muqavile_tarixi == None:
             validated_data['muqavile_tarixi'] = datetime.date.today()
+        if odenis_uslubu == "KREDİT":
+            if float(ilkin_odenis) > 0:
+                if ilkin_odenis_tarixi == None:
+                    validated_data['ilkin_odenis_tarixi'] = datetime.date.today()
         return super(MuqavileSerializer, self).create(validated_data)
 
     class Meta:

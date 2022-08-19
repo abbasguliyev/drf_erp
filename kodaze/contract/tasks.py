@@ -187,7 +187,7 @@ def create_odeme_tarix_task(id, created):
         return kredit_muddeti_yeni
 
     if(instance.odenis_uslubu == "KREDİT"):
-        # indi = datetime.datetime.today().strftime('%Y-%m-%d')
+        # indi = datetime.datetime.today().strftime('%d-%m-%Y')
         indi = instance.muqavile_tarixi
         inc_month = pd.date_range(indi, periods = kredit_muddeti+1, freq='M')
         ilkin_odenis = instance.ilkin_odenis

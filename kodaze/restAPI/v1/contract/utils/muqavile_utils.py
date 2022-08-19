@@ -47,6 +47,7 @@ from restAPI.v1.cashbox.utils import (
     ofis_balans_hesabla, 
 )
 
+import django
 
 def create_and_add_pdf_when_muqavile_updated(sender, instance, created, **kwargs):
     if created:
@@ -168,7 +169,7 @@ def create_odeme_tarix_when_update_muqavile(
 
     if(odenis_uslubu == "KREDİT"):
 
-        indi = datetime.datetime.today().strftime('%Y-%m-%d')
+        indi = datetime.datetime.today().strftime('%d-%m-%Y')
         inc_month = pd.date_range(indi, periods=kredit_muddeti+1, freq='M')
 
         ilkin_odenis = ilkin_odenis
@@ -294,7 +295,7 @@ def muqavile_create(self, request, *args, **kwargs):
     if (request.data.get("ilkin_odenis_tarixi") is not None):
         ilkin_odenis_tarixi = request.data.get("ilkin_odenis_tarixi")
         ilkin_odenis_tarixi_date = datetime.datetime.strptime(
-            ilkin_odenis_tarixi, "%Y-%m-%d")
+            ilkin_odenis_tarixi, "%d-%m-%Y")
         ilkin_odenis_tarixi_san = datetime.datetime.timestamp(
             ilkin_odenis_tarixi_date)
     # else:
@@ -311,21 +312,21 @@ def muqavile_create(self, request, *args, **kwargs):
         ilkin_odenis_qaliq_tarixi = request.data.get(
             "ilkin_odenis_qaliq_tarixi")
         ilkin_odenis_qaliq_tarixi_date = datetime.datetime.strptime(
-            ilkin_odenis_qaliq_tarixi, "%Y-%m-%d")
+            ilkin_odenis_qaliq_tarixi, "%d-%m-%Y")
         ilkin_odenis_qaliq_tarixi_san = datetime.datetime.timestamp(
             ilkin_odenis_qaliq_tarixi_date)
 
     if (request.data.get("negd_odenis_1_tarix") is not None):
         negd_odenis_1_tarix = request.data.get("negd_odenis_1_tarix")
         negd_odenis_1_tarix_date = datetime.datetime.strptime(
-            negd_odenis_1_tarix, "%Y-%m-%d")
+            negd_odenis_1_tarix, "%d-%m-%Y")
         negd_odenis_1_tarix_san = datetime.datetime.timestamp(
             negd_odenis_1_tarix_date)
 
     if (request.data.get("negd_odenis_2_tarix") is not None):
         negd_odenis_2_tarix = request.data.get("negd_odenis_2_tarix")
         negd_odenis_2_tarix_date = datetime.datetime.strptime(
-            negd_odenis_2_tarix, "%Y-%m-%d")
+            negd_odenis_2_tarix, "%d-%m-%Y")
         negd_odenis_2_tarix_san = datetime.datetime.timestamp(
             negd_odenis_2_tarix_date)
 
@@ -425,9 +426,6 @@ def muqavile_create(self, request, *args, **kwargs):
                     # Kredit muddeti 0-dan boyuk olarsa
 
                     if ((ilkin_odenis is not None) and (request.data.get("ilkin_odenis_tarixi") == None)):
-                        # return Response(
-                        #     {"detail": "İlkin ödəniş məbləği qeyd olunub amma ilkin ödəniş tarixi qeyd olunmayıb"},
-                        #     status=status.HTTP_400_BAD_REQUEST)
                         ilkin_odenis_tarixi = indiki_tarix_date
                         ilkin_odenis_tarixi_date = indiki_tarix
                         ilkin_odenis_tarixi_san = indiki_tarix_san
@@ -472,7 +470,7 @@ def muqavile_create(self, request, *args, **kwargs):
                                 muqavile_umumi_mebleg) - float(ilkin_odenis)
                             serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
-                                            ilkin_odenis_status="BİTMİŞ", ilkin_odenis_tarixi=ilkin_odenis_tarixi, muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc,)
+                                            ilkin_odenis_status="BİTMİŞ", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc,)
                             sonraki_balans = holding_umumi_balans_hesabla()
                             print(f"{sonraki_balans=}")
                             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
@@ -1038,7 +1036,7 @@ def muqavile_patch(self, request, *args, **kwargs):
             odenmeyen_odemetarixler_qs = OdemeTarix.objects.filter(
                 muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
             odenmeyen_odemetarixler = list(odenmeyen_odemetarixler_qs)
-            indi = datetime.datetime.today().strftime('%Y-%m-%d')
+            indi = datetime.datetime.today().strftime('%d-%m-%Y')
             inc_month = pd.date_range(indi, periods=len(
                 odenmeyen_odemetarixler), freq='M')
 
@@ -1509,7 +1507,7 @@ def muqavile_update(self, request, *args, **kwargs):
             odenmeyen_odemetarixler_qs = OdemeTarix.objects.filter(
                 muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
             odenmeyen_odemetarixler = list(odenmeyen_odemetarixler_qs)
-            indi = datetime.datetime.today().strftime('%Y-%m-%d')
+            indi = datetime.datetime.today().strftime('%d-%m-%Y')
             inc_month = pd.date_range(indi, periods=len(
                 odenmeyen_odemetarixler), freq='M')
             i = 0

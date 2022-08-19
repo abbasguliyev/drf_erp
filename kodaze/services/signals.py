@@ -43,9 +43,9 @@ def create_servis_odeme(sender, instance, created, **kwargs):
 
         # servis_tarixi = pd.to_datetime(f"{servis_tarixi_str.year}-{servis_tarixi_str.month}-{servis_tarixi_str.day}")
         try:
-            servis_tarixi = datetime.datetime.strptime(f"{servis_tarixi_str.year}-{servis_tarixi_str.month}-{servis_tarixi_str.day}", '%Y-%m-%d')
+            servis_tarixi = datetime.datetime.strptime(f"{servis_tarixi_str.year}-{servis_tarixi_str.month}-{servis_tarixi_str.day}", '%d-%m-%Y')
         except:
-            servis_tarixi = datetime.datetime.strptime(servis_tarixi_str, '%Y-%m-%d')
+            servis_tarixi = datetime.datetime.strptime(servis_tarixi_str, '%d-%m-%Y')
         inc_month = pd.date_range(servis_tarixi, periods=kredit_muddeti+1, freq='M')
 
         if kredit == False:

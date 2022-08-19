@@ -27,7 +27,7 @@ def holding_kassa_medaxil_create(self, request, *args, **kwargs):
         medaxil_tarixi = request.data.get("medaxil_tarixi")
 
         if(medaxil_tarixi == None):
-            medaxil_tarixi = datetime.today().strftime('%Y-%m-%d')
+            medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
 
         qeyd = request.data.get("qeyd")
 
@@ -85,7 +85,7 @@ def holding_kassa_mexaric_create(self, request, *args, **kwargs):
     mexaric_tarixi = request.data.get("mexaric_tarixi")
 
     if(mexaric_tarixi == None):
-        mexaric_tarixi = datetime.today().strftime('%Y-%m-%d')
+        mexaric_tarixi = datetime.today().strftime('%d-%m-%Y')
 
     if(holding_kassa_balans != 0):
         if(mebleg != None):
@@ -147,7 +147,7 @@ def shirket_kassa_medaxil_create(self, request, *args, **kwargs):
         shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
 
         if(medaxil_tarixi == ""):
-            medaxil_tarixi = datetime.today().strftime('%Y-%m-%d')
+            medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
 
         qeyd = request.data.get("qeyd")
 
@@ -206,7 +206,7 @@ def shirket_kassa_mexaric_create(self, request, *args, **kwargs):
     mexaric_tarixi = request.data.get("mexaric_tarixi")
 
     if(mexaric_tarixi == ""):
-        mexaric_tarixi = datetime.today().strftime('%Y-%m-%d')
+        mexaric_tarixi = datetime.today().strftime('%d-%m-%Y')
 
     if(shirket_kassa_balans != 0):
         if(mebleg != ""):
@@ -261,7 +261,7 @@ def ofis_kassa_medaxil_create(self, request, *args, **kwargs):
         print(f"{ilkin_balans=}")
         ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
         if(medaxil_tarixi == ""):
-            medaxil_tarixi = datetime.today().strftime('%Y-%m-%d')
+            medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
         qeyd = request.data.get("qeyd")
         ofis_kassa_balans = ofis_kassa.balans
         yekun_balans = float(mebleg) + float(ofis_kassa_balans)
@@ -310,7 +310,7 @@ def ofis_kassa_mexaric_create(self, request, *args, **kwargs):
     ofis_kassa_balans = ofis_kassa.balans
     mexaric_tarixi = request.data.get("mexaric_tarixi")
     if(mexaric_tarixi == ""):
-        mexaric_tarixi = datetime.today().strftime('%Y-%m-%d')
+        mexaric_tarixi = datetime.today().strftime('%d-%m-%Y')
 
     if(ofis_kassa_balans != 0):
         if(mebleg != ""):

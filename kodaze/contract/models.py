@@ -149,6 +149,7 @@ class Muqavile(models.Model):
     pdf_elave = models.FileField(upload_to="media/media/muqavile_doc/%Y/%m/%d/", blank=True, null=True, validators=[file_size, FileExtensionValidator(['pdf'])])
 
     dusme_tarixi = models.DateField(null=True, blank=True)
+    borc_baglanma_tarixi = models.DateField(null=True, blank=True)
 
     kompensasiya_medaxil = models.FloatField(default=0, null=True, blank=True)
     kompensasiya_mexaric = models.FloatField(default=0, null=True, blank=True)

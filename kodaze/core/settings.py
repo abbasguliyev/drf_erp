@@ -233,7 +233,7 @@ TIME_ZONE = 'Asia/Baku'
 
 USE_I18N = True
 
-DATE_FORMAT=['%m/%d/%Y']
+DATE_FORMAT=['%d-%m-%Y']
 
 USE_L10N = False
 

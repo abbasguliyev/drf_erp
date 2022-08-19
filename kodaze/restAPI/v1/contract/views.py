@@ -381,7 +381,7 @@ def create_test_kredit(request):
     odenis_uslubu = instance.data.get("odenis_uslubu")
     mehsul = Mehsullar.objects.get(id=mehsul_id)
     muqavile_tarixi_str = instance.data.get("muqavile_tarixi")
-    muqavile_tarixi = datetime.datetime.strptime(muqavile_tarixi_str, '%Y-%m-%d')
+    muqavile_tarixi = datetime.datetime.strptime(muqavile_tarixi_str, '%d-%m-%Y')
 
     ilkin_odenis = instance.data.get("ilkin_odenis")
     ilkin_odenis_qaliq = instance.data.get("ilkin_odenis_qaliq")
@@ -393,7 +393,7 @@ def create_test_kredit(request):
         return kredit_muddeti_yeni
 
     if(odenis_uslubu == "KREDİT"):
-        # indi = datetime.datetime.today().strftime('%Y-%m-%d')
+        # indi = datetime.datetime.today().strftime('%d-%m-%Y')
         indi = muqavile_tarixi
         inc_month = pd.date_range(indi, periods = kredit_muddeti+1, freq='M')
         ilkin_odenis = ilkin_odenis

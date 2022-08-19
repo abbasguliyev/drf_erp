@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 import pandas as pd
+import django
 
 from restAPI.v1.cashbox.utils import (
     holding_umumi_balans_hesabla, 
@@ -83,6 +84,7 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         indiki_ay.save()
 
         muqavile.muqavile_status = "BİTMİŞ"
+        muqavile.borc_baglanma_tarixi = django.utils.timezone.now
         qaliq_borc = 0
         muqavile.qaliq_borc = qaliq_borc
         muqavile.borc_baglandi = True
@@ -131,7 +133,7 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         odeme_tarixi_san = datetime.datetime.timestamp(odeme_tarixi)
 
         gecikdirmek_istediyi_tarix = request.data.get("tarix")
-        gecikdirmek_istediyi_tarix_date = datetime.datetime.strptime(gecikdirmek_istediyi_tarix, "%Y-%m-%d")
+        gecikdirmek_istediyi_tarix_date = datetime.datetime.strptime(gecikdirmek_istediyi_tarix, "%d-%m-%Y")
         gecikdirmek_istediyi_tarix_san = datetime.datetime.timestamp(gecikdirmek_istediyi_tarix_date)
 
         odenmeyen_odemetarixler_qs = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")

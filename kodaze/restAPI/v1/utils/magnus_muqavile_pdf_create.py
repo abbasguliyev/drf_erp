@@ -54,7 +54,7 @@ def magnus_muqavile_pdf_canvas(musteri, muqavile) -> list:
     mehsul_adi = muqavile.mehsul.mehsulun_adi
 
     imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+    # imza = "/home/abbas/Workspace/kodazeERP/kodaze/media/media/imza.png"
 
     # asa = "Abbas Quliyev Azər"
     # asa_split = asa.split(" ")
@@ -239,7 +239,7 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
     mehsul_sayi = muqavile.mehsul_sayi
 
     imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/alliance/OkeanCRM/media/imza.png"
+    # imza = "/home/abbas/Workspace/kodazeERP/kodaze/media/media/imza.png"
     
     mehsul_qiymeti = muqavile.mehsul.qiymet
     ilkin_odenis = muqavile.ilkin_odenis

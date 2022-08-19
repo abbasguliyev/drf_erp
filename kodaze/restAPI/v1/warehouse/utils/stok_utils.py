@@ -10,6 +10,8 @@ def stok_update(self, request, *args, **kwargs):
     mehsul = stok.mehsul
     tarix = datetime.date.today()
     say = int(request.data.get("say"))
+    if say==0:
+        return Response({"detail": "Say 0 ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
     icraci = request.user
     evvelki_say = stok.say
     yekun_say = abs(int(evvelki_say) - int(say))
