@@ -75,6 +75,7 @@ class MusteriFilter(django_filters.FilterSet):
         }
 
 class MusteriQeydlerFilter(django_filters.FilterSet):
+    tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
     class Meta:
         model = MusteriQeydler
         fields = {

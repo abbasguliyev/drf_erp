@@ -50,6 +50,13 @@ class OdemeTarixFilter(django_filters.FilterSet):
 
 
 class MuqavileFilter(django_filters.FilterSet):
+    muqavile_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    muqavile_imzalanma_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    negd_odenis_1_tarix = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    negd_odenis_2_tarix = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_qaliq_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = Muqavile
         fields = {
