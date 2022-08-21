@@ -283,7 +283,7 @@ class MusteriListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
-            serializer.save()
+            serializer.save(is_active=True)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail" : "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)

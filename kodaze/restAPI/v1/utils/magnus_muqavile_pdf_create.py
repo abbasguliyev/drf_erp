@@ -4,7 +4,7 @@ import io
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from reportlab.pdfbase import pdfmetrics 
+from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from PIL import Image
@@ -12,7 +12,6 @@ from contract.models import OdemeTarix
 
 from core.settings import BASE_DIR, __PRODUCTION__
 module_dir = os.path.dirname(__file__)  # get current directory
-
 
 
 # ----------------------------------------------Muqavile pdf creater--------------------------------------------------------
@@ -53,8 +52,10 @@ def magnus_muqavile_pdf_canvas(musteri, muqavile) -> list:
     tarix_year = muqavile.muqavile_tarixi.year
     mehsul_adi = muqavile.mehsul.mehsulun_adi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/kodazeERP/kodaze/media/media/imza.png"
+    if __PRODUCTION__ == True:
+        imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    else:
+        imza = "/home/abbas/Workspace/kodazeERP/kodaze/media/media/imza.png"
 
     # asa = "Abbas Quliyev Azər"
     # asa_split = asa.split(" ")
@@ -71,7 +72,7 @@ def magnus_muqavile_pdf_canvas(musteri, muqavile) -> list:
 
     new_pdfs = []
 
-    pdfmetrics.registerFont(TTFont('DejaVuSans','DejaVuSans.ttf'))
+    pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
     i = 0
     while i < 3:
         packet = io.BytesIO()
@@ -125,7 +126,7 @@ def magnus_muqavile_pdf_canvas(musteri, muqavile) -> list:
     return new_pdfs
 
 
-def magnus_create_muqavile_pdf(canvas,muqavile):
+def magnus_create_muqavile_pdf(canvas, muqavile):
     """
     Bu method muqavile_pdf_canvas metodundan gelen pdf listin icindeki pdf-leri
     uygun olaraq bize verilen pdf-e merge edir.
@@ -139,8 +140,10 @@ def magnus_create_muqavile_pdf(canvas,muqavile):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/muqavile_doc/magnus-muqavile.pdf')
-    file_path_new = os.path.join(f'media/media/muqavile_doc/magnus-muqavile-{muqavile.pk}.pdf')
+    file_path = os.path.join(
+        BASE_DIR, 'media/media/muqavile_doc/magnus-muqavile.pdf')
+    file_path_new = os.path.join(
+        f'media/media/muqavile_doc/magnus-muqavile-{muqavile.pk}.pdf')
 
     # ****** test **********
     # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/muqavile_doc/magnus-muqavile.pdf'
@@ -238,9 +241,11 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
     mehsul_adi = muqavile.mehsul.mehsulun_adi
     mehsul_sayi = muqavile.mehsul_sayi
 
-    imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
-    # imza = "/home/abbas/Workspace/kodazeERP/kodaze/media/media/imza.png"
-    
+    if __PRODUCTION__ == True:
+        imza = os.path.join(BASE_DIR, f"{muqavile.elektron_imza}")
+    else:
+        imza = "/home/abbas/Workspace/kodazeERP/kodaze/media/media/imza.png"
+
     mehsul_qiymeti = muqavile.mehsul.qiymet
     ilkin_odenis = muqavile.ilkin_odenis
     if ilkin_odenis == None or ilkin_odenis == "":
@@ -262,7 +267,7 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
 
     new_pdfs = []
 
-    pdfmetrics.registerFont(TTFont('DejaVuSans','DejaVuSans.ttf'))
+    pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 
     i = 0
     while i < 4:
@@ -301,7 +306,6 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
             else:
                 can.drawString(470, 380, "NƏĞD")
 
-
             x1 = 95
             x2 = 126
             x3 = 150
@@ -314,131 +318,181 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
 
             if odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD":
                 can.drawString(x1, 328, f"{muqavile.negd_odenis_1_tarix.day}")
-                can.drawString(x2, 328, f"{muqavile.negd_odenis_1_tarix.month}")
+                can.drawString(
+                    x2, 328, f"{muqavile.negd_odenis_1_tarix.month}")
                 can.drawString(x3, 328, f"{muqavile.negd_odenis_1_tarix.year}")
                 can.drawString(x4, 325, f"{muqavile.negd_odenis_1}")
-                
+
                 can.drawString(x1, 304, f"{muqavile.negd_odenis_2_tarix.day}")
-                can.drawString(x2, 304, f"{muqavile.negd_odenis_2_tarix.month}")
+                can.drawString(
+                    x2, 304, f"{muqavile.negd_odenis_2_tarix.month}")
                 can.drawString(x3, 304, f"{muqavile.negd_odenis_2_tarix.year}")
                 can.drawString(x4, 295, f"{muqavile.negd_odenis_2}")
             elif odenis_uslubu == "KREDİT":
                 try:
-                    can.drawString(x1, 328, f"{odeme_tarixleri_list[0].tarix.day}")
-                    can.drawString(x2, 328, f"{odeme_tarixleri_list[0].tarix.month}")
-                    can.drawString(x3, 328, f"{odeme_tarixleri_list[0].tarix.year}")
-                    can.drawString(x4, 325, f"{odeme_tarixleri_list[0].qiymet}")
+                    can.drawString(
+                        x1, 328, f"{odeme_tarixleri_list[0].tarix.day}")
+                    can.drawString(
+                        x2, 328, f"{odeme_tarixleri_list[0].tarix.month}")
+                    can.drawString(
+                        x3, 328, f"{odeme_tarixleri_list[0].tarix.year}")
+                    can.drawString(
+                        x4, 325, f"{odeme_tarixleri_list[0].qiymet}")
                 except:
                     can.drawString(x1, 328, f"")
                     can.drawString(x2, 328, f"")
                     can.drawString(x3, 328, f"")
                     can.drawString(x4, 325, f"")
-                
+
                 try:
-                    can.drawString(x1, 304, f"{odeme_tarixleri_list[1].tarix.day}")
-                    can.drawString(x2, 304, f"{odeme_tarixleri_list[1].tarix.month}")
-                    can.drawString(x3, 304, f"{odeme_tarixleri_list[1].tarix.year}")
-                    can.drawString(x4, 295, f"{odeme_tarixleri_list[1].qiymet}")
+                    can.drawString(
+                        x1, 304, f"{odeme_tarixleri_list[1].tarix.day}")
+                    can.drawString(
+                        x2, 304, f"{odeme_tarixleri_list[1].tarix.month}")
+                    can.drawString(
+                        x3, 304, f"{odeme_tarixleri_list[1].tarix.year}")
+                    can.drawString(
+                        x4, 295, f"{odeme_tarixleri_list[1].qiymet}")
                 except:
                     can.drawString(x1, 304, f"")
                     can.drawString(x2, 304, f"")
                     can.drawString(x3, 304, f"")
                     can.drawString(x4, 295, f"")
                 try:
-                    can.drawString(x1, 281, f"{odeme_tarixleri_list[2].tarix.day}")
-                    can.drawString(x2, 281, f"{odeme_tarixleri_list[2].tarix.month}")
-                    can.drawString(x3, 281, f"{odeme_tarixleri_list[2].tarix.year}")
-                    can.drawString(x4, 275, f"{odeme_tarixleri_list[2].qiymet}")
+                    can.drawString(
+                        x1, 281, f"{odeme_tarixleri_list[2].tarix.day}")
+                    can.drawString(
+                        x2, 281, f"{odeme_tarixleri_list[2].tarix.month}")
+                    can.drawString(
+                        x3, 281, f"{odeme_tarixleri_list[2].tarix.year}")
+                    can.drawString(
+                        x4, 275, f"{odeme_tarixleri_list[2].qiymet}")
                 except:
                     can.drawString(x1, 281, f"")
                     can.drawString(x2, 281, f"")
                     can.drawString(x3, 281, f"")
                     can.drawString(x4, 275, f"")
                 try:
-                    can.drawString(x1, 257, f"{odeme_tarixleri_list[3].tarix.day}")
-                    can.drawString(x2, 257, f"{odeme_tarixleri_list[3].tarix.month}")
-                    can.drawString(x3, 257, f"{odeme_tarixleri_list[3].tarix.year}")
-                    can.drawString(x4, 248, f"{odeme_tarixleri_list[3].qiymet}")
+                    can.drawString(
+                        x1, 257, f"{odeme_tarixleri_list[3].tarix.day}")
+                    can.drawString(
+                        x2, 257, f"{odeme_tarixleri_list[3].tarix.month}")
+                    can.drawString(
+                        x3, 257, f"{odeme_tarixleri_list[3].tarix.year}")
+                    can.drawString(
+                        x4, 248, f"{odeme_tarixleri_list[3].qiymet}")
                 except:
                     can.drawString(x1, 257, f"")
                     can.drawString(x2, 257, f"")
                     can.drawString(x3, 257, f"")
                     can.drawString(x4, 248, f"")
                 try:
-                    can.drawString(x1, 233, f"{odeme_tarixleri_list[4].tarix.day}")
-                    can.drawString(x2, 233, f"{odeme_tarixleri_list[4].tarix.month}")
-                    can.drawString(x3, 233, f"{odeme_tarixleri_list[4].tarix.year}")
-                    can.drawString(x4, 226, f"{odeme_tarixleri_list[4].qiymet}")
+                    can.drawString(
+                        x1, 233, f"{odeme_tarixleri_list[4].tarix.day}")
+                    can.drawString(
+                        x2, 233, f"{odeme_tarixleri_list[4].tarix.month}")
+                    can.drawString(
+                        x3, 233, f"{odeme_tarixleri_list[4].tarix.year}")
+                    can.drawString(
+                        x4, 226, f"{odeme_tarixleri_list[4].qiymet}")
                 except:
                     can.drawString(x1, 233, f"")
                     can.drawString(x2, 233, f"")
                     can.drawString(x3, 233, f"")
                     can.drawString(x4, 226, f"")
                 try:
-                    can.drawString(x1, 209, f"{odeme_tarixleri_list[5].tarix.day}")
-                    can.drawString(x2, 209, f"{odeme_tarixleri_list[5].tarix.month}")
-                    can.drawString(x3, 209, f"{odeme_tarixleri_list[5].tarix.year}")
-                    can.drawString(x4, 203, f"{odeme_tarixleri_list[5].qiymet}")
+                    can.drawString(
+                        x1, 209, f"{odeme_tarixleri_list[5].tarix.day}")
+                    can.drawString(
+                        x2, 209, f"{odeme_tarixleri_list[5].tarix.month}")
+                    can.drawString(
+                        x3, 209, f"{odeme_tarixleri_list[5].tarix.year}")
+                    can.drawString(
+                        x4, 203, f"{odeme_tarixleri_list[5].qiymet}")
                 except:
                     can.drawString(x1, 209, f"")
                     can.drawString(x2, 209, f"")
                     can.drawString(x3, 209, f"")
                     can.drawString(x4, 203, f"")
                 try:
-                    can.drawString(x1, 185, f"{odeme_tarixleri_list[6].tarix.day}")
-                    can.drawString(x2, 185, f"{odeme_tarixleri_list[6].tarix.month}")
-                    can.drawString(x3, 185, f"{odeme_tarixleri_list[6].tarix.year}")
-                    can.drawString(x4, 180, f"{odeme_tarixleri_list[6].qiymet}")
+                    can.drawString(
+                        x1, 185, f"{odeme_tarixleri_list[6].tarix.day}")
+                    can.drawString(
+                        x2, 185, f"{odeme_tarixleri_list[6].tarix.month}")
+                    can.drawString(
+                        x3, 185, f"{odeme_tarixleri_list[6].tarix.year}")
+                    can.drawString(
+                        x4, 180, f"{odeme_tarixleri_list[6].qiymet}")
                 except:
                     can.drawString(x1, 185, f"")
                     can.drawString(x2, 185, f"")
                     can.drawString(x3, 185, f"")
                     can.drawString(x4, 180, f"")
                 try:
-                    can.drawString(x1, 160, f"{odeme_tarixleri_list[7].tarix.day}")
-                    can.drawString(x2, 160, f"{odeme_tarixleri_list[7].tarix.month}")
-                    can.drawString(x3, 160, f"{odeme_tarixleri_list[7].tarix.year}")
-                    can.drawString(x4, 156, f"{odeme_tarixleri_list[7].qiymet}")
+                    can.drawString(
+                        x1, 160, f"{odeme_tarixleri_list[7].tarix.day}")
+                    can.drawString(
+                        x2, 160, f"{odeme_tarixleri_list[7].tarix.month}")
+                    can.drawString(
+                        x3, 160, f"{odeme_tarixleri_list[7].tarix.year}")
+                    can.drawString(
+                        x4, 156, f"{odeme_tarixleri_list[7].qiymet}")
                 except:
                     can.drawString(x1, 160, f"")
                     can.drawString(x2, 160, f"")
                     can.drawString(x3, 160, f"")
                     can.drawString(x4, 156, f"")
                 try:
-                    can.drawString(x1, 137, f"{odeme_tarixleri_list[8].tarix.day}")
-                    can.drawString(x2, 137, f"{odeme_tarixleri_list[8].tarix.month}")
-                    can.drawString(x3, 137, f"{odeme_tarixleri_list[8].tarix.year}")
-                    can.drawString(x4, 132, f"{odeme_tarixleri_list[8].qiymet}")
+                    can.drawString(
+                        x1, 137, f"{odeme_tarixleri_list[8].tarix.day}")
+                    can.drawString(
+                        x2, 137, f"{odeme_tarixleri_list[8].tarix.month}")
+                    can.drawString(
+                        x3, 137, f"{odeme_tarixleri_list[8].tarix.year}")
+                    can.drawString(
+                        x4, 132, f"{odeme_tarixleri_list[8].qiymet}")
                 except:
                     can.drawString(x1, 137, f"")
                     can.drawString(x2, 137, f"")
                     can.drawString(x3, 137, f"")
                     can.drawString(x4, 132, f"")
                 try:
-                    can.drawString(x1, 112, f"{odeme_tarixleri_list[9].tarix.day}")
-                    can.drawString(x2, 112, f"{odeme_tarixleri_list[9].tarix.month}")
-                    can.drawString(x3, 112, f"{odeme_tarixleri_list[9].tarix.year}")
-                    can.drawString(x4, 108, f"{odeme_tarixleri_list[9].qiymet}")
+                    can.drawString(
+                        x1, 112, f"{odeme_tarixleri_list[9].tarix.day}")
+                    can.drawString(
+                        x2, 112, f"{odeme_tarixleri_list[9].tarix.month}")
+                    can.drawString(
+                        x3, 112, f"{odeme_tarixleri_list[9].tarix.year}")
+                    can.drawString(
+                        x4, 108, f"{odeme_tarixleri_list[9].qiymet}")
                 except:
                     can.drawString(x1, 112, f"")
                     can.drawString(x2, 112, f"")
                     can.drawString(x3, 112, f"")
                     can.drawString(x4, 108, f"")
                 try:
-                    can.drawString(x1, 89, f"{odeme_tarixleri_list[10].tarix.day}")
-                    can.drawString(x2, 89, f"{odeme_tarixleri_list[10].tarix.month}")
-                    can.drawString(x3, 89, f"{odeme_tarixleri_list[10].tarix.year}")
-                    can.drawString(x4, 84, f"{odeme_tarixleri_list[10].qiymet}")
+                    can.drawString(
+                        x1, 89, f"{odeme_tarixleri_list[10].tarix.day}")
+                    can.drawString(
+                        x2, 89, f"{odeme_tarixleri_list[10].tarix.month}")
+                    can.drawString(
+                        x3, 89, f"{odeme_tarixleri_list[10].tarix.year}")
+                    can.drawString(
+                        x4, 84, f"{odeme_tarixleri_list[10].qiymet}")
                 except:
                     can.drawString(x1, 89, f"")
                     can.drawString(x2, 89, f"")
                     can.drawString(x3, 89, f"")
                     can.drawString(x4, 84, f"")
                 try:
-                    can.drawString(x1, 65, f"{odeme_tarixleri_list[11].tarix.day}")
-                    can.drawString(x2, 65, f"{odeme_tarixleri_list[11].tarix.month}")
-                    can.drawString(x3, 65, f"{odeme_tarixleri_list[11].tarix.year}")
-                    can.drawString(x4, 60, f"{odeme_tarixleri_list[11].qiymet}")
+                    can.drawString(
+                        x1, 65, f"{odeme_tarixleri_list[11].tarix.day}")
+                    can.drawString(
+                        x2, 65, f"{odeme_tarixleri_list[11].tarix.month}")
+                    can.drawString(
+                        x3, 65, f"{odeme_tarixleri_list[11].tarix.year}")
+                    can.drawString(
+                        x4, 60, f"{odeme_tarixleri_list[11].qiymet}")
                 except:
                     can.drawString(x1, 65, f"")
                     can.drawString(x2, 65, f"")
@@ -446,129 +500,177 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
                     can.drawString(x4, 60, f"")
 
                 # 13 - 24
-                
+
                 try:
-                    can.drawString(zx1, 328, f"{odeme_tarixleri_list[12].tarix.day}")
-                    can.drawString(zx2, 328, f"{odeme_tarixleri_list[12].tarix.month}")
-                    can.drawString(zx3, 328, f"{odeme_tarixleri_list[12].tarix.year}")
-                    can.drawString(zx4, 325, f"{odeme_tarixleri_list[12].qiymet}")
+                    can.drawString(
+                        zx1, 328, f"{odeme_tarixleri_list[12].tarix.day}")
+                    can.drawString(
+                        zx2, 328, f"{odeme_tarixleri_list[12].tarix.month}")
+                    can.drawString(
+                        zx3, 328, f"{odeme_tarixleri_list[12].tarix.year}")
+                    can.drawString(
+                        zx4, 325, f"{odeme_tarixleri_list[12].qiymet}")
                 except:
                     can.drawString(zx1, 328, f"")
                     can.drawString(zx2, 328, f"")
                     can.drawString(zx3, 328, f"")
                     can.drawString(zx4, 325, f"")
-                
+
                 try:
-                    can.drawString(zx1, 304, f"{odeme_tarixleri_list[13].tarix.day}")
-                    can.drawString(zx2, 304, f"{odeme_tarixleri_list[13].tarix.month}")
-                    can.drawString(zx3, 304, f"{odeme_tarixleri_list[13].tarix.year}")
-                    can.drawString(zx4, 295, f"{odeme_tarixleri_list[13].qiymet}")
+                    can.drawString(
+                        zx1, 304, f"{odeme_tarixleri_list[13].tarix.day}")
+                    can.drawString(
+                        zx2, 304, f"{odeme_tarixleri_list[13].tarix.month}")
+                    can.drawString(
+                        zx3, 304, f"{odeme_tarixleri_list[13].tarix.year}")
+                    can.drawString(
+                        zx4, 295, f"{odeme_tarixleri_list[13].qiymet}")
                 except:
                     can.drawString(zx1, 304, f"")
                     can.drawString(zx2, 304, f"")
                     can.drawString(zx3, 304, f"")
                     can.drawString(zx4, 295, f"")
                 try:
-                    can.drawString(zx1, 281, f"{odeme_tarixleri_list[14].tarix.day}")
-                    can.drawString(zx2, 281, f"{odeme_tarixleri_list[14].tarix.month}")
-                    can.drawString(zx3, 281, f"{odeme_tarixleri_list[14].tarix.year}")
-                    can.drawString(zx4, 275, f"{odeme_tarixleri_list[14].qiymet}")
+                    can.drawString(
+                        zx1, 281, f"{odeme_tarixleri_list[14].tarix.day}")
+                    can.drawString(
+                        zx2, 281, f"{odeme_tarixleri_list[14].tarix.month}")
+                    can.drawString(
+                        zx3, 281, f"{odeme_tarixleri_list[14].tarix.year}")
+                    can.drawString(
+                        zx4, 275, f"{odeme_tarixleri_list[14].qiymet}")
                 except:
                     can.drawString(zx1, 281, f"")
                     can.drawString(zx2, 281, f"")
                     can.drawString(zx3, 281, f"")
                     can.drawString(zx4, 275, f"")
                 try:
-                    can.drawString(zx1, 257, f"{odeme_tarixleri_list[15].tarix.day}")
-                    can.drawString(zx2, 257, f"{odeme_tarixleri_list[15].tarix.month}")
-                    can.drawString(zx3, 257, f"{odeme_tarixleri_list[15].tarix.year}")
-                    can.drawString(zx4, 248, f"{odeme_tarixleri_list[15].qiymet}")
+                    can.drawString(
+                        zx1, 257, f"{odeme_tarixleri_list[15].tarix.day}")
+                    can.drawString(
+                        zx2, 257, f"{odeme_tarixleri_list[15].tarix.month}")
+                    can.drawString(
+                        zx3, 257, f"{odeme_tarixleri_list[15].tarix.year}")
+                    can.drawString(
+                        zx4, 248, f"{odeme_tarixleri_list[15].qiymet}")
                 except:
                     can.drawString(zx1, 257, f"")
                     can.drawString(zx2, 257, f"")
                     can.drawString(zx3, 257, f"")
                     can.drawString(zx4, 248, f"")
                 try:
-                    can.drawString(zx1, 233, f"{odeme_tarixleri_list[16].tarix.day}")
-                    can.drawString(zx2, 233, f"{odeme_tarixleri_list[16].tarix.month}")
-                    can.drawString(zx3, 233, f"{odeme_tarixleri_list[16].tarix.year}")
-                    can.drawString(zx4, 226, f"{odeme_tarixleri_list[16].qiymet}")
+                    can.drawString(
+                        zx1, 233, f"{odeme_tarixleri_list[16].tarix.day}")
+                    can.drawString(
+                        zx2, 233, f"{odeme_tarixleri_list[16].tarix.month}")
+                    can.drawString(
+                        zx3, 233, f"{odeme_tarixleri_list[16].tarix.year}")
+                    can.drawString(
+                        zx4, 226, f"{odeme_tarixleri_list[16].qiymet}")
                 except:
                     can.drawString(zx1, 233, f"")
                     can.drawString(zx2, 233, f"")
                     can.drawString(zx3, 233, f"")
                     can.drawString(zx4, 226, f"")
                 try:
-                    can.drawString(zx1, 209, f"{odeme_tarixleri_list[17].tarix.day}")
-                    can.drawString(zx2, 209, f"{odeme_tarixleri_list[17].tarix.month}")
-                    can.drawString(zx3, 209, f"{odeme_tarixleri_list[17].tarix.year}")
-                    can.drawString(zx4, 203, f"{odeme_tarixleri_list[17].qiymet}")
+                    can.drawString(
+                        zx1, 209, f"{odeme_tarixleri_list[17].tarix.day}")
+                    can.drawString(
+                        zx2, 209, f"{odeme_tarixleri_list[17].tarix.month}")
+                    can.drawString(
+                        zx3, 209, f"{odeme_tarixleri_list[17].tarix.year}")
+                    can.drawString(
+                        zx4, 203, f"{odeme_tarixleri_list[17].qiymet}")
                 except:
                     can.drawString(zx1, 209, f"")
                     can.drawString(zx2, 209, f"")
                     can.drawString(zx3, 209, f"")
                     can.drawString(zx4, 203, f"")
                 try:
-                    can.drawString(zx1, 185, f"{odeme_tarixleri_list[18].tarix.day}")
-                    can.drawString(zx2, 185, f"{odeme_tarixleri_list[18].tarix.month}")
-                    can.drawString(zx3, 185, f"{odeme_tarixleri_list[18].tarix.year}")
-                    can.drawString(zx4, 180, f"{odeme_tarixleri_list[18].qiymet}")
+                    can.drawString(
+                        zx1, 185, f"{odeme_tarixleri_list[18].tarix.day}")
+                    can.drawString(
+                        zx2, 185, f"{odeme_tarixleri_list[18].tarix.month}")
+                    can.drawString(
+                        zx3, 185, f"{odeme_tarixleri_list[18].tarix.year}")
+                    can.drawString(
+                        zx4, 180, f"{odeme_tarixleri_list[18].qiymet}")
                 except:
                     can.drawString(zx1, 185, f"")
                     can.drawString(zx2, 185, f"")
                     can.drawString(zx3, 185, f"")
                     can.drawString(zx4, 180, f"")
                 try:
-                    can.drawString(zx1, 160, f"{odeme_tarixleri_list[19].tarix.day}")
-                    can.drawString(zx2, 160, f"{odeme_tarixleri_list[19].tarix.month}")
-                    can.drawString(zx3, 160, f"{odeme_tarixleri_list[19].tarix.year}")
-                    can.drawString(zx4, 156, f"{odeme_tarixleri_list[19].qiymet}")
+                    can.drawString(
+                        zx1, 160, f"{odeme_tarixleri_list[19].tarix.day}")
+                    can.drawString(
+                        zx2, 160, f"{odeme_tarixleri_list[19].tarix.month}")
+                    can.drawString(
+                        zx3, 160, f"{odeme_tarixleri_list[19].tarix.year}")
+                    can.drawString(
+                        zx4, 156, f"{odeme_tarixleri_list[19].qiymet}")
                 except:
                     can.drawString(zx1, 160, f"")
                     can.drawString(zx2, 160, f"")
                     can.drawString(zx3, 160, f"")
                     can.drawString(zx4, 156, f"")
                 try:
-                    can.drawString(zx1, 137, f"{odeme_tarixleri_list[20].tarix.day}")
-                    can.drawString(zx2, 137, f"{odeme_tarixleri_list[20].tarix.month}")
-                    can.drawString(zx3, 137, f"{odeme_tarixleri_list[20].tarix.year}")
-                    can.drawString(zx4, 132, f"{odeme_tarixleri_list[20].qiymet}")
+                    can.drawString(
+                        zx1, 137, f"{odeme_tarixleri_list[20].tarix.day}")
+                    can.drawString(
+                        zx2, 137, f"{odeme_tarixleri_list[20].tarix.month}")
+                    can.drawString(
+                        zx3, 137, f"{odeme_tarixleri_list[20].tarix.year}")
+                    can.drawString(
+                        zx4, 132, f"{odeme_tarixleri_list[20].qiymet}")
                 except:
                     can.drawString(zx1, 137, f"")
                     can.drawString(zx2, 137, f"")
                     can.drawString(zx3, 137, f"")
                     can.drawString(zx4, 132, f"")
                 try:
-                    can.drawString(zx1, 112, f"{odeme_tarixleri_list[21].tarix.day}")
-                    can.drawString(zx2, 112, f"{odeme_tarixleri_list[21].tarix.month}")
-                    can.drawString(zx3, 112, f"{odeme_tarixleri_list[21].tarix.year}")
-                    can.drawString(zx4, 108, f"{odeme_tarixleri_list[21].qiymet}")
+                    can.drawString(
+                        zx1, 112, f"{odeme_tarixleri_list[21].tarix.day}")
+                    can.drawString(
+                        zx2, 112, f"{odeme_tarixleri_list[21].tarix.month}")
+                    can.drawString(
+                        zx3, 112, f"{odeme_tarixleri_list[21].tarix.year}")
+                    can.drawString(
+                        zx4, 108, f"{odeme_tarixleri_list[21].qiymet}")
                 except:
                     can.drawString(zx1, 112, f"")
                     can.drawString(zx2, 112, f"")
                     can.drawString(zx3, 112, f"")
                     can.drawString(zx4, 108, f"")
                 try:
-                    can.drawString(zx1, 89, f"{odeme_tarixleri_list[22].tarix.day}")
-                    can.drawString(zx2, 89, f"{odeme_tarixleri_list[22].tarix.month}")
-                    can.drawString(zx3, 89, f"{odeme_tarixleri_list[22].tarix.year}")
-                    can.drawString(zx4, 84, f"{odeme_tarixleri_list[22].qiymet}")
+                    can.drawString(
+                        zx1, 89, f"{odeme_tarixleri_list[22].tarix.day}")
+                    can.drawString(
+                        zx2, 89, f"{odeme_tarixleri_list[22].tarix.month}")
+                    can.drawString(
+                        zx3, 89, f"{odeme_tarixleri_list[22].tarix.year}")
+                    can.drawString(
+                        zx4, 84, f"{odeme_tarixleri_list[22].qiymet}")
                 except:
                     can.drawString(zx1, 89, f"")
                     can.drawString(zx2, 89, f"")
                     can.drawString(zx3, 89, f"")
                     can.drawString(zx4, 84, f"")
                 try:
-                    can.drawString(zx1, 65, f"{odeme_tarixleri_list[23].tarix.day}")
-                    can.drawString(zx2, 65, f"{odeme_tarixleri_list[23].tarix.month}")
-                    can.drawString(zx3, 65, f"{odeme_tarixleri_list[23].tarix.year}")
-                    can.drawString(zx4, 60, f"{odeme_tarixleri_list[23].qiymet}")
+                    can.drawString(
+                        zx1, 65, f"{odeme_tarixleri_list[23].tarix.day}")
+                    can.drawString(
+                        zx2, 65, f"{odeme_tarixleri_list[23].tarix.month}")
+                    can.drawString(
+                        zx3, 65, f"{odeme_tarixleri_list[23].tarix.year}")
+                    can.drawString(
+                        zx4, 60, f"{odeme_tarixleri_list[23].qiymet}")
                 except:
                     can.drawString(zx1, 65, f"")
                     can.drawString(zx2, 65, f"")
                     can.drawString(zx3, 65, f"")
                     can.drawString(zx4, 60, f"")
-            
+
             can.save()
             packet.seek(0)
             new_pdf = PdfFileReader(packet)
@@ -611,7 +713,7 @@ def magnus_kredit_muqavile_pdf_canvas(muqavile) -> list:
     return new_pdfs
 
 
-def magnus_kredit_create_muqavile_pdf(canvas,muqavile):
+def magnus_kredit_create_muqavile_pdf(canvas, muqavile):
     """
     Bu method magnus_kredit_muqavile_pdf_canvas metodundan gelen pdf listin icindeki pdf-leri
     uygun olaraq bize verilen pdf-e merge edir.
@@ -625,8 +727,10 @@ def magnus_kredit_create_muqavile_pdf(canvas,muqavile):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/muqavile_doc/magnus-muqavile-kredit.pdf')
-    file_path_new = os.path.join(f'media/media/muqavile_doc/magnus-muqavile-kredit-{muqavile.pk}.pdf')
+    file_path = os.path.join(
+        BASE_DIR, 'media/media/muqavile_doc/magnus-muqavile-kredit.pdf')
+    file_path_new = os.path.join(
+        f'media/media/muqavile_doc/magnus-muqavile-kredit-{muqavile.pk}.pdf')
 
     # ****** test **********
     # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/muqavile_doc/magnus-muqavile-kredit.pdf'

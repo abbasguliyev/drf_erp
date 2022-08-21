@@ -99,9 +99,8 @@ def isci_fix_maas_auto_elave_et():
         officeLeader_status = officeLeader.isci_status
 
         ofisleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, vezife=officeLeader.vezife)
-
+        print(f"************{officeLeader.id=}")
         officeLeader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=bu_ay)
-
 
         officeLeader_maas_goruntulenme_bu_ay.yekun_maas = float(officeLeader_maas_goruntulenme_bu_ay.yekun_maas) + float(ofisleader_prim.fix_maas)
         officeLeader_maas_goruntulenme_bu_ay.save()

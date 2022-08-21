@@ -59,6 +59,19 @@ def create_services_task(id):
     kartric18ay = Mehsullar.objects.filter(kartric_novu="KARTRIC18AY", shirket=instance.shirket)
     kartric24ay = Mehsullar.objects.filter(kartric_novu="KARTRIC24AY", shirket=instance.shirket)
 
+    date_format = '%d-%m-%Y'
+    kartric6ay_date_lt_29 = datetime.datetime.strptime(f"{indi.day}-{month6.month}-{month6.year}", date_format)
+    kartric6ay_date_eq_29_30_31 = datetime.datetime.strptime(f"{month6.day}-{month6.month}-{month6.year}", date_format)
+
+    kartric12ay_date_lt_29 = datetime.datetime.strptime(f"{indi.day}-{month12.month}-{month12.year}", date_format)
+    kartric12ay_date_eq_29_30_31 = datetime.datetime.strptime(f"{month12.day}-{month12.month}-{month12.year}", date_format)
+
+    kartric18ay_date_lt_29 = datetime.datetime.strptime(f"{indi.day}-{month18.month}-{month18.year}", date_format)
+    kartric18ay_date_eq_29_30_31 = datetime.datetime.strptime(f"{month18.day}-{month18.month}-{month18.year}", date_format)
+
+    kartric24ay_date_lt_29 = datetime.datetime.strptime(f"{indi.day}-{month24.month}-{month24.year}", date_format)
+    kartric24ay_date_eq_29_30_31 = datetime.datetime.strptime(f"{month24.day}-{month24.month}-{month24.year}", date_format)
+
     q = 0
     while(q<instance.mehsul_sayi):
         for i in range(1):
@@ -68,7 +81,7 @@ def create_services_task(id):
             if(indi.day < 29):
                 servis = Servis.objects.create(
                     muqavile=instance,
-                    servis_tarix = f"{month6.year}-{month6.month}-{indi.day}",
+                    servis_tarix = kartric6ay_date_lt_29,
                     servis_qiymeti=servis_qiymeti,
                     is_auto=True
                 )
@@ -76,14 +89,14 @@ def create_services_task(id):
                 if(month6.day <= indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month6.year}-{month6.month}-{month6.day}",
+                        servis_tarix = kartric6ay_date_eq_29_30_31,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
                 elif(month6.day > indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month6.year}-{month6.month}-{indi.day}",
+                        servis_tarix = kartric6ay_date_lt_29,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
@@ -96,7 +109,7 @@ def create_services_task(id):
             if(indi.day < 29):
                 servis = Servis.objects.create(
                     muqavile=instance,
-                    servis_tarix = f"{month12.year}-{month12.month}-{indi.day}",
+                    servis_tarix = kartric12ay_date_lt_29,
                     servis_qiymeti=servis_qiymeti,
                     is_auto=True
                 )
@@ -104,14 +117,14 @@ def create_services_task(id):
                 if(month12.day <= indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month12.year}-{month12.month}-{month12.day}",
+                        servis_tarix = kartric12ay_date_eq_29_30_31,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
                 elif(month12.day > indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month12.year}-{month12.month}-{indi.day}",
+                        servis_tarix = kartric12ay_date_lt_29,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
@@ -124,7 +137,7 @@ def create_services_task(id):
             if(indi.day < 29):
                 servis = Servis.objects.create(
                     muqavile=instance,
-                    servis_tarix = f"{month18.year}-{month18.month}-{indi.day}",
+                    servis_tarix = kartric18ay_date_lt_29,
                     servis_qiymeti=servis_qiymeti,
                     is_auto=True
                 )
@@ -132,14 +145,14 @@ def create_services_task(id):
                 if(month18.day <= indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month18.year}-{month18.month}-{month18.day}",
+                        servis_tarix = kartric18ay_date_eq_29_30_31,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
                 elif(month18.day > indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month18.year}-{month18.month}-{indi.day}",
+                        servis_tarix = kartric18ay_date_lt_29,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
@@ -152,7 +165,7 @@ def create_services_task(id):
             if(indi.day < 29):
                 servis = Servis.objects.create(
                     muqavile=instance,
-                    servis_tarix = f"{month24.year}-{month24.month}-{indi.day}",
+                    servis_tarix = kartric24ay_date_lt_29,
                     servis_qiymeti=servis_qiymeti,
                     is_auto=True
                 )
@@ -160,14 +173,14 @@ def create_services_task(id):
                 if(month24.day <= indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month24.year}-{month24.month}-{month24.day}",
+                        servis_tarix = kartric24ay_date_eq_29_30_31,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )
                 elif(month24.day > indi.day):
                     servis = Servis.objects.create(
                         muqavile=instance,
-                        servis_tarix = f"{month24.year}-{month24.month}-{indi.day}",
+                        servis_tarix = kartric24ay_date_lt_29,
                         servis_qiymeti=servis_qiymeti,
                         is_auto=True
                     )

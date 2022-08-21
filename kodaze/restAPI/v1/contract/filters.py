@@ -50,12 +50,12 @@ class OdemeTarixFilter(django_filters.FilterSet):
 
 
 class MuqavileFilter(django_filters.FilterSet):
-    muqavile_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr=['gte','lte'], input_formats=["%d-%m-%Y"])
-    muqavile_imzalanma_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr=['gte','lte'], input_formats=["%d-%m-%Y"])
-    negd_odenis_1_tarix = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr=['gte','lte'], input_formats=["%d-%m-%Y"])
-    negd_odenis_2_tarix = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr=['gte','lte'], input_formats=["%d-%m-%Y"])
-    ilkin_odenis_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr=['gte','lte'], input_formats=["%d-%m-%Y"])
-    ilkin_odenis_qaliq_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr=['gte','lte'], input_formats=["%d-%m-%Y"])
+    muqavile_tarixi = django_filters.DateFilter(field_name='muqavile_tarixi', input_formats=["%d-%m-%Y"])
+    muqavile_imzalanma_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi',lookup_expr=['gte', 'lte'], input_formats=["%d-%m-%Y"])
+    negd_odenis_1_tarix = django_filters.DateFilter(field_name='negd_odenis_1_tarix', input_formats=["%d-%m-%Y"])
+    negd_odenis_2_tarix = django_filters.DateFilter(field_name='negd_odenis_2_tarix', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_tarixi = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_qaliq_tarixi = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = Muqavile
@@ -71,10 +71,8 @@ class MuqavileFilter(django_filters.FilterSet):
             'kreditor__kreditor__asa': ['exact'],
             'kreditor__kreditor__id': ['exact'],
 
-            'muqavile_tarixi': ['exact'],
-            'muqavile_tarixi': ['exact', 'gte', 'lte'],
-            'muqavile_imzalanma_tarixi': ['exact'],
-            'muqavile_imzalanma_tarixi': ['exact', 'gte', 'lte'],
+            # 'muqavile_tarixi': 'muqavile_tarixi',
+            # 'muqavile_imzalanma_tarixi': 'muqavile_imzalanma_tarixi',
 
             'shirket__id': ['exact'],
             'shirket': ['exact'],

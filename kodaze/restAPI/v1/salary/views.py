@@ -221,13 +221,43 @@ class MaasGoruntulemeListCreateAPIView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(queryset)
     
         satis_sayi = 0
+        umumi_avans = 0
+        umumi_bonus = 0
+        umumi_kesinti = 0
+
         for q in queryset:
             satis_sayi += q.satis_sayi
+
+            month = q.tarix.month
+
+            avans = Avans.objects.filter(isci = q.isci, avans_tarixi__month=month)
+            bonus = Bonus.objects.filter(isci = q.isci, bonus_tarixi__month=month)
+            kesinti = Kesinti.objects.filter(isci = q.isci, kesinti_tarixi__month=month)
+
+            for a in avans:
+                umumi_avans += a.mebleg
+
+            for b in bonus:
+                umumi_bonus += b.mebleg
+
+            for k in kesinti:
+                umumi_kesinti += k.mebleg
+
+        print(f"{umumi_avans=}")
+        print(f"{umumi_bonus=}")
+        print(f"{umumi_kesinti=}")
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response(
+                {
+                    'umumi_avans': umumi_avans, 
+                    'umumi_bonus': umumi_bonus, 
+                    'umumi_kesinti': umumi_kesinti,
+                    'data':serializer.data
+                }
+            )
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

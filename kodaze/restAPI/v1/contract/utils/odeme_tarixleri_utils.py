@@ -74,17 +74,18 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         ay_ucun_olan_mebleg = 0
         for i in odenmeyen_odemetarixler:
             ay_ucun_olan_mebleg = ay_ucun_olan_mebleg + float(i.qiymet)
-            i.qiymet = 0
-            i.odenme_status = "ÖDƏNƏN"
-            i.qeyd = qeyd
-            i.save()
+            # i.qiymet = 0
+            # i.odenme_status = "ÖDƏNƏN"
+            # i.qeyd = qeyd
+            # i.save()
+            i.delete()
 
         indiki_ay.qiymet = qaliq_borc
         indiki_ay.odenme_status = "ÖDƏNƏN"
         indiki_ay.save()
 
         muqavile.muqavile_status = "BİTMİŞ"
-        muqavile.borc_baglanma_tarixi = django.utils.timezone.now
+        muqavile.borc_baglanma_tarixi = django.utils.timezone.now()
         qaliq_borc = 0
         muqavile.qaliq_borc = qaliq_borc
         muqavile.borc_baglandi = True
