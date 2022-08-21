@@ -8,6 +8,14 @@ from contract.models import (
 )
 
 class OdemeTarixFilter(django_filters.FilterSet):
+    muqavile__muqavile_tarixi = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
+    muqavile__muqavile_tarixi__gte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    muqavile__muqavile_tarixi__lte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
+    tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
+    tarix__gte = django_filters.DateFilter(field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    tarix__lte = django_filters.DateFilter(field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = OdemeTarix
         fields = {
@@ -24,8 +32,8 @@ class OdemeTarixFilter(django_filters.FilterSet):
             'muqavile__kreditor__kreditor': ['exact'],
             'muqavile__kreditor__kreditor__asa': ['exact'],
             'muqavile__muqavile_status': ['exact'],
-            'muqavile__muqavile_tarixi': ['exact'],
-            'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
+            # 'muqavile__muqavile_tarixi': ['exact'],
+            # 'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
             'muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
             'muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
 
@@ -36,8 +44,8 @@ class OdemeTarixFilter(django_filters.FilterSet):
             'muqavile__musteri__tel3': ['exact', 'icontains'],
             'muqavile__musteri__tel4': ['exact', 'icontains'],
 
-            'tarix': ['exact'],
-            'tarix': ['exact', 'gte', 'lte'],
+            # 'tarix': ['exact'],
+            # 'tarix': ['exact', 'gte', 'lte'],
             'qiymet': ['exact', 'gte', 'lte'],     
             'odenme_status': ['exact', 'icontains'],
             'gecikdirme_status': ['exact', 'icontains'],
@@ -51,11 +59,28 @@ class OdemeTarixFilter(django_filters.FilterSet):
 
 class MuqavileFilter(django_filters.FilterSet):
     muqavile_tarixi = django_filters.DateFilter(field_name='muqavile_tarixi', input_formats=["%d-%m-%Y"])
-    muqavile_imzalanma_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi',lookup_expr=['gte', 'lte'], input_formats=["%d-%m-%Y"])
+    muqavile_tarixi__gte = django_filters.DateFilter(field_name='muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    muqavile_tarixi__lte = django_filters.DateFilter(field_name='muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
+    muqavile_imzalanma_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
+    muqavile_imzalanma_tarixi__gte = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    muqavile_imzalanma_tarixi__lte = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     negd_odenis_1_tarix = django_filters.DateFilter(field_name='negd_odenis_1_tarix', input_formats=["%d-%m-%Y"])
+    negd_odenis_1_tarix__gte = django_filters.DateFilter(field_name='negd_odenis_1_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    negd_odenis_1_tarix__lte = django_filters.DateFilter(field_name='negd_odenis_1_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     negd_odenis_2_tarix = django_filters.DateFilter(field_name='negd_odenis_2_tarix', input_formats=["%d-%m-%Y"])
+    negd_odenis_2_tarix__gte = django_filters.DateFilter(field_name='negd_odenis_2_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    negd_odenis_2_tarix__lte = django_filters.DateFilter(field_name='negd_odenis_2_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     ilkin_odenis_tarixi = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_tarixi__gte = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_tarixi__lte = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     ilkin_odenis_qaliq_tarixi = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_qaliq_tarixi__gte = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    ilkin_odenis_qaliq_tarixi__lte = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = Muqavile
@@ -71,8 +96,8 @@ class MuqavileFilter(django_filters.FilterSet):
             'kreditor__kreditor__asa': ['exact'],
             'kreditor__kreditor__id': ['exact'],
 
-            # 'muqavile_tarixi': 'muqavile_tarixi',
-            # 'muqavile_imzalanma_tarixi': 'muqavile_imzalanma_tarixi',
+            # 'muqavile_tarixi': ['exact', 'gte', 'lte'],
+            # 'muqavile_imzalanma_tarixi': ['exact', 'gte', 'lte'],
 
             'shirket__id': ['exact'],
             'shirket': ['exact'],
@@ -89,8 +114,8 @@ class MuqavileFilter(django_filters.FilterSet):
             'negd_odenis_2': ['exact', 'gte', 'lte'],
             'negd_odenis_1_status': ['exact', 'icontains'],
             'negd_odenis_2_status': ['exact', 'icontains'],
-            'negd_odenis_1_tarix': ['exact', 'gte', 'lte'],
-            'negd_odenis_2_tarix': ['exact', 'gte', 'lte'],
+            # 'negd_odenis_1_tarix': ['exact', 'gte', 'lte'],
+            # 'negd_odenis_2_tarix': ['exact', 'gte', 'lte'],
 
             'yeni_qrafik_mebleg': ['exact', 'gte', 'lte'],
             'yeni_qrafik_status': ['exact', 'icontains'],
@@ -99,8 +124,8 @@ class MuqavileFilter(django_filters.FilterSet):
             
             'ilkin_odenis': ['exact', 'gte', 'lte'],
             'ilkin_odenis_qaliq': ['exact', 'gte', 'lte'],
-            'ilkin_odenis_tarixi': ['exact', 'gte', 'lte'],
-            'ilkin_odenis_qaliq_tarixi': ['exact', 'gte', 'lte'],
+            # 'ilkin_odenis_tarixi': ['exact', 'gte', 'lte'],
+            # 'ilkin_odenis_qaliq_tarixi': ['exact', 'gte', 'lte'],
             'ilkin_odenis_status': ['exact', 'icontains'],
             'qaliq_ilkin_odenis_status': ['exact', 'icontains'],
 
@@ -128,6 +153,10 @@ class MuqavileFilter(django_filters.FilterSet):
         }
 
 class MuqavileHediyyeFilter(django_filters.FilterSet):
+    muqavile__muqavile_tarixi = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
+    muqavile__muqavile_tarixi__gte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    muqavile__muqavile_tarixi__lte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = MuqavileHediyye
         fields = {
@@ -147,7 +176,7 @@ class MuqavileHediyyeFilter(django_filters.FilterSet):
 
             'muqavile__odenis_uslubu': ['exact'],
             'muqavile__muqavile_status': ['exact'],
-            'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
+            # 'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
             'muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
             'muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
 
@@ -160,6 +189,10 @@ class MuqavileHediyyeFilter(django_filters.FilterSet):
         }
 
 class DemoSatisFilter(django_filters.FilterSet):
+    created_date = django_filters.DateFilter(field_name='created_date', input_formats=["%d-%m-%Y"])
+    created_date__gte = django_filters.DateFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    created_date__lte = django_filters.DateFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = DemoSatis
         fields = {
@@ -173,5 +206,5 @@ class DemoSatisFilter(django_filters.FilterSet):
             'user__vezife__vezife_adi': ['exact', 'icontains'],
             'user__komanda': ['exact'],
             'user__komanda__komanda_adi': ['exact', 'icontains'],
-            'created_date': ['exact', 'gte', 'lte'],
+            # 'created_date': ['exact', 'gte', 'lte'],
         }

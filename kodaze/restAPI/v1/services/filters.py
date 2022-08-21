@@ -6,7 +6,20 @@ from services.models import (
 )
 
 class ServisFilter(django_filters.FilterSet):
-    pass
+    muqavile__muqavile_tarixi = django_filters.DateFilter(
+        field_name='muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
+    muqavile__muqavile_tarixi__gte = django_filters.DateFilter(
+        field_name='muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    muqavile__muqavile_tarixi__lte = django_filters.DateFilter(
+        field_name='muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
+    servis_tarix = django_filters.DateFilter(
+        field_name='servis_tarix', input_formats=["%d-%m-%Y"])
+    servis_tarix__gte = django_filters.DateFilter(
+        field_name='servis_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    servis_tarix__lte = django_filters.DateFilter(
+        field_name='servis_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = Servis
         fields = {
@@ -24,7 +37,7 @@ class ServisFilter(django_filters.FilterSet):
 
             'muqavile__odenis_uslubu': ['exact'],
             'muqavile__muqavile_status': ['exact'],
-            'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
+            # 'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
             'muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
             'muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
 
@@ -35,14 +48,34 @@ class ServisFilter(django_filters.FilterSet):
             'muqavile__musteri__tel3': ['exact', 'icontains'],
             'muqavile__musteri__tel4': ['exact', 'icontains'],
 
-            'servis_tarix': ['exact', 'gte', 'lte'],
+            # 'servis_tarix': ['exact', 'gte', 'lte'],
             'yerine_yetirildi': ['exact'],
             'operator_tesdiq': ['exact'],
 
         }
 
 class ServisOdemeFilter(django_filters.FilterSet):
-    pass
+    servis__muqavile__muqavile_tarixi = django_filters.DateFilter(
+        field_name='servis__muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
+    servis__muqavile__muqavile_tarixi__gte = django_filters.DateFilter(
+        field_name='servis__muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    servis__muqavile__muqavile_tarixi__lte = django_filters.DateFilter(
+        field_name='servis__muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
+    servis__servis_tarix = django_filters.DateFilter(
+        field_name='servis__servis_tarix', input_formats=["%d-%m-%Y"])
+    servis__servis_tarix__gte = django_filters.DateFilter(
+        field_name='servis__servis_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    servis__servis_tarix__lte = django_filters.DateFilter(
+        field_name='servis__servis_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
+    odeme_tarix = django_filters.DateFilter(
+        field_name='odeme_tarix', input_formats=["%d-%m-%Y"])
+    odeme_tarix__gte = django_filters.DateFilter(
+        field_name='odeme_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    odeme_tarix__lte = django_filters.DateFilter(
+        field_name='odeme_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = ServisOdeme
         fields = {
@@ -70,7 +103,7 @@ class ServisOdemeFilter(django_filters.FilterSet):
             'servis__muqavile__kreditor__kreditor__asa': ['exact'],
             'servis__muqavile__odenis_uslubu': ['exact'],
             'servis__muqavile__muqavile_status': ['exact'],
-            'servis__muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
+            # 'servis__muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
             'servis__muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
             'servis__muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
             'servis__muqavile__musteri__asa': ['exact', 'icontains'],
@@ -80,10 +113,9 @@ class ServisOdemeFilter(django_filters.FilterSet):
             'servis__muqavile__musteri__tel3': ['exact', 'icontains'],
             'servis__muqavile__musteri__tel4': ['exact', 'icontains'],
 
-            'servis__servis_tarix': ['exact', 'gte', 'lte'],
+            # 'servis__servis_tarix': ['exact', 'gte', 'lte'],
             'servis__yerine_yetirildi': ['exact'],
             'servis__operator_tesdiq': ['exact'],
 
-           
-            'odeme_tarix': ['exact', 'gte', 'lte'],
+            # 'odeme_tarix': ['exact', 'gte', 'lte'],
         }

@@ -23,6 +23,13 @@ class StokFilter(django_filters.FilterSet):
         }
 
 class EmeliyyatFilter(django_filters.FilterSet):
+    emeliyyat_tarixi = django_filters.DateFilter(
+        field_name='emeliyyat_tarixi', input_formats=["%d-%m-%Y"])
+    emeliyyat_tarixi__gte = django_filters.DateFilter(
+        field_name='emeliyyat_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    emeliyyat_tarixi__lte = django_filters.DateFilter(
+        field_name='emeliyyat_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = Emeliyyat
         fields = {
@@ -36,7 +43,7 @@ class EmeliyyatFilter(django_filters.FilterSet):
 
             'qeyd': ['exact', 'icontains'],
 
-            'emeliyyat_tarixi': ['exact', 'gte', 'lte'],
+            # 'emeliyyat_tarixi': ['exact', 'gte', 'lte'],
         }
 
 class AnbarFilter(django_filters.FilterSet):

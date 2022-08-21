@@ -10,6 +10,10 @@ from income_expense.models import (
 )
 
 class HoldingKassaMedaxilFilter(django_filters.FilterSet):
+    medaxil_tarixi = django_filters.DateFilter(field_name='medaxil_tarixi', input_formats=["%d-%m-%Y"])
+    medaxil_tarixi__gte = django_filters.DateFilter(field_name='medaxil_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    medaxil_tarixi__lte = django_filters.DateFilter(field_name='medaxil_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+   
     class Meta:
         model = HoldingKassaMedaxil
         fields = {
@@ -21,11 +25,15 @@ class HoldingKassaMedaxilFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
             'qeyd': ['exact', 'icontains'],
             
-            'medaxil_tarixi': ['exact', 'gte', 'lte'],
+            # 'medaxil_tarixi': ['exact', 'gte', 'lte'],
 
         }
 
 class HoldingKassaMexaricFilter(django_filters.FilterSet):
+    mexaric_tarixi = django_filters.DateFilter(field_name='mexaric_tarixi', input_formats=["%d-%m-%Y"])
+    mexaric_tarixi__gte = django_filters.DateFilter(field_name='mexaric_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    mexaric_tarixi__lte = django_filters.DateFilter(field_name='mexaric_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+   
     class Meta:
         model = HoldingKassaMexaric
         fields = {
@@ -37,10 +45,14 @@ class HoldingKassaMexaricFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
             'qeyd': ['exact', 'icontains'],
             
-            'mexaric_tarixi': ['exact', 'gte', 'lte'],
+            # 'mexaric_tarixi': ['exact', 'gte', 'lte'],
         }
 
 class ShirketKassaMedaxilFilter(django_filters.FilterSet):
+    medaxil_tarixi = django_filters.DateFilter(field_name='medaxil_tarixi', input_formats=["%d-%m-%Y"])
+    medaxil_tarixi__gte = django_filters.DateFilter(field_name='medaxil_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    medaxil_tarixi__lte = django_filters.DateFilter(field_name='medaxil_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+   
     class Meta:
         model = ShirketKassaMedaxil
         fields = {
@@ -52,11 +64,15 @@ class ShirketKassaMedaxilFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
             'qeyd': ['exact', 'icontains'],
             
-            'medaxil_tarixi': ['exact', 'gte', 'lte'],
+            # 'medaxil_tarixi': ['exact', 'gte', 'lte'],
 
         }
 
 class ShirketKassaMexaricFilter(django_filters.FilterSet):
+    mexaric_tarixi = django_filters.DateFilter(field_name='mexaric_tarixi', input_formats=["%d-%m-%Y"])
+    mexaric_tarixi__gte = django_filters.DateFilter(field_name='mexaric_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    mexaric_tarixi__lte = django_filters.DateFilter(field_name='mexaric_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+   
     class Meta:
         model = ShirketKassaMexaric
         fields = {
@@ -68,10 +84,14 @@ class ShirketKassaMexaricFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
             'qeyd': ['exact', 'icontains'],
             
-            'mexaric_tarixi': ['exact', 'gte', 'lte'],
+            # 'mexaric_tarixi': ['exact', 'gte', 'lte'],
         }
 
 class OfisKassaMedaxilFilter(django_filters.FilterSet):
+    medaxil_tarixi = django_filters.DateFilter(field_name='medaxil_tarixi', input_formats=["%d-%m-%Y"])
+    medaxil_tarixi__gte = django_filters.DateFilter(field_name='medaxil_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    medaxil_tarixi__lte = django_filters.DateFilter(field_name='medaxil_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+   
     class Meta:
         model = OfisKassaMedaxil
         fields = {
@@ -83,11 +103,15 @@ class OfisKassaMedaxilFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
             'qeyd': ['exact', 'icontains'],
             
-            'medaxil_tarixi': ['exact', 'gte', 'lte'],
+            # 'medaxil_tarixi': ['exact', 'gte', 'lte'],
 
         }
 
 class OfisKassaMexaricFilter(django_filters.FilterSet):
+    mexaric_tarixi = django_filters.DateFilter(field_name='mexaric_tarixi', input_formats=["%d-%m-%Y"])
+    mexaric_tarixi__gte = django_filters.DateFilter(field_name='mexaric_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    mexaric_tarixi__lte = django_filters.DateFilter(field_name='mexaric_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+   
     class Meta:
         model = OfisKassaMexaric
         fields = {
@@ -99,5 +123,5 @@ class OfisKassaMexaricFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
             'qeyd': ['exact', 'icontains'],
             
-            'mexaric_tarixi': ['exact', 'gte', 'lte'],
+            # 'mexaric_tarixi': ['exact', 'gte', 'lte'],
         }

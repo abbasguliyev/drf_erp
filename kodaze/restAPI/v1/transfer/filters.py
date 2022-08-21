@@ -8,6 +8,13 @@ from transfer.models import (
 )
 
 class HoldingdenShirketlereTransferFilter(django_filters.FilterSet):
+    transfer_tarixi = django_filters.DateFilter(
+        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__gte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__lte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = HoldingdenShirketlereTransfer
         fields = {
@@ -21,11 +28,18 @@ class HoldingdenShirketlereTransferFilter(django_filters.FilterSet):
             'transfer_meblegi': ['exact', 'gte', 'lte'],
             'transfer_qeydi': ['exact', 'icontains'],
             
-            'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
         }
 
 
 class ShirketdenHoldingeTransferFilter(django_filters.FilterSet):
+    transfer_tarixi = django_filters.DateFilter(
+        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__gte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__lte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = ShirketdenHoldingeTransfer
         fields = {
@@ -39,10 +53,17 @@ class ShirketdenHoldingeTransferFilter(django_filters.FilterSet):
             'transfer_meblegi': ['exact', 'gte', 'lte'],
             'transfer_qeydi': ['exact', 'icontains'],
             
-            'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
         }
 
 class ShirketdenOfislereTransferFilter(django_filters.FilterSet):
+    transfer_tarixi = django_filters.DateFilter(
+        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__gte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__lte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = ShirketdenOfislereTransfer
         fields = {
@@ -56,10 +77,17 @@ class ShirketdenOfislereTransferFilter(django_filters.FilterSet):
             'transfer_meblegi': ['exact', 'gte', 'lte'],
             'transfer_qeydi': ['exact', 'icontains'],
             
-            'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
         }
 
 class OfisdenShirketeTransferFilter(django_filters.FilterSet):
+    transfer_tarixi = django_filters.DateFilter(
+        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__gte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_tarixi__lte = django_filters.DateFilter(
+        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = OfisdenShirketeTransfer
         fields = {
@@ -73,5 +101,5 @@ class OfisdenShirketeTransferFilter(django_filters.FilterSet):
             'transfer_meblegi': ['exact', 'gte', 'lte'],
             'transfer_qeydi': ['exact', 'icontains'],
             
-            'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
         }

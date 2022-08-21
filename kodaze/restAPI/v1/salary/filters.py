@@ -6,15 +6,23 @@ from salary.models import (
     Kesinti,
     Bonus,
     MaasGoruntuleme,
-    MaasOde, 
-    VanLeaderPrim, 
-    DealerPrim, 
+    MaasOde,
+    VanLeaderPrim,
+    DealerPrim,
     OfficeLeaderPrim,
     CanvasserPrim,
     VanLeaderPrimNew
 )
 
+
 class AvansFilter(django_filters.FilterSet):
+    avans_tarixi = django_filters.DateFilter(
+        field_name='avans_tarixi', input_formats=["%d-%m-%Y"])
+    avans_tarixi__gte = django_filters.DateFilter(
+        field_name='avans_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    avans_tarixi__lte = django_filters.DateFilter(
+        field_name='avans_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = Avans
         fields = {
@@ -26,10 +34,18 @@ class AvansFilter(django_filters.FilterSet):
             'yarim_ay_emek_haqqi': ['exact', 'gte', 'lte'],
 
             'qeyd': ['exact', 'icontains'],
-            'avans_tarixi': ['exact', 'gte', 'lte'],
+            # 'avans_tarixi': ['exact', 'gte', 'lte'],
         }
 
+
 class KesintiFilter(django_filters.FilterSet):
+    kesinti_tarixi = django_filters.DateFilter(
+        field_name='kesinti_tarixi', input_formats=["%d-%m-%Y"])
+    kesinti_tarixi__gte = django_filters.DateFilter(
+        field_name='kesinti_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    kesinti_tarixi__lte = django_filters.DateFilter(
+        field_name='kesinti_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = Kesinti
         fields = {
@@ -40,10 +56,18 @@ class KesintiFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
 
             'qeyd': ['exact', 'icontains'],
-            'kesinti_tarixi': ['exact', 'gte', 'lte'],
+            # 'kesinti_tarixi': ['exact', 'gte', 'lte'],
         }
 
+
 class BonusFilter(django_filters.FilterSet):
+    bonus_tarixi = django_filters.DateFilter(
+        field_name='bonus_tarixi', input_formats=["%d-%m-%Y"])
+    bonus_tarixi__gte = django_filters.DateFilter(
+        field_name='bonus_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    bonus_tarixi__lte = django_filters.DateFilter(
+        field_name='bonus_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = Bonus
         fields = {
@@ -54,10 +78,18 @@ class BonusFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
 
             'qeyd': ['exact', 'icontains'],
-            'bonus_tarixi': ['exact', 'gte', 'lte'],
+            # 'bonus_tarixi': ['exact', 'gte', 'lte'],
         }
 
+
 class MaasGoruntulemeFilter(django_filters.FilterSet):
+    tarix = django_filters.DateFilter(
+        field_name='tarix', input_formats=["%d-%m-%Y"])
+    tarix__gte = django_filters.DateFilter(
+        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    tarix__lte = django_filters.DateFilter(
+        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = MaasGoruntuleme
         fields = {
@@ -69,15 +101,15 @@ class MaasGoruntulemeFilter(django_filters.FilterSet):
             'isci__ofis': ['exact'],
             'isci__ofis__id': ['exact'],
             'isci__ofis__ofis_adi': ['exact', 'icontains'],
-            
+
             'isci__shirket': ['exact'],
             'isci__shirket__id': ['exact'],
             'isci__shirket__shirket_adi': ['exact', 'icontains'],
-            
+
             'isci__vezife': ['exact'],
             'isci__vezife__id': ['exact'],
             'isci__vezife__vezife_adi': ['exact', 'icontains'],
-            
+
             'isci__isci_status__status_adi': ['exact', 'icontains'],
 
             'isci__komanda': ['exact'],
@@ -90,10 +122,18 @@ class MaasGoruntulemeFilter(django_filters.FilterSet):
             'satis_meblegi': ['exact', 'gte', 'lte'],
             'yekun_maas': ['exact', 'gte', 'lte'],
 
-            'tarix': ['exact', 'gte', 'lte', 'month', 'year'],
+            # 'tarix': ['exact', 'gte', 'lte', 'month', 'year'],
         }
 
+
 class MaasOdeFilter(django_filters.FilterSet):
+    odeme_tarixi = django_filters.DateFilter(
+        field_name='odeme_tarixi', input_formats=["%d-%m-%Y"])
+    odeme_tarixi__gte = django_filters.DateFilter(
+        field_name='odeme_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    odeme_tarixi__lte = django_filters.DateFilter(
+        field_name='odeme_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = MaasOde
         fields = {
@@ -105,8 +145,9 @@ class MaasOdeFilter(django_filters.FilterSet):
             'mebleg': ['exact', 'gte', 'lte'],
 
             'qeyd': ['exact', 'icontains'],
-            'odeme_tarixi': ['exact', 'gte', 'lte'],
+            # 'odeme_tarixi': ['exact', 'gte', 'lte'],
         }
+
 
 class VanLeaderPrimFilter(django_filters.FilterSet):
     class Meta:
@@ -125,6 +166,7 @@ class VanLeaderPrimFilter(django_filters.FilterSet):
             'komandaya_gore_prim': ['exact', 'gte', 'lte'],
             'fix_maas': ['exact', 'gte', 'lte'],
         }
+
 
 class VanLeaderPrimNewFilter(django_filters.FilterSet):
     class Meta:
@@ -145,6 +187,7 @@ class VanLeaderPrimNewFilter(django_filters.FilterSet):
             'mehsul__qiymet': ['exact', 'gte', 'lte'],
         }
 
+
 class DealerPrimFilter(django_filters.FilterSet):
     class Meta:
         model = DealerPrim
@@ -162,6 +205,7 @@ class DealerPrimFilter(django_filters.FilterSet):
             'komandaya_gore_prim': ['exact', 'gte', 'lte'],
             'fix_maas': ['exact', 'gte', 'lte'],
         }
+
 
 class DealerPrimNewFilter(django_filters.FilterSet):
     class Meta:

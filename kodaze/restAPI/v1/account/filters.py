@@ -30,6 +30,10 @@ class GroupFilter(django_filters.FilterSet):
         }
 
 class UserFilter(django_filters.FilterSet):
+    ishe_baslama_tarixi = django_filters.DateFilter(field_name='ishe_baslama_tarixi', input_formats=["%d-%m-%Y"])
+    ishe_baslama_tarixi__gte = django_filters.DateFilter(field_name='ishe_baslama_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    ishe_baslama_tarixi__lte = django_filters.DateFilter(field_name='ishe_baslama_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = User
         fields = {
@@ -41,7 +45,7 @@ class UserFilter(django_filters.FilterSet):
             'shirket__shirket_adi': ['exact', 'icontains'],
             'ofis__ofis_adi': ['exact', 'icontains'],
             'shobe__shobe_adi': ['exact', 'icontains'],
-            'ishe_baslama_tarixi': ['exact', 'gte', 'lte'],
+            # 'ishe_baslama_tarixi': ['exact', 'gte', 'lte'],
             'is_active': ['exact'],
             'isci_status__status_adi': ['exact', 'icontains'],
         }
@@ -76,6 +80,9 @@ class MusteriFilter(django_filters.FilterSet):
 
 class MusteriQeydlerFilter(django_filters.FilterSet):
     tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
+    tarix__gte = django_filters.DateFilter(field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    tarix__lte = django_filters.DateFilter(field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = MusteriQeydler
         fields = {
@@ -87,5 +94,5 @@ class MusteriQeydlerFilter(django_filters.FilterSet):
             'musteri__bolge__bolge_adi': ['exact', 'icontains'],
             'musteri__bolge': ['exact'],
             'qeyd': ['exact', 'icontains'],
-            'tarix': ['exact', 'gte', 'lte'],
+            # 'tarix': ['exact', 'gte', 'lte'],
         }

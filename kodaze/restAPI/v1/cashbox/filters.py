@@ -39,6 +39,10 @@ class OfisKassaFilter(django_filters.FilterSet):
         }
 
 class PulAxiniFilter(django_filters.FilterSet):
+    tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
+    tarix__gte = django_filters.DateFilter(field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    tarix__lte = django_filters.DateFilter(field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
     class Meta:
         model = PulAxini
         fields = {
@@ -63,5 +67,5 @@ class PulAxiniFilter(django_filters.FilterSet):
 
             'emeliyyat_uslubu': ['exact', 'icontains'],
             
-            'tarix': ['exact', 'gte', 'lte'],
+            # 'tarix': ['exact', 'gte', 'lte'],
         }
