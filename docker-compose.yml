@@ -81,7 +81,7 @@ services:
       dockerfile: ./Dockerfile
     image: kodaze_worker
     restart: unless-stopped
-    command: celery -A core worker --beat --scheduler django --loglevel=info 
+    command: celery -A core worker --beat --scheduler django --loglevel=info --concurrency=8 -O fair -P prefork -n core
     env_file:
       - .env
     environment:
