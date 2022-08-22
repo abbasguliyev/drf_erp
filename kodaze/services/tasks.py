@@ -11,7 +11,6 @@ User = get_user_model()
 
 @shared_task(name='create_services_task')
 def create_services_task(id):
-    print(f"***************create_services_task task working******************")
     instance = Muqavile.objects.get(id=id)
     indi = instance.muqavile_tarixi
 

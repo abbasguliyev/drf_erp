@@ -44,7 +44,6 @@ def demo_create_task():
 
 @shared_task(name='create_services_task')
 def create_services_task(id):
-    print(f"***************create_services_task task working******************")
     instance = Muqavile.objects.get(id=id)
     indi = instance.muqavile_tarixi
 
@@ -190,7 +189,6 @@ def create_services_task(id):
 
 @shared_task(name='create_odeme_tarix_task')
 def create_odeme_tarix_task(id, created):
-    print(f"***************create_and_add_pdf_to_muqavile_kredit task working******************")
     instance = Muqavile.objects.get(id=id)
     kredit_muddeti = instance.kredit_muddeti
     mehsul_sayi = instance.mehsul_sayi
@@ -281,7 +279,6 @@ def create_odeme_tarix_task(id, created):
 
 @shared_task(name='demo_satis_sayi_task')
 def demo_satis_sayi_task(id):
-    print(f"***************demo_satis_sayi_task task working******************")
     instance = Muqavile.objects.get(id=id)
     dealer = instance.dealer
     canvesser = instance.canvesser
