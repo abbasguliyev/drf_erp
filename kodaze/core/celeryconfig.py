@@ -9,8 +9,8 @@ from celery.schedules import crontab
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
-# app = Celery('core', backend='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0', broker='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0')
-# app.conf.broker_url = 'redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0'
+app = Celery('core', backend='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0', broker='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0')
+app.conf.broker_url = 'redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0'
 
 # app = Celery('core', backend='redis://127.0.0.1:6379/0', broker='redis://127.0.0.1:6379/0')
 # app.conf.broker_url = 'redis://127.0.0.1:6379/0'
