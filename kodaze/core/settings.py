@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'services.apps.ServicesConfig',
     'backup_restore.apps.BackupRestoreConfig',
     'update.apps.UpdateConfig',
+    'task_manager.apps.TaskManagerConfig'
 ]
 
 

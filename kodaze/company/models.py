@@ -166,3 +166,6 @@ class AppLogo(models.Model):
             ("change_logo", "Logonu yeniləyə bilər"),
             ("delete_logo", "Logonu silə bilər")
         )
+
+class Tag(models.Model):
+    title = models.CharField(max_length=250)
