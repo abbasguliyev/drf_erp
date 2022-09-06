@@ -14,6 +14,7 @@ from restAPI.v1.product import views as product_views
 from restAPI.v1.income_expense import views as income_expense_views
 from restAPI.v1.backup_restore import views as backup_views
 from restAPI.v1.update import views as update_views
+from restAPI.v1.task_manager import views as task_views
 from restAPI.v1.statistika import statistika
 
 from rest_framework_simplejwt.views import token_refresh
@@ -346,6 +347,14 @@ urlpatterns = [
     # update views *****************************************
     path('update/', update_views.UpdateListCreateAPIView.as_view()),
     path('update/<int:pk>', update_views.UpdateDetailAPIView.as_view()),
+
+    # task manager views *****************************************
+    path('task-manager/', task_views.TaskManagerListCreateAPIView.as_view()),
+    path('task-manager/<int:pk>', task_views.TaskManagerDetailAPIView.as_view()),
+
+    # task request views *****************************************
+    path('task-request/', task_views.UserTaskRequestListCreateAPIView.as_view()),
+    path('task-request/<int:pk>', task_views.UserTaskRequestDetailAPIView.as_view()),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,7 +1,7 @@
+import django
 from django.db import models
 from django.contrib.auth import get_user_model
 User = get_user_model()
-
 
 class TaskManager(models.Model):
     TAPSIRIQ = 'tapşırıq'
@@ -20,15 +20,15 @@ class TaskManager(models.Model):
     ]
     title = models.CharField(max_length=250)
     description = models.TextField()
-    document = models.FileField()
-    date = models.DateTimeField()
+    document = models.FileField(null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)
     position = models.ForeignKey(
         "company.Vezifeler", on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     employee = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     type = models.CharField(
         max_length=50, choices=TYPE_CHOICES, default=None, null=True, blank=True)
-    tag = models.ManyToManyField('company.Tag', related_name="tasks")
     status = models.CharField(
         max_length=50, choices=STATUS_CHOICES, default=ICRA_EDILIR, blank=True)
 
@@ -44,3 +44,7 @@ class TaskManager(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+class UserTaskRequest(models.Model):
+    task = models.ForeignKey(TaskManager, on_delete=models.CASCADE, related_name="requests")
+    note = models.TextField()
