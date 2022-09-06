@@ -16,5 +16,6 @@ class TaskManagerFilter(django_filters.FilterSet):
             'employee__asa': ['exact', 'icontains'],
             'type': ['exact', 'icontains'],
             'status': ['exact', 'icontains'],
+            'requests': ['exact'],
         }
 
