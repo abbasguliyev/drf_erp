@@ -95,16 +95,16 @@ urlpatterns = [
     path('office-leader-prim/<int:pk>',
          salary_views.OfficeLeaderPrimDetailAPIView.as_view()),
 
-    path('vanleader-prim/', salary_views.VanLeaderPrimNewListCreateAPIView.as_view()),
+    path('vanleader-prim/', salary_views.GroupLeaderPrimNewListCreateAPIView.as_view()),
     path('vanleader-prim/<int:pk>',
-         salary_views.VanLeaderPrimNewDetailAPIView.as_view()),
+         salary_views.GroupLeaderPrimNewDetailAPIView.as_view()),
 
-    path('canvasser-prim/', salary_views.CanvasserPrimListCreateAPIView.as_view()),
+    path('canvasser-prim/', salary_views.Menecer2PrimListCreateAPIView.as_view()),
     path('canvasser-prim/<int:pk>',
-         salary_views.CanvasserPrimDetailAPIView.as_view()),
+         salary_views.Menecer2PrimDetailAPIView.as_view()),
 
-    path('dealer-prim/', salary_views.DealerPrimNewListCreateAPIView.as_view()),
-    path('dealer-prim/<int:pk>', salary_views.DealerPrimNewDetailAPIView.as_view()),
+    path('dealer-prim/', salary_views.Menecer1PrimNewListCreateAPIView.as_view()),
+    path('dealer-prim/<int:pk>', salary_views.Menecer1PrimNewDetailAPIView.as_view()),
 
     path('kreditor-prim/', salary_views.KreditorPrimListCreateAPIView.as_view()),
     path('kreditor-prim/<int:pk>', salary_views.KreditorPrimDetailAPIView.as_view()),

@@ -1,24 +1,24 @@
 from rest_framework import permissions
 from restAPI.v1.utils.permission_utils import PermissionUtil
        
-class VanLeaderPrimPermissions(permissions.IsAdminUser):
+class GroupLeaderPrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="vanleaderprim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="group_leaderprim", view=view)
         return perm_util.add_user_permission_to_list()
 
-class VanLeaderPrimNewPermissions(permissions.IsAdminUser):
+class GroupLeaderPrimNewPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="vanleaderprimnew", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="group_leaderprimnew", view=view)
         return perm_util.add_user_permission_to_list()
 
-class DealerPrimPermissions(permissions.IsAdminUser):
+class Menecer1PrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="dealerprim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="menecer1prim", view=view)
         return perm_util.add_user_permission_to_list()
 
-class DealerPrimNewPermissions(permissions.IsAdminUser):
+class Menecer1PrimNewPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="dealerprimnew", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="menecer1primnew", view=view)
         return perm_util.add_user_permission_to_list()
 
 class OfficeLeaderPrimPermissions(permissions.IsAdminUser):
@@ -26,9 +26,9 @@ class OfficeLeaderPrimPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="officeleaderprim", view=view)
         return perm_util.add_user_permission_to_list()
 
-class CanvasserPrimPermissions(permissions.IsAdminUser):
+class Menecer2PrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="canvasserprim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="menecer2prim", view=view)
         return perm_util.add_user_permission_to_list()
 
 class AvansPermissions(permissions.IsAdminUser):

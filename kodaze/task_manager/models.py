@@ -20,7 +20,6 @@ class TaskManager(models.Model):
     ]
     title = models.CharField(max_length=250)
     description = models.TextField()
-    document = models.FileField(upload_to="media/task-documents/%Y/%m/%d/", null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)
     position = models.ForeignKey(

@@ -12,16 +12,30 @@ class TaskManagerSerializer(serializers.ModelSerializer):
     position = VezifelerSerializer(read_only=True)
     employee = UserSerializer(read_only=True)
 
-    position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source='position', write_only=True, required=False, allow_null=True
-    )
-    employee_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='employee', write_only=True, required=False, allow_null=True
-    )
+    # position_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Vezifeler.objects.all(), source='position', write_only=True, required=False, allow_null=True
+    # )
+    # employee_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=User.objects.all(), source='employee', write_only=True, required=False, allow_null=True
+    # )
+
+    users = serializers.CharField(write_only=True,required=False, allow_null=True)
+    positions = serializers.CharField(write_only=True,required=False, allow_null=True)
 
     class Meta:
         model = TaskManager
-        fields = "__all__"
+        fields = (
+            'title', 
+            'description', 
+            'created_date', 
+            'end_date', 
+            'position', 
+            'employee', 
+            'type',
+            'status',
+            'users',
+            'positions'
+        )
 
 
 class UserTaskRequestSerializer(serializers.ModelSerializer):

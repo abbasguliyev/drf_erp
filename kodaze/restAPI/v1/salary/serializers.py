@@ -6,17 +6,17 @@ from restAPI.v1.company.serializers import VezifelerSerializer
 
 from salary.models import (
     Avans,
-    DealerPrimNew,
+    Menecer1PrimNew,
     Kesinti,
     Bonus,
     MaasGoruntuleme,
     MaasOde, 
-    VanLeaderPrim, 
-    DealerPrim, 
+    GroupLeaderPrim, 
+    Menecer1Prim, 
     OfficeLeaderPrim,
-    CanvasserPrim,
+    Menecer2Prim,
     KreditorPrim,
-    VanLeaderPrimNew
+    GroupLeaderPrimNew
 )
 
 from restAPI.v1.account.serializers import IsciStatusSerializer, UserSerializer
@@ -86,7 +86,7 @@ class OfficeLeaderPrimSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class VanLeaderPrimSerializer(serializers.ModelSerializer):
+class GroupLeaderPrimSerializer(serializers.ModelSerializer):
     prim_status = IsciStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
@@ -98,10 +98,10 @@ class VanLeaderPrimSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = VanLeaderPrim
+        model = GroupLeaderPrim
         fields = "__all__"
 
-class VanLeaderPrimNewSerializer(serializers.ModelSerializer):
+class GroupLeaderPrimNewSerializer(serializers.ModelSerializer):
     prim_status = IsciStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
@@ -113,50 +113,7 @@ class VanLeaderPrimNewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = VanLeaderPrimNew
-        fields = "__all__"
-
-    def create(self, validated_data):
-        prim_status = validated_data.get('prim_status')
-        vezife = validated_data.get('vezife')
-        print(f"{prim_status=}")
-        try:
-            prim = VanLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
-            if len(prim)>0:
-                raise ValidationError
-            return super(VanLeaderPrimNewSerializer, self).create(validated_data)
-        except:
-            raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
-
-class DealerPrimSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
-    )
-
-    class Meta:
-        model = DealerPrim
-        fields = "__all__"
-
-class DealerPrimNewSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
-    )
-
-    class Meta:
-        model = DealerPrimNew
+        model = GroupLeaderPrimNew
         fields = "__all__"
 
     def create(self, validated_data):
@@ -164,15 +121,15 @@ class DealerPrimNewSerializer(serializers.ModelSerializer):
         vezife = validated_data.get('vezife')
         print(f"{prim_status=}")
         try:
-            prim = DealerPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
             print(f"{prim=}")
             if len(prim)>0:
                 raise ValidationError
-            return super(DealerPrimNewSerializer, self).create(validated_data)
+            return super(GroupLeaderPrimNewSerializer, self).create(validated_data)
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class CanvasserPrimSerializer(serializers.ModelSerializer):
+class Menecer1PrimSerializer(serializers.ModelSerializer):
     prim_status = IsciStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
@@ -184,7 +141,50 @@ class CanvasserPrimSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = CanvasserPrim
+        model = Menecer1Prim
+        fields = "__all__"
+
+class Menecer1PrimNewSerializer(serializers.ModelSerializer):
+    prim_status = IsciStatusSerializer(read_only=True)
+    prim_status_id = serializers.PrimaryKeyRelatedField(
+        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
+    )
+
+    vezife = VezifelerSerializer(read_only=True)
+    vezife_id = serializers.PrimaryKeyRelatedField(
+        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
+    )
+
+    class Meta:
+        model = Menecer1PrimNew
+        fields = "__all__"
+
+    def create(self, validated_data):
+        prim_status = validated_data.get('prim_status')
+        vezife = validated_data.get('vezife')
+        print(f"{prim_status=}")
+        try:
+            prim = Menecer1PrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            print(f"{prim=}")
+            if len(prim)>0:
+                raise ValidationError
+            return super(Menecer1PrimNewSerializer, self).create(validated_data)
+        except:
+            raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
+
+class Menecer2PrimSerializer(serializers.ModelSerializer):
+    prim_status = IsciStatusSerializer(read_only=True)
+    prim_status_id = serializers.PrimaryKeyRelatedField(
+        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
+    )
+
+    vezife = VezifelerSerializer(read_only=True)
+    vezife_id = serializers.PrimaryKeyRelatedField(
+        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
+    )
+
+    class Meta:
+        model = Menecer2Prim
         fields = "__all__"
     
     def create(self, validated_data):
@@ -192,11 +192,11 @@ class CanvasserPrimSerializer(serializers.ModelSerializer):
         vezife = validated_data.get('vezife')
         print(f"{prim_status=}")
         try:
-            prim = CanvasserPrim.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = Menecer2Prim.objects.filter(prim_status=prim_status, vezife=vezife)
             print(f"{prim=}")
             if len(prim)>0:
                 raise ValidationError
-            return super(CanvasserPrimSerializer, self).create(validated_data)
+            return super(Menecer2PrimSerializer, self).create(validated_data)
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 

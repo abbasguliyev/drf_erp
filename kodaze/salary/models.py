@@ -25,7 +25,7 @@ class AbstractPrim(models.Model):
     class Meta:
         abstract = True
 
-class VanLeaderPrim(AbstractPrim):
+class GroupLeaderPrim(AbstractPrim):
     komandaya_gore_prim = models.FloatField(default=0, blank=True)
     fix_maas = models.FloatField(default=0, blank=True)
 
@@ -36,7 +36,7 @@ class VanLeaderPrim(AbstractPrim):
     def __str__(self) -> str:
         return f"{self.prim_status} - {self.komandaya_gore_prim} - {self.odenis_uslubu} - {self.vezife.vezife_adi}"
 
-class VanLeaderPrimNew(AbstractPrim):
+class GroupLeaderPrimNew(AbstractPrim):
     odenis_uslubu = None
     negd = models.FloatField(default=0, blank=True)
     kredit_4_12 = models.FloatField(default=0, blank=True)
@@ -47,16 +47,16 @@ class VanLeaderPrimNew(AbstractPrim):
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_vanleaderprimnew", "Mövcud vanleader primlərə baxa bilər"),
-            ("add_vanleaderprimnew", "Vanleader prim əlavə edə bilər"),
-            ("change_vanleaderprimnew", "Vanleader prim məlumatlarını yeniləyə bilər"),
-            ("delete_vanleaderprimnew", "Vanleader prim silə bilər")
+            ("view_group_leaderprimnew", "Mövcud group_leader primlərə baxa bilər"),
+            ("add_group_leaderprimnew", "GroupLeader prim əlavə edə bilər"),
+            ("change_group_leaderprimnew", "GroupLeader prim məlumatlarını yeniləyə bilər"),
+            ("delete_group_leaderprimnew", "GroupLeader prim silə bilər")
         )
 
     def __str__(self) -> str:
         return f"{self.prim_status} - {self.vezife.vezife_adi}"
 
-class DealerPrim(AbstractPrim):
+class Menecer1Prim(AbstractPrim):
     komandaya_gore_prim = models.FloatField(default=0, blank=True)
     fix_maas = models.FloatField(default=0, blank=True)
 
@@ -67,7 +67,7 @@ class DealerPrim(AbstractPrim):
     def __str__(self) -> str:
         return f"{self.prim_status} - {self.komandaya_gore_prim} - {self.odenis_uslubu} - {self.vezife.vezife_adi}"
 
-class DealerPrimNew(AbstractPrim):
+class Menecer1PrimNew(AbstractPrim):
     odenis_uslubu = None
     negd = models.FloatField(default=0, blank=True)
     kredit_4_12 = models.FloatField(default=0, blank=True)
@@ -78,10 +78,10 @@ class DealerPrimNew(AbstractPrim):
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_dealerprimnew", "Mövcud dealer primlərə baxa bilər"),
-            ("add_dealerprimnew", "Dealer prim əlavə edə bilər"),
-            ("change_dealerprimnew", "Dealer prim məlumatlarını yeniləyə bilər"),
-            ("delete_dealerprimnew", "Dealer prim silə bilər")
+            ("view_menecer1primnew", "Mövcud menecer1 primlərə baxa bilər"),
+            ("add_menecer1primnew", "Menecer1 prim əlavə edə bilər"),
+            ("change_menecer1primnew", "Menecer1 prim məlumatlarını yeniləyə bilər"),
+            ("delete_menecer1primnew", "Menecer1 prim silə bilər")
         )
 
     def __str__(self) -> str:
@@ -105,7 +105,7 @@ class OfficeLeaderPrim(AbstractPrim):
     def __str__(self) -> str:
         return f"{self.prim_status} - {self.ofise_gore_prim} - {self.vezife.vezife_adi}"
 
-class CanvasserPrim(AbstractPrim):
+class Menecer2Prim(AbstractPrim):
     odenis_uslubu = None
     satis0 = models.FloatField(default=0, blank=True)
     satis1_8 = models.FloatField(default=0, blank=True)
@@ -120,10 +120,10 @@ class CanvasserPrim(AbstractPrim):
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_canvasserprim", "Mövcud canvasser primlərə baxa bilər"),
-            ("add_canvasserprim", "Canvasser prim əlavə edə bilər"),
-            ("change_canvasserprim", "Canvasser prim məlumatlarını yeniləyə bilər"),
-            ("delete_canvasserprim", "Canvasser prim silə bilər")
+            ("view_menecer2prim", "Mövcud menecer2 primlərə baxa bilər"),
+            ("add_menecer2prim", "Menecer2 prim əlavə edə bilər"),
+            ("change_menecer2prim", "Menecer2 prim məlumatlarını yeniləyə bilər"),
+            ("delete_menecer2prim", "Menecer2 prim silə bilər")
         )
 
     def __str__(self) -> str:

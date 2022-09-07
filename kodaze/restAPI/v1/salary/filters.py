@@ -2,16 +2,16 @@ import django_filters
 
 from salary.models import (
     Avans,
-    DealerPrimNew,
+    Menecer1PrimNew,
     Kesinti,
     Bonus,
     MaasGoruntuleme,
     MaasOde,
-    VanLeaderPrim,
-    DealerPrim,
+    GroupLeaderPrim,
+    Menecer1Prim,
     OfficeLeaderPrim,
-    CanvasserPrim,
-    VanLeaderPrimNew
+    Menecer2Prim,
+    GroupLeaderPrimNew
 )
 
 
@@ -149,9 +149,9 @@ class MaasOdeFilter(django_filters.FilterSet):
         }
 
 
-class VanLeaderPrimFilter(django_filters.FilterSet):
+class GroupLeaderPrimFilter(django_filters.FilterSet):
     class Meta:
-        model = VanLeaderPrim
+        model = GroupLeaderPrim
         fields = {
             'prim_status__status_adi': ['exact', 'icontains'],
             'satis_meblegi': ['exact', 'icontains'],
@@ -168,9 +168,9 @@ class VanLeaderPrimFilter(django_filters.FilterSet):
         }
 
 
-class VanLeaderPrimNewFilter(django_filters.FilterSet):
+class GroupLeaderPrimNewFilter(django_filters.FilterSet):
     class Meta:
-        model = VanLeaderPrimNew
+        model = GroupLeaderPrimNew
         fields = {
             'prim_status__status_adi': ['exact', 'icontains'],
             'satis_meblegi': ['exact', 'icontains'],
@@ -188,9 +188,9 @@ class VanLeaderPrimNewFilter(django_filters.FilterSet):
         }
 
 
-class DealerPrimFilter(django_filters.FilterSet):
+class Menecer1PrimFilter(django_filters.FilterSet):
     class Meta:
-        model = DealerPrim
+        model = Menecer1Prim
         fields = {
             'prim_status__status_adi': ['exact', 'icontains'],
             'satis_meblegi': ['exact', 'icontains'],
@@ -207,9 +207,9 @@ class DealerPrimFilter(django_filters.FilterSet):
         }
 
 
-class DealerPrimNewFilter(django_filters.FilterSet):
+class Menecer1PrimNewFilter(django_filters.FilterSet):
     class Meta:
-        model = DealerPrimNew
+        model = Menecer1PrimNew
         fields = {
             'prim_status__status_adi': ['exact', 'icontains'],
             'satis_meblegi': ['exact', 'icontains'],
@@ -245,9 +245,9 @@ class OfficeLeaderPrimFilter(django_filters.FilterSet):
         }
 
 
-class CanvasserPrimFilter(django_filters.FilterSet):
+class Menecer2PrimFilter(django_filters.FilterSet):
     class Meta:
-        model = CanvasserPrim
+        model = Menecer2Prim
         fields = {
             'prim_status__status_adi': ['exact', 'icontains'],
             'satis_meblegi': ['exact', 'icontains'],

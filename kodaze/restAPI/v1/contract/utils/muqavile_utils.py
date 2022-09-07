@@ -7,12 +7,12 @@ from company.models import Ofis, Shobe, Vezifeler
 from cashbox.models import OfisKassa
 from income_expense.models import OfisKassaMedaxil, OfisKassaMexaric
 from salary.models import (
-    DealerPrim, 
-    DealerPrimNew, 
+    Menecer1Prim, 
+    Menecer1PrimNew, 
     MaasGoruntuleme, 
     OfficeLeaderPrim, 
-    VanLeaderPrim, 
-    VanLeaderPrimNew
+    GroupLeaderPrim, 
+    GroupLeaderPrimNew
 )
 from contract.models import OdemeTarix
 from warehouse.models import (
@@ -117,14 +117,14 @@ def stok_mehsul_elave(stok, mehsul_sayi):
     return stok.say
 
 
-def k_medaxil(company_kassa, daxil_edilecek_mebleg, vanleader, qeyd):
+def k_medaxil(company_kassa, daxil_edilecek_mebleg, group_leader, qeyd):
     yekun_balans = float(daxil_edilecek_mebleg) + float(company_kassa.balans)
     company_kassa.balans = yekun_balans
     company_kassa.save()
     tarix = datetime.date.today()
 
     medaxil = OfisKassaMedaxil.objects.create(
-        medaxil_eden=vanleader,
+        medaxil_eden=group_leader,
         ofis_kassa=company_kassa,
         mebleg=daxil_edilecek_mebleg,
         medaxil_tarixi=tarix,
@@ -134,14 +134,14 @@ def k_medaxil(company_kassa, daxil_edilecek_mebleg, vanleader, qeyd):
     return medaxil
 
 
-def k_mexaric(company_kassa, daxil_edilecek_mebleg, vanleader, qeyd):
+def k_mexaric(company_kassa, daxil_edilecek_mebleg, group_leader, qeyd):
     yekun_balans = float(company_kassa.balans) - float(daxil_edilecek_mebleg)
     company_kassa.balans = yekun_balans
     company_kassa.save()
     tarix = datetime.date.today()
 
     mexaric = OfisKassaMexaric.objects.create(
-        mexaric_eden=vanleader,
+        mexaric_eden=group_leader,
         ofis_kassa=company_kassa,
         mebleg=daxil_edilecek_mebleg,
         mexaric_tarixi=tarix,
@@ -252,39 +252,39 @@ def muqavile_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     user = None
 
-    vanleader_id = request.data.get("vanleader_id")
+    group_leader_id = request.data.get("group_leader_id")
 
-    if (vanleader_id == None):
+    if (group_leader_id == None):
         user = self.request.user
     else:
-        user = get_object_or_404(User, pk=vanleader_id)
+        user = get_object_or_404(User, pk=group_leader_id)
 
-    dealer_id = request.data.get("dealer_id")
-    canvesser_id = request.data.get("canvesser_id")
+    menecer1_id = request.data.get("menecer1_id")
+    menecer2_id = request.data.get("menecer2_id")
 
     musteri_id = request.data.get("musteri_id")
     if musteri_id == None:
         return Response({"detail": "Müştəri qeyd olunmayıb"}, status=status.HTTP_400_BAD_REQUEST)
     musteri = get_object_or_404(Musteri, pk=musteri_id)
 
-    dealer = None
-    canvesser = None
+    menecer1 = None
+    menecer2 = None
 
-    if (dealer_id is not None):
+    if (menecer1_id is not None):
         try:
-            dealer = get_object_or_404(User, pk=dealer_id)
-            if (canvesser_id == None):
-                canvesser = dealer
+            menecer1 = get_object_or_404(User, pk=menecer1_id)
+            if (menecer2_id == None):
+                menecer2 = menecer1
         except:
-            return Response({"detail": "Dealer tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Menecer1 tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if (canvesser_id is not None):
+    if (menecer2_id is not None):
         try:
-            canvesser = get_object_or_404(User, pk=canvesser_id)
-            if (dealer_id == None):
-                dealer = canvesser
+            menecer2 = get_object_or_404(User, pk=menecer2_id)
+            if (menecer1_id == None):
+                menecer1 = menecer2
         except:
-            return Response({"detail": "Canvesser tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Menecer2 tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
 
     my_time = datetime.datetime.min.time()
 
@@ -315,20 +315,6 @@ def muqavile_create(self, request, *args, **kwargs):
             ilkin_odenis_qaliq_tarixi, "%d-%m-%Y")
         ilkin_odenis_qaliq_tarixi_san = datetime.datetime.timestamp(
             ilkin_odenis_qaliq_tarixi_date)
-
-    if (request.data.get("negd_odenis_1_tarix") is not None):
-        negd_odenis_1_tarix = request.data.get("negd_odenis_1_tarix")
-        negd_odenis_1_tarix_date = datetime.datetime.strptime(
-            negd_odenis_1_tarix, "%d-%m-%Y")
-        negd_odenis_1_tarix_san = datetime.datetime.timestamp(
-            negd_odenis_1_tarix_date)
-
-    if (request.data.get("negd_odenis_2_tarix") is not None):
-        negd_odenis_2_tarix = request.data.get("negd_odenis_2_tarix")
-        negd_odenis_2_tarix_date = datetime.datetime.strptime(
-            negd_odenis_2_tarix, "%d-%m-%Y")
-        negd_odenis_2_tarix_san = datetime.datetime.timestamp(
-            negd_odenis_2_tarix_date)
 
     mehsul_id_str = request.data.get("mehsul_id")
     if (mehsul_id_str == None):
@@ -443,7 +429,7 @@ def muqavile_create(self, request, *args, **kwargs):
 
                         qaliq_borc = float(muqavile_umumi_mebleg)
 
-                        serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
+                        serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket, ofis=ofis,
                                         shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                         # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                         #                 status=status.HTTP_201_CREATED)
@@ -462,13 +448,13 @@ def muqavile_create(self, request, *args, **kwargs):
                             ilkin_balans = holding_umumi_balans_hesabla()
                             print(f"{ilkin_balans=}")
                             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-                            qeyd = f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, tam ilkin ödəniş"
+                            qeyd = f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, tam ilkin ödəniş"
                             k_medaxil(ofis_kassa, float(
                                 ilkin_odenis), user, qeyd)
 
                             qaliq_borc = float(
                                 muqavile_umumi_mebleg) - float(ilkin_odenis)
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
+                            serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_status="BİTMİŞ", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc,)
                             sonraki_balans = holding_umumi_balans_hesabla()
@@ -477,7 +463,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             pul_axini_create(
                                 ofis=ofis,
                                 shirket=ofis.shirket,
-                                aciqlama=f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, tam ilkin ödəniş",
+                                aciqlama=f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, tam ilkin ödəniş",
                                 ilkin_balans=ilkin_balans,
                                 sonraki_balans=sonraki_balans,
                                 ofis_ilkin_balans=ofis_ilkin_balans,
@@ -498,7 +484,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             qaliq_borc = float(
                                 muqavile_umumi_mebleg) - float(ilkin_odenis)
 
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
+                            serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_status="DAVAM EDƏN", qaliq_borc=qaliq_borc,
                                             muqavile_umumi_mebleg=muqavile_umumi_mebleg)
@@ -539,13 +525,13 @@ def muqavile_create(self, request, *args, **kwargs):
                             print(f"{ilkin_balans=}")
                             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
-                            qeyd = f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, 2-dəfəyə ilkin ödənişin birincisi."
+                            qeyd = f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, 2-dəfəyə ilkin ödənişin birincisi."
                             k_medaxil(ofis_kassa, float(
                                 ilkin_odenis), user, qeyd)
 
                             qaliq_borc = float(muqavile_umumi_mebleg) - float(ilkin_odenis)
 
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
+                            serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="BİTMİŞ",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
@@ -556,7 +542,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             pul_axini_create(
                                 ofis=ofis,
                                 shirket=ofis.shirket,
-                                aciqlama=f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, 2-dəfəyə ilkin ödənişin birincisi.",
+                                aciqlama=f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, 2-dəfəyə ilkin ödənişin birincisi.",
                                 ilkin_balans=ilkin_balans,
                                 sonraki_balans=sonraki_balans,
                                 ofis_ilkin_balans=ofis_ilkin_balans,
@@ -599,7 +585,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             # qaliq_borc = float(muqavile_umumi_mebleg) - float(ilkin_odenis_qaliq) - float(ilkin_odenis)
                             qaliq_borc = float(muqavile_umumi_mebleg)
 
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
+                            serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="DAVAM EDƏN",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
@@ -617,7 +603,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             # qaliq_borc = float(muqavile_umumi_mebleg) - float(ilkin_odenis_qaliq) - float(ilkin_odenis)
                             qaliq_borc = float(muqavile_umumi_mebleg)
 
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
+                            serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="DAVAM EDƏN",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
@@ -636,7 +622,7 @@ def muqavile_create(self, request, *args, **kwargs):
                                         status=status.HTTP_400_BAD_REQUEST)
 
             # Negd odenis
-            elif (odenis_uslubu == "NƏĞD" and request.data.get("negd_odenis_1") == None and request.data.get("negd_odenis_2") == None):
+            elif (odenis_uslubu == "NƏĞD"):
                 if (kredit_muddeti is not None):
                     return Response({"detail": "Kredit müddəti ancaq status kredit olan müqavilələr üçündür"},
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -654,10 +640,10 @@ def muqavile_create(self, request, *args, **kwargs):
                 print(f"{ilkin_balans=}")
                 ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
-                qeyd = f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, ödəniş üslubu - {odenis_uslubu}"
+                qeyd = f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, ödəniş üslubu - {odenis_uslubu}"
                 k_medaxil(ofis_kassa, float(muqavile_umumi_mebleg), user, qeyd)
 
-                serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
+                serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket, ofis=ofis,
                                 muqavile_status="BİTMİŞ", shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg)
 
                 sonraki_balans = holding_umumi_balans_hesabla()
@@ -677,625 +663,11 @@ def muqavile_create(self, request, *args, **kwargs):
                 )
                 # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"}, status=status.HTTP_201_CREATED)
                 return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-
-            # 2 defeye negd odenis
-            elif (request.data.get("negd_odenis_1") is not None and request.data.get("negd_odenis_2") is not None):
-                if (float(request.data.get("negd_odenis_1")) < muqavile_umumi_mebleg):
-                    if (mehsul_sayi == None):
-                        mehsul_sayi = 1
-                    if (kredit_muddeti is not None):
-                        return Response({"detail": "Kredit müddəti ancaq status kredit olan müqavilələr üçündür"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-                    negd_odenis_1 = request.data.get("negd_odenis_1")
-                    negd_odenis_2 = request.data.get("negd_odenis_2")
-                    muqavile_umumi_mebleg = umumi_mebleg(
-                        mehsul.qiymet, int(mehsul_sayi))
-
-                    if (negd_odenis_1 == None or negd_odenis_2 == None or negd_odenis_1 == "0" or negd_odenis_2 == "0"):
-                        return Response(
-                            {"detail": "2 dəfəyə nəğd ödəniş statusunda hər 2 nəğd ödəniş qeyd olunmalıdır"},
-                            status=status.HTTP_400_BAD_REQUEST)
-                    elif float(negd_odenis_1) > muqavile_umumi_mebleg or float(negd_odenis_2) > muqavile_umumi_mebleg:
-                        return Response({"detail": "Daxil etdiyiniz məbləğ müqavilənin ümumi məbləğindən daha çoxdur"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-                    elif float(negd_odenis_1) + float(negd_odenis_2) == muqavile_umumi_mebleg:
-                        if ((indiki_tarix_san == negd_odenis_1_tarix_san) and (
-                                indiki_tarix_san < negd_odenis_2_tarix_san)):
-                            stok_mehsul_ciximi(stok, int(mehsul_sayi))
-
-                            ilkin_balans = holding_umumi_balans_hesabla()
-                            print(f"{ilkin_balans=}")
-                            ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-
-                            qeyd = f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {negd_odenis_1_tarix}, ödəniş üslubu - {odenis_uslubu}, 1-ci nəğd ödəniş"
-                            k_medaxil(ofis_kassa, float(
-                                negd_odenis_1), user, qeyd)
-
-                            qaliq_borc = float(
-                                muqavile_umumi_mebleg) - float(negd_odenis_1)
-
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, odenis_uslubu="İKİ DƏFƏYƏ NƏĞD",
-                                            negd_odenis_1_status="BİTMİŞ", negd_odenis_2_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
-                            sonraki_balans = holding_umumi_balans_hesabla()
-                            print(f"{sonraki_balans=}")
-                            ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
-                            pul_axini_create(
-                                ofis=ofis,
-                                shirket=ofis.shirket,
-                                aciqlama=qeyd,
-                                ilkin_balans=ilkin_balans,
-                                sonraki_balans=sonraki_balans,
-                                ofis_ilkin_balans=ofis_ilkin_balans,
-                                ofis_sonraki_balans=ofis_sonraki_balans,
-                                emeliyyat_eden=user,
-                                emeliyyat_uslubu="MƏDAXİL",
-                                miqdar=float(negd_odenis_1)
-                            )
-                            # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
-                            #                 status=status.HTTP_201_CREATED)
-                            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-
-                        elif ((indiki_tarix_san == negd_odenis_1_tarix_san) and (
-                                negd_odenis_1_tarix_san == negd_odenis_2_tarix_san)):
-                            return Response({"detail": "Ödənişlərin hər ikisi bu günki tarixə qeyd oluna bilməz"},
-                                            status=status.HTTP_400_BAD_REQUEST)
-
-                        elif (indiki_tarix_san == negd_odenis_2_tarix_san):
-                            return Response({"detail": "Qalıq nəğd ödəniş bu günki tarixə qeyd oluna bilməz"},
-                                            status=status.HTTP_400_BAD_REQUEST)
-
-                        elif (negd_odenis_1_tarix_san > negd_odenis_2_tarix_san):
-                            return Response(
-                                {"detail": "Qalıq nəğd ödəniş tarixi nəğd ödəniş tarixindən əvvəl ola bilməz"},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-                        elif (negd_odenis_1_tarix_san == negd_odenis_2_tarix_san):
-                            return Response(
-                                {"detail": "Qalıq nəğd ödəniş və nəğd ödəniş hər ikisi eyni tarixə qeyd oluna bilməz"},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-                        elif ((indiki_tarix_san > negd_odenis_1_tarix_san) or (
-                                indiki_tarix_san > negd_odenis_2_tarix_san)):
-                            return Response({"detail": "Nəğd ödəniş tarixini keçmiş tarixə təyin edə bilməzsiniz"},
-                                            status=status.HTTP_400_BAD_REQUEST)
-
-                        elif ((indiki_tarix_san < negd_odenis_1_tarix_san) and (
-                                indiki_tarix_san < negd_odenis_2_tarix_san)):
-                            stok_mehsul_ciximi(stok, int(mehsul_sayi))
-
-                            qaliq_borc = float(muqavile_umumi_mebleg)
-
-                            serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, odenis_uslubu="İKİ DƏFƏYƏ NƏĞD",
-                                            negd_odenis_1_status="DAVAM EDƏN", negd_odenis_2_status="DAVAM EDƏN",
-                                            muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
-                            # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
-                            #                 status=status.HTTP_201_CREATED)
-                            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-
-                    elif (float(negd_odenis_1) + float(negd_odenis_2) != muqavile_umumi_mebleg):
-                        return Response({"detail": "Ödəmək istədiyiniz məbləğlər məhsulun qiymətinə bərabər deyil"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-            elif (request.data.get("negd_odenis_1") is not None and request.data.get("negd_odenis_2") == None):
-                return Response({"detail": "Nəğd ödəniş 2 daxil edilməyib"}, status=status.HTTP_400_BAD_REQUEST)
-
-            elif (odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD"):
-                if (mehsul_sayi == None):
-                    mehsul_sayi = 1
-                if (kredit_muddeti is not None):
-                    return Response({"detail": "Kredit müddəti ancaq status kredit olan müqavilələr üçündür"},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-                negd_odenis_1 = request.data.get("negd_odenis_1")
-                negd_odenis_2 = request.data.get("negd_odenis_2")
-                muqavile_umumi_mebleg = umumi_mebleg(
-                    mehsul.qiymet, int(mehsul_sayi))
-
-                if (negd_odenis_1 == None or negd_odenis_2 == None or negd_odenis_1 == "0" or negd_odenis_2 == "0"):
-                    return Response({"detail": "2 dəfəyə nəğd ödəniş statusunda hər 2 nəğd ödəniş qeyd olunmalıdır"},
-                                    status=status.HTTP_400_BAD_REQUEST)
-                elif (float(negd_odenis_1) > muqavile_umumi_mebleg):
-                    return Response({"detail": "Daxil etdiyiniz məbləğ müqavilənin ümumi məbləğindən daha çoxdur"},
-                                    status=status.HTTP_400_BAD_REQUEST)
-
-                elif (float(negd_odenis_2) > muqavile_umumi_mebleg):
-                    return Response({"detail": "Daxil etdiyiniz məbləğ müqavilənin ümumi məbləğindən daha çoxdur"},
-                                    status=status.HTTP_400_BAD_REQUEST)
-                elif (float(negd_odenis_1) + float(negd_odenis_2) == muqavile_umumi_mebleg):
-
-                    if ((indiki_tarix_san == negd_odenis_1_tarix_san) and (indiki_tarix_san < negd_odenis_2_tarix_san)):
-                        stok_mehsul_ciximi(stok, int(mehsul_sayi))
-                        
-                        ilkin_balans = holding_umumi_balans_hesabla()
-                        print(f"{ilkin_balans=}")
-                        ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-
-                        qeyd = f"Vanleader - {user.asa}, müştəri - {musteri.asa}, tarix - {negd_odenis_1_tarix}, ödəniş üslubu - {odenis_uslubu}, 1-ci nəğd ödəniş"
-                        k_medaxil(ofis_kassa, float(negd_odenis_1), user, qeyd)
-
-                        qaliq_borc = float(
-                            muqavile_umumi_mebleg) - float(negd_odenis_1)
-
-                        serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
-                                        shobe=shobe, negd_odenis_1_status="BİTMİŞ", negd_odenis_2_status="DAVAM EDƏN",
-                                        muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
-                        sonraki_balans = holding_umumi_balans_hesabla()
-                        print(f"{sonraki_balans=}")
-                        ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
-                        pul_axini_create(
-                            ofis=ofis,
-                            shirket=ofis.shirket,
-                            aciqlama=qeyd,
-                            ilkin_balans=ilkin_balans,
-                            sonraki_balans=sonraki_balans,
-                            ofis_ilkin_balans=ofis_ilkin_balans,
-                            ofis_sonraki_balans=ofis_sonraki_balans,
-                            emeliyyat_eden=user,
-                            emeliyyat_uslubu="MƏDAXİL",
-                            miqdar=float(negd_odenis_1)
-                        )
-                        # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
-                        #                 status=status.HTTP_201_CREATED)
-                        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-
-                    elif ((indiki_tarix_san == negd_odenis_1_tarix_san) and (
-                            negd_odenis_1_tarix_san == negd_odenis_2_tarix_san)):
-                        return Response({"detail": "Ödənişlərin hər ikisi bu günki tarixə qeyd oluna bilməz"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-                    elif (indiki_tarix_san == negd_odenis_2_tarix_san):
-                        return Response({"detail": "Qalıq nəğd ödəniş bu günki tarixə qeyd oluna bilməz"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-                    elif (negd_odenis_1_tarix_san > negd_odenis_2_tarix_san):
-                        return Response({"detail": "Qalıq nəğd ödəniş tarixi nəğd ödəniş tarixindən əvvəl ola bilməz"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-                    elif (negd_odenis_1_tarix_san == negd_odenis_2_tarix_san):
-                        return Response(
-                            {"detail": "Qalıq nəğd ödəniş və nəğd ödəniş hər ikisi eyni tarixə qeyd oluna bilməz"},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-                    elif ((indiki_tarix_san > negd_odenis_1_tarix_san) or (indiki_tarix_san > negd_odenis_2_tarix_san)):
-                        return Response({"detail": "Nəğd ödəniş tarixini keçmiş tarixə təyin edə bilməzsiniz"},
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-                    elif ((indiki_tarix_san < negd_odenis_1_tarix_san) and (
-                            indiki_tarix_san < negd_odenis_2_tarix_san)):
-                        stok_mehsul_ciximi(stok, int(mehsul_sayi))
-
-                        qaliq_borc = float(muqavile_umumi_mebleg)
-
-                        serializer.save(vanleader=user, dealer=dealer, canvesser=canvesser, shirket=shirket, ofis=ofis,
-                                        shobe=shobe, negd_odenis_1_status="DAVAM EDƏN",
-                                        negd_odenis_2_status="DAVAM EDƏN", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
-                        # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
-                        #                 status=status.HTTP_201_CREATED)
-                        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-
-                elif (float(negd_odenis_1) + float(negd_odenis_2) != muqavile_umumi_mebleg):
-                    return Response({"detail": "Ödəmək istədiyiniz məbləğlər məhsulun qiymətinə bərabər deyil"},
-                                    status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
     except Exception:
         traceback.print_exc()
         return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def muqavile_patch(self, request, *args, **kwargs):
-    """
-    DEPRECATED  --- Bu method yenilenmelidir. Istifadesi meslehet gorunmur.
-    """
-    try:
-        muqavile = self.get_object()
-        serializer = MuqavileSerializer(
-            muqavile, data=request.data, partial=True)
-
-        ilkin_odenis = muqavile.ilkin_odenis
-        ilkin_odenis_qaliq = muqavile.ilkin_odenis_qaliq
-        ilkin_odenis_status = muqavile.ilkin_odenis_status
-        qaliq_ilkin_odenis_status = muqavile.qaliq_ilkin_odenis_status
-        odemek_istediyi_ilkin_odenis = request.data.get("ilkin_odenis")
-        odemek_istediyi_qaliq_ilkin_odenis = request.data.get(
-            "ilkin_odenis_qaliq")
-
-        negd_odenis_1 = muqavile.negd_odenis_1
-        negd_odenis_2 = muqavile.negd_odenis_2
-        negd_odenis_1_status = muqavile.negd_odenis_1_status
-        negd_odenis_2_status = muqavile.negd_odenis_2_status
-        muqavile_status = muqavile.muqavile_status
-        odemek_istediyi_negd_odenis_1 = request.data.get("negd_odenis_1")
-        odemek_istediyi_negd_odenis_2 = request.data.get("negd_odenis_2")
-        my_time = datetime.datetime.min.time()
-
-        indiki_tarix_date = datetime.date.today()
-        indiki_tarix = datetime.datetime.combine(indiki_tarix_date, my_time)
-        indiki_tarix_san = datetime.datetime.timestamp(indiki_tarix)
-        dusen_muqavile_status = request.data.get("muqavile_status")
-        mehsul = muqavile.mehsul
-        mehsul_sayi = muqavile.mehsul_sayi
-        muqavile_vanleader = muqavile.vanleader
-        musteri_id = request.data.get("musteri_id")
-        if (musteri_id is not None):
-            musteri = get_object_or_404(Musteri, pk=musteri_id)
-
-        muqavile_dealer = muqavile.dealer
-        yeni_qrafik = request.data.get("yeni_qrafik_status")
-        # YENI QRAFIK ile bagli emeliyyatlar
-        if(yeni_qrafik == "YENİ QRAFİK"):
-            ilkin_odenis = muqavile.ilkin_odenis
-            ilkin_odenis_qaliq = muqavile.ilkin_odenis_qaliq
-            ilkin_odenis_tam = ilkin_odenis + ilkin_odenis_qaliq
-            mehsulun_qiymeti = muqavile.muqavile_umumi_mebleg
-            odenen_odemetarixler = OdemeTarix.objects.filter(
-                muqavile=muqavile, odenme_status="ÖDƏNƏN")
-
-            odenmeyen_odemetarixler = OdemeTarix.objects.filter(
-                muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
-
-            odemek_istediyi_mebleg = float(
-                request.data.get("yeni_qrafik_mebleg"))
-
-            odenen_mebleg = 0
-            for i in odenen_odemetarixler:
-                odenen_mebleg += float(i.qiymet)
-
-            odediyi = float(odenen_mebleg) + ilkin_odenis_tam
-            qaliq_borc = mehsulun_qiymeti - odediyi
-            odenmeyen_aylar = len(odenmeyen_odemetarixler)
-
-            try:
-                elave_olunacaq_ay_qaliqli = qaliq_borc / odemek_istediyi_mebleg
-                # muqavile.yeni_qrafik_status = "YENİ QRAFİK"
-                muqavile.save()
-            except:
-                return Response({"detail": "Ödəmək istədiyiniz məbləği doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-            elave_olunacaq_ay = math.ceil(elave_olunacaq_ay_qaliqli)
-            create_olunacaq_ay = elave_olunacaq_ay - \
-                len(odenmeyen_odemetarixler)
-            a = odemek_istediyi_mebleg * (elave_olunacaq_ay-1)
-            son_aya_elave_edilecek_mebleg = qaliq_borc - a
-            inc_month = pd.date_range(odenmeyen_odemetarixler[len(
-                odenmeyen_odemetarixler)-1].tarix, periods=create_olunacaq_ay+1, freq='M')
-            muqavile.kredit_muddeti = muqavile.kredit_muddeti + create_olunacaq_ay
-            muqavile.save()
-            # Var olan aylarin qiymetini musterinin istediyi qiymet edir
-            i = 0
-            while(i < len(odenmeyen_odemetarixler)):
-                odenmeyen_odemetarixler[i].qiymet = odemek_istediyi_mebleg
-                odenmeyen_odemetarixler[i].save()
-                i += 1
-
-            # Elave olunacaq aylari create edir
-            j = 1
-            while(j <= create_olunacaq_ay):
-                if(j == create_olunacaq_ay):
-                    if(datetime.date.today().day < 29):
-                        OdemeTarix.objects.create(
-                            muqavile=muqavile,
-                            tarix=f"{inc_month[j].year}-{inc_month[j].month}-{datetime.date.today().day}",
-                            qiymet=son_aya_elave_edilecek_mebleg
-                        )
-                    elif(datetime.date.today().day == 31 or datetime.date.today().day == 30 or datetime.date.today().day == 29):
-                        if(inc_month[j].day <= datetime.date.today().day):
-                            OdemeTarix.objects.create(
-                                muqavile=muqavile,
-                                tarix=f"{inc_month[j].year}-{inc_month[j].month}-{inc_month[j].day}",
-                                qiymet=son_aya_elave_edilecek_mebleg
-                            )
-                else:
-                    if(datetime.date.today().day < 29):
-                        OdemeTarix.objects.create(
-                            muqavile=muqavile,
-                            tarix=f"{inc_month[j].year}-{inc_month[j].month}-{datetime.date.today().day}",
-                            qiymet=odemek_istediyi_mebleg
-                        )
-                    elif(datetime.date.today().day == 31 or datetime.date.today().day == 30 or datetime.date.today().day == 29):
-                        if(inc_month[j].day <= datetime.date.today().day):
-                            OdemeTarix.objects.create(
-                                muqavile=muqavile,
-                                tarix=f"{inc_month[j].year}-{inc_month[j].month}-{inc_month[j].day}",
-                                qiymet=odemek_istediyi_mebleg
-                            )
-                j += 1
-            return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
-
-        if (muqavile.muqavile_status == "DÜŞƏN" and request.data.get("muqavile_status") == "DAVAM EDƏN"):
-            """
-            Müqavilə düşən statusundan davam edən statusuna qaytarılarkən bu hissə işə düşür
-            """
-            muqavile.muqavile_status = "DAVAM EDƏN"
-            muqavile.save()
-
-            try:
-                anbar = get_object_or_404(Anbar, ofis=muqavile_vanleader.ofis)
-            except:
-                return Response({"detail": "Anbar tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
-
-            try:
-                stok = get_object_or_404(Stok, anbar=anbar, mehsul=mehsul)
-            except:
-                return Response({"detail": "Anbarın stokunda məhsul yoxdur"}, status=status.HTTP_400_BAD_REQUEST)
-
-            if (stok.say < int(mehsul_sayi)):
-                return Response({"detail": "Stokda yetəri qədər məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
-
-            stok_mehsul_ciximi(stok, mehsul_sayi)
-
-            muqavile_tarixi = muqavile.muqavile_tarixi
-
-            year = muqavile_tarixi.year
-            month = muqavile_tarixi.month
-            tarix = datetime.date(year=year, month=month, day=1)
-            odenmeyen_odemetarixler_qs = OdemeTarix.objects.filter(
-                muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
-            odenmeyen_odemetarixler = list(odenmeyen_odemetarixler_qs)
-            indi = datetime.datetime.today().strftime('%d-%m-%Y')
-            inc_month = pd.date_range(indi, periods=len(
-                odenmeyen_odemetarixler), freq='M')
-
-            i = 0
-            while (i < len(odenmeyen_odemetarixler)):
-                if (datetime.date.today().day < 29):
-                    odenmeyen_odemetarixler[
-                        i].tarix = f"{inc_month[i].year}-{inc_month[i].month}-{datetime.date.today().day}"
-                    odenmeyen_odemetarixler[i].save()
-                elif (
-                        datetime.date.today().day == 31 or datetime.date.today().day == 30 or datetime.date.today().day == 29):
-                    odenmeyen_odemetarixler[i].tarix = f"{inc_month[i].year}-{inc_month[i].month}-{inc_month[i].day}",
-                    odenmeyen_odemetarixler[i].save()
-                i += 1
-
-            create_services(muqavile, muqavile, True)
-
-            return Response({"detail": "Müqavilə düşən statusundan davam edən statusuna keçirildi"},
-                            status=status.HTTP_200_OK)
-
-        if (muqavile.muqavile_status == "DAVAM EDƏN" and request.data.get("muqavile_status") == "DÜŞƏN"):
-            """
-            Müqavilə düşən statusuna keçərkən bu hissə işə düşür
-            """
-            muqavile_tarixi = muqavile.muqavile_tarixi
-
-            year = muqavile_tarixi.year
-            month = muqavile_tarixi.month
-            tarix = datetime.date(year=year, month=month, day=1)
-            kompensasiya_medaxil = request.data.get("kompensasiya_medaxil")
-            kompensasiya_mexaric = request.data.get("kompensasiya_mexaric")
-
-            muqavile_vanleader = muqavile.vanleader
-            muqavile_dealer = muqavile.dealer
-
-            ofis_kassa = get_object_or_404(OfisKassa, ofis=muqavile.ofis)
-            ofis_kassa_balans = ofis_kassa.balans
-
-            if (kompensasiya_medaxil is not None and kompensasiya_mexaric is not None):
-                return Response({"detail": "Kompensasiya məxaric və mədaxil eyni anda edilə bilməz"},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-            if (kompensasiya_medaxil is not None):
-                ilkin_balans = holding_umumi_balans_hesabla()
-                print(f"{ilkin_balans=}")
-                ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-
-                qeyd = f"Vanleader - {muqavile_vanleader.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, müqavilə düşən statusuna keçirildiyi üçün."
-                k_medaxil(ofis_kassa, float(kompensasiya_medaxil),
-                          muqavile_vanleader, qeyd)
-                user = request.user
-                muqavile.muqavile_status = "DÜŞƏN"
-                muqavile.save()
-                sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
-                ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
-                pul_axini_create(
-                    ofis=ofis,
-                    shirket=ofis.shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    ofis_ilkin_balans=ofis_ilkin_balans,
-                    ofis_sonraki_balans=ofis_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏDAXİL",
-                    miqdar=float(kompensasiya_medaxil)
-                )
-
-            elif (kompensasiya_mexaric is not None):
-                if (ofis_kassa_balans < float(kompensasiya_mexaric)):
-                    return Response({"detail": "Kompensasiya məxaric məbləği Ofisin balansından çox ola bilməz"},
-                                    status=status.HTTP_400_BAD_REQUEST)
-                ilkin_balans = holding_umumi_balans_hesabla()
-                print(f"{ilkin_balans=}")
-                ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-
-                qeyd = f"Vanleader - {muqavile_vanleader.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği=> {kompensasiya_mexaric} AZN."
-                k_mexaric(ofis_kassa, float(kompensasiya_mexaric),
-                          muqavile_vanleader, qeyd)
-
-                muqavile.muqavile_status = "DÜŞƏN"
-                muqavile.save()
-
-                sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
-                ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
-                pul_axini_create(
-                    ofis=muqavile.ofis,
-                    shirket=muqavile.ofis.shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    ofis_ilkin_balans=ofis_ilkin_balans,
-                    ofis_sonraki_balans=ofis_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(kompensasiya_mexaric)
-                )
-
-            if (kompensasiya_medaxil == "" and kompensasiya_mexaric == ""):
-                muqavile.muqavile_status = "DÜŞƏN"
-                muqavile.save()
-
-            muqavile_vanleader = muqavile.vanleader
-            muqavile_dealer = muqavile.dealer
-
-            try:
-                anbar = get_object_or_404(Anbar, ofis=muqavile.ofis)
-            except:
-                return Response({"detail": "Anbar tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
-
-            stok = get_object_or_404(Stok, anbar=anbar, mehsul=mehsul)
-            stok_mehsul_elave(stok, mehsul_sayi)
-            indi = datetime.date.today()
-            d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
-            next_m = d + pd.offsets.MonthBegin(1)
-            all_servis = Servis.objects.filter(muqavile=self.get_object())
-
-            for servis in all_servis:
-                all_servis_odeme = ServisOdeme.objects.filter(
-                    servis=servis, odendi=False)
-                if len(all_servis_odeme) == 1:
-                    servis_odeme = all_servis_odeme[0]
-                    servis_odeme.delete()
-                    servis.delete()
-                for servis_odeme in all_servis_odeme:
-                    servis_odeme.delete()
-
-            # -------------------- Maaslarin geri qaytarilmasi --------------------
-            muqavile_odenis_uslubu = muqavile.odenis_uslubu
-            vanleader = muqavile.vanleader
-            if vanleader is not None:
-                vanleader_status = vanleader.isci_status
-                try:
-                    vanleader_vezife_all = vanleader.vezife.all()
-                    vanleader_vezife = vanleader_vezife_all[0].vezife_adi
-                except:
-                    vanleader_vezife = None
-                if (vanleader_status is not None):
-                    vanleader_prim = VanLeaderPrim.objects.get(
-                        prim_status=vanleader_status, odenis_uslubu=muqavile_odenis_uslubu)
-
-                    vanleader_mg_indiki_ay = MaasGoruntuleme.objects.get(
-                        isci=muqavile_vanleader, tarix=f"{indi.year}-{indi.month}-{1}")
-                    vanleader_mg_novbeti_ay = MaasGoruntuleme.objects.get(
-                        isci=muqavile_vanleader, tarix=next_m)
-
-                    vanleader_mg_indiki_ay.satis_sayi = float(
-                        vanleader_mg_indiki_ay.satis_sayi) - float(mehsul_sayi)
-                    vanleader_mg_indiki_ay.satis_meblegi = float(
-                        vanleader_mg_indiki_ay.satis_meblegi) - float(muqavile.mehsul.qiymet)
-
-                    vanleader_mg_novbeti_ay.yekun_maas = float(
-                        vanleader_mg_novbeti_ay.yekun_maas) - float(vanleader_prim.komandaya_gore_prim)
-
-                    vanleader_mg_indiki_ay.save()
-                    vanleader_mg_novbeti_ay.save()
-
-            dealer = muqavile.dealer
-            if dealer is not None:
-                dealer_status = dealer.isci_status
-                try:
-                    dealer_vezife_all = dealer.vezife.all()
-                    dealer_vezife = dealer_vezife_all[0].vezife_adi
-                except:
-                    dealer_vezife = None
-                if (dealer_vezife == "DEALER"):
-                    dealer_prim = DealerPrim.objects.get(
-                        prim_status=dealer_status, odenis_uslubu=muqavile_odenis_uslubu)
-
-                    dealer_mg_indiki_ay = MaasGoruntuleme.objects.get(
-                        isci=muqavile_dealer, tarix=f"{indi.year}-{indi.month}-{1}")
-                    dealer_mg_novbeti_ay = MaasGoruntuleme.objects.get(
-                        isci=muqavile_dealer, tarix=next_m)
-
-                    dealer_mg_indiki_ay.satis_sayi = float(
-                        dealer_mg_indiki_ay.satis_sayi) - float(mehsul_sayi)
-                    dealer_mg_indiki_ay.satis_meblegi = float(
-                        dealer_mg_indiki_ay.satis_meblegi) - float(muqavile.mehsul.qiymet)
-                    dealer_mg_novbeti_ay.yekun_maas = float(
-                        dealer_mg_novbeti_ay.yekun_maas) - float(dealer_prim.komandaya_gore_prim)
-
-                    dealer_mg_indiki_ay.save()
-                    dealer_mg_novbeti_ay.save()
-
-            ofis = muqavile.ofis
-            if ofis is not None:
-                officeLeaderVezife = Vezifeler.objects.get(
-                    vezife_adi="OFFICE LEADER")
-                officeLeaders = User.objects.filter(
-                    ofis=ofis, vezife=officeLeaderVezife)
-                for officeLeader in officeLeaders:
-                    officeLeader_status = officeLeader.isci_status
-                    ofisleader_prim = OfficeLeaderPrim.objects.get(
-                        prim_status=officeLeader_status)
-
-                    officeLeader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(
-                        isci=officeLeader, tarix=f"{indi.year}-{indi.month}-{1}")
-                    officeLeader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(
-                        isci=officeLeader, tarix=next_m)
-
-                    officeLeader_maas_goruntulenme_bu_ay.satis_sayi = float(
-                        officeLeader_maas_goruntulenme_bu_ay.satis_sayi) - float(mehsul_sayi)
-                    officeLeader_maas_goruntulenme_bu_ay.satis_meblegi = float(
-                        officeLeader_maas_goruntulenme_bu_ay.satis_meblegi) - float(muqavile.mehsul.qiymet)
-                    officeLeader_maas_goruntulenme_bu_ay.save()
-
-                    officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas = float(
-                        officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas) - float(ofisleader_prim.komandaya_gore_prim)
-                    officeLeader_maas_goruntulenme_novbeti_ay.save()
-            # -------------------- -------------------- --------------------
-            muqavile.muqavile_status = "DÜŞƏN"
-            muqavile.save()
-            return Response({"detail": "Müqavilə düşən statusuna keçirildi"}, status=status.HTTP_200_OK)
-
-        if (muqavile.odenis_uslubu == "KREDİT"):
-            if (odemek_istediyi_ilkin_odenis != None and ilkin_odenis_status == "DAVAM EDƏN"):
-                if (float(odemek_istediyi_ilkin_odenis) != ilkin_odenis):
-                    return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-                elif (float(odemek_istediyi_ilkin_odenis) == ilkin_odenis):
-                    muqavile.ilkin_odenis_status = "BİTMİŞ"
-                    muqavile.ilkin_odenis_tarixi = indiki_tarix_date
-                    muqavile.save()
-                    return Response({"detail": "İlkin ödəniş ödənildi"}, status=status.HTTP_200_OK)
-
-            if (
-                    odemek_istediyi_qaliq_ilkin_odenis != None and ilkin_odenis_status == "BİTMİŞ" and qaliq_ilkin_odenis_status == "DAVAM EDƏN"):
-                if (float(odemek_istediyi_qaliq_ilkin_odenis) == ilkin_odenis_qaliq):
-                    muqavile.qaliq_ilkin_odenis_status = "BİTMİŞ"
-                    muqavile.ilkin_odenis_qaliq_tarixi = indiki_tarix_date
-                    muqavile.save()
-                    return Response({"detail": "Qalıq ilkin ödəniş ödənildi"}, status=status.HTTP_200_OK)
-                elif (float(odemek_istediyi_qaliq_ilkin_odenis) != ilkin_odenis_qaliq):
-                    return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if (muqavile.odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD"):
-            if (odemek_istediyi_negd_odenis_1 != None and negd_odenis_1_status == "DAVAM EDƏN"):
-                if (float(odemek_istediyi_negd_odenis_1) != negd_odenis_1):
-                    return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-                elif (float(odemek_istediyi_negd_odenis_1) == negd_odenis_1):
-                    muqavile.negd_odenis_1_status = "BİTMİŞ"
-                    muqavile.negd_odenis_1_tarix = indiki_tarix_date
-                    muqavile.save()
-                    return Response({"detail": "1-ci ödəniş ödənildi"}, status=status.HTTP_200_OK)
-
-            if (
-                    odemek_istediyi_negd_odenis_2 != None and negd_odenis_1_status == "BİTMİŞ" and negd_odenis_2_status == "DAVAM EDƏN"):
-                if (float(odemek_istediyi_negd_odenis_2) == negd_odenis_2):
-                    muqavile.negd_odenis_2_status = "BİTMİŞ"
-                    muqavile.negd_odenis_2_tarix = indiki_tarix_date
-                    muqavile.muqavile_status = "BİTMİŞ"
-                    muqavile.save()
-                    return Response({"detail": "Qalıq nəğd ödəniş ödənildi"}, status=status.HTTP_200_OK)
-                elif (float(odemek_istediyi_negd_odenis_2) != negd_odenis_2):
-                    return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception:
-        traceback.print_exc()
-
 
 def muqavile_update(self, request, *args, **kwargs):
     try:
@@ -1310,14 +682,7 @@ def muqavile_update(self, request, *args, **kwargs):
         odemek_istediyi_qaliq_ilkin_odenis = request.data.get(
             "ilkin_odenis_qaliq")
 
-        negd_odenis_1 = muqavile.negd_odenis_1
-        negd_odenis_2 = muqavile.negd_odenis_2
-        negd_odenis_1_status = muqavile.negd_odenis_1_status
-        negd_odenis_2_status = muqavile.negd_odenis_2_status
-
         muqavile_status = muqavile.muqavile_status
-        odemek_istediyi_negd_odenis_1 = request.data.get("negd_odenis_1")
-        odemek_istediyi_negd_odenis_2 = request.data.get("negd_odenis_2")
         my_time = datetime.datetime.min.time()
 
         indiki_tarix_date = datetime.date.today()
@@ -1326,14 +691,14 @@ def muqavile_update(self, request, *args, **kwargs):
         dusen_muqavile_status = request.data.get("muqavile_status")
         mehsul = muqavile.mehsul
         mehsul_sayi = muqavile.mehsul_sayi
-        muqavile_vanleader = muqavile.vanleader
+        muqavile_group_leader = muqavile.group_leader
         ofis=muqavile.ofis
         musteri = muqavile.musteri
         musteri_id = request.data.get("musteri_id")
         if (musteri_id is not None):
             musteri = get_object_or_404(Musteri, pk=musteri_id)
 
-        muqavile_dealer = muqavile.dealer
+        muqavile_menecer1 = muqavile.menecer1
         yeni_qrafik = request.data.get("yeni_qrafik_status")
         # YENI QRAFIK ile bagli emeliyyatlar
         if(yeni_qrafik == "YENİ QRAFİK"):
@@ -1538,8 +903,8 @@ def muqavile_update(self, request, *args, **kwargs):
             kompensasiya_medaxil = request.data.get("kompensasiya_medaxil")
             kompensasiya_mexaric = request.data.get("kompensasiya_mexaric")
 
-            muqavile_vanleader = muqavile.vanleader
-            muqavile_dealer = muqavile.dealer
+            muqavile_group_leader = muqavile.group_leader
+            muqavile_menecer1 = muqavile.menecer1
 
             ofis_kassa = get_object_or_404(OfisKassa, ofis=muqavile.ofis)
             ofis_kassa_balans = ofis_kassa.balans
@@ -1555,9 +920,9 @@ def muqavile_update(self, request, *args, **kwargs):
                 user = request.user
                 musteri = muqavile.musteri
 
-                qeyd = f"Vanleader - {muqavile_vanleader.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {kompensasiya_medaxil}"
+                qeyd = f"GroupLeader - {muqavile_group_leader.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {kompensasiya_medaxil}"
                 k_medaxil(ofis_kassa, float(kompensasiya_medaxil),
-                          muqavile_vanleader, qeyd)
+                          muqavile_group_leader, qeyd)
 
                 muqavile.muqavile_status = "DÜŞƏN"
                 muqavile.kompensasiya_medaxil = request.data.get("kompensasiya_medaxil")
@@ -1591,9 +956,9 @@ def muqavile_update(self, request, *args, **kwargs):
                 user = request.user
                 musteri = muqavile.musteri
 
-                qeyd = f"Vanleader - {muqavile_vanleader.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {kompensasiya_mexaric}"
+                qeyd = f"GroupLeader - {muqavile_group_leader.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {kompensasiya_mexaric}"
                 k_mexaric(ofis_kassa, float(kompensasiya_mexaric),
-                          muqavile_vanleader, qeyd)
+                          muqavile_group_leader, qeyd)
 
                 muqavile.muqavile_status = "DÜŞƏN"
                 muqavile.kompensasiya_mexaric = request.data.get("kompensasiya_mexaric")
@@ -1619,8 +984,8 @@ def muqavile_update(self, request, *args, **kwargs):
                 muqavile.muqavile_status = "DÜŞƏN"
                 muqavile.save()
 
-            muqavile_vanleader = muqavile.vanleader
-            muqavile_dealer = muqavile.dealer
+            muqavile_group_leader = muqavile.group_leader
+            muqavile_menecer1 = muqavile.menecer1
 
             try:
                 anbar = get_object_or_404(Anbar, ofis=muqavile.ofis)
@@ -1650,95 +1015,95 @@ def muqavile_update(self, request, *args, **kwargs):
 
             # -------------------- Maaslarin geri qaytarilmasi --------------------
             muqavile_odenis_uslubu = muqavile.odenis_uslubu
-            vanleader = muqavile.vanleader
+            group_leader = muqavile.group_leader
             muqavile_kredit_muddeti = muqavile.kredit_muddeti
 
             try:
-                vezife_adi = vanleader.vezife.vezife_adi
+                vezife_adi = group_leader.vezife.vezife_adi
             except:
                 vezife_adi = None
 
             if vezife_adi == "VANLEADER":
-                if vanleader is not None:
-                    vanleader_status = vanleader.isci_status
+                if group_leader is not None:
+                    group_leader_status = group_leader.isci_status
                     try:
-                        vanleader_vezife = vanleader.vezife.vezife_adi
+                        group_leader_vezife = group_leader.vezife.vezife_adi
                     except:
-                        vanleader_vezife = None
-                    if (vanleader_status is not None):
-                        vanleader_prim = VanLeaderPrimNew.objects.get(
-                            prim_status=vanleader_status, vezife=vanleader.vezife)
-                        vanleader_mg_indiki_ay = MaasGoruntuleme.objects.get(
-                            isci=muqavile_vanleader, tarix=f"{indi.year}-{indi.month}-{1}")
-                        vanleader_mg_novbeti_ay = MaasGoruntuleme.objects.get(
-                            isci=muqavile_vanleader, tarix=next_m)
+                        group_leader_vezife = None
+                    if (group_leader_status is not None):
+                        group_leader_prim = GroupLeaderPrimNew.objects.get(
+                            prim_status=group_leader_status, vezife=group_leader.vezife)
+                        group_leader_mg_indiki_ay = MaasGoruntuleme.objects.get(
+                            isci=muqavile_group_leader, tarix=f"{indi.year}-{indi.month}-{1}")
+                        group_leader_mg_novbeti_ay = MaasGoruntuleme.objects.get(
+                            isci=muqavile_group_leader, tarix=next_m)
 
-                        vanleader_mg_indiki_ay.satis_sayi = float(
-                            vanleader_mg_indiki_ay.satis_sayi) - float(mehsul_sayi)
-                        vanleader_mg_indiki_ay.satis_meblegi = float(
-                            vanleader_mg_indiki_ay.satis_meblegi) - (float(muqavile.mehsul.qiymet) * float(muqavile.mehsul_sayi))
+                        group_leader_mg_indiki_ay.satis_sayi = float(
+                            group_leader_mg_indiki_ay.satis_sayi) - float(mehsul_sayi)
+                        group_leader_mg_indiki_ay.satis_meblegi = float(
+                            group_leader_mg_indiki_ay.satis_meblegi) - (float(muqavile.mehsul.qiymet) * float(muqavile.mehsul_sayi))
 
-                        # vanleader_mg_novbeti_ay.yekun_maas = float(vanleader_mg_novbeti_ay.yekun_maas) - float(vanleader_prim.komandaya_gore_prim)
+                        # group_leader_mg_novbeti_ay.yekun_maas = float(group_leader_mg_novbeti_ay.yekun_maas) - float(group_leader_prim.komandaya_gore_prim)
 
                         if muqavile_odenis_uslubu == "NƏĞD":
-                            vanleader_mg_novbeti_ay.yekun_maas = float(
-                                vanleader_mg_novbeti_ay.yekun_maas) - (float(vanleader_prim.negd) * float(muqavile.mehsul_sayi))
+                            group_leader_mg_novbeti_ay.yekun_maas = float(
+                                group_leader_mg_novbeti_ay.yekun_maas) - (float(group_leader_prim.negd) * float(muqavile.mehsul_sayi))
                         elif muqavile_odenis_uslubu == "KREDİT":
                             if int(muqavile_kredit_muddeti) >= 0 and int(muqavile_kredit_muddeti) <= 3:
-                                vanleader_mg_novbeti_ay.yekun_maas = float(
-                                    vanleader_mg_novbeti_ay.yekun_maas) - (float(vanleader_prim.negd) * float(muqavile.mehsul_sayi))
+                                group_leader_mg_novbeti_ay.yekun_maas = float(
+                                    group_leader_mg_novbeti_ay.yekun_maas) - (float(group_leader_prim.negd) * float(muqavile.mehsul_sayi))
                             elif int(muqavile_kredit_muddeti) >= 4 and int(muqavile_kredit_muddeti) <= 12:
-                                vanleader_mg_novbeti_ay.yekun_maas = float(vanleader_mg_novbeti_ay.yekun_maas) - (
-                                    float(vanleader_prim.kredit_4_12) * float(muqavile.mehsul_sayi))
+                                group_leader_mg_novbeti_ay.yekun_maas = float(group_leader_mg_novbeti_ay.yekun_maas) - (
+                                    float(group_leader_prim.kredit_4_12) * float(muqavile.mehsul_sayi))
                             elif int(muqavile_kredit_muddeti) >= 13 and int(muqavile_kredit_muddeti) <= 18:
-                                vanleader_mg_novbeti_ay.yekun_maas = float(vanleader_mg_novbeti_ay.yekun_maas) - (
-                                    float(vanleader_prim.kredit_13_18) * float(muqavile.mehsul_sayi))
+                                group_leader_mg_novbeti_ay.yekun_maas = float(group_leader_mg_novbeti_ay.yekun_maas) - (
+                                    float(group_leader_prim.kredit_13_18) * float(muqavile.mehsul_sayi))
                             elif int(muqavile_kredit_muddeti) >= 19 and int(muqavile_kredit_muddeti) <= 24:
-                                vanleader_mg_novbeti_ay.yekun_maas = float(vanleader_mg_novbeti_ay.yekun_maas) - (
-                                    float(vanleader_prim.kredit_19_24) * float(muqavile.mehsul_sayi))
+                                group_leader_mg_novbeti_ay.yekun_maas = float(group_leader_mg_novbeti_ay.yekun_maas) - (
+                                    float(group_leader_prim.kredit_19_24) * float(muqavile.mehsul_sayi))
 
-                        vanleader_mg_indiki_ay.save()
-                        vanleader_mg_novbeti_ay.save()
+                        group_leader_mg_indiki_ay.save()
+                        group_leader_mg_novbeti_ay.save()
 
-                dealer = muqavile.dealer
-                if dealer is not None:
-                    dealer_status = dealer.isci_status
+                menecer1 = muqavile.menecer1
+                if menecer1 is not None:
+                    menecer1_status = menecer1.isci_status
                     try:
-                        dealer_vezife = dealer.vezife.vezife_adi
+                        menecer1_vezife = menecer1.vezife.vezife_adi
                     except:
-                        dealer_vezife = None
-                    if (dealer_vezife == "DEALER"):
-                        dealer_prim = DealerPrimNew.objects.get(
-                            prim_status=dealer_status, vezife=dealer.vezife)
-                        dealer_mg_indiki_ay = MaasGoruntuleme.objects.get(
-                            isci=muqavile_dealer, tarix=f"{indi.year}-{indi.month}-{1}")
-                        dealer_mg_novbeti_ay = MaasGoruntuleme.objects.get(
-                            isci=muqavile_dealer, tarix=next_m)
+                        menecer1_vezife = None
+                    if (menecer1_vezife == "DEALER"):
+                        menecer1_prim = Menecer1PrimNew.objects.get(
+                            prim_status=menecer1_status, vezife=menecer1.vezife)
+                        menecer1_mg_indiki_ay = MaasGoruntuleme.objects.get(
+                            isci=muqavile_menecer1, tarix=f"{indi.year}-{indi.month}-{1}")
+                        menecer1_mg_novbeti_ay = MaasGoruntuleme.objects.get(
+                            isci=muqavile_menecer1, tarix=next_m)
 
-                        dealer_mg_indiki_ay.satis_sayi = float(
-                            dealer_mg_indiki_ay.satis_sayi) - float(mehsul_sayi)
-                        dealer_mg_indiki_ay.satis_meblegi = float(dealer_mg_indiki_ay.satis_meblegi) - (
+                        menecer1_mg_indiki_ay.satis_sayi = float(
+                            menecer1_mg_indiki_ay.satis_sayi) - float(mehsul_sayi)
+                        menecer1_mg_indiki_ay.satis_meblegi = float(menecer1_mg_indiki_ay.satis_meblegi) - (
                             float(muqavile.mehsul.qiymet) * float(muqavile.mehsul_sayi))
 
                         if muqavile_odenis_uslubu == "NƏĞD":
-                            dealer_mg_novbeti_ay.yekun_maas = float(
-                                dealer_mg_novbeti_ay.yekun_maas) - (float(dealer_prim.negd) * float(muqavile.mehsul_sayi))
+                            menecer1_mg_novbeti_ay.yekun_maas = float(
+                                menecer1_mg_novbeti_ay.yekun_maas) - (float(menecer1_prim.negd) * float(muqavile.mehsul_sayi))
                         elif muqavile_odenis_uslubu == "KREDİT":
                             if int(muqavile_kredit_muddeti) >= 0 and int(muqavile_kredit_muddeti) <= 3:
-                                dealer_mg_novbeti_ay.yekun_maas = float(
-                                    dealer_mg_novbeti_ay.yekun_maas) - (float(dealer_prim.negd) * float(muqavile.mehsul_sayi))
+                                menecer1_mg_novbeti_ay.yekun_maas = float(
+                                    menecer1_mg_novbeti_ay.yekun_maas) - (float(menecer1_prim.negd) * float(muqavile.mehsul_sayi))
                             elif int(muqavile_kredit_muddeti) >= 4 and int(muqavile_kredit_muddeti) <= 12:
-                                dealer_mg_novbeti_ay.yekun_maas = float(dealer_mg_novbeti_ay.yekun_maas) - (
-                                    float(dealer_prim.kredit_4_12) * float(muqavile.mehsul_sayi))
+                                menecer1_mg_novbeti_ay.yekun_maas = float(menecer1_mg_novbeti_ay.yekun_maas) - (
+                                    float(menecer1_prim.kredit_4_12) * float(muqavile.mehsul_sayi))
                             elif int(muqavile_kredit_muddeti) >= 13 and int(muqavile_kredit_muddeti) <= 18:
-                                dealer_mg_novbeti_ay.yekun_maas = float(dealer_mg_novbeti_ay.yekun_maas) - (
-                                    float(dealer_prim.kredit_13_18) * float(muqavile.mehsul_sayi))
+                                menecer1_mg_novbeti_ay.yekun_maas = float(menecer1_mg_novbeti_ay.yekun_maas) - (
+                                    float(menecer1_prim.kredit_13_18) * float(muqavile.mehsul_sayi))
                             elif int(muqavile_kredit_muddeti) >= 19 and int(muqavile_kredit_muddeti) <= 24:
-                                dealer_mg_novbeti_ay.yekun_maas = float(dealer_mg_novbeti_ay.yekun_maas) - (
-                                    float(dealer_prim.kredit_19_24) * float(muqavile.mehsul_sayi))
+                                menecer1_mg_novbeti_ay.yekun_maas = float(menecer1_mg_novbeti_ay.yekun_maas) - (
+                                    float(menecer1_prim.kredit_19_24) * float(muqavile.mehsul_sayi))
 
-                        dealer_mg_indiki_ay.save()
-                        dealer_mg_novbeti_ay.save()
+                        menecer1_mg_indiki_ay.save()
+                        menecer1_mg_novbeti_ay.save()
 
                 ofis = muqavile.ofis
                 if ofis is not None:
@@ -1795,84 +1160,6 @@ def muqavile_update(self, request, *args, **kwargs):
                     return Response({"detail": "Qalıq ilkin ödəniş ödənildi"}, status=status.HTTP_200_OK)
                 elif (float(odemek_istediyi_qaliq_ilkin_odenis) != ilkin_odenis_qaliq):
                     return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if (muqavile.odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD"):
-            if (odemek_istediyi_negd_odenis_1 != None and negd_odenis_1_status == "DAVAM EDƏN"):
-                if (float(odemek_istediyi_negd_odenis_1) != negd_odenis_1):
-                    return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-                elif (float(odemek_istediyi_negd_odenis_1) == negd_odenis_1):
-                    muqavile.negd_odenis_1_status = "BİTMİŞ"
-                    muqavile.negd_odenis_1_tarix = indiki_tarix_date
-                    muqavile.qaliq_borc = float(
-                        muqavile.qaliq_borc) - float(negd_odenis_1)
-                    muqavile.save()
-                    return Response({"detail": "1-ci ödəniş ödənildi"}, status=status.HTTP_200_OK)
-
-            if (
-                    odemek_istediyi_negd_odenis_2 != None and negd_odenis_1_status == "BİTMİŞ" and negd_odenis_2_status == "DAVAM EDƏN"):
-                if (float(odemek_istediyi_negd_odenis_2) == negd_odenis_2):
-                    muqavile.negd_odenis_2_status = "BİTMİŞ"
-                    muqavile.negd_odenis_2_tarix = indiki_tarix_date
-                    muqavile.muqavile_status = "BİTMİŞ"
-                    muqavile.qaliq_borc = float(
-                        muqavile.qaliq_borc) - float(negd_odenis_2)
-                    muqavile.save()
-                    return Response({"detail": "Qalıq nəğd ödəniş ödənildi"}, status=status.HTTP_200_OK)
-                elif (float(odemek_istediyi_negd_odenis_2) != negd_odenis_2):
-                    return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if muqavile.odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD":
-            if serializer.is_valid():
-                kredit_muddeti = serializer.validated_data.get(
-                    "kredit_muddeti")
-                odenis_uslubu = serializer.validated_data.get("odenis_uslubu")
-
-                if odenis_uslubu == "KREDİT":
-
-                    ilkin_odenis = 0
-                    ilkin_odenis_qaliq = 0
-                    negd_odenis_1 = muqavile.negd_odenis_1
-                    negd_odenis_2 = muqavile.negd_odenis_2
-                    negd_odenis_1_tarix = muqavile.negd_odenis_1_tarix
-                    negd_odenis_2_tarix = muqavile.negd_odenis_2_tarix
-                    negd_odenis_1_status = muqavile.negd_odenis_1_status
-                    negd_odenis_2_status = muqavile.negd_odenis_2_status
-
-                    if negd_odenis_1_tarix != datetime.date.today():
-                        negd_odenis_1_status = "DAVAM EDƏN"
-                    else:
-                        negd_odenis_1_status = "YOXDUR"
-
-                    if negd_odenis_2_tarix != datetime.date.today():
-                        negd_odenis_2_status = "DAVAM EDƏN"
-                    else:
-                        negd_odenis_2_status = "YOXDUR"
-
-                    create_odeme_tarix_when_update_muqavile(
-                        instance=muqavile,
-                        kredit_muddeti=int(kredit_muddeti),
-                        odenis_uslubu=odenis_uslubu,
-                        ilkin_odenis=float(negd_odenis_1),
-                        ilkin_odenis_qaliq=0
-                    )
-                    serializer.save(
-                        muqavile_status="DAVAM EDƏN",
-                        ilkin_odenis=negd_odenis_1,
-                        ilkin_odenis_qaliq=0,
-                        ilkin_odenis_tarixi=negd_odenis_1_tarix,
-                        ilkin_odenis_qaliq_tarixi=None,
-                        ilkin_odenis_status=negd_odenis_1_status,
-                        qaliq_ilkin_odenis_status="YOXDUR",
-                        negd_odenis_1=0,
-                        negd_odenis_2=0,
-                        negd_odenis_1_tarix=None,
-                        negd_odenis_2_tarix=None,
-                        negd_odenis_1_status="YOXDUR",
-                        negd_odenis_2_status="YOXDUR"
-                    )
-                    pdf_create_when_muqavile_updated(
-                        sender=muqavile, instance=muqavile, created=True)
-                    return Response({"detail": "Müqavilə nəğd statusundan kredit statusuna keçirildi"}, status=status.HTTP_200_OK)
                 else:
                     return Response({"detail": "Bu əməliyyatı icra etmək mümkün olmadı"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -292,9 +292,9 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
                 muqavile_utils.stok_mehsul_ciximi(stok, int(kohne_muqavile.mehsul_sayi))
 
                 yeni_muqavile = Muqavile.objects.create(
-                    vanleader = kohne_muqavile.vanleader,
-                    dealer = kohne_muqavile.dealer,
-                    canvesser = kohne_muqavile.canvesser,
+                    group_leader = kohne_muqavile.group_leader,
+                    menecer1 = kohne_muqavile.menecer1,
+                    menecer2 = kohne_muqavile.menecer2,
                     musteri = kohne_muqavile.musteri,
                     mehsul = mehsul,
                     mehsul_sayi = kohne_muqavile.mehsul_sayi,

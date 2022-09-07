@@ -6,7 +6,7 @@ import datetime
 
 from account.models import User
 from company.models import Vezifeler
-from .models import CanvasserPrim, DealerPrimNew, MaasGoruntuleme, OfficeLeaderPrim, VanLeaderPrimNew
+from .models import Menecer2Prim, Menecer1PrimNew, MaasGoruntuleme, OfficeLeaderPrim, GroupLeaderPrimNew
 from contract.models import Muqavile
 import traceback
 
@@ -25,32 +25,32 @@ def create_prim(sender, instance, created, **kwargs):
         if muqavile_odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD":
             muqavile_odenis_uslubu = "NƏĞD"
 
-        vanleader = instance.vanleader
-        if vanleader is not None:
-            vanleader_status = vanleader.isci_status
+        group_leader = instance.group_leader
+        if group_leader is not None:
+            group_leader_status = group_leader.isci_status
         else:
-            vanleader_status = None
+            group_leader_status = None
 
-        dealer = instance.dealer
-        if dealer is not None:
-            dealer_status = dealer.isci_status
-            dealer_vezife = dealer.vezife.vezife_adi
+        menecer1 = instance.menecer1
+        if menecer1 is not None:
+            menecer1_status = menecer1.isci_status
+            menecer1_vezife = menecer1.vezife.vezife_adi
         else:
-            dealer_status = None
-            dealer_vezife = None
+            menecer1_status = None
+            menecer1_vezife = None
 
 
-        canvesser = instance.canvesser
-        if canvesser is not None:
-            canvesser_status = canvesser.isci_status
-            canvesser_vezife = canvesser.vezife.vezife_adi
+        menecer2 = instance.menecer2
+        if menecer2 is not None:
+            menecer2_status = menecer2.isci_status
+            menecer2_vezife = menecer2.vezife.vezife_adi
         else:
-            canvesser_status = None
-            canvesser_vezife = None
+            menecer2_status = None
+            menecer2_vezife = None
 
         ofis = instance.ofis
         shirket = instance.shirket
-        shobe = instance.vanleader.shobe
+        shobe = instance.group_leader.shobe
         print(f"{shirket=}")
         print(f"{shobe=}")
         if (ofis is not None) or (ofis != ""):
@@ -72,129 +72,129 @@ def create_prim(sender, instance, created, **kwargs):
                 officeLeader_maas_goruntulenme_novbeti_ay.save()
 
         # --------------------------------------------------------
-        # if (vanleader_status is not None):
+        # if (group_leader_status is not None):
         #     """
-        #     Vanleaderin kohne uslubla maas hesablanmasi
+        #     GroupLeaderin kohne uslubla maas hesablanmasi
         #     """
-        #     vanleader_prim = VanLeaderPrim.objects.get(prim_status=vanleader_status, odenis_uslubu=muqavile_odenis_uslubu)
+        #     group_leader_prim = GroupLeaderPrim.objects.get(prim_status=group_leader_status, odenis_uslubu=muqavile_odenis_uslubu)
             
-        #     vanleader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=vanleader, tarix=f"{indi.year}-{indi.month}-{1}")
-        #     vanleader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=vanleader, tarix=next_m)
+        #     group_leader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=f"{indi.year}-{indi.month}-{1}")
+        #     group_leader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=next_m)
 
-        #     vanleader_maas_goruntulenme_bu_ay.satis_sayi = float(vanleader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-        #     vanleader_maas_goruntulenme_bu_ay.satis_meblegi = float(vanleader_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+        #     group_leader_maas_goruntulenme_bu_ay.satis_sayi = float(group_leader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
+        #     group_leader_maas_goruntulenme_bu_ay.satis_meblegi = float(group_leader_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
 
-        #     vanleader_maas_goruntulenme_bu_ay.save()
+        #     group_leader_maas_goruntulenme_bu_ay.save()
 
-        #     vanleader_maas_goruntulenme_novbeti_ay.yekun_maas = float(vanleader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(vanleader_prim.komandaya_gore_prim) * float(instance.mehsul_sayi))
+        #     group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.komandaya_gore_prim) * float(instance.mehsul_sayi))
 
-        #     vanleader_maas_goruntulenme_novbeti_ay.save()
+        #     group_leader_maas_goruntulenme_novbeti_ay.save()
         # --------------------------------------------------------
-        if (vanleader_status is not None):
+        if (group_leader_status is not None):
             """
-            Vanleaderin yeni uslubla maas hesablanmasi
+            GroupLeaderin yeni uslubla maas hesablanmasi
             """
-            vanleader_prim = VanLeaderPrimNew.objects.get(prim_status=vanleader_status, vezife=vanleader.vezife)
+            group_leader_prim = GroupLeaderPrimNew.objects.get(prim_status=group_leader_status, vezife=group_leader.vezife)
             
-            vanleader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=vanleader, tarix=f"{indi.year}-{indi.month}-{1}")
-            vanleader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=vanleader, tarix=next_m)
+            group_leader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=f"{indi.year}-{indi.month}-{1}")
+            group_leader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=next_m)
 
-            vanleader_maas_goruntulenme_bu_ay.satis_sayi = float(vanleader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-            vanleader_maas_goruntulenme_bu_ay.satis_meblegi = float(vanleader_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+            group_leader_maas_goruntulenme_bu_ay.satis_sayi = float(group_leader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
+            group_leader_maas_goruntulenme_bu_ay.satis_meblegi = float(group_leader_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
             
-            vanleader_maas_goruntulenme_bu_ay.save()
+            group_leader_maas_goruntulenme_bu_ay.save()
             if muqavile_odenis_uslubu == "NƏĞD":
-                vanleader_maas_goruntulenme_novbeti_ay.yekun_maas = float(vanleader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(vanleader_prim.negd) * float(instance.mehsul_sayi))
+                group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.negd) * float(instance.mehsul_sayi))
             elif muqavile_odenis_uslubu == "KREDİT":
                 if int(muqavile_kredit_muddeti) >= 0 and int(muqavile_kredit_muddeti) <= 3:
-                    vanleader_maas_goruntulenme_novbeti_ay.yekun_maas = float(vanleader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(vanleader_prim.negd) * float(instance.mehsul_sayi))
+                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.negd) * float(instance.mehsul_sayi))
                 elif int(muqavile_kredit_muddeti) >= 4 and int(muqavile_kredit_muddeti) <= 12:
-                    vanleader_maas_goruntulenme_novbeti_ay.yekun_maas = float(vanleader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(vanleader_prim.kredit_4_12) * float(instance.mehsul_sayi))
+                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.kredit_4_12) * float(instance.mehsul_sayi))
                 elif int(muqavile_kredit_muddeti) >= 13 and int(muqavile_kredit_muddeti) <= 18:
-                    vanleader_maas_goruntulenme_novbeti_ay.yekun_maas = float(vanleader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(vanleader_prim.kredit_13_18) * float(instance.mehsul_sayi))
+                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.kredit_13_18) * float(instance.mehsul_sayi))
                 elif int(muqavile_kredit_muddeti) >= 19 and int(muqavile_kredit_muddeti) <= 24:
-                    vanleader_maas_goruntulenme_novbeti_ay.yekun_maas = float(vanleader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(vanleader_prim.kredit_19_24) * float(instance.mehsul_sayi))
+                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.kredit_19_24) * float(instance.mehsul_sayi))
 
-            vanleader_maas_goruntulenme_novbeti_ay.save()
+            group_leader_maas_goruntulenme_novbeti_ay.save()
         # --------------------------------------------------------
-        # if (dealer_vezife == "DEALER"):
-        #     dealer_prim = DealerPrim.objects.get(prim_status=dealer_status, odenis_uslubu=muqavile_odenis_uslubu)
+        # if (menecer1_vezife == "DEALER"):
+        #     menecer1_prim = Menecer1Prim.objects.get(prim_status=menecer1_status, odenis_uslubu=muqavile_odenis_uslubu)
 
-        #     dealer_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=dealer, tarix=f"{indi.year}-{indi.month}-{1}")
-        #     dealer_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=dealer, tarix=next_m)
+        #     menecer1_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=f"{indi.year}-{indi.month}-{1}")
+        #     menecer1_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=next_m)
 
-        #     dealer_maas_goruntulenme_bu_ay.satis_sayi = float(dealer_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-        #     dealer_maas_goruntulenme_bu_ay.satis_meblegi = float(dealer_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+        #     menecer1_maas_goruntulenme_bu_ay.satis_sayi = float(menecer1_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
+        #     menecer1_maas_goruntulenme_bu_ay.satis_meblegi = float(menecer1_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
 
-        #     dealer_maas_goruntulenme_bu_ay.save()
+        #     menecer1_maas_goruntulenme_bu_ay.save()
 
 
-        #     dealer_maas_goruntulenme_novbeti_ay.yekun_maas = float(dealer_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(dealer_prim.komandaya_gore_prim) * float(instance.mehsul_sayi))
+        #     menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.komandaya_gore_prim) * float(instance.mehsul_sayi))
 
-        #     dealer_maas_goruntulenme_novbeti_ay.save()
+        #     menecer1_maas_goruntulenme_novbeti_ay.save()
 
         # --------------------------------------------------------
-        if (dealer_vezife == "DEALER"):
+        if (menecer1_vezife == "DEALER"):
             """
-            Dealerin yeni uslubla maas hesablanmasi
+            Menecer1in yeni uslubla maas hesablanmasi
             """
-            dealer_prim = DealerPrimNew.objects.get(prim_status=dealer_status, vezife=dealer.vezife)
+            menecer1_prim = Menecer1PrimNew.objects.get(prim_status=menecer1_status, vezife=menecer1.vezife)
             
-            dealer_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=dealer, tarix=f"{indi.year}-{indi.month}-{1}")
-            dealer_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=dealer, tarix=next_m)
+            menecer1_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=f"{indi.year}-{indi.month}-{1}")
+            menecer1_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=next_m)
 
-            dealer_maas_goruntulenme_bu_ay.satis_sayi = float(dealer_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-            dealer_maas_goruntulenme_bu_ay.satis_meblegi = float(dealer_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+            menecer1_maas_goruntulenme_bu_ay.satis_sayi = float(menecer1_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
+            menecer1_maas_goruntulenme_bu_ay.satis_meblegi = float(menecer1_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
 
-            dealer_maas_goruntulenme_bu_ay.save()
+            menecer1_maas_goruntulenme_bu_ay.save()
 
             if muqavile_odenis_uslubu == "NƏĞD":
-                dealer_maas_goruntulenme_novbeti_ay.yekun_maas = float(dealer_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(dealer_prim.negd) * float(instance.mehsul_sayi))
+                menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.negd) * float(instance.mehsul_sayi))
             elif muqavile_odenis_uslubu == "KREDİT":
                 if int(muqavile_kredit_muddeti) >= 0 and int(muqavile_kredit_muddeti) <= 3:
-                    dealer_maas_goruntulenme_novbeti_ay.yekun_maas = float(dealer_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(dealer_prim.negd) * float(instance.mehsul_sayi))
+                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.negd) * float(instance.mehsul_sayi))
                 elif int(muqavile_kredit_muddeti) >= 4 and int(muqavile_kredit_muddeti) <= 12:
-                    dealer_maas_goruntulenme_novbeti_ay.yekun_maas = float(dealer_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(dealer_prim.kredit_4_12) * float(instance.mehsul_sayi))
+                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.kredit_4_12) * float(instance.mehsul_sayi))
                 elif int(muqavile_kredit_muddeti) >= 13 and int(muqavile_kredit_muddeti) <= 18:
-                    dealer_maas_goruntulenme_novbeti_ay.yekun_maas = float(dealer_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(dealer_prim.kredit_13_18) * float(instance.mehsul_sayi))
+                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.kredit_13_18) * float(instance.mehsul_sayi))
                 elif int(muqavile_kredit_muddeti) >= 19 and int(muqavile_kredit_muddeti) <= 24:
-                    dealer_maas_goruntulenme_novbeti_ay.yekun_maas = float(dealer_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(dealer_prim.kredit_19_24) * float(instance.mehsul_sayi))
-            dealer_maas_goruntulenme_novbeti_ay.save()
+                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.kredit_19_24) * float(instance.mehsul_sayi))
+            menecer1_maas_goruntulenme_novbeti_ay.save()
 
         # --------------------------------------------------------
-        if (canvesser_vezife == "CANVASSER"):
-            canvesser_prim = CanvasserPrim.objects.get(prim_status=canvesser_status, vezife=canvesser.vezife)
+        if (menecer2_vezife == "CANVASSER"):
+            menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
 
-            canvesser_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=canvesser, tarix=f"{indi.year}-{indi.month}-{1}")
-            canvesser_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=canvesser, tarix=next_m)
+            menecer2_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=f"{indi.year}-{indi.month}-{1}")
+            menecer2_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=next_m)
 
-            canvesser_maas_goruntulenme_bu_ay.satis_sayi = float(canvesser_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-            canvesser_maas_goruntulenme_bu_ay.satis_meblegi = float(canvesser_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
-            canvesser_maas_goruntulenme_bu_ay.save()
+            menecer2_maas_goruntulenme_bu_ay.satis_sayi = float(menecer2_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
+            menecer2_maas_goruntulenme_bu_ay.satis_meblegi = float(menecer2_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+            menecer2_maas_goruntulenme_bu_ay.save()
 
             satis_sayina_gore_prim = 0
             
-            if (canvesser_maas_goruntulenme_bu_ay.satis_sayi >= 9) and (canvesser_maas_goruntulenme_bu_ay.satis_sayi <= 14):
-                satis_sayina_gore_prim = canvesser_prim.satis9_14
-            elif (canvesser_maas_goruntulenme_bu_ay.satis_sayi >= 15):
-                satis_sayina_gore_prim = canvesser_prim.satis15p
-            elif (canvesser_maas_goruntulenme_bu_ay.satis_sayi >= 20):
-                satis_sayina_gore_prim = canvesser_prim.satis20p
+            if (menecer2_maas_goruntulenme_bu_ay.satis_sayi >= 9) and (menecer2_maas_goruntulenme_bu_ay.satis_sayi <= 14):
+                satis_sayina_gore_prim = menecer2_prim.satis9_14
+            elif (menecer2_maas_goruntulenme_bu_ay.satis_sayi >= 15):
+                satis_sayina_gore_prim = menecer2_prim.satis15p
+            elif (menecer2_maas_goruntulenme_bu_ay.satis_sayi >= 20):
+                satis_sayina_gore_prim = menecer2_prim.satis20p
 
-            canvesser_maas_goruntulenme_novbeti_ay.yekun_maas = float(canvesser_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(canvesser_prim.komandaya_gore_prim) * float(instance.mehsul_sayi)) + float(satis_sayina_gore_prim)
+            menecer2_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer2_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer2_prim.komandaya_gore_prim) * float(instance.mehsul_sayi)) + float(satis_sayina_gore_prim)
 
-            canvesser_maas_goruntulenme_novbeti_ay.save()
+            menecer2_maas_goruntulenme_novbeti_ay.save()
 
         
-        canvesserVezife = Vezifeler.objects.get(vezife_adi__icontains="CANVASSER", shirket=shirket)
-        canvessers = User.objects.filter(ofis=ofis, vezife=canvesserVezife)
+        menecer2Vezife = Vezifeler.objects.get(vezife_adi__icontains="CANVASSER", shirket=shirket)
+        menecer2s = User.objects.filter(ofis=ofis, vezife=menecer2Vezife)
 
-        for canvesser in canvessers:
-            canvesser_status = canvesser.isci_status
-            canvesser_prim = CanvasserPrim.objects.get(prim_status=canvesser_status, vezife=canvesser.vezife)
+        for menecer2 in menecer2s:
+            menecer2_status = menecer2.isci_status
+            menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
 
-            canvesser_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=canvesser, tarix=next_m)
+            menecer2_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=next_m)
 
-            canvesser_maas_goruntulenme_novbeti_ay.yekun_maas = float(canvesser_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(canvesser_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
+            menecer2_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer2_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer2_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
 
-            canvesser_maas_goruntulenme_novbeti_ay.save()
+            menecer2_maas_goruntulenme_novbeti_ay.save()

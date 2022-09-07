@@ -24,7 +24,7 @@ def muqavile_hediyye_create(self, request, *args, **kwargs):
     if serializer.is_valid():
         mehsullar = serializer.validated_data.get("mehsul")
         muqavile = serializer.validated_data.get("muqavile")
-        vanleader = muqavile.vanleader
+        group_leader = muqavile.group_leader
         say = serializer.validated_data.get("say")
         if say == None or say == "":
             say = 1
@@ -58,7 +58,7 @@ def muqavile_hediyye_create(self, request, *args, **kwargs):
                 k_medaxil(
                     company_kassa=kassa,
                     daxil_edilecek_mebleg=daxil_edilecek_mebleg,
-                    vanleader=user,
+                    group_leader=user,
                     qeyd=qeyd
                 )
 
@@ -74,7 +74,7 @@ def muqavile_hediyye_destroy(self, request, *args, **kwargs):
     mehsul_query_set = muqavile_hediyye.mehsul.all()
     mehsullar = list(mehsul_query_set)
     muqavile = muqavile_hediyye.muqavile
-    vanleader = muqavile.vanleader
+    group_leader = muqavile.group_leader
     anbar = get_object_or_404(Anbar, ofis=muqavile.ofis)
     say = muqavile_hediyye.say
     for mehsul in mehsullar:
@@ -92,7 +92,7 @@ def muqavile_hediyye_destroy(self, request, *args, **kwargs):
                 k_mexaric(
                     company_kassa=kassa,
                     daxil_edilecek_mebleg=daxil_edilecek_mebleg,
-                    vanleader=user,
+                    group_leader=user,
                     qeyd=qeyd
                 )
         try:

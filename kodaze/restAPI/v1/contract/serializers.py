@@ -39,9 +39,9 @@ class ServisMuqavileSerializer(serializers.ModelSerializer):
         fields = ['id', 'yerine_yetirildi']
 
 class MuqavileSerializer(serializers.ModelSerializer):
-    vanleader = UserSerializer(read_only=True)
-    dealer = UserSerializer(read_only=True)
-    canvesser = UserSerializer(read_only=True)
+    group_leader = UserSerializer(read_only=True)
+    menecer1 = UserSerializer(read_only=True)
+    menecer2 = UserSerializer(read_only=True)
     musteri = MusteriSerializer(read_only=True)
     mehsul = MehsullarSerializer(read_only=True)
     shirket = ShirketSerializer(read_only=True)
@@ -53,14 +53,14 @@ class MuqavileSerializer(serializers.ModelSerializer):
 
     servis_muqavile = ServisMuqavileSerializer(read_only=True, many=True)
 
-    vanleader_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='vanleader', write_only=True, required=False, allow_null=True
+    group_leader_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='group_leader', write_only=True, required=False, allow_null=True
     )
-    dealer_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='dealer', write_only=True, required=False, allow_null=True
+    menecer1_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='menecer1', write_only=True, required=False, allow_null=True
     )
-    canvesser_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='canvesser', write_only=True, required=False, allow_null=True
+    menecer2_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='menecer2', write_only=True, required=False, allow_null=True
     )
     musteri_id = serializers.PrimaryKeyRelatedField(
         queryset=Musteri.objects.all(), source='musteri', write_only=True, required=False, allow_null=True

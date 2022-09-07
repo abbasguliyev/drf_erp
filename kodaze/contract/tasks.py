@@ -280,22 +280,22 @@ def create_odeme_tarix_task(id, created):
 @shared_task(name='demo_satis_sayi_task')
 def demo_satis_sayi_task(id):
     instance = Muqavile.objects.get(id=id)
-    dealer = instance.dealer
-    canvesser = instance.canvesser
+    menecer1 = instance.menecer1
+    menecer2 = instance.menecer2
     muqavile_tarixi = instance.muqavile_tarixi
     mehsul_sayi = instance.mehsul_sayi
     sale_count = 0
     try:
-        dealer_demo = DemoSatis.objects.filter(user=dealer, created_date=muqavile_tarixi)
+        menecer1_demo = DemoSatis.objects.filter(user=menecer1, created_date=muqavile_tarixi)
         sale_count = sale_count + int(mehsul_sayi)
-        dealer_demo.sale_count = sale_count
-        dealer_demo.save()
+        menecer1_demo.sale_count = sale_count
+        menecer1_demo.save()
     except:
         sale_count = 0
     try:
-        canvesser_demo = DemoSatis.objects.filter(user=canvesser, created_date=muqavile_tarixi)
+        menecer2_demo = DemoSatis.objects.filter(user=menecer2, created_date=muqavile_tarixi)
         sale_count = sale_count + int(mehsul_sayi)
-        canvesser_demo.sale_count = sale_count
-        canvesser_demo.save()
+        menecer2_demo.sale_count = sale_count
+        menecer2_demo.save()
     except:
         sale_count = 0

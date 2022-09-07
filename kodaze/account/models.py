@@ -100,6 +100,8 @@ class Bolge(models.Model):
 
 class Musteri(models.Model):
     asa = models.CharField(max_length=200)
+    email = models.EmailField(null=True, blank=True)
+    profile_image = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     sv_image = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     sv_image2 = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     tel1 = models.CharField(max_length=50)

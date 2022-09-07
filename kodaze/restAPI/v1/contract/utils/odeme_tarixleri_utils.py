@@ -47,7 +47,7 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
     today = datetime.date.today()
 
     muqavile = indiki_ay.muqavile
-    vanleader = muqavile.vanleader
+    group_leader = muqavile.group_leader
     musteri = muqavile.musteri
     odenis_uslubu = muqavile.odenis_uslubu
     ofis = muqavile.ofis
@@ -95,8 +95,8 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         print(f"{ilkin_balans=}")
         ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
-        qeyd = f"Vanleader - {vanleader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. Borcu tam bağlandı"
-        k_medaxil(ofis_kassa, float(ay_ucun_olan_mebleg), vanleader, qeyd)
+        qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. Borcu tam bağlandı"
+        k_medaxil(ofis_kassa, float(ay_ucun_olan_mebleg), group_leader, qeyd)
 
         sonraki_balans = holding_umumi_balans_hesabla()
         print(f"{sonraki_balans=}")
@@ -223,8 +223,8 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         print(f"{ilkin_balans=}")
         ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
-        qeyd = f"Vanleader - {vanleader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}, şərtli ödəmə - {indiki_ay.sertli_odeme_status}"
-        k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), vanleader, qeyd)
+        qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}, şərtli ödəmə - {indiki_ay.sertli_odeme_status}"
+        k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), group_leader, qeyd)
         qaliq_borc = muqavile.qaliq_borc
         qaliq_borc = float(qaliq_borc) - float(odemek_istediyi_mebleg)
         muqavile.qaliq_borc = qaliq_borc
@@ -502,8 +502,8 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                     print(f"{ilkin_balans=}")
                     ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
                     
-                    qeyd = f"Vanleader - {vanleader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. kredit ödəməsi"
-                    k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), vanleader, qeyd)
+                    qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. kredit ödəməsi"
+                    k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), group_leader, qeyd)
 
                     indiki_ay.odenme_status = "ÖDƏNƏN"
                     indiki_ay.save()
@@ -669,8 +669,8 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
             print(f"{ilkin_balans=}")
             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
             
-            qeyd = f"Vanleader - {vanleader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. kredit ödəməsi"
-            k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), vanleader, qeyd)
+            qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. kredit ödəməsi"
+            k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), group_leader, qeyd)
 
             sonraki_balans = holding_umumi_balans_hesabla()
             print(f"{sonraki_balans=}")

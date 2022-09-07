@@ -9,12 +9,10 @@ USER = get_user_model()
 class Muqavile(models.Model):
     KREDIT = 'KREDİT'
     NAGD = 'NƏĞD'
-    IKI_DEFEYE_NEGD = "İKİ DƏFƏYƏ NƏĞD"
 
     ODENIS_USLUBU_CHOICES = [
         (NAGD, "NƏĞD"),
         (KREDIT, "KREDİT"),
-        (IKI_DEFEYE_NEGD, "İKİ DƏFƏYƏ NƏĞD"),
     ]
 
     BITMIS = "BİTMİŞ"
@@ -63,9 +61,9 @@ class Muqavile(models.Model):
         (DEYISMIS_MEHSUL, "DƏYİŞİLMİŞ MƏHSUL")
     ]
 
-    vanleader = models.ForeignKey('account.User', on_delete=models.CASCADE, related_name="vanleader", null=True, blank=True)
-    dealer = models.ForeignKey('account.User', on_delete=models.CASCADE, related_name="dealer", null=True, blank=True)
-    canvesser = models.ForeignKey('account.User', on_delete=models.CASCADE, related_name="canvesser", null=True, blank=True)
+    group_leader = models.ForeignKey('account.User', on_delete=models.CASCADE, related_name="group_leader", null=True, blank=True)
+    menecer1 = models.ForeignKey('account.User', on_delete=models.CASCADE, related_name="menecer1", null=True, blank=True)
+    menecer2 = models.ForeignKey('account.User', on_delete=models.CASCADE, related_name="menecer2", null=True, blank=True)
     musteri = models.ForeignKey('account.Musteri', on_delete=models.CASCADE, related_name="musteri_muqavile", null=True,
                                 blank=True)
     mehsul = models.ForeignKey("product.Mehsullar", on_delete=models.CASCADE, related_name="mehsul_muqavile", null=True,
@@ -74,7 +72,7 @@ class Muqavile(models.Model):
     muqavile_umumi_mebleg = models.FloatField(default=0, blank=True)
     elektron_imza = models.ImageField(upload_to="media/muqavile/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     muqavile_tarixi = models.DateField(null=True, blank=True)
-    muqavile_imzalanma_tarixi = models.DateField(auto_now_add=True, null=True)
+    muqavile_imzalanma_tarixi = models.DateField(auto_now_add=True)
     shirket = models.ForeignKey('company.Shirket', on_delete=models.CASCADE, related_name="muqavile", null=True, blank=True)
     ofis = models.ForeignKey('company.Ofis', on_delete=models.CASCADE, related_name="muqavile", null=True, blank=True)
     shobe = models.ForeignKey('company.Shobe', on_delete=models.CASCADE, related_name="muqavile", null=True, blank=True)
@@ -87,11 +85,6 @@ class Muqavile(models.Model):
         default=NAGD
     )
     
-    negd_odenis_1 = models.FloatField(default=0, blank=True)
-    negd_odenis_2 = models.FloatField(default=0, blank=True)
-    
-    negd_odenis_1_tarix = models.DateField(blank=True, null=True)
-    negd_odenis_2_tarix = models.DateField(blank=True, null=True)
 
     yeni_qrafik_mebleg = models.FloatField(default=0, blank=True)
     yeni_qrafik_status = models.CharField(
@@ -108,18 +101,6 @@ class Muqavile(models.Model):
         default=None,
         null=True,
         blank=True
-    )
-
-    negd_odenis_1_status = models.CharField(
-        max_length=20,
-        choices=NAGD_ODENIS_1_STATUS_CHOICES,
-        default=YOXDUR
-    )
-
-    negd_odenis_2_status = models.CharField(
-        max_length=20,
-        choices=NAGD_ODENIS_2_STATUS_CHOICES,
-        default=YOXDUR
     )
 
     muqavile_status = models.CharField(

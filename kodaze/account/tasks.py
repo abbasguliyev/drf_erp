@@ -3,7 +3,7 @@ from company.models import Vezifeler
 from .models import User
 from celery import shared_task
 import pandas as pd
-from salary.models import CanvasserPrim, MaasGoruntuleme, OfficeLeaderPrim, VanLeaderPrim
+from salary.models import Menecer2Prim, MaasGoruntuleme, OfficeLeaderPrim, GroupLeaderPrim
 
 
 
@@ -107,33 +107,33 @@ def isci_fix_maas_auto_elave_et():
     # vanLeaderVezife = Vezifeler.objects.get(vezife_adi="VAN LEADER")
     # vanLeaders = User.objects.filter(vezife=vanLeaderVezife)
 
-    # for vanleader in vanLeaders:
-    #     vanleader_status = vanleader.isci_status
+    # for group_leader in vanLeaders:
+    #     group_leader_status = group_leader.isci_status
 
-    #     vanleader_prim = VanLeaderPrim.objects.get(prim_status=vanleader_status, odenis_uslubu="NƏĞD")
+    #     group_leader_prim = GroupLeaderPrim.objects.get(prim_status=group_leader_status, odenis_uslubu="NƏĞD")
 
-    #     vanleader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=vanleader, tarix=bu_ay)
+    #     group_leader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=bu_ay)
 
-    #     vanleader_maas_goruntulenme_bu_ay.yekun_maas = float(vanleader_maas_goruntulenme_bu_ay.yekun_maas) + float(vanleader_prim.fix_maas)
-    #     vanleader_maas_goruntulenme_bu_ay.save()
+    #     group_leader_maas_goruntulenme_bu_ay.yekun_maas = float(group_leader_maas_goruntulenme_bu_ay.yekun_maas) + float(group_leader_prim.fix_maas)
+    #     group_leader_maas_goruntulenme_bu_ay.save()
 
-    canvasserVezife = Vezifeler.objects.filter(vezife_adi="CANVASSER")[0]
-    canvassers = User.objects.filter(vezife__vezife_adi=canvasserVezife.vezife_adi)
+    menecer2Vezife = Vezifeler.objects.filter(vezife_adi="CANVASSER")[0]
+    menecer2s = User.objects.filter(vezife__vezife_adi=menecer2Vezife.vezife_adi)
 
-    for canvesser in canvassers:
-        canvesser_status = canvesser.isci_status
+    for menecer2 in menecer2s:
+        menecer2_status = menecer2.isci_status
 
-        canvesser_prim = CanvasserPrim.objects.get(prim_status=canvesser_status, vezife=canvesser.vezife)
+        menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
 
-        canvesser_maas_goruntulenme_evvelki_ay = MaasGoruntuleme.objects.get(isci=canvesser, tarix=evvelki_ay)
-        canvesser_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=canvesser, tarix=f"{indi.year}-{indi.month}-{1}")
+        menecer2_maas_goruntulenme_evvelki_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=evvelki_ay)
+        menecer2_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=f"{indi.year}-{indi.month}-{1}")
 
         satis_sayina_gore_prim = 0
-        if (canvesser_maas_goruntulenme_evvelki_ay.satis_sayi == 0):
-            satis_sayina_gore_prim = canvesser_prim.satis0
-        elif (canvesser_maas_goruntulenme_evvelki_ay.satis_sayi >= 1) and (canvesser_maas_goruntulenme_evvelki_ay.satis_sayi <= 8):
-            satis_sayina_gore_prim = canvesser_prim.satis1_8
+        if (menecer2_maas_goruntulenme_evvelki_ay.satis_sayi == 0):
+            satis_sayina_gore_prim = menecer2_prim.satis0
+        elif (menecer2_maas_goruntulenme_evvelki_ay.satis_sayi >= 1) and (menecer2_maas_goruntulenme_evvelki_ay.satis_sayi <= 8):
+            satis_sayina_gore_prim = menecer2_prim.satis1_8
 
-        canvesser_maas_goruntulenme_bu_ay.yekun_maas = float(canvesser_maas_goruntulenme_bu_ay.yekun_maas) + float(satis_sayina_gore_prim) + float(canvesser_prim.fix_maas)
-        canvesser_maas_goruntulenme_bu_ay.save()
-        canvesser_maas_goruntulenme_evvelki_ay.save()
+        menecer2_maas_goruntulenme_bu_ay.yekun_maas = float(menecer2_maas_goruntulenme_bu_ay.yekun_maas) + float(satis_sayina_gore_prim) + float(menecer2_prim.fix_maas)
+        menecer2_maas_goruntulenme_bu_ay.save()
+        menecer2_maas_goruntulenme_evvelki_ay.save()

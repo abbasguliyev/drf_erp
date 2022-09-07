@@ -8,11 +8,12 @@ from rest_framework.response import Response
 
 from restAPI.v1.task_manager.serializers import TaskManagerSerializer, UserTaskRequestSerializer
 from task_manager.models import TaskManager, UserTaskRequest
-
+from company.models import Vezifeler
 from restAPI.v1.task_manager.filters import TaskManagerFilter
 from . import permissions
 from restAPI.v1.utils.permission_utils import IsAdminUserOrReadOnly
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -23,34 +24,99 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
     filterset_class = TaskManagerFilter
     permission_classes = [permissions.TaskManagerPermissions]
 
+    def get(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        toplam_tapsiriq_sayi = 0
+        tamamlandi = 0
+        icra_edilir = 0
+        gecikir = 0
+
+        for q in queryset:
+            print(f"********************query ====> {q}")
+            toplam = TaskManager.objects.filter(pk = q.id).count()
+            tamamlanan = TaskManager.objects.filter(pk = q.id, status="Tamamlandı").count()
+            icra_edilen = TaskManager.objects.filter(pk = q.id, status="İcra edilir").count()
+            geciken = TaskManager.objects.filter(pk = q.id, status="Gecikir").count()
+
+            toplam_tapsiriq_sayi += toplam
+            tamamlandi += tamamlanan
+            icra_edilir += icra_edilen
+            gecikir += geciken
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            serializer.data
+            return self.get_paginated_response([{
+                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
+                    'tamamlandi':tamamlandi,
+                    'icra_edilir':icra_edilir,
+                    'gecikir':gecikir,
+                    'date':serializer.data
+            }])
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response([{
+                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
+                    'tamamlandi':tamamlandi,
+                    'icra_edilir':icra_edilir,
+                    'gecikir':gecikir,
+                    'date':serializer.data
+            }])
+        
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            position = serializer.validated_data.get("position")
+            position_str = serializer.validated_data.get("positions")
+            if position_str is not None:
+                position_list = position_str.split(',')
+            else:
+                position_list = None
+            user_str = serializer.validated_data.get("users")
+            if user_str is not None:
+                user_list = user_str.split(',')
+            else:
+                user_list = None
             end_date = serializer.validated_data.get('end_date')
             print(f"{end_date=}")
             if end_date == None:
                 end_date = datetime.today()
-            if position is not None:
-                print(f"{position=}")
-                users = User.objects.filter(vezife=position)
-                print(f"{users=}")
-                for user in users:
+            if position_list is not None:
+                print(f"{position_list=}")
+                for position_id in position_list:
+                    print(f"{position_id=}")
+                    position = Vezifeler.objects.get(pk=position_id)
+                    print(f"{position=}")
+
+                    users = User.objects.filter(vezife=position)
+                    print(f"{users=}")
+                    for user in users:
+                        task_manager = TaskManager.objects.create(
+                            title = serializer.validated_data.get('title'),
+                            description = serializer.validated_data.get('description'),
+                            end_date = end_date,
+                            position = position,
+                            employee = user,
+                            type = serializer.validated_data.get('type'),
+                        )
+                        task_manager.save()
+            if user_list is not None:
+                print(f"{user_list}")
+                for user_id in user_list:
+                    print(f"{user_id}")
+                    user = User.objects.get(pk=user_id)
                     task_manager = TaskManager.objects.create(
                         title = serializer.validated_data.get('title'),
                         description = serializer.validated_data.get('description'),
-                        document = serializer.validated_data.get('document'),
                         end_date = end_date,
-                        position = position,
                         employee = user,
                         type = serializer.validated_data.get('type'),
                     )
                     task_manager.save()
-            else:
-                serializer.save()
             return Response({"detail": "Tapşırıq əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             traceback.print_exc
+            return Response({'detail' : "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 class TaskManagerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TaskManager.objects.all()

@@ -28,9 +28,9 @@ class ServisFilter(django_filters.FilterSet):
             'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
             'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
 
-            'muqavile__vanleader__asa': ['exact', 'icontains'],
-            'muqavile__vanleader__komanda__komanda_adi': ['exact', 'icontains'],
-            'muqavile__vanleader__isci_status__status_adi': ['exact', 'icontains'],
+            'muqavile__group_leader__asa': ['exact', 'icontains'],
+            'muqavile__group_leader__komanda__komanda_adi': ['exact', 'icontains'],
+            'muqavile__group_leader__isci_status__status_adi': ['exact', 'icontains'],
 
             'muqavile__kreditor__kreditor': ['exact'],
             'muqavile__kreditor__kreditor__asa': ['exact'],
@@ -96,9 +96,9 @@ class ServisOdemeFilter(django_filters.FilterSet):
             'servis__muqavile__ofis__ofis_adi': ['exact', 'icontains'],
             'servis__muqavile__shirket__shirket_adi': ['exact', 'icontains'],
             
-            'servis__muqavile__vanleader__asa': ['exact', 'icontains'],
-            'servis__muqavile__vanleader__komanda__komanda_adi': ['exact', 'icontains'],
-            'servis__muqavile__vanleader__isci_status__status_adi': ['exact', 'icontains'],
+            'servis__muqavile__group_leader__asa': ['exact', 'icontains'],
+            'servis__muqavile__group_leader__komanda__komanda_adi': ['exact', 'icontains'],
+            'servis__muqavile__group_leader__isci_status__status_adi': ['exact', 'icontains'],
             'servis__muqavile__kreditor__kreditor': ['exact'],
             'servis__muqavile__kreditor__kreditor__asa': ['exact'],
             'servis__muqavile__odenis_uslubu': ['exact'],

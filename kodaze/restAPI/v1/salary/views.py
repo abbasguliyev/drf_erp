@@ -1,29 +1,29 @@
 from salary.models import (
     Avans,
-    DealerPrimNew,
+    Menecer1PrimNew,
     Kesinti,
     Bonus,
     KreditorPrim,
     MaasGoruntuleme,
     MaasOde, 
-    VanLeaderPrim, 
-    DealerPrim, 
+    GroupLeaderPrim, 
+    Menecer1Prim, 
     OfficeLeaderPrim,
-    CanvasserPrim,
-    VanLeaderPrimNew
+    Menecer2Prim,
+    GroupLeaderPrimNew
 )
 from restAPI.v1.salary.serializers import (
     AvansSerializer, 
     BonusSerializer,
-    DealerPrimNewSerializer,
+    Menecer1PrimNewSerializer,
     KesintiSerializer,
     MaasGoruntulemeSerializer,
-    CanvasserPrimSerializer,
-    DealerPrimSerializer,
+    Menecer2PrimSerializer,
+    Menecer1PrimSerializer,
     MaasOdeSerializer,
     OfficeLeaderPrimSerializer,
-    VanLeaderPrimNewSerializer,
-    VanLeaderPrimSerializer,
+    GroupLeaderPrimNewSerializer,
+    GroupLeaderPrimSerializer,
     KreditorPrimSerializer,
 )
 from rest_framework import status, generics
@@ -39,15 +39,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from restAPI.v1.salary.filters import (
     AvansFilter,
     BonusFilter,
-    CanvasserPrimFilter,
-    DealerPrimFilter,
-    DealerPrimNewFilter,
+    Menecer2PrimFilter,
+    Menecer1PrimFilter,
+    Menecer1PrimNewFilter,
     KesintiFilter,
     MaasGoruntulemeFilter,
     MaasOdeFilter,
     OfficeLeaderPrimFilter,
-    VanLeaderPrimFilter,
-    VanLeaderPrimNewFilter
+    GroupLeaderPrimFilter,
+    GroupLeaderPrimNewFilter
 )
 
 # ********************************** Avans get post put delete **********************************
@@ -333,21 +333,21 @@ class OfficeLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-# ********************************** VanLeader Prim get post put delete **********************************
-class VanLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
-    queryset = VanLeaderPrim.objects.all()
-    serializer_class = VanLeaderPrimSerializer
+# ********************************** GroupLeader Prim get post put delete **********************************
+class GroupLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
+    queryset = GroupLeaderPrim.objects.all()
+    serializer_class = GroupLeaderPrimSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VanLeaderPrimFilter
-    permission_classes = [maas_permissions.VanLeaderPrimPermissions]
+    filterset_class = GroupLeaderPrimFilter
+    permission_classes = [maas_permissions.GroupLeaderPrimPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = VanLeaderPrim.objects.all()
+            queryset = GroupLeaderPrim.objects.all()
         elif request.user.shirket is not None:
-            queryset = VanLeaderPrim.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = GroupLeaderPrim.objects.filter(vezife__shirket=request.user.shirket)
         else:
-            queryset = VanLeaderPrim.objects.all()
+            queryset = GroupLeaderPrim.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -371,12 +371,12 @@ class VanLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": "Prim əlavə edildi"})
 
 
-class VanLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VanLeaderPrim.objects.all()
-    serializer_class = VanLeaderPrimSerializer
+class GroupLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = GroupLeaderPrim.objects.all()
+    serializer_class = GroupLeaderPrimSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VanLeaderPrimFilter
-    permission_classes = [maas_permissions.VanLeaderPrimPermissions]
+    filterset_class = GroupLeaderPrimFilter
+    permission_classes = [maas_permissions.GroupLeaderPrimPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -386,21 +386,21 @@ class VanLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response({"detail": "Van Leader bonus yeniləndi"}, status=status.HTTP_200_OK)
 
-# ********************************** VanLeader Prim New get post put delete **********************************
-class VanLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
-    queryset = VanLeaderPrimNew.objects.all()
-    serializer_class = VanLeaderPrimNewSerializer
+# ********************************** GroupLeader Prim New get post put delete **********************************
+class GroupLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
+    queryset = GroupLeaderPrimNew.objects.all()
+    serializer_class = GroupLeaderPrimNewSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VanLeaderPrimNewFilter
-    permission_classes = [maas_permissions.VanLeaderPrimNewPermissions]
+    filterset_class = GroupLeaderPrimNewFilter
+    permission_classes = [maas_permissions.GroupLeaderPrimNewPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = VanLeaderPrimNew.objects.all()
+            queryset = GroupLeaderPrimNew.objects.all()
         elif request.user.shirket is not None:
-            queryset = VanLeaderPrimNew.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = GroupLeaderPrimNew.objects.filter(vezife__shirket=request.user.shirket)
         else:
-            queryset = VanLeaderPrimNew.objects.all()
+            queryset = GroupLeaderPrimNew.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -416,7 +416,7 @@ class VanLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
         if serializer.is_valid():
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
-            prim = VanLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
             print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
@@ -425,12 +425,12 @@ class VanLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
                 return Response({"detail": "Prim əlavə edildi"})
 
 
-class VanLeaderPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VanLeaderPrimNew.objects.all()
-    serializer_class = VanLeaderPrimNewSerializer
+class GroupLeaderPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = GroupLeaderPrimNew.objects.all()
+    serializer_class = GroupLeaderPrimNewSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VanLeaderPrimNewFilter
-    permission_classes = [maas_permissions.VanLeaderPrimNewPermissions]
+    filterset_class = GroupLeaderPrimNewFilter
+    permission_classes = [maas_permissions.GroupLeaderPrimNewPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -445,21 +445,21 @@ class VanLeaderPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-# ********************************** Canvasser Prim get post put delete **********************************
-class CanvasserPrimListCreateAPIView(generics.ListCreateAPIView):
-    queryset = CanvasserPrim.objects.all()
-    serializer_class = CanvasserPrimSerializer
+# ********************************** Menecer2 Prim get post put delete **********************************
+class Menecer2PrimListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Menecer2Prim.objects.all()
+    serializer_class = Menecer2PrimSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = CanvasserPrimFilter
-    permission_classes = [maas_permissions.CanvasserPrimPermissions]
+    filterset_class = Menecer2PrimFilter
+    permission_classes = [maas_permissions.Menecer2PrimPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = CanvasserPrim.objects.all()
+            queryset = Menecer2Prim.objects.all()
         elif request.user.shirket is not None:
-            queryset = CanvasserPrim.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = Menecer2Prim.objects.filter(vezife__shirket=request.user.shirket)
         else:
-            queryset = CanvasserPrim.objects.all()
+            queryset = Menecer2Prim.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -475,7 +475,7 @@ class CanvasserPrimListCreateAPIView(generics.ListCreateAPIView):
         if serializer.is_valid():
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
-            prim = CanvasserPrim.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = Menecer2Prim.objects.filter(prim_status=prim_status, vezife=vezife)
             print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
@@ -483,12 +483,12 @@ class CanvasserPrimListCreateAPIView(generics.ListCreateAPIView):
                 serializer.save()
                 return Response({"detail": "Prim əlavə edildi"})
 
-class CanvasserPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CanvasserPrim.objects.all()
-    serializer_class = CanvasserPrimSerializer
+class Menecer2PrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Menecer2Prim.objects.all()
+    serializer_class = Menecer2PrimSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = CanvasserPrimFilter
-    permission_classes = [maas_permissions.CanvasserPrimPermissions]
+    filterset_class = Menecer2PrimFilter
+    permission_classes = [maas_permissions.Menecer2PrimPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -496,28 +496,28 @@ class CanvasserPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Canvasser bonus yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Menecer2 bonus yeniləndi"}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-# ********************************** Dealer Prim get post put delete **********************************
-class DealerPrimListCreateAPIView(generics.ListCreateAPIView):
-    queryset = DealerPrim.objects.all()
-    serializer_class = DealerPrimSerializer
+# ********************************** Menecer1 Prim get post put delete **********************************
+class Menecer1PrimListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Menecer1Prim.objects.all()
+    serializer_class = Menecer1PrimSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = DealerPrimFilter
-    permission_classes = [maas_permissions.DealerPrimPermissions]
+    filterset_class = Menecer1PrimFilter
+    permission_classes = [maas_permissions.Menecer1PrimPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = DealerPrim.objects.all()
+            queryset = Menecer1Prim.objects.all()
         elif request.user.shirket is not None:
-            queryset = DealerPrim.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = Menecer1Prim.objects.filter(vezife__shirket=request.user.shirket)
         else:
-            queryset = DealerPrim.objects.all()
+            queryset = Menecer1Prim.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -540,12 +540,12 @@ class DealerPrimListCreateAPIView(generics.ListCreateAPIView):
 
             return Response({"detail": "Prim əlavə edildi"})
 
-class DealerPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DealerPrim.objects.all()
-    serializer_class = DealerPrimSerializer
+class Menecer1PrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Menecer1Prim.objects.all()
+    serializer_class = Menecer1PrimSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = DealerPrimFilter
-    permission_classes = [maas_permissions.DealerPrimPermissions]
+    filterset_class = Menecer1PrimFilter
+    permission_classes = [maas_permissions.Menecer1PrimPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -553,23 +553,23 @@ class DealerPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Dealer bonus yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Menecer1 bonus yeniləndi"}, status=status.HTTP_200_OK)
     
-# ********************************** Dealer Prim New get post put delete **********************************
-class DealerPrimNewListCreateAPIView(generics.ListCreateAPIView):
-    queryset = DealerPrimNew.objects.all()
-    serializer_class = DealerPrimNewSerializer
+# ********************************** Menecer1 Prim New get post put delete **********************************
+class Menecer1PrimNewListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Menecer1PrimNew.objects.all()
+    serializer_class = Menecer1PrimNewSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = DealerPrimNewFilter
-    permission_classes = [maas_permissions.DealerPrimNewPermissions]
+    filterset_class = Menecer1PrimNewFilter
+    permission_classes = [maas_permissions.Menecer1PrimNewPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = DealerPrimNew.objects.all()
+            queryset = Menecer1PrimNew.objects.all()
         elif request.user.shirket is not None:
-            queryset = DealerPrimNew.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = Menecer1PrimNew.objects.filter(vezife__shirket=request.user.shirket)
         else:
-            queryset = DealerPrimNew.objects.all()
+            queryset = Menecer1PrimNew.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -585,7 +585,7 @@ class DealerPrimNewListCreateAPIView(generics.ListCreateAPIView):
         if serializer.is_valid():
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
-            prim = DealerPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = Menecer1PrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
             print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
@@ -593,12 +593,12 @@ class DealerPrimNewListCreateAPIView(generics.ListCreateAPIView):
                 serializer.save()
                 return Response({"detail": "Prim əlavə edildi"})
 
-class DealerPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = DealerPrimNew.objects.all()
-    serializer_class = DealerPrimNewSerializer
+class Menecer1PrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Menecer1PrimNew.objects.all()
+    serializer_class = Menecer1PrimNewSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = DealerPrimNewFilter
-    permission_classes = [maas_permissions.DealerPrimNewPermissions]
+    filterset_class = Menecer1PrimNewFilter
+    permission_classes = [maas_permissions.Menecer1PrimNewPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -606,7 +606,7 @@ class DealerPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Dealer bonus yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Menecer1 bonus yeniləndi"}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

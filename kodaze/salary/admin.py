@@ -2,11 +2,11 @@ from django.contrib import admin
 from .models import (
     Avans, 
     Bonus, 
-    CanvasserPrim, 
-    DealerPrimNew, 
+    Menecer2Prim, 
+    Menecer1PrimNew, 
     Kesinti, 
     MaasGoruntuleme,
-    VanLeaderPrimNew, 
+    GroupLeaderPrimNew, 
     MaasOde, 
     KreditorPrim, 
     OfficeLeaderPrim
@@ -26,11 +26,11 @@ class MaasGoruntulemeAdmin(admin.ModelAdmin):
 
 admin.site.register(Avans)
 admin.site.register(Bonus)
-admin.site.register(CanvasserPrim)
-admin.site.register(DealerPrimNew)
+admin.site.register(Menecer2Prim)
+admin.site.register(Menecer1PrimNew)
 admin.site.register(Kesinti)
 admin.site.register(MaasGoruntuleme, MaasGoruntulemeAdmin)
-admin.site.register(VanLeaderPrimNew)
+admin.site.register(GroupLeaderPrimNew)
 admin.site.register(MaasOde)
 admin.site.register(KreditorPrim)
 admin.site.register(OfficeLeaderPrim)
