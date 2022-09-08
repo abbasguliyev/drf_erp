@@ -42,7 +42,8 @@ def create_and_add_pdf_to_muqavile(sender, instance, created, **kwargs):
                 muqavile=instance, musteri=instance.musteri
             )
             muqavile_pdf = magnus_create_muqavile_pdf(muqavile_pdf_canvas_list, instance)
-        
+        else:
+            return False
         instance.pdf = muqavile_pdf
         instance.save()
     
@@ -64,6 +65,8 @@ def create_and_add_pdf_to_muqavile_kredit(sender, instance, created, **kwargs):
                 muqavile=instance
             )
             muqavile_pdf = magnus_kredit_create_muqavile_pdf(muqavile_pdf_canvas_list, instance)
+        else:
+            return False
         instance.pdf_elave = muqavile_pdf
         instance.save()
 
