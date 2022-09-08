@@ -713,7 +713,7 @@ def magnus_kredit_create_muqavile_pdf(canvas, muqavile):
     new_pdfs = canvas
     # read your existing PDF
     file_path = os.path.join(
-        BASE_DIR, 'media/media/muqavile_doc/muqavile/magnus-muqavile-kredit.pdf')
+        BASE_DIR, 'media/media/muqavile_doc/magnus-muqavile-kredit.pdf')
     file_path_new = os.path.join(
         f'media/media/muqavile_doc/muqavile/magnus-muqavile-kredit-{muqavile.pk}.pdf')
 

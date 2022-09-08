@@ -618,7 +618,7 @@ def ocean_kredit_create_muqavile_pdf(canvas,muqavile):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/muqavile_doc/muqavile/ocean-muqavile-kredit.pdf')
+    file_path = os.path.join(BASE_DIR, 'media/media/muqavile_doc/ocean-muqavile-kredit.pdf')
     file_path_new = os.path.join(f'media/media/muqavile_doc/muqavile/ocean-muqavile-kredit-{muqavile.pk}.pdf')
 
     # ****** test **********
