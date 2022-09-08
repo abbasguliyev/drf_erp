@@ -21,7 +21,7 @@ class TaskManager(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
     created_date = models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)
-    end_date = models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
     position = models.ForeignKey(
         "company.Vezifeler", on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     employee = models.ForeignKey(
