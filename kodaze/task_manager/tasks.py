@@ -8,8 +8,6 @@ def manage_task_manager():
     indi = datetime.datetime.today()
     tasks = TaskManager.objects.select_related(
         'position', 'employee').filter(status="İcra edilir")
-    print("********************************task ishe dushdu")
-
     for task in tasks:
         d1 = datetime.datetime(task.end_date.year, task.end_date.month,
                                task.end_date.day, task.end_date.hour, task.end_date.minute, task.end_date.second)
