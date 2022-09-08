@@ -170,7 +170,9 @@ class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
 
 
 class RegisterApi(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all()
     serializer_class = RegisterSerializer
 
     def create(self, request, *args, **kwargs):
@@ -208,13 +210,21 @@ class UserList(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = User.objects.all()
+            queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = User.objects.filter(shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = User.objects.filter(shirket=request.user.shirket)
+                queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).filter(shirket=request.user.shirket, ofis=request.user.ofis)
+            queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).filter(shirket=request.user.shirket)
         else:
-            queryset = User.objects.all()
+            queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all()
         
         queryset = self.filter_queryset(queryset)
 
@@ -260,10 +270,14 @@ class Login(TokenObtainPairView):
 
         acces_token = utils.jwt_decode_handler(data.get("access"))
 
-        if not User.objects.filter(id=acces_token.get("user_id")).last():
+        if not User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).filter(id=acces_token.get("user_id")).last():
             return Response({"error": True, "message": "No such a user"}, status=status.HTTP_404_NOT_FOUND)
 
-        user = User.objects.filter(id=acces_token.get("user_id")).last()
+        user = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).filter(id=acces_token.get("user_id")).last()
         user_logged_in.send(sender=type(user), request=request, user=user)
 
         user_details = UserSerializer(user)

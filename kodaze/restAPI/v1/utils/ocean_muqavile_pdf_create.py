@@ -257,7 +257,6 @@ def ocean_kredit_muqavile_pdf_canvas(muqavile) -> list:
     if ilkin_odenis_qaliq == None or ilkin_odenis_qaliq == "":
         ilkin_odenis_qaliq = 0
     ilkin_odenis_tam = float(ilkin_odenis) + float(ilkin_odenis_qaliq)
-    negd_odenis_2 = muqavile.negd_odenis_2
     if muqavile.ilkin_odenis_status == "BİTMİŞ":
         qalan_mebleg = float(mehsul_qiymeti) - float(ilkin_odenis)
     else:
@@ -301,9 +300,7 @@ def ocean_kredit_muqavile_pdf_canvas(muqavile) -> list:
                 can.drawString(305, 422, "0")
                 if odenis_uslubu == "NƏĞD":
                     can.drawString(380, 422, "0")
-                elif odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD":
-                    can.drawString(380, 422, f"{negd_odenis_2}")
-
+                
 
             if odenis_uslubu == "KREDİT":
                 can.drawString(470, 422, f"{odenis_uslubu}")
@@ -321,17 +318,7 @@ def ocean_kredit_muqavile_pdf_canvas(muqavile) -> list:
             zx3 = 430
             zx4 = 495
 
-            if odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD":
-                can.drawString(x1, 370, f"{muqavile.negd_odenis_1_tarix.day}")
-                can.drawString(x2, 370, f"{muqavile.negd_odenis_1_tarix.month}")
-                can.drawString(x3, 370, f"{muqavile.negd_odenis_1_tarix.year}")
-                can.drawString(x4, 365, f"{muqavile.negd_odenis_1}")
-                
-                can.drawString(x1, 345, f"{muqavile.negd_odenis_2_tarix.day}")
-                can.drawString(x2, 345, f"{muqavile.negd_odenis_2_tarix.month}")
-                can.drawString(x3, 345, f"{muqavile.negd_odenis_2_tarix.year}")
-                can.drawString(x4, 338, f"{muqavile.negd_odenis_2}")
-            elif odenis_uslubu == "KREDİT":
+            if odenis_uslubu == "KREDİT":
                 try:
                     can.drawString(x1, 370, f"{odeme_tarixleri_list[0].tarix.day}")
                     can.drawString(x2, 370, f"{odeme_tarixleri_list[0].tarix.month}")

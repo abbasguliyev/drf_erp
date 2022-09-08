@@ -51,7 +51,16 @@ from restAPI.v1.contract import permissions as contract_permissions
 # ********************************** muqavile get post put delete **********************************
 
 class MuqavileListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Muqavile.objects.all()
+    queryset = Muqavile.objects.select_related(
+                    'group_leader', 
+                    'menecer1', 
+                    'menecer2', 
+                    'musteri', 
+                    'mehsul', 
+                    'shirket', 
+                    'ofis', 
+                    'shobe'
+                ).all()
     serializer_class = MuqavileSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = MuqavileFilter
@@ -59,11 +68,38 @@ class MuqavileListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Muqavile.objects.all()
+            queryset = Muqavile.objects.select_related(
+                    'group_leader', 
+                    'menecer1', 
+                    'menecer2', 
+                    'musteri', 
+                    'mehsul', 
+                    'shirket', 
+                    'ofis', 
+                    'shobe'
+                ).all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
-                queryset = Muqavile.objects.filter(shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = Muqavile.objects.filter(shirket=request.user.shirket)
+                queryset = Muqavile.objects.select_related(
+                    'group_leader', 
+                    'menecer1', 
+                    'menecer2', 
+                    'musteri', 
+                    'mehsul', 
+                    'shirket', 
+                    'ofis', 
+                    'shobe'
+                ).filter(shirket=request.user.shirket, ofis=request.user.ofis)
+            queryset = Muqavile.objects.select_related(
+                    'group_leader', 
+                    'menecer1', 
+                    'menecer2', 
+                    'musteri', 
+                    'mehsul', 
+                    'shirket', 
+                    'ofis', 
+                    'shobe'
+                ).filter(shirket=request.user.shirket)
         else:
             queryset = Muqavile.objects.all()
         queryset = self.filter_queryset(queryset)

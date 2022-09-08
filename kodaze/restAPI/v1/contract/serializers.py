@@ -54,30 +54,36 @@ class MuqavileSerializer(serializers.ModelSerializer):
     servis_muqavile = ServisMuqavileSerializer(read_only=True, many=True)
 
     group_leader_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='group_leader', write_only=True, required=False, allow_null=True
+        queryset=User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all(), source='group_leader', write_only=True, required=False, allow_null=True
     )
     menecer1_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='menecer1', write_only=True, required=False, allow_null=True
+        queryset=User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all(), source='menecer1', write_only=True, required=False, allow_null=True
     )
     menecer2_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='menecer2', write_only=True, required=False, allow_null=True
+        queryset=User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all(), source='menecer2', write_only=True, required=False, allow_null=True
     )
     musteri_id = serializers.PrimaryKeyRelatedField(
-        queryset=Musteri.objects.all(), source='musteri', write_only=True, required=False, allow_null=True
+        queryset=Musteri.objects.select_related('bolge').all(), source='musteri', write_only=True, required=False, allow_null=True
     )
     mehsul_id = serializers.PrimaryKeyRelatedField(
-        queryset=Mehsullar.objects.all(), source='mehsul', write_only=True, required=False, allow_null=True
+        queryset=Mehsullar.objects.select_related('shirket').all(), source='mehsul', write_only=True, required=False, allow_null=True
     )
     shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True, required=False, allow_null=True
+        queryset=Shirket.objects.select_related('holding').all(), source='shirket', write_only=True, required=False, allow_null=True
     )
 
     shobe_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shobe.objects.all(), source='shobe', write_only=True, required=False, allow_null=True
+        queryset=Shobe.objects.select_related('ofis').all(), source='shobe', write_only=True, required=False, allow_null=True
     )
 
     ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True, required=False, allow_null=True
+        queryset=Ofis.objects.select_related('shirket').all(), source='ofis', write_only=True, required=False, allow_null=True
     )
 
     muqavile_imzalanma_tarixi = serializers.DateField(read_only=True)
@@ -85,7 +91,7 @@ class MuqavileSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        muqavile_kreditor = MuqavileKreditor.objects.filter(muqavile=instance).first()
+        muqavile_kreditor = MuqavileKreditor.objects.select_related('kreditor', 'muqavile').filter(muqavile=instance).first()
         kreditor = None
         if muqavile_kreditor is not None:
             kreditor = dict()
@@ -117,9 +123,6 @@ class MuqavileSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = (
             'muqavile_umumi_mebleg', 
-            'negd_odenis_gecikdirme', 
-            'negd_odenis_1_status', 
-            'negd_odenis_2_status',
             'ilkin_odenis_status',
             'qaliq_ilkin_odenis_status',
             'servis_muqavile',

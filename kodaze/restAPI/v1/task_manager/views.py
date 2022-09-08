@@ -77,8 +77,10 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                 user_list = user_str.split(',')
             else:
                 user_list = None
+            created_date = serializer.validated_data.get('created_date')
+            if created_date == None:
+                created_date = datetime.today()
             end_date = serializer.validated_data.get('end_date')
-            print(f"{end_date=}")
             if end_date == None:
                 end_date = datetime.today()
             if position_list is not None:
