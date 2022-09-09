@@ -178,22 +178,20 @@ class RegisterApi(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if(serializer.is_valid()):
-            komanda = serializer.validated_data.get('komanda')
-            if komanda is not None:
-                komanda = komanda
-            else:
-                komanda = None
+            # komanda = serializer.validated_data.get('komanda')
+            # if komanda is not None:
+            #     komanda = komanda
+            # else:
+            #     komanda = None
                 
-            if serializer.validated_data.get('maas') == None:
-                maas = 0
-            elif serializer.validated_data.get('maas') is not None:
-                maas = serializer.validated_data.get('maas')
+            # if serializer.validated_data.get('maas') == None:
+            #     maas = 0
+            # elif serializer.validated_data.get('maas') is not None:
+            #     maas = serializer.validated_data.get('maas')
             
-            user_permissions=serializer.validated_data.get('user_permissions')
+            # user_permissions=serializer.validated_data.get('user_permissions')
 
-            serializer.save(
-                komanda=komanda, user_permissions=user_permissions, maas=maas
-            )
+            serializer.save()
             return Response({"detail": "İşçi qeydiyyatdan keçirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": f"{serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST)

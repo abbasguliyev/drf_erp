@@ -90,12 +90,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 
-    shobe = serializers.PrimaryKeyRelatedField(
-        queryset=Shobe.objects.all(), required=True)
-    shirket = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), required=True)
-    ofis = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), required=True)
+    # shobe = serializers.PrimaryKeyRelatedField(
+    #     queryset=Shobe.objects.all(), required=False)
+    # shirket = serializers.PrimaryKeyRelatedField(
+    #     queryset=Shirket.objects.all(), required=True)
+    # ofis = serializers.PrimaryKeyRelatedField(
+    #     queryset=Ofis.objects.all(), required=False)
     vezife = serializers.PrimaryKeyRelatedField(
         queryset=Vezifeler.objects.all(), required=True)
     tel1 = serializers.CharField(required=True)
@@ -105,10 +105,33 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'asa', 'dogum_tarixi',
-            'tel1', 'tel2', 'sv_image', 'sv_image2', 'shirket', 'isci_status',
-            'ofis', 'vezife', 'komanda', 'user_permissions', 'groups', 'profile_image',
-            'maas', 'qeyd', 'shobe', 'maas_uslubu', 'elektron_imza', 'password', 'password2','ishe_baslama_tarixi'
+            'id', 
+            'username', 
+            'asa', 
+            'dogum_tarixi', 
+            'ishe_baslama_tarixi',
+            'ishden_cixma_tarixi',
+            'tel1', 
+            'tel2', 
+            'sv_image', 
+            'sv_image2', 
+            'suruculuk_vesiqesi', 
+            'shirket', 
+            'ofis', 
+            'shobe', 
+            'vezife', 
+            'komanda', 
+            'isci_status',
+            'user_permissions', 
+            'groups', 
+            'profile_image',
+            'muqavile_novu', 
+            'maas_uslubu', 
+            'maas', 
+            'supervisor', 
+            'qeyd', 
+            'password', 
+            'password2',
         )
 
     def validate(self, data):
@@ -118,53 +141,55 @@ class RegisterSerializer(serializers.ModelSerializer):
         if data['password'] != data['password2']:
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."})
-        if data['shobe'] == None:
-            raise serializers.ValidationError(
-                {"password": "Şöbəni daxil edin"})
-        if data['shirket'] == None:
-            raise serializers.ValidationError(
-                {"password": "Şirkəti daxil edin"})
-        if data['ofis'] == None:
-            raise serializers.ValidationError({"password": "Ofisi daxil edin"})
         if data['vezife'] == None:
             raise serializers.ValidationError(
-                {"password": "Vəzifə daxil edin"})
+                {"vezife": "Vəzifə daxil edin"})
         if data['tel1'] == None:
             raise serializers.ValidationError(
-                {"password": "Ən az 1 telefon nömrəsi daxil edin"})
+                {"tel1": "Ən az 1 telefon nömrəsi daxil edin"})
 
         return data
 
     def create(self, validated_data):
-        user = User.objects.create(username=validated_data['username'],
-                                   asa=validated_data['asa'], dogum_tarixi=validated_data['dogum_tarixi'],
-                                   tel1=validated_data['tel1'], tel2=validated_data['tel2'], komanda=validated_data['komanda'],
-                                   isci_status=validated_data['isci_status'], vezife=validated_data['vezife'],
-                                   qeyd=validated_data['qeyd'],
-                                   shirket=validated_data['shirket'], ofis=validated_data['ofis'],
-                                   shobe=validated_data['shobe'], sv_image=validated_data['sv_image'],
-                                   maas_uslubu=validated_data['maas_uslubu']
-                                   )
+        user = User.objects.create(
+            username=validated_data['username'],
+            asa=validated_data['asa'], 
+            dogum_tarixi=validated_data['dogum_tarixi'],
+            tel1=validated_data['tel1'], 
+            tel2=validated_data['tel2'], 
+            komanda=validated_data['komanda'],
+            ishden_cixma_tarixi=validated_data['ishden_cixma_tarixi'],
+            isci_status=validated_data['isci_status'], 
+            vezife=validated_data['vezife'],
+            qeyd=validated_data['qeyd'],
+            shirket=validated_data['shirket'], 
+            ofis=validated_data['ofis'],
+            shobe=validated_data['shobe'], 
+            sv_image=validated_data['sv_image'],
+            maas_uslubu=validated_data['maas_uslubu'],
+            muqavile_novu=validated_data['muqavile_novu'],
+            supervisor=validated_data['supervisor'],
+        )
         user.set_password(validated_data['password'])
         try:
             user.sv_image2 = validated_data['sv_image2']
         except:
             user.sv_image2 = None
-
         try:
             user.profile_image = validated_data['profile_image']
         except:
             user.profile_image = None
 
         try:
-            user.elektron_imza = validated_data['elektron_imza']
+            user.suruculuk_vesiqesi = validated_data['suruculuk_vesiqesi']
         except:
-            user.elektron_imza = None
+            user.suruculuk_vesiqesi = None
 
         try:
             user.ishe_baslama_tarixi = validated_data['ishe_baslama_tarixi']
         except:
             user.ishe_baslama_tarixi = django.utils.timezone.now()
+        
 
         if validated_data['maas'] == None:
             user.maas = 0
