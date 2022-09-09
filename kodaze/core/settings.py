@@ -281,7 +281,7 @@ REST_FRAMEWORK = {
     'DATE_INPUT_FORMATS': ["%d-%m-%Y", ],
     'DATETIME_FORMAT':  "%d-%m-%Y %H:%M:%S",
     'DATE_FORMAT':  "%d-%m-%Y",
-    'DATETIME_INPUT_FORMATS':  "%d-%m-%Y %H:%M:%S",
+    'DATETIME_INPUT_FORMATS':  ["%d-%m-%Y %H:%M:%S", ],
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 
