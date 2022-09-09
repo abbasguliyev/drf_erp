@@ -61,7 +61,6 @@ def maas_ode_create(self, request, *args, **kwargs):
             holding = Holding.objects.all()[0]
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
             shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
             holding_ilkin_balans = holding_balans_hesabla()
@@ -84,7 +83,6 @@ def maas_ode_create(self, request, *args, **kwargs):
                 ofis_kassa_mexaric.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                 pul_axini_create(
                     ofis=ofis,
@@ -114,7 +112,6 @@ def maas_ode_create(self, request, *args, **kwargs):
                 shirket_kassa_mexaric.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
                 pul_axini_create(
                     shirket=shirket,
@@ -144,7 +141,6 @@ def maas_ode_create(self, request, *args, **kwargs):
                 holding_kassa_mexaric.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 holding_sonraki_balans = holding_balans_hesabla()
                 pul_axini_create(
                     holding=holding,
@@ -347,8 +343,6 @@ def avans_create(self, request, *args, **kwargs):
             avansdan_sonra_qalan_mebleg = maas_goruntuleme.yekun_maas - float(mebleg)
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
-
             if float(mebleg) > maas_goruntuleme.yekun_maas:
                 return Response({"detail": "Daxil etdiyiniz məbləğ işçinin yekun maaşından daha çoxdur"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -381,7 +375,6 @@ def avans_create(self, request, *args, **kwargs):
                 ofis_kassa_mexaric.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                 pul_axini_create(
                     ofis=ofis,
@@ -411,7 +404,6 @@ def avans_create(self, request, *args, **kwargs):
                 shirket_kassa_mexaric.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
                 pul_axini_create(
                     shirket=shirket,
@@ -441,7 +433,6 @@ def avans_create(self, request, *args, **kwargs):
                 holding_kassa_mexaric.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 holding_sonraki_balans = holding_balans_hesabla()
                 pul_axini_create(
                     holding=holding,

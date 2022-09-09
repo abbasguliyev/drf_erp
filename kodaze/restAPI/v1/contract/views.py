@@ -157,8 +157,6 @@ class OdemeTarixListCreateAPIView(generics.ListCreateAPIView):
         for q in queryset:
             umumi_miqdar += q.qiymet
 
-        print(f"{umumi_miqdar=}")
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -258,11 +256,6 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
             if mehsul == None:
                 return Response({"detail": "Dəyişim statusunda mehsul əlavə olunmalıdır."}, status=status.HTTP_400_BAD_REQUEST)
 
-            print(f"{kohne_muqavile=}")
-            print(f"{odenis_uslubu=}")
-            print(f"{kredit_muddeti=}")
-            print(f"{mehsul=}")
-
             kohne_muqavile.deyisilmis_mehsul_status = "DƏYİŞİLMİŞ MƏHSUL"
             kohne_muqavile.muqavile_status = "DÜŞƏN"
             kohne_muqavile.save()
@@ -275,13 +268,9 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
                 if ilkin_odenis_qaliq == None:
                     ilkin_odenis_qaliq = 0
 
-                print(f"****************{ilkin_odenis=}")
-                print(f"****************{ilkin_odenis_qaliq=}")
-                
                 odenilmis_mebleg = 0
 
                 odenilmis_odeme_tarixleri = OdemeTarix.objects.filter(muqavile = kohne_muqavile, odenme_status="ÖDƏNƏN")
-                print(f"****************{odenilmis_odeme_tarixleri=}")
 
                 if len(odenilmis_odeme_tarixleri) != 0:
                     for odenmis_tarix in odenilmis_odeme_tarixleri:
@@ -289,12 +278,9 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
                 else:
                     odenilmis_mebleg = float(odenilmis_mebleg) + float(ilkin_odenis) + float(ilkin_odenis_qaliq)
 
-                print(f"*****************{odenilmis_mebleg=}")
-
                 muqavile_umumi_mebleg = float(mehsul.qiymet) * int(kohne_muqavile.mehsul_sayi)
 
                 ofis = kohne_muqavile.ofis
-                print(f"{ofis=}")
                 try:
                     anbar = get_object_or_404(Anbar, ofis=ofis)
                 except:
@@ -324,7 +310,6 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
                     return Response({"detail": "Kredit müddəti 0 ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
 
                 qaliq_borc = float(muqavile_umumi_mebleg) - float(odenilmis_mebleg)
-                print(f"*********************{qaliq_borc=}")
                 muqavile_utils.stok_mehsul_ciximi(stok, int(kohne_muqavile.mehsul_sayi))
 
                 yeni_muqavile = Muqavile.objects.create(
@@ -409,7 +394,6 @@ def create_test_kredit(request):
         "kredit_muddeti":10
     }
     """
-    print(request)
     instance = request
     kredit_muddeti = instance.data.get("kredit_muddeti")
     mehsul_sayi = instance.data.get("mehsul_sayi")
@@ -500,7 +484,6 @@ def create_test_kredit(request):
                             kredit["qiymet"] = aylara_gore_odenecek_mebleg
                             umumi_kredit.append(kredit)
                 i+=1
-        print(f"***********{umumi_kredit=}")
     return Response(umumi_kredit)
 
 
@@ -533,7 +516,6 @@ class MuqavileKreditorListCreateAPIView(generics.ListCreateAPIView):
         if serializer.is_valid():
             muqavile = serializer.validated_data.get("muqavile")
             muqavile_kreditor = MuqavileKreditor.objects.filter(muqavile=muqavile)
-            print(f"{muqavile_kreditor=}")
             if len(muqavile_kreditor)>0:
                 return Response({"detail":"Bir müqaviləyə birdən artıq kreditor təyin edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()

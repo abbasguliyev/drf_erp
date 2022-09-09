@@ -50,13 +50,11 @@ class HoldingKassaListCreateAPIView(generics.ListCreateAPIView):
             balans = serializer.validated_data.get("balans")
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             holding_ilkin_balans = holding_balans_hesabla()
 
             serializer.save()
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             holding_sonraki_balans = holding_balans_hesabla()
             pul_axini_create(
                 holding=holding,
@@ -89,7 +87,6 @@ class HoldingKassaDetailAPIView(generics.RetrieveUpdateAPIView):
             holding = instance.holding
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             holding_ilkin_balans = holding_balans_hesabla()
 
             balans = serializer.validated_data.get("balans")
@@ -97,7 +94,6 @@ class HoldingKassaDetailAPIView(generics.RetrieveUpdateAPIView):
             serializer.save()
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             holding_sonraki_balans = holding_balans_hesabla()
             pul_axini_create(
                 holding=holding,
@@ -149,13 +145,11 @@ class ShirketKassaListCreateAPIView(generics.ListCreateAPIView):
             balans = serializer.validated_data.get("balans")
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
 
             serializer.save()
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
             pul_axini_create(
                 shirket=shirket,
@@ -189,13 +183,11 @@ class ShirketKassaDetailAPIView(generics.RetrieveUpdateAPIView):
 
             balans = serializer.validated_data.get("balans")
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
 
             serializer.save()
             
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
             pul_axini_create(
                 shirket=shirket,
@@ -249,13 +241,11 @@ class OfisKassaListCreateAPIView(generics.ListCreateAPIView):
             balans = serializer.validated_data.get("balans")
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
             serializer.save()
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
             pul_axini_create(
                 ofis=ofis,
@@ -290,13 +280,11 @@ class OfisKassaDetailAPIView(generics.RetrieveUpdateAPIView):
             balans = serializer.validated_data.get("balans")
             
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
             serializer.save()
             
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
             pul_axini_create(
                 ofis=ofis,
@@ -330,8 +318,6 @@ class PulAxiniListAPIView(generics.ListAPIView):
 
         for q in queryset:
             umumi_miqdar += q.miqdar
-
-        print(f"{umumi_miqdar=}")
 
         page = self.paginate_queryset(queryset)
         if page is not None:

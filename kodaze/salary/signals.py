@@ -16,8 +16,6 @@ def create_prim(sender, instance, created, **kwargs):
         indi = datetime.date.today()
         d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
-        print(f"{indi=}")
-        print(f"{next_m=}")
         days_in_mont = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
         
         muqavile_kredit_muddeti = instance.kredit_muddeti
@@ -51,8 +49,6 @@ def create_prim(sender, instance, created, **kwargs):
         ofis = instance.ofis
         shirket = instance.shirket
         shobe = instance.group_leader.shobe
-        print(f"{shirket=}")
-        print(f"{shobe=}")
         if (ofis is not None) or (ofis != ""):
             officeLeaderVezife = Vezifeler.objects.get(vezife_adi__icontains="OFFICE LEADER", shirket=shirket)
             officeLeaders = User.objects.filter(ofis=ofis, vezife=officeLeaderVezife)

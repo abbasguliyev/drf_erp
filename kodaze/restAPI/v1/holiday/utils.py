@@ -336,10 +336,7 @@ def isci_tetil_gunleri_calc(serializer, obj):
     is_gunleri_count = float(is_gunleri_count) - float(qeyri_is_gunu_count)
 
     is_odenisli = serializer.validated_data.get("is_odenisli")
-    print(f"************{is_odenisli=}")
-
     odenis_meblegi = serializer.validated_data.get("odenis_meblegi")
-    print(f"************{odenis_meblegi=}")
 
     if is_odenisli == True:
         try:
@@ -529,7 +526,6 @@ def shirket_istisna_isci_gunler_create(self, request, *args, **kwargs):
     
     if serializer.is_valid():
         shirket_gunler = serializer.validated_data.get("gunler")
-        print(f"{shirket_gunler=}")
         instisna_isci_create(serializer=serializer, company="shirket", company_name=shirket_gunler.shirket, obj_gunler=shirket_gunler)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)

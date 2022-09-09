@@ -76,10 +76,8 @@ class OfficeLeaderPrimSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
         vezife = validated_data.get('vezife')
-        print(f"{prim_status=}")
         try:
             prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 raise ValidationError
             return super(OfficeLeaderPrimSerializer, self).create(validated_data)
@@ -119,10 +117,8 @@ class GroupLeaderPrimNewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
         vezife = validated_data.get('vezife')
-        print(f"{prim_status=}")
         try:
             prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 raise ValidationError
             return super(GroupLeaderPrimNewSerializer, self).create(validated_data)
@@ -162,10 +158,8 @@ class Menecer1PrimNewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
         vezife = validated_data.get('vezife')
-        print(f"{prim_status=}")
         try:
             prim = Menecer1PrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 raise ValidationError
             return super(Menecer1PrimNewSerializer, self).create(validated_data)
@@ -190,10 +184,8 @@ class Menecer2PrimSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
         vezife = validated_data.get('vezife')
-        print(f"{prim_status=}")
         try:
             prim = Menecer2Prim.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 raise ValidationError
             return super(Menecer2PrimSerializer, self).create(validated_data)

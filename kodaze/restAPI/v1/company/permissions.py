@@ -20,8 +20,6 @@ class OfisPermissions(permissions.IsAdminUser):
         is_admin = super().has_permission(request, view)
         request_user_shirket = request.user.shirket
         object_shirket = obj.shirket
-        print(f"{request_user_shirket=}")
-        print(f"{object_shirket=}")
 
         return request_user_shirket == object_shirket or is_admin
 

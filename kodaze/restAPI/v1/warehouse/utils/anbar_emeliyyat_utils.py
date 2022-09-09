@@ -21,19 +21,12 @@ def emeliyyat_create(self, request, *args, **kwargs):
                 return Response({"detail": "Əməliyyat yalnız eyni şirkətin anbarları arasında ola bilər"}, status=status.HTTP_404_NOT_FOUND)
 
             mehsul_ve_sayi = serializer.validated_data.get("mehsul_ve_sayi")
-            print(f"{mehsul_ve_sayi=}")
-
             mehsul_ve_sayi_list = mehsul_ve_sayi.split(",")
-            print(f"{mehsul_ve_sayi_list=}")
             for m in mehsul_ve_sayi_list:
                 mehsul_ve_say = m.split("-")
-                print(f"{mehsul_ve_say=}--- {type(mehsul_ve_say)=}")
                 mehsul_id = int(mehsul_ve_say[0].strip())
                 say = int(mehsul_ve_say[1])
-                print(f"{mehsul_id=}")
-                print(f"{say=}")
                 mehsul = Mehsullar.objects.get(pk=mehsul_id)
-                print("1")
                 try:
                     stok1 = get_object_or_404(
                         Stok, anbar=gonderen, mehsul=mehsul)
@@ -43,7 +36,6 @@ def emeliyyat_create(self, request, *args, **kwargs):
                     return Response({"detail": "Göndərən anbarda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
                 if (say > stok1.say):
                     return Response({"detail": "Göndərən anbarda yetəri qədər məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
-                print("2")
                 try:
                     stok2 = get_object_or_404(
                         Stok, anbar=qebul_eden, mehsul=mehsul)
@@ -51,7 +43,6 @@ def emeliyyat_create(self, request, *args, **kwargs):
                         return Response({"detail": "Göndərən və göndərilən anbar eynidir!"}, status=status.HTTP_404_NOT_FOUND)
                     stok1.say = stok1.say - say
                     stok1.save()
-                    print("3")
                     if (stok1.say == 0):
                         stok1.delete()
                     stok2.say = stok2.say + say
@@ -65,7 +56,6 @@ def emeliyyat_create(self, request, *args, **kwargs):
                     if (stok1 == stok2):
                         return Response({"detail": "Göndərən və göndərilən anbar eynidir!"}, status=status.HTTP_404_NOT_FOUND)
                     stok2.save()
-                    print("4")
                     stok1.say = stok1.say - say
                     stok1.save()
                     if (serializer.is_valid()):

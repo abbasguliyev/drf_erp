@@ -464,8 +464,6 @@ class AppLogoListCreateAPIView(generics.ListCreateAPIView):
         try:
             app_logo = AppLogo.objects.all()
             if len(app_logo) > 0:
-                print(f"{app_logo=}")
-                print(f"{app_logo[0]=}")
                 app_logo[0].logo = logo
                 app_logo[0].save()
             else:

@@ -92,14 +92,12 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         muqavile.save()
 
         ilkin_balans = holding_umumi_balans_hesabla()
-        print(f"{ilkin_balans=}")
         ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
         qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. Borcu tam bağlandı"
         k_medaxil(ofis_kassa, float(ay_ucun_olan_mebleg), group_leader, qeyd)
 
         sonraki_balans = holding_umumi_balans_hesabla()
-        print(f"{sonraki_balans=}")
         ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
         pul_axini_create(
             ofis=ofis,
@@ -220,7 +218,6 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         odemek_istediyi_mebleg = float(request.data.get("qiymet"))
         
         ilkin_balans = holding_umumi_balans_hesabla()
-        print(f"{ilkin_balans=}")
         ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
         qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}, şərtli ödəmə - {indiki_ay.sertli_odeme_status}"
@@ -231,7 +228,6 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
         muqavile.save()
 
         sonraki_balans = holding_umumi_balans_hesabla()
-        print(f"{sonraki_balans=}")
         ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
         pul_axini_create(
             ofis=ofis,
@@ -450,7 +446,6 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                     return Response({"detail": "Artıq ödəmə statusunda qalıq borcunuzdan artıq məbləğ ödəyə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
                 artiqdan_normalda_odenmeli_olani_cixan_ferq = odemek_istediyi_mebleg - normalda_odenmeli_olan
-                print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
                 odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
 
                 indiki_ay.qiymet = odemek_istediyi_mebleg
@@ -467,31 +462,23 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                 sonuncu_aydan_qalan = sonuncu_ay.qiymet - artiqdan_normalda_odenmeli_olani_cixan_ferq
                 while(artiqdan_normalda_odenmeli_olani_cixan_ferq>0):
                     if(sonuncu_ay.qiymet > artiqdan_normalda_odenmeli_olani_cixan_ferq):
-                        print(f"1")
                         sonuncu_ay.qiymet = sonuncu_ay.qiymet - artiqdan_normalda_odenmeli_olani_cixan_ferq
                         sonuncu_ay.save()
                         artiqdan_normalda_odenmeli_olani_cixan_ferq = 0
-                        print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
 
                     elif(sonuncu_ay.qiymet == artiqdan_normalda_odenmeli_olani_cixan_ferq):
-                        print(f"2")
                         sonuncu_ay.delete()
                         muqavile.kredit_muddeti = muqavile.kredit_muddeti - 1
                         muqavile.save()
                         artiqdan_normalda_odenmeli_olani_cixan_ferq = 0
-                        print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
                     elif(sonuncu_ay.qiymet < artiqdan_normalda_odenmeli_olani_cixan_ferq):
-                        print(f"3")
                         artiqdan_normalda_odenmeli_olani_cixan_ferq = artiqdan_normalda_odenmeli_olani_cixan_ferq - sonuncu_ay.qiymet
-                        print(f"{artiqdan_normalda_odenmeli_olani_cixan_ferq=}")
                         sonuncu_ay.delete()
                         muqavile.kredit_muddeti = muqavile.kredit_muddeti - 1
                         muqavile.save()
                         odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN")
                         sonuncu_ay = odenmeyen_odemetarixler[len(odenmeyen_odemetarixler)-1]
                         sonuncudan_bir_evvelki_ay = odenmeyen_odemetarixler[len(odenmeyen_odemetarixler)-2]
-                        print(f"{sonuncu_ay.qiymet=}")
-                        print(f"{sonuncudan_bir_evvelki_ay.qiymet=}")
 
                 if(request.data.get("odenme_status") == "ÖDƏNƏN"):
                     qaliq_borc = float(qaliq_borc) - float(odemek_istediyi_mebleg)
@@ -499,7 +486,6 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                     muqavile.save()
 
                     ilkin_balans = holding_umumi_balans_hesabla()
-                    print(f"{ilkin_balans=}")
                     ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
                     
                     qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. kredit ödəməsi"
@@ -509,7 +495,6 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                     indiki_ay.save()
 
                     sonraki_balans = holding_umumi_balans_hesabla()
-                    print(f"{sonraki_balans=}")
                     ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                     pul_axini_create(
                         ofis=ofis,
@@ -531,7 +516,6 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                 indiki_ay = self.get_object()
                 muqavile = indiki_ay.muqavile
                 odemek_istediyi_mebleg = float(request.data.get("qiymet"))
-                print(f"{odemek_istediyi_mebleg=}")
                 normalda_odenmeli_olan = indiki_ay.qiymet
 
                 if float(odemek_istediyi_mebleg) > float(muqavile.qaliq_borc):
@@ -545,28 +529,19 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                 odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN", sertli_odeme_status=None)
                 umumi_odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN").exclude(sertli_odeme_status="BURAXILMIŞ AY")
                 sertli_odeme = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN").exclude(sertli_odeme_status=None)
-                print(f"******************************{odenmeyen_odemetarixler=} ---> {len(odenmeyen_odemetarixler)}")
-                print(f"******************************{umumi_odenmeyen_odemetarixler=} ---> {len(umumi_odenmeyen_odemetarixler)}")
-                print(f"******************{sertli_odeme=}")
 
                 sertli_odemeden_gelen_mebleg = 0
                 for s in sertli_odeme:
                     sertli_odemeden_gelen_mebleg += float(s.qiymet)
-                print(f"******************{sertli_odemeden_gelen_mebleg=}")
                 odeme_tarixleri = OdemeTarix.objects.filter(muqavile=muqavile)
                 # odediyi = len(odenen_odemetarixler) * indiki_ay.qiymet
                 qaliq_borc = float(muqavile.qaliq_borc)
-                print(f"******************{qaliq_borc=}")
                 yeni_qaliq_borc = qaliq_borc-sertli_odemeden_gelen_mebleg
-                print(f"******************{yeni_qaliq_borc=}")
                 # cixilacaq_mebleg = qaliq_borc -  sertli_odemeden_gelen_mebleg
                 yeni_aylar = yeni_qaliq_borc // odemek_istediyi_mebleg
-                print(f"******************{yeni_aylar=}")
                 # silinecek_ay = len(odenmeyen_odemetarixler) - yeni_aylar
                 silinecek_ay = len(umumi_odenmeyen_odemetarixler) - yeni_aylar - len(sertli_odeme)
-                print(f"******************{silinecek_ay=}")
                 son_aya_elave_edilecek_mebleg = yeni_qaliq_borc - ((yeni_aylar-1) * odemek_istediyi_mebleg)
-                print(f"******************{son_aya_elave_edilecek_mebleg=}")
                 indiki_ay.qiymet = odemek_istediyi_mebleg
                 # indiki_ay.odenme_status = "ÖDƏNƏN"
                 indiki_ay.sertli_odeme_status = "ARTIQ ÖDƏMƏ"
@@ -584,18 +559,14 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
                     odenmeyen_odemetarixler = OdemeTarix.objects.filter(muqavile=muqavile, odenme_status="ÖDƏNMƏYƏN", sertli_odeme_status=None)
                     a += 1
 
-                print(f"********Silinmeden sonra***********{odenmeyen_odemetarixler=} ---> {len(odenmeyen_odemetarixler)}")
-
                 b = 0
                 if float(odemek_istediyi_mebleg) == float(qaliq_borc):
                     while(b < yeni_aylar):
-                        print(f"******************{b=}")
                         odenmeyen_odemetarixler[b].qiymet = odemek_istediyi_mebleg
                         odenmeyen_odemetarixler[b].save()
                         b += 1
                 elif float(odemek_istediyi_mebleg) < float(qaliq_borc):
                     while(b < yeni_aylar):
-                        print(f"******************{b=}")
                         if(b < yeni_aylar-1):
                             odeme_tarixi = odenmeyen_odemetarixler[b]
                             odeme_tarixi.qiymet = odemek_istediyi_mebleg
@@ -666,14 +637,12 @@ def odeme_tarixi_update(self, request, *args, **kwargs):
             muqavile.save()
 
             ilkin_balans = holding_umumi_balans_hesabla()
-            print(f"{ilkin_balans=}")
             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
             
             qeyd = f"GroupLeader - {group_leader.asa}, müştəri - {musteri.asa}, tarix - {today}, ödəniş üslubu - {odenis_uslubu}. kredit ödəməsi"
             k_medaxil(ofis_kassa, float(odemek_istediyi_mebleg), group_leader, qeyd)
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
             pul_axini_create(
                 ofis=ofis,

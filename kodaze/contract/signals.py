@@ -27,8 +27,6 @@ def create_odeme_tarix(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Muqavile)
 def create_and_add_pdf_to_muqavile(sender, instance, created, **kwargs):
     if created:
-        print("Signal işə düşdü")
-        
         okean = "OCEAN"
         magnus = "MAGNUS"
 
@@ -50,8 +48,6 @@ def create_and_add_pdf_to_muqavile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Muqavile)
 def create_and_add_pdf_to_muqavile_kredit(sender, instance, created, **kwargs):
     if created:
-        print("Signal işə düşdü")
-
         okean = "OCEAN"
         magnus = "MAGNUS"
 

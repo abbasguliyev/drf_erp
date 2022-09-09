@@ -250,7 +250,6 @@ class StokListCreateAPIView(generics.ListCreateAPIView):
             tarix = datetime.date.today()
             stok = Stok.objects.filter(anbar=anbar, mehsul=mehsul)
             say = serializer.validated_data.get("say")
-            print(f"{say=}")
             if len(stok) > 0:
                 return Response({"detail": "Bu adlı stok artıq var. Yenisini əlavə edə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
             emeliyyat = Emeliyyat.objects.create(

@@ -243,10 +243,6 @@ class MaasGoruntulemeListCreateAPIView(generics.ListCreateAPIView):
             for k in kesinti:
                 umumi_kesinti += k.mebleg
 
-        print(f"{umumi_avans=}")
-        print(f"{umumi_bonus=}")
-        print(f"{umumi_kesinti=}")
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -306,7 +302,6 @@ class OfficeLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
             prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -417,7 +412,6 @@ class GroupLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
             prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -476,7 +470,6 @@ class Menecer2PrimListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
             prim = Menecer2Prim.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -586,7 +579,6 @@ class Menecer1PrimNewListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             vezife = serializer.validated_data.get("vezife")
             prim = Menecer1PrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
-            print(f"{prim=}")
             if len(prim)>0:
                 return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
             else:

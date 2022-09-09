@@ -198,11 +198,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         vezife = validated_data['vezife']
         vezife_permission = VezifePermission.objects.filter(vezife=vezife)
-        print(f"{vezife_permission=}")
         if vezife_permission is not None:
             for vp in vezife_permission:
                 permission_group = vp.permission_group
-                print(f"{permission_group=}")
                 user.groups.add(permission_group)
 
         user_permissions = validated_data['user_permissions']
@@ -262,7 +260,6 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         user = instance
         user_permissions = validated_data.get('user_permissions')
-        print(f"{user_permissions=}")
         if user_permissions is not None:
             for user_permission in user_permissions:
                 user.user_permissions.add(user_permission)

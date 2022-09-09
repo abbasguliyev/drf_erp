@@ -21,7 +21,6 @@ def holding_kassa_medaxil_create(self, request, *args, **kwargs):
         evvelki_balans=holding_kassa.balans
 
         ilkin_balans = holding_umumi_balans_hesabla()
-        print(f"{ilkin_balans=}")
         holding_ilkin_balans = holding_balans_hesabla()
 
         medaxil_tarixi = request.data.get("medaxil_tarixi")
@@ -44,7 +43,6 @@ def holding_kassa_medaxil_create(self, request, *args, **kwargs):
             serializer.save(medaxil_eden=user, holding_kassa=holding_kassa, medaxil_tarixi=medaxil_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             holding_sonraki_balans = holding_balans_hesabla()
 
             pul_axini_create(
@@ -77,7 +75,6 @@ def holding_kassa_mexaric_create(self, request, *args, **kwargs):
     evvelki_balans=holding_kassa.balans
 
     ilkin_balans = holding_umumi_balans_hesabla()
-    print(f"{ilkin_balans=}")
     holding_ilkin_balans = holding_balans_hesabla()
 
     holding_kassa_balans = holding_kassa.balans
@@ -100,7 +97,6 @@ def holding_kassa_mexaric_create(self, request, *args, **kwargs):
                     serializer.save(mexaric_eden=user, holding_kassa=holding_kassa, mexaric_tarixi=mexaric_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
 
                     sonraki_balans = holding_umumi_balans_hesabla()
-                    print(f"{sonraki_balans=}")
                     holding_sonraki_balans = holding_balans_hesabla()
 
                     pul_axini_create(
@@ -142,7 +138,6 @@ def shirket_kassa_medaxil_create(self, request, *args, **kwargs):
         medaxil_tarixi = request.data.get("medaxil_tarixi")
 
         ilkin_balans = holding_umumi_balans_hesabla()
-        print(f"{ilkin_balans=}")
 
         shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
 
@@ -164,7 +159,6 @@ def shirket_kassa_medaxil_create(self, request, *args, **kwargs):
             serializer.save(medaxil_eden=user, shirket_kassa=shirket_kassa, medaxil_tarixi=medaxil_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
 
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
             pul_axini_create(
                 shirket=shirket,
@@ -198,7 +192,6 @@ def shirket_kassa_mexaric_create(self, request, *args, **kwargs):
     evvelki_balans=shirket_kassa.balans
 
     ilkin_balans = holding_umumi_balans_hesabla()
-    print(f"{ilkin_balans=}")
     shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
 
     shirket_kassa_balans = shirket_kassa.balans
@@ -221,7 +214,6 @@ def shirket_kassa_mexaric_create(self, request, *args, **kwargs):
                     serializer.save(mexaric_eden=user, shirket_kassa=shirket_kassa, mexaric_tarixi=mexaric_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
 
                     sonraki_balans = holding_umumi_balans_hesabla()
-                    print(f"{sonraki_balans=}")
                     shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
                     pul_axini_create(
                         shirket=shirket,
@@ -258,7 +250,6 @@ def ofis_kassa_medaxil_create(self, request, *args, **kwargs):
         evvelki_balans=ofis_kassa.balans
 
         ilkin_balans = holding_umumi_balans_hesabla()
-        print(f"{ilkin_balans=}")
         ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
         if(medaxil_tarixi == ""):
             medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
@@ -272,7 +263,6 @@ def ofis_kassa_medaxil_create(self, request, *args, **kwargs):
             sonraki_kassa_balans=ofis_kassa.balans
             serializer.save(medaxil_eden=user, ofis_kassa=ofis_kassa, medaxil_tarixi=medaxil_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
             sonraki_balans = holding_umumi_balans_hesabla()
-            print(f"{sonraki_balans=}")
             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
             pul_axini_create(
                 ofis=ofis,
@@ -303,7 +293,6 @@ def ofis_kassa_mexaric_create(self, request, *args, **kwargs):
     evvelki_balans=ofis_kassa.balans
 
     ilkin_balans = holding_umumi_balans_hesabla()
-    print(f"{ilkin_balans=}")
 
     ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
@@ -322,7 +311,6 @@ def ofis_kassa_mexaric_create(self, request, *args, **kwargs):
                     sonraki_kassa_balans=ofis_kassa.balans
                     serializer.save(mexaric_eden=user, ofis_kassa=ofis_kassa, mexaric_tarixi=mexaric_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
                     sonraki_balans = holding_umumi_balans_hesabla()
-                    print(f"{sonraki_balans=}")
                     ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                     pul_axini_create(
                         ofis=ofis,

@@ -32,7 +32,6 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
         gecikir = 0
 
         for q in queryset:
-            print(f"********************query ====> {q}")
             toplam = TaskManager.objects.filter(pk = q.id).count()
             tamamlanan = TaskManager.objects.filter(pk = q.id, status="Tamamlandı").count()
             icra_edilen = TaskManager.objects.filter(pk = q.id, status="İcra edilir").count()
@@ -84,14 +83,9 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             if end_date == None:
                 end_date = None
             if position_list is not None:
-                print(f"{position_list=}")
                 for position_id in position_list:
-                    print(f"{position_id=}")
                     position = Vezifeler.objects.get(pk=position_id)
-                    print(f"{position=}")
-
                     users = User.objects.filter(vezife=position)
-                    print(f"{users=}")
                     for user in users:
                         task_manager = TaskManager.objects.create(
                             title = serializer.validated_data.get('title'),
@@ -103,9 +97,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                         )
                         task_manager.save()
             if user_list is not None:
-                print(f"{user_list}")
                 for user_id in user_list:
-                    print(f"{user_id}")
                     user = User.objects.get(pk=user_id)
                     task_manager = TaskManager.objects.create(
                         title = serializer.validated_data.get('title'),

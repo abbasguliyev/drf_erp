@@ -15,9 +15,6 @@ def stok_update(self, request, *args, **kwargs):
     icraci = request.user
     evvelki_say = stok.say
     yekun_say = abs(int(evvelki_say) - int(say))
-    print(f"{say=}")
-    print(f"{evvelki_say=}")
-    print(f"{yekun_say=}")
     if serializer.is_valid():
         qeyd = serializer.validated_data.get("qeyd")
         serializer.save(say=say)

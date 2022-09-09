@@ -95,11 +95,9 @@ class OfisSerializer(serializers.ModelSerializer):
         ofis_adi = validated_data.get('ofis_adi')
         validated_data['ofis_adi'] = ofis_adi.upper()
         shirket = validated_data['shirket']
-        print(f"{shirket=}")
         try:
             ofiss = Ofis.objects.filter(
                 ofis_adi=ofis_adi.upper(), shirket=shirket)
-            print(f"{ofiss=}")
             if len(ofiss) > 0:
                 raise ValidationError
             return super(OfisSerializer, self).create(validated_data)
@@ -131,11 +129,9 @@ class ShobeSerializer(serializers.ModelSerializer):
         shobe_adi = validated_data.get('shobe_adi')
         validated_data['shobe_adi'] = shobe_adi.upper()
         ofis = validated_data['ofis']
-        print(f"{ofis=}")
         try:
             shobe_qs = Shobe.objects.filter(
                 shobe_adi=shobe_adi.upper(), ofis=ofis)
-            print(f"{shobe_qs=}")
             if len(shobe_qs) > 0:
                 raise ValidationError
             return super(ShobeSerializer, self).create(validated_data)

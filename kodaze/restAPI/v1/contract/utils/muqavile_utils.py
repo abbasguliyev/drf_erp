@@ -51,8 +51,6 @@ import django
 
 def create_and_add_pdf_when_muqavile_updated(sender, instance, created, **kwargs):
     if created:
-        print("create_and_add_pdf_when_muqavile_updated  işə düşdü")
-
         okean = "OCEAN"
         magnus = "MAGNUS"
 
@@ -74,8 +72,6 @@ def create_and_add_pdf_when_muqavile_updated(sender, instance, created, **kwargs
 
 def create_and_add_pdf_when_muqavile_kredit_updated(sender, instance, created, **kwargs):
     if created:
-        print("create_and_add_pdf_when_muqavile_kredit_updated işə düşdü")
-
         okean = "OCEAN"
         magnus = "MAGNUS"
 
@@ -441,12 +437,10 @@ def muqavile_create(self, request, *args, **kwargs):
                             return Response({"detail": "İlkin ödəniş məbləği müqavilənin məbləğindən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
                         # Umumi ilkin odenis meblegi daxil edilerse ve qaliq ilkin odenis meblegi daxil edilmezse
                         if (indiki_tarix_san == ilkin_odenis_tarixi_san):
-                            print(f"*****************{ilkin_odenis_tarixi=}")
                             stok_mehsul_ciximi(stok, int(mehsul_sayi))
                             muqavile_umumi_mebleg = umumi_mebleg(mehsul.qiymet, int(mehsul_sayi))
                             
                             ilkin_balans = holding_umumi_balans_hesabla()
-                            print(f"{ilkin_balans=}")
                             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
                             qeyd = f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, tam ilkin ödəniş"
                             k_medaxil(ofis_kassa, float(
@@ -458,7 +452,6 @@ def muqavile_create(self, request, *args, **kwargs):
                                             ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_status="BİTMİŞ", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc,)
                             sonraki_balans = holding_umumi_balans_hesabla()
-                            print(f"{sonraki_balans=}")
                             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                             pul_axini_create(
                                 ofis=ofis,
@@ -522,7 +515,6 @@ def muqavile_create(self, request, *args, **kwargs):
                                 mehsul.qiymet, int(mehsul_sayi))
 
                             ilkin_balans = holding_umumi_balans_hesabla()
-                            print(f"{ilkin_balans=}")
                             ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
                             qeyd = f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {ilkin_odenis_tarixi}, ödəniş üslubu - {odenis_uslubu}, 2-dəfəyə ilkin ödənişin birincisi."
@@ -537,7 +529,6 @@ def muqavile_create(self, request, *args, **kwargs):
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
                                             muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                             sonraki_balans = holding_umumi_balans_hesabla()
-                            print(f"{sonraki_balans=}")
                             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                             pul_axini_create(
                                 ofis=ofis,
@@ -637,7 +628,6 @@ def muqavile_create(self, request, *args, **kwargs):
                     mehsul.qiymet, int(mehsul_sayi))
 
                 ilkin_balans = holding_umumi_balans_hesabla()
-                print(f"{ilkin_balans=}")
                 ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
                 qeyd = f"GroupLeader - {user.asa}, müştəri - {musteri.asa}, tarix - {indiki_tarix_date}, ödəniş üslubu - {odenis_uslubu}"
@@ -647,7 +637,6 @@ def muqavile_create(self, request, *args, **kwargs):
                                 muqavile_status="BİTMİŞ", shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg)
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                 pul_axini_create(
                     ofis=ofis,
@@ -702,7 +691,6 @@ def muqavile_update(self, request, *args, **kwargs):
         yeni_qrafik = request.data.get("yeni_qrafik_status")
         # YENI QRAFIK ile bagli emeliyyatlar
         if(yeni_qrafik == "YENİ QRAFİK"):
-            print("------------------------------------------------------------------------------------")
             ilkin_odenis = muqavile.ilkin_odenis
             ilkin_odenis_qaliq = muqavile.ilkin_odenis_qaliq
             ilkin_odenis_tam = ilkin_odenis + ilkin_odenis_qaliq
@@ -728,8 +716,6 @@ def muqavile_update(self, request, *args, **kwargs):
                 sertli_odemeden_gelen_mebleg = 0
                 for s in sertli_odeme:
                     sertli_odemeden_gelen_mebleg += float(s.qiymet)
-                print(f"***************{sertli_odeme=}")
-                print(f"***************{sertli_odemeden_gelen_mebleg=}")
                 odediyi = float(odenen_mebleg) + ilkin_odenis_tam
                 qaliq_borc = mehsulun_qiymeti - odediyi
                 cixilacaq_mebleg = qaliq_borc -  sertli_odemeden_gelen_mebleg
@@ -750,7 +736,6 @@ def muqavile_update(self, request, *args, **kwargs):
                 inc_month = pd.date_range(odenmeyen_odemetarixler[len(
                     odenmeyen_odemetarixler)-1].tarix, periods=create_olunacaq_ay+1, freq='M')
 
-                print(f"|||||||||||||||||||{inc_month=}")
                 muqavile.kredit_muddeti = muqavile.kredit_muddeti + create_olunacaq_ay
                 muqavile.save()
                 # Var olan aylarin qiymetini musterinin istediyi qiymet edir
@@ -762,9 +747,6 @@ def muqavile_update(self, request, *args, **kwargs):
                 # Elave olunacaq aylari create edir
                 o_t = OdemeTarix.objects.filter(muqavile=muqavile)
                 c = int(list(o_t)[-1].ay_no) + 1
-                print(f"***************{c=}")
-                print(f"***************{create_olunacaq_ay=}")
-                print(f"***************{datetime.date.today().day=} ---type---> {type(datetime.date.today().day)=}")
                 j = 1
                 while(j <= create_olunacaq_ay):
                     if(j == create_olunacaq_ay):
@@ -777,14 +759,7 @@ def muqavile_update(self, request, *args, **kwargs):
                                 sonuncu_ay=True
                             ).save()
                         elif(datetime.date.today().day == 31 or datetime.date.today().day == 30 or datetime.date.today().day == 29):
-                            print(f"**************{j=}")
-                            print(f"***testson1***********{inc_month[j].day=} ---type---> {type(inc_month[j].day)=}")
-                            print(f"***testson1***********{datetime.date.today().day=} ---type---> {type(datetime.date.today().day)=}")
-                            print("Burdayam3")
                             if(inc_month[j].day <= datetime.date.today().day):
-                                print(f"***testson2***********{inc_month[j].day=} ---type---> {type(inc_month[j].day)=}")
-                                print(f"***testson2***********{datetime.date.today().day=} ---type---> {type(datetime.date.today().day)=}")
-                                print("Burdayam4")
                                 OdemeTarix.objects.create(
                                     ay_no=c,
                                     muqavile=muqavile,
@@ -809,18 +784,7 @@ def muqavile_update(self, request, *args, **kwargs):
                                 qiymet=odemek_istediyi_mebleg
                             ).save()
                         elif(datetime.date.today().day == 31 or datetime.date.today().day == 30 or datetime.date.today().day == 29):
-                            print(f"**************{j=}")
-                            print(f"***test***********{inc_month[j].day=} ---type---> {type(inc_month[j].day)=}")
-                            print(f"***test***********{datetime.date.today().day=} ---type---> {type(datetime.date.today().day)=}")
-                            print("Burdayam1")
-
-                            print(f"***test***********{datetime.date.today().day=} ---type---> {type(datetime.date.today().day)=}")
                             if(inc_month[j].day <= datetime.date.today().day):
-                                print(f"**************{j=}")
-                                print(f"***test***********{inc_month[j].day=} ---type---> {type(inc_month[j].day)=}")
-                                print(f"***test***********{datetime.date.today().day=} ---type---> {type(datetime.date.today().day)=}")
-                                print("Burdayam2")
-
                                 OdemeTarix.objects.create(
                                     ay_no=c,
                                     muqavile=muqavile,
@@ -914,7 +878,6 @@ def muqavile_update(self, request, *args, **kwargs):
 
             if (kompensasiya_medaxil is not None):
                 ilkin_balans = holding_umumi_balans_hesabla()
-                print(f"{ilkin_balans=}")
                 ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
                 user = request.user
@@ -929,7 +892,6 @@ def muqavile_update(self, request, *args, **kwargs):
                 muqavile.save()
                 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                 pul_axini_create(
                     ofis=muqavile.ofis,
@@ -950,7 +912,6 @@ def muqavile_update(self, request, *args, **kwargs):
                     return Response({"detail": "Kompensasiya məxaric məbləği Ofisin balansından çox ola bilməz"},
                                     status=status.HTTP_400_BAD_REQUEST)
                 ilkin_balans = holding_umumi_balans_hesabla()
-                print(f"{ilkin_balans=}")
                 ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
                 user = request.user
@@ -965,7 +926,6 @@ def muqavile_update(self, request, *args, **kwargs):
                 muqavile.save()
 
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                 pul_axini_create(
                     ofis=muqavile.ofis,
@@ -1000,16 +960,13 @@ def muqavile_update(self, request, *args, **kwargs):
             next_m = d + pd.offsets.MonthBegin(1)
 
             all_servis = Servis.objects.filter(muqavile=muqavile)
-            print(f"{all_servis=}")
             for servis in all_servis:
                 all_servis_odeme = ServisOdeme.objects.filter(
                     servis=servis, odendi=False)
-                print(f"{all_servis_odeme=}")
                 if len(all_servis_odeme) == 1:
                     all_servis_odeme[0].delete()
                 else:
                     for servis_odeme in all_servis_odeme:
-                        print(f"{servis_odeme=}")
                         servis_odeme.delete()
                 servis.delete()
 

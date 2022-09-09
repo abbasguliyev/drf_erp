@@ -52,13 +52,11 @@ def create_is_auto_services_when_update_service(muqavile, created, kartric_novu,
         elif kartric_novu == "KARTRIC24AY":
             month = '24M'
 
-        print(f"{kartric_novu=}")
         d = pd.to_datetime(f"{indi.year}-{indi.month}-{indi.day}")
         month_service = pd.date_range(start=d, periods=2, freq=month)[1]
         anbar = get_object_or_404(Anbar, ofis=instance.ofis)
         
         kartric = Mehsullar.objects.filter(kartric_novu=kartric_novu, shirket=instance.shirket)
-        print(f"{kartric=}")
         for c in kartric:
             stok = Stok.objects.filter(anbar=anbar, mehsul=c)[0]
             if stok == None or stok.say == 0:
@@ -210,18 +208,15 @@ def servis_update(self, request, *args, **kwargs):
                 s.save()
 
                 if servis.is_auto == True:
-                    print("Yeni servis create edilmə prosesi işə düşdü")
                     kartric_novu = servis.mehsullar.all()[0].kartric_novu
                     create_is_auto_services_when_update_service(muqavile=muqavile, created=True, kartric_novu=kartric_novu)
 
                 ilkin_balans = holding_umumi_balans_hesabla()
-                print(f"{ilkin_balans=}")
                 ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
 
                 qeyd = f"Kreditor - {user.asa}, müştəri - {muqavile.musteri.asa}, servis ödənişi"
                 k_medaxil(ofis_kassa, s.odenilecek_mebleg, user, qeyd)
                 sonraki_balans = holding_umumi_balans_hesabla()
-                print(f"{sonraki_balans=}")
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
                 pul_axini_create(
                     ofis=muqavile.ofis,
@@ -278,13 +273,10 @@ def servis_odeme_update(self, request, *args, **kwargs):
                     servis_odeme.odendi = True
                     servis_odeme.save()
                     if servis_odeme.servis.is_auto == True:
-                        print("Yeni servis create edilmə prosesi işə düşdü")
                         kartric_novu = servis_odeme.servis.mehsullar.all()[0].kartric_novu
-                        print(f"{kartric_novu=}")
                         create_is_auto_services_when_update_service(muqavile=muqavile, created=True, kartric_novu=kartric_novu)
 
                     ilkin_balans = holding_umumi_balans_hesabla()
-                    print(f"{ilkin_balans=}")
                     ofis_ilkin_balans = ofis_balans_hesabla(ofis=muqavile.ofis)
                     
                     qeyd = f"Kreditor - {user.asa}, müştəri - {muqavile.musteri.asa}, servis ödənişi"
@@ -292,7 +284,6 @@ def servis_odeme_update(self, request, *args, **kwargs):
                     kreditorun_servisden_alacagi_mebleg = (float(servis_odeme.odenilecek_mebleg) * int(prim_faizi)) / 100
 
                     sonraki_balans = holding_umumi_balans_hesabla()
-                    print(f"{sonraki_balans=}")
                     ofis_sonraki_balans = ofis_balans_hesabla(ofis=muqavile.ofis)
                     pul_axini_create(
                         ofis=muqavile.ofis,
