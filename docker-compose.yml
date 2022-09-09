@@ -99,7 +99,9 @@ services:
       - db
 
   celery_beat:
-    build: ./kodaze
+    build:
+      context: ./kodaze
+      dockerfile: ./Dockerfile
     command: celery -A core beat -l info
     volumes:
       - ./kodaze:/app/
@@ -116,6 +118,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD} 
     depends_on:
       - redis
+      - db
 
 volumes:
   postgres_data:
