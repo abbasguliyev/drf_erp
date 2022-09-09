@@ -81,7 +81,7 @@ services:
       dockerfile: ./Dockerfile
     image: kodaze_worker
     restart: unless-stopped
-    command: celery -A core worker --beat --scheduler django --loglevel=info
+    command: celery -A core worker --beat --scheduler django --loglevel=info --concurrency=8 -O fair -P prefork -n core
     env_file:
       - .env
     environment:
@@ -99,10 +99,10 @@ services:
       - db
 
   celery_beat:
-    build:
-      context: ./kodaze
-      dockerfile: ./Dockerfile
+    build: ./kodaze
     command: celery -A core beat -l info
+    image: kodaze_celery_beat
+    restart: unless-stopped
     volumes:
       - ./kodaze:/app/
     env_file:
@@ -118,7 +118,6 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD} 
     depends_on:
       - redis
-      - db
 
 volumes:
   postgres_data:
