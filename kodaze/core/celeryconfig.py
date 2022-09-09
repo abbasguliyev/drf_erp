@@ -19,6 +19,8 @@ app.config_from_object('django.conf:settings')
 
 app.autodiscover_tasks()
 
+app.conf.broker_url = os.environ['CELERY_BROKER_URL']
+
 app.conf.beat_schedule = {
     "maas_goruntuleme_create_task": {
         "task": "maas_goruntuleme_create_task",
