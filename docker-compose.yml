@@ -100,7 +100,7 @@ services:
 
   celery_beat:
     build: ./kodaze
-    command: celery -A core beat -l info
+    command: celery -A core beat --loglevel=info
     volumes:
       - ./kodaze:/app/
     env_file:
@@ -116,6 +116,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD} 
     depends_on:
       - redis
+      - db
 
 volumes:
   postgres_data:
