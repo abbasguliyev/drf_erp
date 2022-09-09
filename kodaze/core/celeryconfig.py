@@ -4,6 +4,8 @@ import os
 from celery import Celery
 from django.conf import settings
 from celery.schedules import crontab
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
 
 # set the default Django settings module for the 'celery' program.
