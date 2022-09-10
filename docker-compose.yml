@@ -116,6 +116,8 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD} 
+    networks:
+      - kodaze-network
     links:
       - redis
     depends_on:
