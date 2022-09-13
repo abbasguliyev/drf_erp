@@ -107,6 +107,8 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                         type = serializer.validated_data.get('type'),
                     )
                     task_manager.save()
+            if user_list == None and position_list == None:
+                return Response({'detail' : "İşçi və ya vəzifədən biri mütləq seçilməlidir"}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"detail": "Tapşırıq əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             traceback.print_exc
