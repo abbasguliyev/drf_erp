@@ -31,17 +31,6 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
         icra_edilir = 0
         gecikir = 0
 
-        # for q in queryset:
-        #     toplam = TaskManager.objects.filter(pk = q.id).count()
-        #     tamamlanan = TaskManager.objects.filter(pk = q.id, status="Tamamlandı").count()
-        #     icra_edilen = TaskManager.objects.filter(pk = q.id, status="İcra edilir").count()
-        #     geciken = TaskManager.objects.filter(pk = q.id, status="Gecikir").count()
-
-        #     toplam_tapsiriq_sayi += toplam
-        #     tamamlandi += tamamlanan
-        #     icra_edilir += icra_edilen
-        #     gecikir += geciken
-
         page = self.paginate_queryset(queryset)
         if page == None:
             page = queryset
@@ -94,6 +83,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             end_date = serializer.validated_data.get('end_date')
             if end_date == None:
                 end_date = None
+
             if position_list is not None:
                 for position_id in position_list:
                     position = Vezifeler.objects.get(pk=position_id)
@@ -102,6 +92,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                         task_manager = TaskManager.objects.create(
                             title = serializer.validated_data.get('title'),
                             description = serializer.validated_data.get('description'),
+                            created_date = created_date,
                             end_date = end_date,
                             position = position,
                             employee = user,
@@ -114,6 +105,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                     task_manager = TaskManager.objects.create(
                         title = serializer.validated_data.get('title'),
                         description = serializer.validated_data.get('description'),
+                        created_date = created_date,
                         end_date = end_date,
                         employee = user,
                         type = serializer.validated_data.get('type'),
