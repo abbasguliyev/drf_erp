@@ -25,6 +25,7 @@ class TaskManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskManager
         fields = (
+            'id',
             'title', 
             'description', 
             'created_date', 
