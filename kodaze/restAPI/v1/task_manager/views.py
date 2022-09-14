@@ -43,9 +43,19 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             gecikir += geciken
 
         page = self.paginate_queryset(queryset)
+        for q in page:
+            toplam = TaskManager.objects.filter(pk = q.id).count()
+            tamamlanan = TaskManager.objects.filter(pk = q.id, status="Tamamlandı").count()
+            icra_edilen = TaskManager.objects.filter(pk = q.id, status="İcra edilir").count()
+            geciken = TaskManager.objects.filter(pk = q.id, status="Gecikir").count()
+
+            toplam_tapsiriq_sayi += toplam
+            tamamlandi += tamamlanan
+            icra_edilir += icra_edilen
+            gecikir += geciken
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            serializer.data
+            # serializer.data
             return self.get_paginated_response([{
                     'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
                     'tamamlandi':tamamlandi,
