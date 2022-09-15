@@ -2,9 +2,13 @@ import django_filters
 from task_manager.models import TaskManager
 
 class TaskManagerFilter(django_filters.FilterSet):
-    date = django_filters.DateTimeFilter(field_name='date', input_formats=["%d-%m-%Y %H:%M:%S"])
-    date__gte = django_filters.DateTimeFilter(field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
-    date__lte = django_filters.DateTimeFilter(field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    created_date = django_filters.DateTimeFilter(field_name='created_date', input_formats=["%d-%m-%Y %H:%M:%S"])
+    created_date__gte = django_filters.DateTimeFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    created_date__lte = django_filters.DateTimeFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    
+    end_date = django_filters.DateTimeFilter(field_name='end_date', input_formats=["%d-%m-%Y %H:%M:%S"])
+    end_date__gte = django_filters.DateTimeFilter(field_name='end_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    end_date__lte = django_filters.DateTimeFilter(field_name='end_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
     
     class Meta:
         model = TaskManager
