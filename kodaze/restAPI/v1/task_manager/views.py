@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from restAPI.v1.task_manager.serializers import TaskManagerSerializer, UserTaskRequestSerializer
 from task_manager.models import TaskManager, UserTaskRequest
 from company.models import Vezifeler
-from restAPI.v1.task_manager.filters import TaskManagerFilter
+from restAPI.v1.task_manager.filters import TaskManagerFilter, UserTaskRequestFilter
 from . import permissions
 from restAPI.v1.utils.permission_utils import IsAdminUserOrReadOnly
 from django.contrib.auth import get_user_model
@@ -122,7 +122,6 @@ class TaskManagerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TaskManager.objects.all()
     serializer_class = TaskManagerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = TaskManagerFilter
     permission_classes = [permissions.TaskManagerPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -138,6 +137,8 @@ class UserTaskRequestListCreateAPIView(generics.ListCreateAPIView):
     queryset = UserTaskRequest.objects.all()
     serializer_class = UserTaskRequestSerializer
     filter_backends = [DjangoFilterBackend]
+    filterset_class = UserTaskRequestFilter
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

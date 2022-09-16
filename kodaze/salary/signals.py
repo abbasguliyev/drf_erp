@@ -55,17 +55,19 @@ def create_prim(sender, instance, created, **kwargs):
 
             for officeLeader in officeLeaders:
                 officeLeader_status = officeLeader.isci_status
-                ofisleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, vezife=officeLeaderVezife)
+                try:
+                    ofisleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, vezife=officeLeaderVezife)
+                    officeLeader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=f"{indi.year}-{indi.month}-{1}")
+                    officeLeader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=f"{next_m.year}-{next_m.month}-{1}")
 
-                officeLeader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=f"{indi.year}-{indi.month}-{1}")
-                officeLeader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=f"{next_m.year}-{next_m.month}-{1}")
+                    officeLeader_maas_goruntulenme_bu_ay.satis_sayi = float(officeLeader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
+                    officeLeader_maas_goruntulenme_bu_ay.satis_meblegi = float(officeLeader_maas_goruntulenme_bu_ay.satis_meblegi) + (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+                    officeLeader_maas_goruntulenme_bu_ay.save()
 
-                officeLeader_maas_goruntulenme_bu_ay.satis_sayi = float(officeLeader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-                officeLeader_maas_goruntulenme_bu_ay.satis_meblegi = float(officeLeader_maas_goruntulenme_bu_ay.satis_meblegi) + (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
-                officeLeader_maas_goruntulenme_bu_ay.save()
-
-                officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas = float(officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(ofisleader_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
-                officeLeader_maas_goruntulenme_novbeti_ay.save()
+                    officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas = float(officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(ofisleader_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
+                    officeLeader_maas_goruntulenme_novbeti_ay.save()
+                except:
+                    ofisleader_prim = None
 
         # --------------------------------------------------------
         # if (group_leader_status is not None):
@@ -187,10 +189,13 @@ def create_prim(sender, instance, created, **kwargs):
 
         for menecer2 in menecer2s:
             menecer2_status = menecer2.isci_status
-            menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
+            try:
+                menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
 
-            menecer2_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=next_m)
+                menecer2_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=next_m)
 
-            menecer2_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer2_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer2_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
+                menecer2_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer2_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer2_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
 
-            menecer2_maas_goruntulenme_novbeti_ay.save()
+                menecer2_maas_goruntulenme_novbeti_ay.save()
+            except:
+                menecer2_prim = None

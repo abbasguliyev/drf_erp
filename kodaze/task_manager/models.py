@@ -47,3 +47,5 @@ class TaskManager(models.Model):
 class UserTaskRequest(models.Model):
     task = models.ForeignKey(TaskManager, on_delete=models.CASCADE, related_name="requests")
     note = models.TextField()
+    change_date = models.DateField(auto_now_add=True)
+    new_date = models.DateField()
