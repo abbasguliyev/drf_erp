@@ -1,6 +1,7 @@
 import django_filters
 
 from company.models import (
+    Department,
     Shirket,
     Ofis,
     Komanda,
@@ -16,6 +17,17 @@ class ShirketFilter(django_filters.FilterSet):
             'shirket_adi': ['exact', 'icontains'],
             'is_active': ['exact']
         }
+
+class DepartmentFilter(django_filters.FilterSet):
+    class Meta:
+        model = Department
+        fields = {
+            'departament_adi': ['exact', 'icontains'],
+            'shirket__id': ['exact'],
+            'shirket__shirket_adi': ['exact', 'icontains'],
+            'is_active': ['exact']
+        }
+
 
 class OfisFilter(django_filters.FilterSet):
     class Meta:

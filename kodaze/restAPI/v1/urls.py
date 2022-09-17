@@ -181,6 +181,9 @@ urlpatterns = [
     path('vezifeler/<int:pk>', company_views.VezifelerDetailAPIView.as_view(),
          name="vezifeler_detail"),
 
+     path('department/', company_views.DepartmentListCreateAPIView.as_view()),
+    path('department/<int:pk>', company_views.DepartmentDetailAPIView.as_view()),
+
     path('shirket/', company_views.ShirketListCreateAPIView.as_view(), name="shirket"),
     path('shirket/<int:pk>', company_views.ShirketDetailAPIView.as_view(),
          name="shirket_detail"),

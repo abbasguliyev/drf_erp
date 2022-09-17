@@ -6,6 +6,7 @@ from account.models import (
 )
 
 from company.models import (
+    Department,
     Holding,
     Shirket,
     Ofis,
@@ -79,6 +80,40 @@ class KomandaSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError(
                 {"detail": 'Bu ad ilə komanda artıq əlavə olunub'})
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    shirket = ShirketSerializer(read_only=True)
+    shirket_id = serializers.PrimaryKeyRelatedField(
+        queryset=Shirket.objects.all(), source='shirket', write_only=True
+    )
+
+    class Meta:
+        model = Department
+        fields = "__all__"
+
+    def create(self, validated_data):
+        departament_adi = validated_data.get('departament_adi')
+        validated_data['departament_adi'] = departament_adi.upper()
+        shirket = validated_data['shirket']
+        try:
+            departmentt = Department.objects.filter(
+                departament_adi=departament_adi.upper(), shirket=shirket)
+            if len(departmentt) > 0:
+                raise ValidationError
+            return super(DepartmentSerializer, self).create(validated_data)
+        except:
+            raise ValidationError(
+                {"detail": 'Bu ad ilə departament artıq əlavə olunub'})
+
+    def update(self, instance, validated_data):
+        instance.departament_adi = validated_data.get(
+            'departament_adi', instance.departament_adi).upper()
+        instance.shirket = validated_data.get('shirket', instance.shirket)
+        instance.is_active = validated_data.get(
+            'is_active', instance.is_active)
+        instance.save()
+        return instance
 
 
 class OfisSerializer(serializers.ModelSerializer):

@@ -6,6 +6,12 @@ class HoldingPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="holding", view=view)
         return perm_util.add_user_permission_to_list()
 
+class DepartmentPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="department", view=view)
+        return perm_util.add_user_permission_to_list()
+
+
 class ShirketPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="shirket", view=view)

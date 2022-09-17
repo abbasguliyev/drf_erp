@@ -13,6 +13,7 @@ from restAPI.v1.company.serializers import (
     VezifePermissionSerializer,
     VezifelerSerializer,
     HoldingSerializer,
+    DepartmentSerializer
 )
 
 from account.models import User
@@ -25,7 +26,8 @@ from company.models import (
     Komanda,
     Shobe,
     VezifePermission,
-    Vezifeler
+    Vezifeler,
+    Department
 )
 
 
@@ -35,7 +37,8 @@ from restAPI.v1.company.filters import (
     ShirketFilter,
     ShobeFilter,
     VezifeFilter,
-    VezifePermissionFilter
+    VezifePermissionFilter,
+    DepartmentFilter
 )
 
 from restAPI.v1.company import permissions as company_permissions
@@ -94,6 +97,66 @@ class KomandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"detail": "Komanda qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
 
+# ********************************** department put delete post get **********************************
+
+
+class DepartmentListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DepartmentFilter
+    permission_classes = [company_permissions.DepartmentPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = Department.objects.all()
+        elif request.user.shirket is not None:
+            if request.user.department is not None:
+                queryset = Department.objects.filter(
+                    shirket=request.user.shirket, id=request.user.department.id)
+            queryset = Department.objects.filter(shirket=request.user.shirket)
+        else:
+            queryset = Department.objects.all()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({"detail": "Departament əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    filter_backends = [DjangoFilterBackend]
+    permission_classes = [company_permissions.DepartmentPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Departament məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({"detail": "Departament deaktiv edildi"}, status=status.HTTP_200_OK)
+
 # ********************************** ofisler put delete post get **********************************
 
 
@@ -145,7 +208,7 @@ class OfisDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Ofis məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Ofis məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -209,7 +272,7 @@ class VezifelerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Vəzifə məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Vəzifə məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -267,7 +330,7 @@ class ShirketDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Şirkət məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Şirkət məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -328,7 +391,7 @@ class ShobeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Şöbə məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Şöbə məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -365,7 +428,7 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Holding məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Holding məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 

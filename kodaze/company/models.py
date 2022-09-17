@@ -58,14 +58,14 @@ class Department(models.Model):
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_ofis", "Mövcud ofislərə baxa bilər"),
-            ("add_ofis", "Ofis əlavə edə bilər"),
-            ("change_ofis", "Ofis məlumatlarını yeniləyə bilər"),
-            ("delete_ofis", "Ofis silə bilər")
+            ("view_department", "Mövcud departamentlərə baxa bilər"),
+            ("add_department", "Departament əlavə edə bilər"),
+            ("change_department", "Departament məlumatlarını yeniləyə bilər"),
+            ("delete_department", "Departament silə bilər")
         )
 
     def __str__(self) -> str:
-        return f"{self.ofis_adi} - {self.shirket}"
+        return f"{self.departament_adi} - {self.shirket}"
 
 
 class Ofis(models.Model):

@@ -6,6 +6,7 @@ from company.models import (
     Shobe, 
     Vezifeler, 
     Komanda, 
+    Department,
     VezifePermission, 
 ) 
 # Register your models here.
@@ -17,3 +18,4 @@ admin.site.register(Shobe)
 admin.site.register(Vezifeler)
 admin.site.register(Komanda)
 admin.site.register(VezifePermission)
+admin.site.register(Department)
