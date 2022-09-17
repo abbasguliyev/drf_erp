@@ -156,15 +156,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             asa=validated_data['asa'], 
             dogum_tarixi=validated_data['dogum_tarixi'],
             tel1=validated_data['tel1'], 
-            tel2=validated_data['tel2'], 
-            komanda=validated_data['komanda'],
-            ishden_cixma_tarixi=validated_data['ishden_cixma_tarixi'],
             isci_status=validated_data['isci_status'], 
             vezife=validated_data['vezife'],
             qeyd=validated_data['qeyd'],
             shirket=validated_data['shirket'], 
             ofis=validated_data['ofis'],
-            shobe=validated_data['shobe'], 
             sv_image=validated_data['sv_image'],
             maas_uslubu=validated_data['maas_uslubu'],
             muqavile_novu=validated_data['muqavile_novu'],
@@ -190,11 +186,29 @@ class RegisterSerializer(serializers.ModelSerializer):
         except:
             user.ishe_baslama_tarixi = django.utils.timezone.now()
         
-
-        if validated_data['maas'] == None:
-            user.maas = 0
-        elif validated_data['maas'] is not None:
+        try:
+            user.ishden_cixma_tarixi = validated_data['ishden_cixma_tarixi']
+        except:
+            user.ishden_cixma_tarixi = None
+        try:
             user.maas = validated_data['maas']
+        except:
+            user.maas = 0
+        
+        try:
+            user.shobe = validated_data['shobe']
+        except:
+            user.shobe = None
+        
+        try:
+            user.tel2 = validated_data['tel2']
+        except:
+            user.tel2 = None
+
+        try:
+            user.komanda = validated_data['komanda']
+        except:
+            user.komanda = None
 
         vezife = validated_data['vezife']
         vezife_permission = VezifePermission.objects.filter(vezife=vezife)

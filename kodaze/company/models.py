@@ -48,8 +48,28 @@ class Shirket(models.Model):
         return self.shirket_adi
 
 
+class Department(models.Model):
+    departament_adi = models.CharField(max_length=200)
+    shirket = models.ForeignKey(
+        Shirket, on_delete=models.CASCADE, related_name="departaments")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_ofis", "Mövcud ofislərə baxa bilər"),
+            ("add_ofis", "Ofis əlavə edə bilər"),
+            ("change_ofis", "Ofis məlumatlarını yeniləyə bilər"),
+            ("delete_ofis", "Ofis silə bilər")
+        )
+
+    def __str__(self) -> str:
+        return f"{self.ofis_adi} - {self.shirket}"
+
+
 class Ofis(models.Model):
-    ofis_adi = models.CharField(max_length=100)
+    ofis_adi = models.CharField(max_length=200)
     shirket = models.ForeignKey(
         Shirket, on_delete=models.CASCADE, related_name="shirket_ofis")
     is_active = models.BooleanField(default=True)
@@ -166,6 +186,7 @@ class AppLogo(models.Model):
             ("change_logo", "Logonu yeniləyə bilər"),
             ("delete_logo", "Logonu silə bilər")
         )
+
 
 class Tag(models.Model):
     title = models.CharField(max_length=250)
