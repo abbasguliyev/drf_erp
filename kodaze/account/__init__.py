@@ -1,6 +1,7 @@
 MONTHLY = 'aylıq'
 DAILY = "günlük"
 WEEKLY = "həftəlik"
+FIX = "fix"
 
 XIDMETI_MUQAVILE = "xidməti müqavilə"
 EMEK_MUQAVILE = "əmək müqaviləsi"
@@ -17,6 +18,7 @@ SALARY_STYLE_CHOICES = [
     (MONTHLY, "aylıq"),
     (DAILY, "günlük"),
     (WEEKLY, "həftəlik"),
+    (FIX, "fix"),
 ]
 
 
