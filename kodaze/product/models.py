@@ -37,5 +37,5 @@ class Mehsullar(models.Model):
             ("delete_mehsullar", "Məhsul silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shirket} şirkəti {self.mehsulun_adi} - {self.qiymet} AZN"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket} şirkəti {self.mehsulun_adi} - {self.qiymet} AZN"

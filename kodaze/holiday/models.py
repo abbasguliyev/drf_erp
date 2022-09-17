@@ -27,8 +27,8 @@ class IsciGelibGetmeVaxtlari(models.Model):
             ("delete_iscigelibgetmevaxtlari", "İşçi gəlib-getmə vaxtını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.isci} - {self.gelme_vaxti} - {self.getme_vaxti}"
+    # def __str__(self) -> str:
+    #     return f"{self.isci} - {self.gelme_vaxti} - {self.getme_vaxti}"
 
 
 class IsciGunler(models.Model):
@@ -52,8 +52,8 @@ class IsciGunler(models.Model):
             ("delete_iscigunler", "İşçilərin tətil gününü silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.isci} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.isci} - {self.is_gunleri_count} - {self.tarix}"
 
 class HoldingGunler(models.Model):
     holding = models.ForeignKey('company.Holding', on_delete=models.CASCADE, related_name="is_gunleri")
@@ -72,8 +72,8 @@ class HoldingGunler(models.Model):
             ("delete_holdinggunler", "Holdinqin tətil gününü silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.holding} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.holding} - {self.is_gunleri_count} - {self.tarix}"
 
 
 class ShirketGunler(models.Model):
@@ -93,8 +93,8 @@ class ShirketGunler(models.Model):
             ("delete_shirketgunler", "Şirkətin tətil gününü silə bilər")
         )
   
-    def __str__(self) -> str:
-        return f"{self.shirket} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket} - {self.is_gunleri_count} - {self.tarix}"
 
 class OfisGunler(models.Model):
     ofis = models.ForeignKey('company.Ofis', on_delete=models.CASCADE, related_name="is_gunleri")
@@ -113,8 +113,8 @@ class OfisGunler(models.Model):
             ("delete_ofisgunler", "Ofisin tətil gününü silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ofis} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.ofis} - {self.is_gunleri_count} - {self.tarix}"
 
 class KomandaGunler(models.Model):
     komanda = models.ForeignKey('company.Komanda', on_delete=models.CASCADE, related_name="is_gunleri")
@@ -133,8 +133,8 @@ class KomandaGunler(models.Model):
             ("delete_komandagunler", "Komandanın tətil gününü silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.komanda} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.komanda} - {self.is_gunleri_count} - {self.tarix}"
 
 class VezifeGunler(models.Model):
     vezife = models.ForeignKey('company.Vezifeler', on_delete=models.CASCADE, related_name="is_gunleri")
@@ -153,8 +153,8 @@ class VezifeGunler(models.Model):
             ("delete_vezifegunler", "Vəzifənin tətil gününü silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.vezife} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.vezife} - {self.is_gunleri_count} - {self.tarix}"
 
 class ShobeGunler(models.Model):
     shobe = models.ForeignKey('company.Shobe', on_delete=models.CASCADE, related_name="is_gunleri")
@@ -173,8 +173,8 @@ class ShobeGunler(models.Model):
             ("delete_shobegunler", "Şöbənin tətil gününü silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shobe} - {self.is_gunleri_count} - {self.tarix}"
+    # def __str__(self) -> str:
+    #     return f"{self.shobe} - {self.is_gunleri_count} - {self.tarix}"
 
 
 # ----------------------------------------------------------------------------------
@@ -192,8 +192,8 @@ class HoldingIstisnaIsci(IstisnaIsci):
             ("delete_holdingistisnaisci", "Holdinq istisna işçiməlumatalrını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
+    # def __str__(self) -> str:
+    #     return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
 
 class ShirketIstisnaIsci(IstisnaIsci):
     gunler = models.ForeignKey(ShirketGunler, on_delete=models.CASCADE, related_name="istisna_isci")
@@ -208,8 +208,8 @@ class ShirketIstisnaIsci(IstisnaIsci):
             ("delete_shirketistisnaisci", "Şirkət istisna işçiməlumatalrını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
+    # def __str__(self) -> str:
+    #     return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
 
 class OfisIstisnaIsci(IstisnaIsci):
     gunler = models.ForeignKey(OfisGunler, on_delete=models.CASCADE, related_name="istisna_isci")
@@ -224,8 +224,8 @@ class OfisIstisnaIsci(IstisnaIsci):
             ("delete_ofisistisnaisci", "Ofis istisna işçiməlumatalrını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
+    # def __str__(self) -> str:
+    #     return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
 
 class ShobeIstisnaIsci(IstisnaIsci):
     gunler = models.ForeignKey(ShobeGunler, on_delete=models.CASCADE, related_name="istisna_isci")
@@ -240,8 +240,8 @@ class ShobeIstisnaIsci(IstisnaIsci):
             ("delete_shobeistisnaisci", "Şöbə istisna işçiməlumatalrını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
+    # def __str__(self) -> str:
+    #     return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
 
 class KomandaIstisnaIsci(IstisnaIsci):
     gunler = models.ForeignKey(KomandaGunler, on_delete=models.CASCADE, related_name="istisna_isci")
@@ -256,8 +256,8 @@ class KomandaIstisnaIsci(IstisnaIsci):
             ("delete_komandaistisnaisci", "Komanda istisna işçiməlumatalrını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
+    # def __str__(self) -> str:
+    #     return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
 
 class VezifeIstisnaIsci(IstisnaIsci):
     gunler = models.ForeignKey(VezifeGunler, on_delete=models.CASCADE, related_name="istisna_isci")
@@ -272,5 +272,5 @@ class VezifeIstisnaIsci(IstisnaIsci):
             ("delete_vezifeistisnaisci", "Vəzifə istisna işçiməlumatalrını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"
+    # def __str__(self) -> str:
+    #     return f"{self.gunler} - {self.istisna_isciler} - {self.tetil_gunleri}"

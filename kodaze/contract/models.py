@@ -148,8 +148,8 @@ class Muqavile(models.Model):
         )
         
 
-    def __str__(self) -> str:
-        return f"{self.pk}. muqavile {self.musteri} - {self.mehsul}"
+    # def __str__(self) -> str:
+    #     return f"{self.pk}. muqavile {self.musteri} - {self.mehsul}"
 
 class MuqavileHediyye(models.Model):
     mehsul = models.ManyToManyField("product.Mehsullar", related_name="mehsul_hediyye")
@@ -168,8 +168,8 @@ class MuqavileHediyye(models.Model):
             ("delete_muqavilehediyye", "Müqavilə hədiyyə silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"Hədiyyə --- {self.muqavile} - {self.mehsul}"
+    # def __str__(self) -> str:
+    #     return f"Hədiyyə --- {self.muqavile} - {self.mehsul}"
 
 class OdemeTarix(models.Model):
     ODENEN = "ÖDƏNƏN"
@@ -306,8 +306,8 @@ class OdemeTarix(models.Model):
             ("delete_odemetarix", "Ödəmə silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.pk}. {self.ay_no}.ay-{self.tarix} - ({self.muqavile.id}) id-li muqavile - {self.muqavile.musteri.asa} - {self.qiymet}"
+    # def __str__(self) -> str:
+    #     return f"{self.pk}. {self.ay_no}.ay-{self.tarix} - ({self.muqavile.id}) id-li muqavile - {self.muqavile.musteri.asa} - {self.qiymet}"
 
 class Deyisim(models.Model):
     kohne_muqavile = models.ForeignKey(Muqavile, related_name="deyisim", on_delete=models.CASCADE)
@@ -348,8 +348,8 @@ class DemoSatis(models.Model):
             ("delete_demosatis", "Demo satış silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.user.username}-{self.count} demo - {self.created_date}"
+    # def __str__(self) -> str:
+    #     return f"{self.user.username}-{self.count} demo - {self.created_date}"
 
 class MuqavileKreditor(models.Model):
     kreditor = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="muqavile_kreditor")
@@ -365,5 +365,5 @@ class MuqavileKreditor(models.Model):
             ("delete_muqavilekreditor", "Müqavilə Kreditor silə bilər")
         )
     
-    def __str__(self) -> str:
-        return f"{self.kreditor.asa} {self.muqavile}"
+    # def __str__(self) -> str:
+    #     return f"{self.kreditor.asa} {self.muqavile}"

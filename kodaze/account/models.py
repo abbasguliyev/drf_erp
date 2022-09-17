@@ -100,8 +100,8 @@ class User(AbstractUser):
             ("delete_user", "İşçi silə bilər")
         )
 
-    def __str__(self):
-        return f"{self.username}"
+    # def __str__(self):
+    #     return f"{self.username}"
 
 
 class Bolge(models.Model):
@@ -117,8 +117,8 @@ class Bolge(models.Model):
             ("delete_bolge", "Bölgə silə bilər")
         )
 
-    def __str__(self) -> str:
-        return self.bolge_adi
+    # def __str__(self) -> str:
+    #     return self.bolge_adi
 
 
 class Musteri(models.Model):
@@ -156,8 +156,8 @@ class Musteri(models.Model):
             ("delete_musteri", "Müştəri silə bilər")
         )
 
-    def __str__(self):
-        return self.asa
+    # def __str__(self):
+    #     return self.asa
 
 
 class MusteriQeydler(models.Model):
@@ -176,8 +176,8 @@ class MusteriQeydler(models.Model):
             ("delete_musteriqeydler", "Müştəri qeydlərini silə bilər")
         )
 
-    def __str__(self):
-        return f"{self.musteri} -- {self.qeyd[:20]}"
+    # def __str__(self):
+    #     return f"{self.musteri} -- {self.qeyd[:20]}"
 
 
 class IsciSatisSayi(models.Model):
@@ -196,5 +196,5 @@ class IsciSatisSayi(models.Model):
             ("delete_iscisatissayi", "İşçi satış sayı silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.isci} {self.tarix}-də {self.satis_sayi} satış etmişdir"
+    # def __str__(self) -> str:
+    #     return f"{self.isci} {self.tarix}-də {self.satis_sayi} satış etmişdir"

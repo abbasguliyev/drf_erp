@@ -15,8 +15,8 @@ class TaskManagerFilter(django_filters.FilterSet):
         fields = {
             'title': ['exact', 'icontains'],
             'description': ['exact', 'icontains'],
-            'position': ['exact'],
-            'employee': ['exact'],
+            'position__vezife_adi': ['exact'],
+            # 'employee': ['exact'],
             'employee__asa': ['exact', 'icontains'],
             'type': ['exact', 'icontains'],
             'status': ['exact', 'icontains'],

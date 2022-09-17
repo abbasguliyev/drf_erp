@@ -26,8 +26,8 @@ class Anbar(models.Model):
             ("delete_anbar", "Anbar silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ad} - {self.ofis}"
+    # def __str__(self) -> str:
+    #     return f"{self.ad} - {self.ofis}"
 
 
 class AnbarQeydler(models.Model):
@@ -50,8 +50,8 @@ class AnbarQeydler(models.Model):
             ("delete_anbarqeydler", "Anbar sorğu silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.anbar} - {self.qeyd[:30]}"
+    # def __str__(self) -> str:
+    #     return f"{self.anbar} - {self.qeyd[:30]}"
 
 
 class Stok(models.Model):
@@ -72,8 +72,8 @@ class Stok(models.Model):
             ("delete_stok", "Stok silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"stok -> {self.anbar} - {self.mehsul} - {self.say}"
+    # def __str__(self) -> str:
+    #     return f"stok -> {self.anbar} - {self.mehsul} - {self.say}"
 
 
 class Emeliyyat(models.Model):
@@ -115,5 +115,5 @@ class Emeliyyat(models.Model):
             ("delete_emeliyyat", "Əməliyyat silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"Əməliyyat ==> {self.gonderen} - {self.qebul_eden} {self.emeliyyat_tarixi}"
+    # def __str__(self) -> str:
+    #     return f"Əməliyyat ==> {self.gonderen} - {self.qebul_eden} {self.emeliyyat_tarixi}"

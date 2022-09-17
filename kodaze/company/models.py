@@ -24,8 +24,8 @@ class Holding(models.Model):
             ("delete_holding", "Holdinq silə bilər")
         )
 
-    def __str__(self) -> str:
-        return self.holding_adi
+    # def __str__(self) -> str:
+    #     return self.holding_adi
 
 
 class Shirket(models.Model):
@@ -44,8 +44,8 @@ class Shirket(models.Model):
             ("delete_shirket", "Şirkət silə bilər")
         )
 
-    def __str__(self) -> str:
-        return self.shirket_adi
+    # def __str__(self) -> str:
+    #     return self.shirket_adi
 
 
 class Department(models.Model):
@@ -64,8 +64,8 @@ class Department(models.Model):
             ("delete_department", "Departament silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.departament_adi} - {self.shirket}"
+    # def __str__(self) -> str:
+    #     return f"{self.departament_adi} - {self.shirket}"
 
 
 class Ofis(models.Model):
@@ -84,8 +84,8 @@ class Ofis(models.Model):
             ("delete_ofis", "Ofis silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ofis_adi} - {self.shirket}"
+    # def __str__(self) -> str:
+    #     return f"{self.ofis_adi} - {self.shirket}"
 
 
 class Shobe(models.Model):
@@ -104,8 +104,8 @@ class Shobe(models.Model):
             ("delete_shobe", "Şöbə silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shobe_adi} - {self.ofis}"
+    # def __str__(self) -> str:
+    #     return f"{self.shobe_adi} - {self.ofis}"
 
 
 class Vezifeler(models.Model):
@@ -130,8 +130,8 @@ class Vezifeler(models.Model):
             ("delete_vezifeler", "Vəzifə silə bilər")
         )
 
-    def __str__(self):
-        return f"{self.vezife_adi}-{self.shirket}"
+    # def __str__(self):
+    #     return f"{self.vezife_adi}-{self.shirket}"
 
 
 class Komanda(models.Model):
@@ -150,8 +150,8 @@ class Komanda(models.Model):
             ("delete_komanda", "Komanda silə bilər")
         )
 
-    def __str__(self):
-        return self.komanda_adi
+    # def __str__(self):
+    #     return self.komanda_adi
 
 
 class VezifePermission(models.Model):
@@ -170,8 +170,8 @@ class VezifePermission(models.Model):
             ("delete_vezifepermission", "Vəzifə icazə məlumatlarını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.vezife}-{self.permission_group}"
+    # def __str__(self) -> str:
+    #     return f"{self.vezife}-{self.permission_group}"
 
 
 class AppLogo(models.Model):

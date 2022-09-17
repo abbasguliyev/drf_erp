@@ -27,8 +27,8 @@ class HoldingKassaMedaxil(models.Model):
             ("delete_holdingkassamedaxil", "Holdinq kassa mədaxil silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.holding_kassa} kassasına {self.mebleg} azn mədaxil edildi"
+    # def __str__(self) -> str:
+    #     return f"{self.holding_kassa} kassasına {self.mebleg} azn mədaxil edildi"
 
 
 class HoldingKassaMexaric(models.Model):
@@ -53,8 +53,8 @@ class HoldingKassaMexaric(models.Model):
             ("delete_holdingkassamexaric", "Holdinq kassa məxaric silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.holding_kassa} kassasından {self.mebleg} azn məxaric edildi"
+    # def __str__(self) -> str:
+    #     return f"{self.holding_kassa} kassasından {self.mebleg} azn məxaric edildi"
 
 
 # -----------------------------------------------------
@@ -80,8 +80,8 @@ class ShirketKassaMedaxil(models.Model):
             ("delete_shirketkassamedaxil", "Şirkət kassa mədaxil silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shirket_kassa} kassasına {self.mebleg} azn mədaxil edildi"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket_kassa} kassasına {self.mebleg} azn mədaxil edildi"
 
 
 class ShirketKassaMexaric(models.Model):
@@ -106,8 +106,8 @@ class ShirketKassaMexaric(models.Model):
             ("delete_shirketkassamexaric", "Şirkət kassa məxaric silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shirket_kassa} kassasından {self.mebleg} azn məxaric edildi"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket_kassa} kassasından {self.mebleg} azn məxaric edildi"
 
 
 # -----------------------------------------------------
@@ -132,8 +132,8 @@ class OfisKassaMedaxil(models.Model):
             ("delete_ofiskassamedaxil", "Ofis kassa mədaxil silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ofis_kassa} kassasına {self.mebleg} azn mədaxil edildi"
+    # def __str__(self) -> str:
+    #     return f"{self.ofis_kassa} kassasına {self.mebleg} azn mədaxil edildi"
 
 
 class OfisKassaMexaric(models.Model):
@@ -157,5 +157,5 @@ class OfisKassaMexaric(models.Model):
             ("delete_ofiskassamexaric", "Ofis kassa məxaric silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ofis_kassa} kassasından {self.mebleg} azn məxaric edildi"
+    # def __str__(self) -> str:
+    #     return f"{self.ofis_kassa} kassasından {self.mebleg} azn məxaric edildi"

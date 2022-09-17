@@ -29,8 +29,8 @@ class Servis(models.Model):
             ("delete_servis", "Servis silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.pk}.servis-{self.muqavile}"
+    # def __str__(self) -> str:
+    #     return f"{self.pk}.servis-{self.muqavile}"
 
 class ServisOdeme(models.Model):
     servis = models.ForeignKey(Servis, related_name="servis_odeme", null=True, on_delete=models.CASCADE)
@@ -49,5 +49,5 @@ class ServisOdeme(models.Model):
             ("delete_servisodeme", "Servis ödəmə silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"servis-{self.servis}-{self.odenilecek_mebleg}-{self.odendi}"
+    # def __str__(self) -> str:
+    #     return f"servis-{self.servis}-{self.odenilecek_mebleg}-{self.odendi}"

@@ -9,5 +9,5 @@ class Update(models.Model):
     class Meta:
         ordering = ("-pk",)
 
-    def __str__(self) -> str:
-        return self.update_name
+    # def __str__(self) -> str:
+    #     return self.update_name

@@ -13,37 +13,40 @@ from restAPI.v1.task_manager.filters import TaskManagerFilter, UserTaskRequestFi
 from . import permissions
 from restAPI.v1.utils.permission_utils import IsAdminUserOrReadOnly
 from django.contrib.auth import get_user_model
-
+from django.db.models import Count
 User = get_user_model()
 
 
 class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
-    queryset = TaskManager.objects.all()
+    queryset = TaskManager.objects.select_related('position', 'employee').all()
     serializer_class = TaskManagerSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = TaskManagerFilter
     permission_classes = [permissions.TaskManagerPermissions]
-
+    
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         toplam_tapsiriq_sayi = 0
         tamamlandi = 0
         icra_edilir = 0
         gecikir = 0
+        toplam_tapsiriq_sayi = queryset.aggregate(
+            toplam = Count('id')
+        ).get("toplam")
+        tamamlandi = queryset.filter(status="Tamamlandı").aggregate(
+            tamamlanan = Count('id')
+        ).get("tamamlanan")
+        icra_edilir = queryset.filter(status="İcra edilir").aggregate(
+            icra_edilen = Count('id')
+        ).get("icra_edilen")
+        gecikir = queryset.filter(status="Gecikir").aggregate(
+            geciken = Count('id')
+        ).get("geciken")
 
         page = self.paginate_queryset(queryset)
         if page == None:
             page = queryset
-        for q in page:
-            toplam = TaskManager.objects.filter(pk = q.id).count()
-            tamamlanan = TaskManager.objects.filter(pk = q.id, status="Tamamlandı").count()
-            icra_edilen = TaskManager.objects.filter(pk = q.id, status="İcra edilir").count()
-            geciken = TaskManager.objects.filter(pk = q.id, status="Gecikir").count()
-
-            toplam_tapsiriq_sayi += toplam
-            tamamlandi += tamamlanan
-            icra_edilir += icra_edilen
-            gecikir += geciken
+        
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             # serializer.data
@@ -54,7 +57,6 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                     'gecikir':gecikir,
                     'date':serializer.data
             }])
-
         serializer = self.get_serializer(queryset, many=True)
         return Response([{
                     'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,

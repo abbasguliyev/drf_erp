@@ -40,9 +40,10 @@ class TaskManager(models.Model):
             ("change_taskmanager", "Tapşırığı yeniləyə bilər"),
             ("delete_taskmanager", "Tapşırığı silə bilər")
         )
+        
 
-    def __str__(self) -> str:
-        return self.title
+    # def __str__(self) -> str:
+    #     return self.title
 
 class UserTaskRequest(models.Model):
     task = models.ForeignKey(TaskManager, on_delete=models.CASCADE, related_name="requests")

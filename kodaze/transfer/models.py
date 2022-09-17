@@ -30,8 +30,8 @@ class OfisdenShirketeTransfer(models.Model):
             ("delete_ofisdenshirketetransfer", "Ofisdən şirkətə olan transfer məlumatlarını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ofis_kassa} -> {self.shirket_kassa} {self.transfer_meblegi} azn"
+    # def __str__(self) -> str:
+    #     return f"{self.ofis_kassa} -> {self.shirket_kassa} {self.transfer_meblegi} azn"
 
 
 class ShirketdenOfislereTransfer(models.Model):
@@ -58,8 +58,8 @@ class ShirketdenOfislereTransfer(models.Model):
         )
         
 
-    def __str__(self) -> str:
-        return f"{self.shirket_kassa} -> {self.ofis_kassa} {self.transfer_meblegi} azn"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket_kassa} -> {self.ofis_kassa} {self.transfer_meblegi} azn"
 
 
 class ShirketdenHoldingeTransfer(models.Model):
@@ -86,8 +86,8 @@ class ShirketdenHoldingeTransfer(models.Model):
             ("delete_shirketdenholdingetransfer", "Şirkətdən holdinqlərə olan transfer məlumatlarını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shirket_kassa} -> {self.holding_kassa} {self.transfer_meblegi} azn"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket_kassa} -> {self.holding_kassa} {self.transfer_meblegi} azn"
 
 
 class HoldingdenShirketlereTransfer(models.Model):
@@ -113,6 +113,6 @@ class HoldingdenShirketlereTransfer(models.Model):
             ("delete_holdingdenshirketleretransfer", "Holdinqdən şirkətlərə olan transfer məlumatlarını silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.holding_kassa} -> {self.shirket_kassa} {self.transfer_meblegi} azn"
+    # def __str__(self) -> str:
+    #     return f"{self.holding_kassa} -> {self.shirket_kassa} {self.transfer_meblegi} azn"
 

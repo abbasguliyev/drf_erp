@@ -10,6 +10,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from .api import api
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Kodaze ERP RestAPI",
@@ -26,6 +28,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include("restAPI.v1.urls")),
+    path('__debug__/', include('debug_toolbar.urls')),
+    path("ninja/", api.urls),
     
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),

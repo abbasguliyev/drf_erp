@@ -7,10 +7,20 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class PositionForTaskManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vezifeler
+        fields = ['id', 'vezife_adi']
+
+class UserForTaskManagerSerializer(serializers.ModelSerializer):
+    vezife = PositionForTaskManagerSerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'asa', 'tel1', 'vezife']
 
 class TaskManagerSerializer(serializers.ModelSerializer):
-    position = VezifelerSerializer(read_only=True)
-    employee = UserSerializer(read_only=True)
+    position = PositionForTaskManagerSerializer(read_only=True)
+    employee = UserForTaskManagerSerializer(read_only=True)
 
     # position_id = serializers.PrimaryKeyRelatedField(
     #     queryset=Vezifeler.objects.all(), source='position', write_only=True, required=False, allow_null=True

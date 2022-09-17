@@ -18,8 +18,8 @@ class OfisKassa(models.Model):
             ("delete_ofiskassa", "Ofis kassa silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.ofis} -> {self.balans}"
+    # def __str__(self) -> str:
+    #     return f"{self.ofis} -> {self.balans}"
 
 
 class ShirketKassa(models.Model):
@@ -36,8 +36,8 @@ class ShirketKassa(models.Model):
             ("delete_shirketkassa", "Şirkət kassa silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.shirket} -> {self.balans}"
+    # def __str__(self) -> str:
+    #     return f"{self.shirket} -> {self.balans}"
 
 
 class HoldingKassa(models.Model):
@@ -54,8 +54,8 @@ class HoldingKassa(models.Model):
             ("delete_holdingkassa", "Holdinq kassa silə bilər")
         )
 
-    def __str__(self) -> str:
-        return f"{self.holding} -> {self.balans}"
+    # def __str__(self) -> str:
+    #     return f"{self.holding} -> {self.balans}"
 
 # -----------------------------------------------------
 
