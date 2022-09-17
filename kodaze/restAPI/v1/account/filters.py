@@ -45,6 +45,7 @@ class UserFilter(django_filters.FilterSet):
             'shirket__shirket_adi': ['exact', 'icontains'],
             'ofis__ofis_adi': ['exact', 'icontains'],
             'shobe__shobe_adi': ['exact', 'icontains'],
+            'department__departament_adi': ['exact', 'icontains'],
             # 'ishe_baslama_tarixi': ['exact', 'gte', 'lte'],
             'is_active': ['exact'],
             'isci_status__status_adi': ['exact', 'icontains'],

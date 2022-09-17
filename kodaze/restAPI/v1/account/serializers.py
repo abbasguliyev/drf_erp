@@ -117,6 +117,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'sv_image2', 
             'suruculuk_vesiqesi', 
             'shirket', 
+            'department',
             'ofis', 
             'shobe', 
             'vezife', 
@@ -194,6 +195,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.maas = validated_data['maas']
         except:
             user.maas = 0
+
+        try:
+            user.department = validated_data['department']
+        except:
+            user.department = None
         
         try:
             user.shobe = validated_data['shobe']

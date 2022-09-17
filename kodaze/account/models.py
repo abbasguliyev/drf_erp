@@ -52,6 +52,8 @@ class User(AbstractUser):
                                   blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     suruculuk_vesiqesi = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[
                                               file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    department = models.ForeignKey(
+        "company.Department", on_delete=models.SET_NULL, related_name="ishci", null=True, blank=True)
     shirket = models.ForeignKey(
         "company.Shirket", on_delete=models.SET_NULL, related_name="ishci", null=True, blank=True)
     ofis = models.ForeignKey("company.Ofis", on_delete=models.SET_NULL,
