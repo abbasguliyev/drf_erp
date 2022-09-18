@@ -200,12 +200,14 @@ class RegisterApi(generics.CreateAPIView):
 
 
 class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UserFilter
     permission_classes = [account_permissions.UserPermissions]
-
+    
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             queryset = User.objects.select_related(
@@ -236,7 +238,9 @@ class UserList(generics.ListAPIView):
 
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.select_related(
+                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+            ).all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UserFilter

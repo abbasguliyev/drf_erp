@@ -268,6 +268,7 @@ CORS_ALLOW_HEADERS = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static/'
+# STATIC_ROOT = 'kodaze/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = 'media/'
