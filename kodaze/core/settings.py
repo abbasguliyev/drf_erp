@@ -44,10 +44,10 @@ if __PRODUCTION__ == True:
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-    "localhost"
-]
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+#     "localhost"
+# ]
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
