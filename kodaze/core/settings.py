@@ -49,6 +49,10 @@ else:
 #     "localhost"
 # ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://do.kodaze.com'
+]
+
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 
