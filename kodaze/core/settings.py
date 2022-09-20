@@ -31,7 +31,7 @@ load_dotenv(find_dotenv())
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-__PRODUCTION__ = True
+__PRODUCTION__ = False
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if __PRODUCTION__ == True:
@@ -44,10 +44,11 @@ if __PRODUCTION__ == True:
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# INTERNAL_IPS = [
-#     "127.0.0.1",
-#     "localhost"
-# ]
+if __PRODUCTION__ == False:
+    INTERNAL_IPS = [
+        "127.0.0.1",
+        "localhost"
+    ]
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -272,8 +273,10 @@ CORS_ALLOW_HEADERS = [
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
-# STATIC_ROOT = 'kodaze/static/'
+if __PRODUCTION__:
+    STATIC_ROOT = '/static/'
+else:
+    STATIC_ROOT = 'kodaze/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = 'media/'

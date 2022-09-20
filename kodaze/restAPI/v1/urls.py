@@ -351,13 +351,8 @@ urlpatterns = [
     path('update/', update_views.UpdateListCreateAPIView.as_view()),
     path('update/<int:pk>', update_views.UpdateDetailAPIView.as_view()),
 
-    # task manager views *****************************************
-    path('task-manager/', task_views.TaskManagerListCreateAPIView.as_view()),
-    path('task-manager/<int:pk>', task_views.TaskManagerDetailAPIView.as_view()),
-
-    # task request views *****************************************
-    path('task-request/', task_views.UserTaskRequestListCreateAPIView.as_view()),
-    path('task-request/<int:pk>', task_views.UserTaskRequestDetailAPIView.as_view()),
+    # task manager url *****************************************
+    path('task-manager/', include("restAPI.v1.task_manager.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
