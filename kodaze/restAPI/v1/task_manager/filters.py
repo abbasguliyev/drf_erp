@@ -13,9 +13,9 @@ class TaskManagerFilter(django_filters.FilterSet):
     class Meta:
         model = TaskManager
         fields = {
+            'creator': ['exact'],
             'title': ['exact', 'icontains'],
             'position__vezife_adi': ['exact'],
-            # 'employee': ['exact'],
             'employee__asa': ['exact', 'icontains'],
             'status': ['exact', 'icontains'],
             'requests': ['exact'],
@@ -34,6 +34,7 @@ class UserTaskRequestFilter(django_filters.FilterSet):
     class Meta:
         model = UserTaskRequest
         fields = {
+            'creator': ['exact'],
             'task': ['exact'],
             'note': ['exact', 'icontains']
         }
@@ -47,6 +48,7 @@ class AdvertisementFilter(django_filters.FilterSet):
     class Meta:
         model = Advertisement
         fields = {
+            'creator': ['exact'],
             'title': ['exact', 'icontains'],
             'position__vezife_adi': ['exact'],
         }

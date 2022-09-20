@@ -71,6 +71,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
+            creator = request.user
             position_str = serializer.validated_data.get("positions")
             if position_str is not None:
                 position_list = position_str.split(',')
@@ -94,6 +95,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                     users = User.objects.filter(vezife=position)
                     for user in users:
                         task_manager = TaskManager.objects.create(
+                            creator = creator,
                             title = serializer.validated_data.get('title'),
                             body = serializer.validated_data.get('body'),
                             created_date = created_date,
@@ -106,6 +108,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
                 for user_id in user_list:
                     user = User.objects.get(pk=user_id)
                     task_manager = TaskManager.objects.create(
+                        creator = creator,
                         title = serializer.validated_data.get('title'),
                         body = serializer.validated_data.get('body'),
                         created_date = created_date,
@@ -142,10 +145,10 @@ class UserTaskRequestListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Sorğu əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
+        if serializer.is_valid():
+            creator = request.user
+            serializer.save(creator=creator)
+            return Response({"detail": "Sorğu əlavə edildi"}, status=status.HTTP_201_CREATED)
 
 
 class UserTaskRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -194,6 +197,7 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
+            creator = request.user
             position_str = serializer.validated_data.get("positions")
             if position_str is not None:
                 position_list = position_str.split(',')
@@ -207,6 +211,7 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
                 for position_id in position_list:
                     position = Vezifeler.objects.get(pk=position_id)
                     advertisement = Advertisement.objects.create(
+                        creator = creator,
                         title = serializer.validated_data.get('title'),
                         body = serializer.validated_data.get('body'),
                         created_date = created_date,

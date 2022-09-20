@@ -19,6 +19,7 @@ class UserForTaskManagerSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'asa', 'tel1', 'vezife']
 
 class TaskManagerSerializer(serializers.ModelSerializer):
+    creator = UserForTaskManagerSerializer(read_only=True)
     position = PositionForTaskManagerSerializer(read_only=True)
     employee = UserForTaskManagerSerializer(read_only=True)
 
@@ -31,6 +32,7 @@ class TaskManagerSerializer(serializers.ModelSerializer):
             'id',
             'title', 
             'body', 
+            'creator', 
             'created_date', 
             'end_date', 
             'position', 
@@ -42,11 +44,15 @@ class TaskManagerSerializer(serializers.ModelSerializer):
 
 
 class UserTaskRequestSerializer(serializers.ModelSerializer):
+    creator = UserForTaskManagerSerializer(read_only=True)
+
     class Meta:
         model = UserTaskRequest
         fields = "__all__"
 
 class AdvertisementSerializer(serializers.ModelSerializer):
+    creator = UserForTaskManagerSerializer(read_only=True)
+
     position = PositionForTaskManagerSerializer(read_only=True)
     positions = serializers.CharField(write_only=True,required=False, allow_null=True)
 
@@ -55,6 +61,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title', 
+            'creator', 
             'body', 
             'created_date', 
             'position', 
