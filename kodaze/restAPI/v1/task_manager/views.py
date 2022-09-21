@@ -179,8 +179,6 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
         ).get("toplam")
 
         page = self.paginate_queryset(queryset)
-        if page == None:
-            page = queryset
         
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -218,6 +216,8 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
                         position = position,
                     )
                     advertisement.save()
+            else:
+                serializer.save()
             return Response({"detail": "Elan əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({'detail' : "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
