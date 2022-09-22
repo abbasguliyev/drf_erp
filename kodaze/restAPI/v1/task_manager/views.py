@@ -142,13 +142,14 @@ class UserTaskRequestListCreateAPIView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = UserTaskRequestFilter
 
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             creator = request.user
             serializer.save(creator=creator)
             return Response({"detail": "Sorğu əlavə edildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserTaskRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -157,11 +158,19 @@ class UserTaskRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({"detail": "Məlumatlar yeniləndi"})
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            is_accept = serializer.validated_data.get("is_accept")
+            new_date = instance.new_date
+            task = instance.task
+            if is_accept == True:
+                task.end_date = new_date
+                task.save()
+                serializer.save()
+            serializer.save()
+            return Response({"detail": "Məlumatlar yeniləndi"})
+        else:
+            return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AdvertisementListCreateAPIView(generics.ListCreateAPIView):

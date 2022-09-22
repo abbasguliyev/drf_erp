@@ -201,26 +201,26 @@ else:
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'core.password_validator.UppercaseValidator',
-    },
-    {
-        'NAME': 'core.password_validator.NumberValidator',
-    },
-    {
-        'NAME': 'core.password_validator.CustomUserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'core.password_validator.CustomCommonPasswordValidator',
-    },
-    {
-        'NAME': 'core.password_validator.SymbolValidator',
-    },
-    {
-        'NAME': 'core.password_validator.MinimumLengthValidator',
-    }
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'core.password_validator.UppercaseValidator',
+#     },
+#     {
+#         'NAME': 'core.password_validator.NumberValidator',
+#     },
+#     {
+#         'NAME': 'core.password_validator.CustomUserAttributeSimilarityValidator',
+#     },
+#     {
+#         'NAME': 'core.password_validator.CustomCommonPasswordValidator',
+#     },
+#     {
+#         'NAME': 'core.password_validator.SymbolValidator',
+#     },
+#     {
+#         'NAME': 'core.password_validator.MinimumLengthValidator',
+#     }
+# ]
 
 # AUTH_PASSWORD_VALIDATORS = [
 #     {

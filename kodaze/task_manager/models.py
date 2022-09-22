@@ -15,8 +15,8 @@ class TaskManager(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="given_tasks")
     title = models.CharField(max_length=250)
     body = models.TextField()
-    created_date = models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)
-    end_date = models.DateTimeField()
+    created_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
+    end_date = models.DateField()
     position = models.ForeignKey(
         "company.Vezifeler", on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     employee = models.ForeignKey(
@@ -40,12 +40,13 @@ class UserTaskRequest(models.Model):
     note = models.TextField()
     change_date = models.DateField(auto_now_add=True)
     new_date = models.DateField()
+    is_accept = models.BooleanField(default=False)
 
 class Advertisement(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="given_advertisements")
     title = models.CharField(max_length=250)
     body = models.TextField()
-    created_date = models.DateTimeField(default=django.utils.timezone.now, null=True, blank=True)
+    created_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     position = models.ForeignKey(
         "company.Vezifeler", on_delete=models.CASCADE, related_name="advertisements", null=True, blank=True)
     

@@ -2,13 +2,13 @@ import django_filters
 from task_manager.models import Advertisement, TaskManager, UserTaskRequest
 
 class TaskManagerFilter(django_filters.FilterSet):
-    created_date = django_filters.DateTimeFilter(field_name='created_date', input_formats=["%d-%m-%Y %H:%M:%S"])
-    created_date__gte = django_filters.DateTimeFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
-    created_date__lte = django_filters.DateTimeFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    created_date = django_filters.DateFilter(field_name='created_date', input_formats=["%d-%m-%Y"])
+    created_date__gte = django_filters.DateFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    created_date__lte = django_filters.DateFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
-    end_date = django_filters.DateTimeFilter(field_name='end_date', input_formats=["%d-%m-%Y %H:%M:%S"])
-    end_date__gte = django_filters.DateTimeFilter(field_name='end_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
-    end_date__lte = django_filters.DateTimeFilter(field_name='end_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    end_date = django_filters.DateFilter(field_name='end_date', input_formats=["%d-%m-%Y"])
+    end_date__gte = django_filters.DateFilter(field_name='end_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    end_date__lte = django_filters.DateFilter(field_name='end_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = TaskManager
@@ -23,13 +23,13 @@ class TaskManagerFilter(django_filters.FilterSet):
 
 
 class UserTaskRequestFilter(django_filters.FilterSet):
-    change_date = django_filters.DateTimeFilter(field_name='change_date', input_formats=["%d-%m-%Y %H:%M:%S"])
-    change_date__gte = django_filters.DateTimeFilter(field_name='change_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
-    change_date__lte = django_filters.DateTimeFilter(field_name='change_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    change_date = django_filters.DateFilter(field_name='change_date', input_formats=["%d-%m-%Y"])
+    change_date__gte = django_filters.DateFilter(field_name='change_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    change_date__lte = django_filters.DateFilter(field_name='change_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
-    new_date = django_filters.DateTimeFilter(field_name='new_date', input_formats=["%d-%m-%Y %H:%M:%S"])
-    new_date__gte = django_filters.DateTimeFilter(field_name='new_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
-    new_date__lte = django_filters.DateTimeFilter(field_name='new_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    new_date = django_filters.DateFilter(field_name='new_date', input_formats=["%d-%m-%Y"])
+    new_date__gte = django_filters.DateFilter(field_name='new_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    new_date__lte = django_filters.DateFilter(field_name='new_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = UserTaskRequest
@@ -41,9 +41,9 @@ class UserTaskRequestFilter(django_filters.FilterSet):
 
 
 class AdvertisementFilter(django_filters.FilterSet):
-    created_date = django_filters.DateTimeFilter(field_name='created_date', input_formats=["%d-%m-%Y %H:%M:%S"])
-    created_date__gte = django_filters.DateTimeFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y %H:%M:%S"])
-    created_date__lte = django_filters.DateTimeFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y %H:%M:%S"])
+    created_date = django_filters.DateFilter(field_name='created_date', input_formats=["%d-%m-%Y"])
+    created_date__gte = django_filters.DateFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    created_date__lte = django_filters.DateFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = Advertisement
