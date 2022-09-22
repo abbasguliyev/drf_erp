@@ -111,6 +111,6 @@ app.conf.beat_schedule = {
     },
     "manage_task_manager": {
         "task": "manage_task_manager",
-        "schedule": crontab(minute='*/15'),
+        "schedule": crontab(hour='*/5'),
     },
 }
