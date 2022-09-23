@@ -22,27 +22,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # account views *****************************************
-    path('users/', account_views.UserList.as_view()),
-    path('users/<int:pk>', account_views.UserDetail.as_view()),
-    path('register/', account_views.RegisterApi.as_view()),
-    path('permission-list/', account_views.PermissionListApi.as_view(),
-         name="permission_list"),
-
-    path('permission-group/', account_views.GroupCreateApi.as_view()),
-    path('all-permission-group/', account_views.GroupListApi.as_view()),
-    path('permission-group/<int:pk>', account_views.GroupDetailApi.as_view()),
-
-    path('vezife-permission/',
-         company_views.VezifePermissionListCreateAPIView.as_view()),
-    path('vezife-permission/<int:pk>',
-         company_views.VezifePermissionDetailAPIView.as_view()),
-
-    path("login/", account_views.Login.as_view()),
-    path("token-refresh/", token_refresh),
-    path('change-password/', account_views.ChangePasswordView.as_view(),
-         name='change_password'),
-    path('password-reset/', account_views.ResetPasswordView.as_view(),
-         name='password_reset'),
+    path('users/', include("restAPI.v1.account.urls")),
 
     path('musteriler/', account_views.MusteriListCreateAPIView.as_view(),
          name="musteriler"),
@@ -68,6 +48,7 @@ urlpatterns = [
          name="isci_status"),
     path('isci-status/<int:pk>', account_views.IsciStatusDetailAPIView.as_view(),
          name="isci_status_detail"),
+
 
     # maas views *****************************************
     path('maas-goruntuleme/', salary_views.MaasGoruntulemeListCreateAPIView.as_view(),
@@ -167,6 +148,12 @@ urlpatterns = [
     # company views *****************************************
     path('logo/', company_views.AppLogoListCreateAPIView.as_view()),
     path('logo/<int:pk>', company_views.AppLogoDetailAPIView.as_view()),
+
+    path('vezife-permission/',
+         company_views.VezifePermissionListCreateAPIView.as_view()),
+    path('vezife-permission/<int:pk>',
+         company_views.VezifePermissionDetailAPIView.as_view()),
+
 
     path('komanda/', company_views.KomandaListCreateAPIView.as_view(), name="komanda"),
     path('komanda/<int:pk>', company_views.KomandaDetailAPIView.as_view(),

@@ -82,22 +82,10 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
-    )
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 
-    # shobe = serializers.PrimaryKeyRelatedField(
-    #     queryset=Shobe.objects.all(), required=False)
-    # shirket = serializers.PrimaryKeyRelatedField(
-    #     queryset=Shirket.objects.all(), required=True)
-    # ofis = serializers.PrimaryKeyRelatedField(
-    #     queryset=Ofis.objects.all(), required=False)
-    vezife = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), required=True)
     tel1 = serializers.CharField(required=True)
 
     ishe_baslama_tarixi = serializers.DateField(format="%d-%m-%Y", required=False, allow_null=True)
@@ -106,9 +94,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id', 
-            'username', 
             'asa', 
-            'dogum_tarixi', 
             'ishe_baslama_tarixi',
             'ishden_cixma_tarixi',
             'tel1', 
@@ -142,32 +128,25 @@ class RegisterSerializer(serializers.ModelSerializer):
         if data['password'] != data['password2']:
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."})
-        if data['vezife'] == None:
-            raise serializers.ValidationError(
-                {"vezife": "Vəzifə daxil edin"})
         if data['tel1'] == None:
             raise serializers.ValidationError(
                 {"tel1": "Ən az 1 telefon nömrəsi daxil edin"})
-
         return data
 
     def create(self, validated_data):
+        last_user_id = User.objects.all().values_list('id', flat=True).last()
+        username=f"user-{last_user_id+1}"
         user = User.objects.create(
-            username=validated_data['username'],
+            username=username,
             asa=validated_data['asa'], 
-            dogum_tarixi=validated_data['dogum_tarixi'],
-            tel1=validated_data['tel1'], 
-            isci_status=validated_data['isci_status'], 
-            vezife=validated_data['vezife'],
-            qeyd=validated_data['qeyd'],
-            shirket=validated_data['shirket'], 
-            ofis=validated_data['ofis'],
+            tel1=validated_data['tel1'],
             sv_image=validated_data['sv_image'],
             maas_uslubu=validated_data['maas_uslubu'],
             muqavile_novu=validated_data['muqavile_novu'],
-            supervisor=validated_data['supervisor'],
         )
         user.set_password(validated_data['password'])
+        
+
         try:
             user.sv_image2 = validated_data['sv_image2']
         except:
@@ -202,10 +181,29 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.department = None
         
         try:
+            user.shirket=validated_data['shirket']
+        except:
+            user.shirket = None
+        
+        try:
+            user.ofis=validated_data['ofis']
+        except:
+            user.ofis = None
+
+        try:
             user.shobe = validated_data['shobe']
         except:
             user.shobe = None
-        
+        try:
+            user.vezife=validated_data['vezife']
+            vezife_permission = VezifePermission.objects.filter(vezife=user.vezife)
+            if vezife_permission is not None:
+                for vp in vezife_permission:
+                    permission_group = vp.permission_group
+                    user.groups.add(permission_group)
+        except:
+            user.vezife = None
+            
         try:
             user.tel2 = validated_data['tel2']
         except:
@@ -215,13 +213,20 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.komanda = validated_data['komanda']
         except:
             user.komanda = None
+        
+        try:
+            user.isci_status=validated_data['isci_status']
+        except:
+            user.isci_status = None
+        try:
+            user.supervisor=validated_data['supervisor']
+        except:
+            user.supervisor = None
 
-        vezife = validated_data['vezife']
-        vezife_permission = VezifePermission.objects.filter(vezife=vezife)
-        if vezife_permission is not None:
-            for vp in vezife_permission:
-                permission_group = vp.permission_group
-                user.groups.add(permission_group)
+        try:
+            user.qeyd=validated_data['qeyd']
+        except:
+            user.qeyd = None
 
         user_permissions = validated_data['user_permissions']
         for user_permission in user_permissions:
@@ -241,19 +246,19 @@ class UserSerializer(serializers.ModelSerializer):
     ofis = OfisSerializer(read_only=True)
     shobe = ShobeSerializer(read_only=True)
     shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True,
+        queryset=Shirket.objects.select_related('holding').all(), source='shirket', write_only=True,
     )
     ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True
+        queryset=Ofis.objects.select_related('shirket').all(), source='ofis', write_only=True
     )
     shobe_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shobe.objects.all(), source='shobe',
+        queryset=Shobe.objects.select_related('ofis').all(), source='shobe',
         write_only=True, required=False, allow_null=True
     )
 
     vezife = VezifelerSerializer(read_only=True)
     vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source='vezife', write_only=True,
+        queryset=Vezifeler.objects.select_related('shobe', 'shirket').all(), source='vezife', write_only=True,
     )
 
     komanda = KomandaSerializer(read_only=True)

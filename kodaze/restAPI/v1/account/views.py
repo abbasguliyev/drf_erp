@@ -86,7 +86,7 @@ class ChangePasswordView(generics.UpdateAPIView):
             response = {
                 'status': 'success',
                 'code': status.HTTP_200_OK,
-                'message': 'Password updated successfully',
+                'detail': 'Password updated successfully',
                 'data': []
             }
 
@@ -99,7 +99,6 @@ class ResetPasswordView(generics.UpdateAPIView):
     """
     An endpoint for resetting password.
     """
-    # class Meta:
     serializer_class = ResetPasswordSerializer
     model = User
     permission_classes = [account_permissions.PasswordResetPermissions]
@@ -178,19 +177,6 @@ class RegisterApi(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if(serializer.is_valid()):
-            # komanda = serializer.validated_data.get('komanda')
-            # if komanda is not None:
-            #     komanda = komanda
-            # else:
-            #     komanda = None
-                
-            # if serializer.validated_data.get('maas') == None:
-            #     maas = 0
-            # elif serializer.validated_data.get('maas') is not None:
-            #     maas = serializer.validated_data.get('maas')
-            
-            # user_permissions=serializer.validated_data.get('user_permissions')
-
             serializer.save()
             return Response({"detail": "İşçi qeydiyyatdan keçirildi"}, status=status.HTTP_201_CREATED)
         else:

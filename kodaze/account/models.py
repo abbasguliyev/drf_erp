@@ -38,7 +38,7 @@ class User(AbstractUser):
     last_name = None
 
     asa = models.CharField(max_length=200)
-    dogum_tarixi = models.DateField(null=True, blank=True)
+    # dogum_tarixi = models.DateField(null=True, blank=True)
     ishe_baslama_tarixi = models.DateField(
         default=django.utils.timezone.now, null=True, blank=True)
     ishden_cixma_tarixi = models.DateField(null=True, blank=True)
@@ -61,7 +61,7 @@ class User(AbstractUser):
     shobe = models.ForeignKey("company.Shobe", on_delete=models.SET_NULL,
                               related_name="ishci", null=True, blank=True)
     vezife = models.ForeignKey(
-        "company.Vezifeler", on_delete=models.SET_NULL, related_name="user_vezife", null=True)
+        "company.Vezifeler", on_delete=models.SET_NULL, related_name="user_vezife", null=True, blank=True)
     komanda = models.OneToOneField("company.Komanda", default=None,
                                    on_delete=models.SET_NULL, related_name="user_komanda", null=True, blank=True)
     isci_status = models.ForeignKey(
