@@ -16,6 +16,7 @@ class TaskManagerFilter(django_filters.FilterSet):
             'creator': ['exact'],
             'title': ['exact', 'icontains'],
             'position__vezife_adi': ['exact'],
+            'employee': ['exact'],
             'employee__asa': ['exact', 'icontains'],
             'status': ['exact', 'icontains'],
             'requests': ['exact'],
