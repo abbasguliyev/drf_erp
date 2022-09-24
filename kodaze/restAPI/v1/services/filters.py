@@ -24,7 +24,6 @@ class ServisFilter(django_filters.FilterSet):
         model = Servis
         fields = {
             'muqavile' : ['exact'],
-            'muqavile__shobe__shobe_adi': ['exact', 'icontains'],
             'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
             'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
 
@@ -92,7 +91,6 @@ class ServisOdemeFilter(django_filters.FilterSet):
             'servis__servis_qiymeti' : ['exact'],
 
             'servis__muqavile' : ['exact'],
-            'servis__muqavile__shobe__shobe_adi': ['exact', 'icontains'],
             'servis__muqavile__ofis__ofis_adi': ['exact', 'icontains'],
             'servis__muqavile__shirket__shirket_adi': ['exact', 'icontains'],
             
@@ -103,7 +101,6 @@ class ServisOdemeFilter(django_filters.FilterSet):
             'servis__muqavile__kreditor__kreditor__asa': ['exact'],
             'servis__muqavile__odenis_uslubu': ['exact'],
             'servis__muqavile__muqavile_status': ['exact'],
-            # 'servis__muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
             'servis__muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
             'servis__muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
             'servis__muqavile__musteri__asa': ['exact', 'icontains'],
@@ -112,10 +109,6 @@ class ServisOdemeFilter(django_filters.FilterSet):
             'servis__muqavile__musteri__tel2': ['exact', 'icontains'],
             'servis__muqavile__musteri__tel3': ['exact', 'icontains'],
             'servis__muqavile__musteri__tel4': ['exact', 'icontains'],
-
-            # 'servis__servis_tarix': ['exact', 'gte', 'lte'],
             'servis__yerine_yetirildi': ['exact'],
             'servis__operator_tesdiq': ['exact'],
-
-            # 'odeme_tarix': ['exact', 'gte', 'lte'],
         }

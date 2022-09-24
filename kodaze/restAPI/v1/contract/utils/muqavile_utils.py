@@ -294,15 +294,6 @@ def muqavile_create(self, request, *args, **kwargs):
             ilkin_odenis_tarixi, "%d-%m-%Y")
         ilkin_odenis_tarixi_san = datetime.datetime.timestamp(
             ilkin_odenis_tarixi_date)
-    # else:
-    #     ilkin_odenis_tarixi = indiki_tarix_date
-    #     ilkin_odenis_tarixi_date = indiki_tarix
-    #     ilkin_odenis_tarixi_san = indiki_tarix_san
-
-    # if (request.data.get("muqavile_tarixi") is not None):
-    #     muqavile_tarixi = request.data.get("muqavile_tarixi")
-    # else:
-    #     muqavile_tarixi = datetime.date.today()
 
     if (request.data.get("ilkin_odenis_qaliq_tarixi") is not None):
         ilkin_odenis_qaliq_tarixi = request.data.get(
@@ -348,8 +339,6 @@ def muqavile_create(self, request, *args, **kwargs):
 
     shirket_id = request.data.get("shirket_id")
 
-    shobe_id = request.data.get("shobe_id")
-
     kredit_muddeti = request.data.get("kredit_muddeti")
 
     if (user.ofis == None):
@@ -361,10 +350,6 @@ def muqavile_create(self, request, *args, **kwargs):
     else:
         shirket = user.shirket
 
-    if (shobe_id is not None):
-        shobe = Shobe.objects.get(pk=shobe_id)
-    else:
-        shobe = user.shobe
     try:
         anbar = get_object_or_404(Anbar, ofis=ofis)
     except:
@@ -426,7 +411,7 @@ def muqavile_create(self, request, *args, **kwargs):
                         qaliq_borc = float(muqavile_umumi_mebleg)
 
                         serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket, ofis=ofis,
-                                        shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
+                                        muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
                         # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
                         #                 status=status.HTTP_201_CREATED)
                         return Response(data=serializer.data,
@@ -449,7 +434,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             qaliq_borc = float(
                                 muqavile_umumi_mebleg) - float(ilkin_odenis)
                             serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
+                                            ofis=ofis, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_status="BİTMİŞ", muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc,)
                             sonraki_balans = holding_umumi_balans_hesabla()
                             ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
@@ -478,7 +463,7 @@ def muqavile_create(self, request, *args, **kwargs):
                                 muqavile_umumi_mebleg) - float(ilkin_odenis)
 
                             serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
+                                            ofis=ofis, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_status="DAVAM EDƏN", qaliq_borc=qaliq_borc,
                                             muqavile_umumi_mebleg=muqavile_umumi_mebleg)
                             # return Response({"detail": "Müqavilə müvəffəqiyyətlə imzalandı"},
@@ -524,7 +509,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             qaliq_borc = float(muqavile_umumi_mebleg) - float(ilkin_odenis)
 
                             serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
+                                            ofis=ofis, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="BİTMİŞ",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
                                             muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
@@ -577,7 +562,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             qaliq_borc = float(muqavile_umumi_mebleg)
 
                             serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
+                                            ofis=ofis, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="DAVAM EDƏN",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
                                             muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
@@ -595,7 +580,7 @@ def muqavile_create(self, request, *args, **kwargs):
                             qaliq_borc = float(muqavile_umumi_mebleg)
 
                             serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket,
-                                            ofis=ofis, shobe=shobe, ilkin_odenis=ilkin_odenis,
+                                            ofis=ofis, ilkin_odenis=ilkin_odenis,
                                             ilkin_odenis_qaliq=ilkin_odenis_qaliq, ilkin_odenis_status="DAVAM EDƏN",
                                             qaliq_ilkin_odenis_status="DAVAM EDƏN",
                                             muqavile_umumi_mebleg=muqavile_umumi_mebleg, qaliq_borc=qaliq_borc)
@@ -634,7 +619,7 @@ def muqavile_create(self, request, *args, **kwargs):
                 k_medaxil(ofis_kassa, float(muqavile_umumi_mebleg), user, qeyd)
 
                 serializer.save(group_leader=user, menecer1=menecer1, menecer2=menecer2, shirket=shirket, ofis=ofis,
-                                muqavile_status="BİTMİŞ", shobe=shobe, muqavile_umumi_mebleg=muqavile_umumi_mebleg)
+                                muqavile_status="BİTMİŞ", muqavile_umumi_mebleg=muqavile_umumi_mebleg)
 
                 sonraki_balans = holding_umumi_balans_hesabla()
                 ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)

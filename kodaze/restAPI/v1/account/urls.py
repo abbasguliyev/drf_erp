@@ -22,4 +22,16 @@ urlpatterns = [
     path('password-reset/', account_views.ResetPasswordView.as_view(),
          name='password_reset'),
 
+    path('employee-status/', account_views.IsciStatusListCreateAPIView.as_view()),
+    path('employee-status/<int:pk>/', account_views.IsciStatusDetailAPIView.as_view()),
+
+    path('employee-status/', account_views.IsciStatusListCreateAPIView.as_view()),
+    path('employee-status/<int:pk>/', account_views.IsciStatusDetailAPIView.as_view()),
+
+    path('customers/', account_views.MusteriListCreateAPIView.as_view()),
+    path('customers/<int:pk>/', account_views.MusteriDetailAPIView.as_view()),
+
+    path('all-region-create/', account_views.AllBolgeCreate.as_view()),
+    path('region/', account_views.BolgeListCreateAPIView.as_view()),
+    path('region/<int:pk>/', account_views.BolgeDetailAPIView.as_view()),
 ]

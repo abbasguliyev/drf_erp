@@ -11,9 +11,7 @@ from core.image_validator import file_size
 from . import (
     CONTRACT_TYPE_CHOICES,
     SALARY_STYLE_CHOICES,
-    MONTHLY,
-    CUSTOMER_TYPE_CHOICES,
-    STANDART,
+    MONTHLY
 )
 
 class IsciStatus(models.Model):
@@ -100,10 +98,6 @@ class User(AbstractUser):
             ("delete_user", "İşçi silə bilər")
         )
 
-    # def __str__(self):
-    #     return f"{self.username}"
-
-
 class Bolge(models.Model):
     bolge_adi = models.CharField(max_length=300, unique=True)
 
@@ -116,10 +110,6 @@ class Bolge(models.Model):
             ("change_bolge", "Bölgə məlumatlarını yeniləyə bilər"),
             ("delete_bolge", "Bölgə silə bilər")
         )
-
-    # def __str__(self) -> str:
-    #     return self.bolge_adi
-
 
 class Musteri(models.Model):
     asa = models.CharField(max_length=200)
@@ -136,7 +126,7 @@ class Musteri(models.Model):
     tel4 = models.CharField(max_length=50, null=True, blank=True)
     unvan = models.TextField(blank=True)
     bolge = models.ForeignKey(Bolge, on_delete=models.SET_NULL, null=True)
-    qeyd = models.TextField(blank=True)
+    qeyd = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(
         _('active'),
         default=True,
@@ -156,10 +146,6 @@ class Musteri(models.Model):
             ("delete_musteri", "Müştəri silə bilər")
         )
 
-    # def __str__(self):
-    #     return self.asa
-
-
 class MusteriQeydler(models.Model):
     qeyd = models.TextField()
     musteri = models.ForeignKey(
@@ -176,10 +162,6 @@ class MusteriQeydler(models.Model):
             ("delete_musteriqeydler", "Müştəri qeydlərini silə bilər")
         )
 
-    # def __str__(self):
-    #     return f"{self.musteri} -- {self.qeyd[:20]}"
-
-
 class IsciSatisSayi(models.Model):
     tarix = models.DateField()
     isci = models.ForeignKey(
@@ -195,6 +177,3 @@ class IsciSatisSayi(models.Model):
             ("change_iscisatissayi", "İşçi satış sayı məlumatlarını yeniləyə bilər"),
             ("delete_iscisatissayi", "İşçi satış sayı silə bilər")
         )
-
-    # def __str__(self) -> str:
-    #     return f"{self.isci} {self.tarix}-də {self.satis_sayi} satış etmişdir"

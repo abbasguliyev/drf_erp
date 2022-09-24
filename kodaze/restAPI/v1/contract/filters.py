@@ -20,7 +20,6 @@ class OdemeTarixFilter(django_filters.FilterSet):
         model = OdemeTarix
         fields = {
             'muqavile' : ['exact'],
-            'muqavile__shobe__shobe_adi': ['exact', 'icontains'],
             'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
             'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
 
@@ -42,9 +41,7 @@ class OdemeTarixFilter(django_filters.FilterSet):
             'muqavile__musteri__tel3': ['exact', 'icontains'],
             'muqavile__musteri__tel4': ['exact', 'icontains'],
 
-            # 'tarix': ['exact'],
-            # 'tarix': ['exact', 'gte', 'lte'],
-            'qiymet': ['exact', 'gte', 'lte'],     
+            'qiymet': ['exact', 'gte', 'lte'],
             'odenme_status': ['exact', 'icontains'],
             'gecikdirme_status': ['exact', 'icontains'],
             'buraxilmis_ay_alt_status': ['exact', 'icontains'],
@@ -143,7 +140,6 @@ class MuqavileHediyyeFilter(django_filters.FilterSet):
             'mehsul__qiymet': ['exact', 'gte', 'lte'],
 
             'muqavile' : ['exact'],
-            'muqavile__shobe__shobe_adi': ['exact', 'icontains'],
             'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
             'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
 

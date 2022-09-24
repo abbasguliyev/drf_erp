@@ -45,7 +45,6 @@ class MuqavileSerializer(serializers.ModelSerializer):
     musteri = MusteriSerializer(read_only=True)
     mehsul = MehsullarSerializer(read_only=True)
     shirket = ShirketSerializer(read_only=True)
-    shobe = ShobeSerializer(read_only=True)
     ofis = OfisSerializer(read_only=True)
     dusme_tarixi = serializers.DateField(read_only=True)
     is_sokuntu = serializers.BooleanField(read_only=True)
@@ -76,10 +75,6 @@ class MuqavileSerializer(serializers.ModelSerializer):
     )
     shirket_id = serializers.PrimaryKeyRelatedField(
         queryset=Shirket.objects.select_related('holding').all(), source='shirket', write_only=True, required=False, allow_null=True
-    )
-
-    shobe_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shobe.objects.select_related('ofis').all(), source='shobe', write_only=True, required=False, allow_null=True
     )
 
     ofis_id = serializers.PrimaryKeyRelatedField(

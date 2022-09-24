@@ -1,4 +1,6 @@
 import datetime
+import traceback
+
 from django.shortcuts import get_object_or_404
 from rest_framework import status, generics
 
@@ -59,7 +61,6 @@ class MuqavileListCreateAPIView(generics.ListCreateAPIView):
                     'mehsul', 
                     'shirket', 
                     'ofis', 
-                    'shobe'
                 ).all()
     serializer_class = MuqavileSerializer
     filter_backends = [DjangoFilterBackend]
@@ -76,7 +77,6 @@ class MuqavileListCreateAPIView(generics.ListCreateAPIView):
                     'mehsul', 
                     'shirket', 
                     'ofis', 
-                    'shobe'
                 ).all()
         elif request.user.shirket is not None:
             if request.user.ofis is not None:
@@ -88,7 +88,6 @@ class MuqavileListCreateAPIView(generics.ListCreateAPIView):
                     'mehsul', 
                     'shirket', 
                     'ofis', 
-                    'shobe'
                 ).filter(shirket=request.user.shirket, ofis=request.user.ofis)
             queryset = Muqavile.objects.select_related(
                     'group_leader', 
@@ -98,7 +97,6 @@ class MuqavileListCreateAPIView(generics.ListCreateAPIView):
                     'mehsul', 
                     'shirket', 
                     'ofis', 
-                    'shobe'
                 ).filter(shirket=request.user.shirket)
         else:
             queryset = Muqavile.objects.all()
@@ -306,7 +304,7 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
                     return Response({"detail": "Maksimum kredit müddəti 30 aydır"}, status=status.HTTP_400_BAD_REQUEST)
                 
                 if (int(kredit_muddeti) == 0):
-                    # Kredit muddeti 31 ay daxil edilerse
+                    # Kredit muddeti 0 ay daxil edilerse
                     return Response({"detail": "Kredit müddəti 0 ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
 
                 qaliq_borc = float(muqavile_umumi_mebleg) - float(odenilmis_mebleg)
@@ -324,7 +322,6 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
                     muqavile_tarixi = datetime.date.today(),
                     shirket = kohne_muqavile.shirket,
                     ofis = kohne_muqavile.ofis,
-                    shobe = kohne_muqavile.shobe,
                     qaliq_borc = qaliq_borc,
                     odenis_uslubu = odenis_uslubu,
                     deyisilmis_mehsul_status = "DƏYİŞİLMİŞ MƏHSUL",
@@ -344,6 +341,7 @@ class DeyisimListCreateAPIView(generics.ListCreateAPIView):
             serializer.save()
             return Response({"detail": "Müqavilə imzalandı"}, status=status.HTTP_201_CREATED)
         else:
+            traceback.print_exc()
             return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ********************************** demo satis put delete post get **********************************
