@@ -33,8 +33,6 @@ class GroupLeaderPrim(AbstractPrim):
         ordering = ("pk",)
         default_permissions = []
 
-    # def __str__(self) -> str:
-    #     return f"{self.prim_status} - {self.komandaya_gore_prim} - {self.odenis_uslubu} - {self.vezife.vezife_adi}"
 
 class GroupLeaderPrimNew(AbstractPrim):
     odenis_uslubu = None
@@ -84,8 +82,6 @@ class Menecer1PrimNew(AbstractPrim):
             ("delete_menecer1primnew", "Menecer1 prim silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.prim_status} - {self.vezife.vezife_adi}"
 
 class OfficeLeaderPrim(AbstractPrim):
     odenis_uslubu = None
@@ -102,8 +98,6 @@ class OfficeLeaderPrim(AbstractPrim):
             ("delete_officeleaderprim", "Office Leader prim silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.prim_status} - {self.ofise_gore_prim} - {self.vezife.vezife_adi}"
 
 class Menecer2Prim(AbstractPrim):
     odenis_uslubu = None
@@ -126,8 +120,6 @@ class Menecer2Prim(AbstractPrim):
             ("delete_menecer2prim", "Menecer2 prim silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.prim_status} - {self.ofise_gore_prim} - {self.vezife.vezife_adi}"
 
 class KreditorPrim(models.Model):
     prim_faizi = models.PositiveBigIntegerField(default=0, blank=True)
@@ -142,8 +134,6 @@ class KreditorPrim(models.Model):
             ("delete_kreditorprim", "Kreditor prim silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.prim_faizi}"
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
@@ -164,8 +154,6 @@ class Avans(models.Model):
             ("delete_avans", "Avans silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.isci} {self.avans_tarixi}"
 
 class MaasOde(models.Model):
     isci = models.ManyToManyField(USER, related_name="maas_ode")
@@ -183,8 +171,6 @@ class MaasOde(models.Model):
             ("delete_maasode", "Maaş ödəmə silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.isci} {self.odeme_tarixi}"
 
 class Kesinti(models.Model):
     isci = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="isci_kesinti")
@@ -202,8 +188,6 @@ class Kesinti(models.Model):
             ("delete_kesinti", "Kəsinti silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.isci} {self.kesinti_tarixi}"
 
 class Bonus(models.Model):
     isci = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="isci_bonus")
@@ -221,9 +205,7 @@ class Bonus(models.Model):
             ("delete_bonus", "Bonus silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.isci} {self.mebleg} {self.bonus_tarixi}"
- 
+
 class MaasGoruntuleme(models.Model):
     isci = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="isci_maas_goruntuleme")
     satis_sayi = models.PositiveBigIntegerField(default=0, blank=True)
@@ -241,6 +223,3 @@ class MaasGoruntuleme(models.Model):
             ("change_maasgoruntuleme", "Maaş cədvəlinin məlumatlarını yeniləyə bilər"),
             ("delete_maasgoruntuleme", "Maaş cədvəlini silə bilər")
         )
-
-    # def __str__(self) -> str:
-    #     return f"{self.isci} {self.yekun_maas} {self.tarix}"

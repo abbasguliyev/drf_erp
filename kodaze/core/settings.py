@@ -52,7 +52,7 @@ if __PRODUCTION__ == False:
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://do.kodaze.com'
+    'https://dev.kodaze.com'
 ]
 
 CSRF_COOKIE_SECURE = False
