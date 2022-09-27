@@ -1,27 +1,25 @@
 from django.contrib import admin
 from account.models import (
-    MusteriQeydler, 
+    CustomerNote, 
     User, 
-    Musteri, 
-    Bolge,
-    IsciSatisSayi,
-    IsciStatus
+    Customer, 
+    Region,
+    EmployeeStatus
 )
 from django.contrib.auth.models import Permission
 
-class BolgeAdmin(admin.ModelAdmin):
+class RegionAdmin(admin.ModelAdmin):
     search_fields = (
-        "bolge_adi",
+        "region_ad",
     )
 
 # Register your models here.
 admin.site.register(User)
-admin.site.register(IsciSatisSayi)
 
-admin.site.register(Musteri)
-admin.site.register(MusteriQeydler)
+admin.site.register(Customer)
+admin.site.register(CustomerNote)
 
-admin.site.register(Bolge, BolgeAdmin)
-admin.site.register(IsciStatus)
+admin.site.register(Region, RegionAdmin)
+admin.site.register(EmployeeStatus)
 
 admin.site.register(Permission)

@@ -3,160 +3,160 @@ from company.models import (
     Holding,
 )
 from cashbox.models import (
-    HoldingKassa, 
-    OfisKassa, 
-    ShirketKassa, 
+    HoldingCashbox, 
+    OfficeCashbox, 
+    CompanyCashbox, 
 )
 from income_expense.models import (
-    HoldingKassaMexaric, 
-    OfisKassaMexaric, 
-    ShirketKassaMexaric
+    HoldingCashboxExpense, 
+    OfficeCashboxExpense, 
+    CompanyCashboxExpense
 )
-from salary.models import MaasGoruntuleme
+from salary.models import SalaryView
 from rest_framework import status
 
 from rest_framework.response import Response
 import datetime
 
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balans_hesabla, 
+    holding_umumi_balance_hesabla, 
     pul_axini_create, 
-    ofis_balans_hesabla, 
-    shirket_balans_hesabla, 
-    holding_balans_hesabla
+    office_balance_hesabla, 
+    company_balance_hesabla, 
+    holding_balance_hesabla
 )
-def maas_ode_create(self, request, *args, **kwargs):
+def salary_ode_create(self, request, *args, **kwargs):
     """
-    İşçilərə maas vermək funksiyası
+    İşçilərə salary vermək funksiyası
     """
     serializer = self.get_serializer(data=request.data)
     user = self.request.user
-    # isciler = serializer.data.get("isci")
+    # employeeler = serializer.data.get("employee")
 
     if serializer.is_valid():
-        isciler = serializer.validated_data.get("isci")
-        qeyd = serializer.validated_data.get("qeyd")
-        odeme_tarixi = serializer.validated_data.get("odeme_tarixi")
-        if (serializer.validated_data.get("odeme_tarixi") == None):
-            odeme_tarixi = datetime.date.today()
-        if (serializer.validated_data.get("odeme_tarixi") == ""):
-            odeme_tarixi = datetime.date.today()
+        employeeler = serializer.validated_data.get("employee")
+        note = serializer.validated_data.get("note")
+        installment = serializer.validated_data.get("installment")
+        if (serializer.validated_data.get("installment") == None):
+            installment = datetime.date.today()
+        if (serializer.validated_data.get("installment") == ""):
+            installment = datetime.date.today()
 
-        indi = datetime.date.today()
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+        now = datetime.date.today()
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
 
-        yekun_odenen_mebleg = 0
-        for isci in isciler:
+        yekun_odenen_amount = 0
+        for employee in employeeler:
             try:
-                maas_goruntuleme = MaasGoruntuleme.objects.get(isci=isci, tarix=f"{indi.year}-{indi.month}-{1}")
+                salary_goruntuleme = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
             except:
-                return Response({"detail": f"{isci} işçinin maaş kartında xəta var"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail": f"{employee} işçinin maaş kartında xəta var"}, status=status.HTTP_404_NOT_FOUND)
 
-            mebleg = maas_goruntuleme.yekun_maas
-            yekun_odenen_mebleg += float(mebleg)
-            maas_goruntuleme.yekun_maas = 0
-            ofis = isci.ofis
-            shirket = isci.shirket
+            amount = salary_goruntuleme.final_salary
+            yekun_odenen_amount += float(amount)
+            salary_goruntuleme.final_salary = 0
+            office = employee.office
+            company = employee.company
             holding = Holding.objects.all()[0]
 
-            ilkin_balans = holding_umumi_balans_hesabla()
-            ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-            shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
-            holding_ilkin_balans = holding_balans_hesabla()
+            initial_balance = holding_umumi_balance_hesabla()
+            office_initial_balance = office_balance_hesabla(office=office)
+            company_initial_balance = company_balance_hesabla(company=company)
+            holding_initial_balance = holding_balance_hesabla()
 
-            qeyd = f"{user.asa} tərəfindən {isci.asa} adlı işçiyə {mebleg} AZN maaş ödəndi"
+            note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN maaş ödəndi"
 
-            if ofis is not None:
-                ofis_kassa = OfisKassa.objects.get(ofis=ofis)
-                if float(ofis_kassa.balans) < float(mebleg):
-                    return Response({"detail": "Ofisin kassasında yetəri qədər məbləğ yoxdur"})
-                ofis_kassa.balans = float(ofis_kassa.balans) - float(mebleg)
-                ofis_kassa.save()
-                ofis_kassa_mexaric = OfisKassaMexaric.objects.create(
-                    mexaric_eden=user,
-                    ofis_kassa=ofis_kassa,
-                    mebleg=mebleg,
-                    mexaric_tarixi=odeme_tarixi,
-                    qeyd=qeyd
+            if office is not None:
+                cashbox = OfficeCashbox.objects.get(office=office)
+                if float(cashbox.balance) < float(amount):
+                    return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
+                cashbox.balance = float(cashbox.balance) - float(amount)
+                cashbox.save()
+                cashbox_expense = OfficeCashboxExpense.objects.create(
+                    executor=user,
+                    cashbox=cashbox,
+                    amount=amount,
+                    expense_datei=installment,
+                    note=note
                 )
-                ofis_kassa_mexaric.save()
+                cashbox_expense.save()
 
-                sonraki_balans = holding_umumi_balans_hesabla()
-                ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
+                subsequent_balance = holding_umumi_balance_hesabla()
+                office_subsequent_balance = office_balance_hesabla(office=office)
                 pul_axini_create(
-                    ofis=ofis,
-                    shirket= ofis.shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    ofis_ilkin_balans=ofis_ilkin_balans,
-                    ofis_sonraki_balans=ofis_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(mebleg)
+                    office=office,
+                    company= office.company,
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    office_initial_balance=office_initial_balance,
+                    office_subsequent_balance=office_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏXARİC",
+                    quantity=float(amount)
                 )
-            elif ofis == None and shirket is not None:
-                shirket_kassa = ShirketKassa.objects.get(shirket=shirket)
-                if float(shirket_kassa.balans) < float(mebleg):
+            elif office == None and company is not None:
+                cashbox = CompanyCashbox.objects.get(company=company)
+                if float(cashbox.balance) < float(amount):
                     return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-                shirket_kassa.balans = float(shirket_kassa.balans) - float(mebleg)
-                shirket_kassa.save()
-                shirket_kassa_mexaric = ShirketKassaMexaric.objects.create(
-                    mexaric_eden=user,
-                    shirket_kassa=shirket_kassa,
-                    mebleg=mebleg,
-                    mexaric_tarixi=odeme_tarixi,
-                    qeyd=qeyd
+                cashbox.balance = float(cashbox.balance) - float(amount)
+                cashbox.save()
+                cashbox_expense = CompanyCashboxExpense.objects.create(
+                    executor=user,
+                    cashbox=cashbox,
+                    amount=amount,
+                    expense_datei=installment,
+                    note=note
                 )
-                shirket_kassa_mexaric.save()
+                cashbox_expense.save()
 
-                sonraki_balans = holding_umumi_balans_hesabla()
-                shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
+                subsequent_balance = holding_umumi_balance_hesabla()
+                company_subsequent_balance = company_balance_hesabla(company=company)
                 pul_axini_create(
-                    shirket=shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    shirket_ilkin_balans=shirket_ilkin_balans,
-                    shirket_sonraki_balans=shirket_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(mebleg)
+                    company=company,
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    company_initial_balance=company_initial_balance,
+                    company_subsequent_balance=company_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏXARİC",
+                    quantity=float(amount)
                 )
 
-            elif ofis == None and shirket == None and holding is not None:
-                holding_kassa = HoldingKassa.objects.get(holding=holding)
-                if float(holding_kassa.balans) < float(mebleg):
+            elif office == None and company == None and holding is not None:
+                cashbox = HoldingCashbox.objects.get(holding=holding)
+                if float(cashbox.balance) < float(amount):
                     return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-                holding_kassa.balans = float(holding_kassa.balans) - float(mebleg)
-                holding_kassa.save()
-                holding_kassa_mexaric = HoldingKassaMexaric.objects.create(
-                    mexaric_eden=user,
-                    holding_kassa=holding_kassa,
-                    mebleg=mebleg,
-                    mexaric_tarixi=odeme_tarixi,
-                    qeyd=qeyd
+                cashbox.balance = float(cashbox.balance) - float(amount)
+                cashbox.save()
+                cashbox_expense = HoldingCashboxExpense.objects.create(
+                    executor=user,
+                    cashbox=cashbox,
+                    amount=amount,
+                    expense_datei=installment,
+                    note=note
                 )
-                holding_kassa_mexaric.save()
+                cashbox_expense.save()
 
-                sonraki_balans = holding_umumi_balans_hesabla()
-                holding_sonraki_balans = holding_balans_hesabla()
+                subsequent_balance = holding_umumi_balance_hesabla()
+                holding_subsequent_balance = holding_balance_hesabla()
                 pul_axini_create(
                     holding=holding,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    holding_ilkin_balans=holding_ilkin_balans,
-                    holding_sonraki_balans=holding_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(mebleg)
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    holding_initial_balance=holding_initial_balance,
+                    holding_subsequent_balance=holding_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏXARİC",
+                    quantity=float(amount)
                 )
 
-            maas_goruntuleme.odendi = True
-            maas_goruntuleme.save()
-        serializer.save(mebleg=yekun_odenen_mebleg, odeme_tarixi=odeme_tarixi)
+            salary_goruntuleme.is_done = True
+            salary_goruntuleme.save()
+        serializer.save(amount=yekun_odenen_amount, installment=installment)
         return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
 
 def bonus_create(self, request, *args, **kwargs):
@@ -166,288 +166,288 @@ def bonus_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     user = self.request.user
     if serializer.is_valid():
-        isci = serializer.validated_data.get("isci")
-        mebleg = serializer.validated_data.get("mebleg")
-        qeyd = serializer.validated_data.get("qeyd")
-        bonus_tarixi = serializer.validated_data.get("bonus_tarixi")
-        if (serializer.validated_data.get("bonus_tarixi") == None):
-            bonus_tarixi = datetime.date.today()
-        elif (serializer.validated_data.get("bonus_tarixi") == ""):
-            bonus_tarixi = datetime.date.today()
+        employee = serializer.validated_data.get("employee")
+        amount = serializer.validated_data.get("amount")
+        note = serializer.validated_data.get("note")
+        date = serializer.validated_data.get("date")
+        if (serializer.validated_data.get("date") == None):
+            date = datetime.date.today()
+        elif (serializer.validated_data.get("date") == ""):
+            date = datetime.date.today()
 
-        indi = datetime.date.today()
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+        now = datetime.date.today()
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
 
-        maas_goruntuleme = MaasGoruntuleme.objects.get(isci=isci, tarix=next_m)
-        maas_goruntuleme.yekun_maas = maas_goruntuleme.yekun_maas + float(mebleg)
+        salary_goruntuleme = SalaryView.objects.get(employee=employee, date=next_m)
+        salary_goruntuleme.final_salary = salary_goruntuleme.final_salary + float(amount)
         
 
-        ofis = isci.ofis
+        office = employee.office
 
-        shirket = isci.shirket
+        company = employee.company
 
         holding = Holding.objects.all()[0]
 
-        qeyd = f"{user.asa} tərəfindən {isci.asa} adlı işçiyə {mebleg} AZN bonus"
+        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN bonus"
 
-        # if ofis is not None:
-        #     ofis_kassa = OfisKassa.objects.get(ofis=ofis)
-        #     if float(ofis_kassa.balans) < float(mebleg):
-        #         return Response({"detail": "Ofisin kassasında yetəri qədər məbləğ yoxdur"})
-        #     ofis_kassa.balans = float(ofis_kassa.balans) - float(mebleg)
-        #     ofis_kassa.save()
-        #     ofis_kassa_mexaric = OfisKassaMexaric.objects.create(
-        #         mexaric_eden=user,
-        #         ofis_kassa=ofis_kassa,
-        #         mebleg=mebleg,
-        #         mexaric_tarixi=bonus_tarixi,
-        #         qeyd=qeyd
+        # if office is not None:
+        #     cashbox = OfficeCashbox.objects.get(office=office)
+        #     if float(cashbox.balance) < float(amount):
+        #         return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
+        #     cashbox.balance = float(cashbox.balance) - float(amount)
+        #     cashbox.save()
+        #     cashbox_expense = OfficeCashboxExpense.objects.create(
+        #         executor=user,
+        #         cashbox=cashbox,
+        #         amount=amount,
+        #         expense_datei=date,
+        #         note=note
         #     )
-        #     ofis_kassa_mexaric.save()
-        # elif ofis == None and shirket is not None:
-        #     shirket_kassa = ShirketKassa.objects.get(shirket=shirket)
-        #     if float(shirket_kassa.balans) < float(mebleg):
+        #     cashbox_expense.save()
+        # elif office == None and company is not None:
+        #     cashbox = CompanyCashbox.objects.get(company=company)
+        #     if float(cashbox.balance) < float(amount):
         #         return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-        #     shirket_kassa.balans = float(shirket_kassa.balans) - float(mebleg)
-        #     shirket_kassa.save()
-        #     shirket_kassa_mexaric = ShirketKassaMexaric.objects.create(
-        #         mexaric_eden=user,
-        #         shirket_kassa=shirket_kassa,
-        #         mebleg=mebleg,
-        #         mexaric_tarixi=bonus_tarixi,
-        #         qeyd=qeyd
+        #     cashbox.balance = float(cashbox.balance) - float(amount)
+        #     cashbox.save()
+        #     cashbox_expense = CompanyCashboxExpense.objects.create(
+        #         executor=user,
+        #         cashbox=cashbox,
+        #         amount=amount,
+        #         expense_datei=date,
+        #         note=note
         #     )
-        #     shirket_kassa_mexaric.save()
-        # elif ofis == None and shirket == None and holding is not None:
-        #     holding_kassa = HoldingKassa.objects.get(holding=holding)
-        #     if float(holding_kassa.balans) < float(mebleg):
+        #     cashbox_expense.save()
+        # elif office == None and company == None and holding is not None:
+        #     cashbox = HoldingCashbox.objects.get(holding=holding)
+        #     if float(cashbox.balance) < float(amount):
         #         return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-        #     holding_kassa.balans = float(holding_kassa.balans) - float(mebleg)
-        #     holding_kassa.save()
-        #     holding_kassa_mexaric = HoldingKassaMexaric.objects.create(
-        #         mexaric_eden=user,
-        #         holding_kassa=holding_kassa,
-        #         mebleg=mebleg,
-        #         mexaric_tarixi=bonus_tarixi,
-        #         qeyd=qeyd
+        #     cashbox.balance = float(cashbox.balance) - float(amount)
+        #     cashbox.save()
+        #     cashbox_expense = HoldingCashboxExpense.objects.create(
+        #         executor=user,
+        #         cashbox=cashbox,
+        #         amount=amount,
+        #         expense_datei=date,
+        #         note=note
         #     )
-        #     holding_kassa_mexaric.save()
+        #     cashbox_expense.save()
 
-        maas_goruntuleme.save()
-        serializer.save(bonus_tarixi=bonus_tarixi)
+        salary_goruntuleme.save()
+        serializer.save(date=date)
 
         return Response({"detail": "Bonus əlavə olundu"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
 
-def kesinti_create(self, request, *args, **kwargs):
+def salarydeduction_create(self, request, *args, **kwargs):
     """
     İşçinin maaşından kəsinti tutmaq funksiyası
     """
     serializer = self.get_serializer(data=request.data)
     user = self.request.user
     if serializer.is_valid():
-        isci = serializer.validated_data.get("isci")
-        mebleg = serializer.validated_data.get("mebleg")
-        qeyd = serializer.validated_data.get("qeyd")
-        kesinti_tarixi = serializer.validated_data.get("kesinti_tarixi")
-        if (serializer.validated_data.get("kesinti_tarixi") == None):
-            kesinti_tarixi = datetime.date.today()
-        elif (serializer.validated_data.get("kesinti_tarixi") == ""):
-            kesinti_tarixi = datetime.date.today()
+        employee = serializer.validated_data.get("employee")
+        amount = serializer.validated_data.get("amount")
+        note = serializer.validated_data.get("note")
+        date = serializer.validated_data.get("date")
+        if (serializer.validated_data.get("date") == None):
+            date = datetime.date.today()
+        elif (serializer.validated_data.get("date") == ""):
+            date = datetime.date.today()
 
-        indi = datetime.date.today()
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+        now = datetime.date.today()
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
 
-        maas_goruntuleme = MaasGoruntuleme.objects.get(isci=isci, tarix=next_m)
-        maas_goruntuleme.yekun_maas = maas_goruntuleme.yekun_maas - float(mebleg)
-        ofis = isci.ofis
-        shirket = isci.shirket
+        salary_goruntuleme = SalaryView.objects.get(employee=employee, date=next_m)
+        salary_goruntuleme.final_salary = salary_goruntuleme.final_salary - float(amount)
+        office = employee.office
+        company = employee.company
         holding = Holding.objects.all()[0]
-        qeyd = f"{user.asa} tərəfindən {isci.asa} adlı işçinin maaşından {mebleg} AZN kəsinti"
+        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçinin maaşından {amount} AZN kəsinti"
 
-        # if ofis is not None:
-        #     ofis_kassa = OfisKassa.objects.get(ofis=ofis)
-        #     ofis_kassa.balans = float(ofis_kassa.balans) + float(mebleg)
-        #     ofis_kassa.save()
-        #     ofis_kassa_medaxil = OfisKassaMedaxil.objects.create(
-        #         medaxil_eden=user,
-        #         ofis_kassa=ofis_kassa,
-        #         mebleg=mebleg,
-        #         medaxil_tarixi=kesinti_tarixi,
-        #         qeyd=qeyd
+        # if office is not None:
+        #     cashbox = OfficeCashbox.objects.get(office=office)
+        #     cashbox.balance = float(cashbox.balance) + float(amount)
+        #     cashbox.save()
+        #     cashbox_income = OfficeCashboxIncome.objects.create(
+        #         executor=user,
+        #         cashbox=cashbox,
+        #         amount=amount,
+        #         date=date,
+        #         note=note
         #     )
-        #     ofis_kassa_medaxil.save()
-        # elif ofis == None and shirket is not None:
-        #     shirket_kassa = ShirketKassa.objects.get(shirket=shirket)
-        #     shirket_kassa.balans = float(shirket_kassa.balans) + float(mebleg)
-        #     shirket_kassa.save()
-        #     shirket_kassa_medaxil = ShirketKassaMedaxil.objects.create(
-        #         medaxil_eden=user,
-        #         shirket_kassa=shirket_kassa,
-        #         mebleg=mebleg,
-        #         medaxil_tarixi=kesinti_tarixi,
-        #         qeyd=qeyd
+        #     cashbox_income.save()
+        # elif office == None and company is not None:
+        #     cashbox = CompanyCashbox.objects.get(company=company)
+        #     cashbox.balance = float(cashbox.balance) + float(amount)
+        #     cashbox.save()
+        #     cashbox_income = CompanyCashboxIncome.objects.create(
+        #         executor=user,
+        #         cashbox=cashbox,
+        #         amount=amount,
+        #         date=date,
+        #         note=note
         #     )
-        #     shirket_kassa_medaxil.save()
-        # elif ofis == None and shirket == None and holding is not None:
-        #     holding_kassa = HoldingKassa.objects.get(holding=holding)
-        #     holding_kassa.balans = float(holding_kassa.balans) + float(mebleg)
-        #     holding_kassa.save()
-        #     holding_kassa_medaxil = HoldingKassaMedaxil.objects.create(
-        #         medaxil_eden=user,
-        #         holding_kassa=holding_kassa,
-        #         mebleg=mebleg,
-        #         medaxil_tarixi=kesinti_tarixi,
-        #         qeyd=qeyd
+        #     cashbox_income.save()
+        # elif office == None and company == None and holding is not None:
+        #     cashbox = HoldingCashbox.objects.get(holding=holding)
+        #     cashbox.balance = float(cashbox.balance) + float(amount)
+        #     cashbox.save()
+        #     cashbox_income = HoldingCashboxIncome.objects.create(
+        #         executor=user,
+        #         cashbox=cashbox,
+        #         amount=amount,
+        #         date=date,
+        #         note=note
         #     )
-        #     holding_kassa_medaxil.save()
+        #     cashbox_income.save()
 
-        maas_goruntuleme.save()
-        serializer.save(kesinti_tarixi=kesinti_tarixi)
+        salary_goruntuleme.save()
+        serializer.save(date=date)
 
 
         return Response({"detail": "Kəsinti əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
 
-def avans_create(self, request, *args, **kwargs):
+def advancepayment_create(self, request, *args, **kwargs):
     """
-    İşçiyə avans vermə funksiyası
+    İşçiyə advancepayment vermə funksiyası
     """
     serializer = self.get_serializer(data=request.data)
     user = self.request.user
     if serializer.is_valid():
-        isciler = serializer.validated_data.get("isci")
-        mebleg = serializer.validated_data.get("mebleg")
-        qeyd = serializer.validated_data.get("qeyd")
-        avans_tarixi = serializer.validated_data.get("avans_tarixi")
-        if (serializer.validated_data.get("avans_tarixi") == None):
-            avans_tarixi = datetime.date.today()
-        elif (serializer.validated_data.get("avans_tarixi") == ""):
-            avans_tarixi = datetime.date.today()
+        employeeler = serializer.validated_data.get("employee")
+        amount = serializer.validated_data.get("amount")
+        note = serializer.validated_data.get("note")
+        date = serializer.validated_data.get("date")
+        if (serializer.validated_data.get("date") == None):
+            date = datetime.date.today()
+        elif (serializer.validated_data.get("date") == ""):
+            date = datetime.date.today()
 
-        indi = datetime.date.today()
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+        now = datetime.date.today()
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
 
 
-        for isci in isciler:
-            maas_goruntuleme = MaasGoruntuleme.objects.get(isci=isci, tarix=f"{indi.year}-{indi.month}-{1}")
-            yarim_ay_emek_haqqi = serializer.validated_data.get("yarim_ay_emek_haqqi")
-            if yarim_ay_emek_haqqi is not None:
-                mebleg = (float(maas_goruntuleme.yekun_maas) * int(yarim_ay_emek_haqqi)) / 100
+        for employee in employeeler:
+            salary_goruntuleme = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
+            half_month_salary = serializer.validated_data.get("half_month_salary")
+            if half_month_salary is not None:
+                amount = (float(salary_goruntuleme.final_salary) * int(half_month_salary)) / 100
 
-            avansdan_sonra_qalan_mebleg = maas_goruntuleme.yekun_maas - float(mebleg)
+            advancepaymentdan_sonra_qalan_amount = salary_goruntuleme.final_salary - float(amount)
 
-            ilkin_balans = holding_umumi_balans_hesabla()
-            if float(mebleg) > maas_goruntuleme.yekun_maas:
+            initial_balance = holding_umumi_balance_hesabla()
+            if float(amount) > salary_goruntuleme.final_salary:
                 return Response({"detail": "Daxil etdiyiniz məbləğ işçinin yekun maaşından daha çoxdur"}, status=status.HTTP_400_BAD_REQUEST)
 
-            maas_goruntuleme.mebleg = mebleg
-            maas_goruntuleme.yekun_maas = avansdan_sonra_qalan_mebleg
+            salary_goruntuleme.amount = amount
+            salary_goruntuleme.final_salary = advancepaymentdan_sonra_qalan_amount
 
-            ofis = isci.ofis
-            shirket = isci.shirket
+            office = employee.office
+            company = employee.company
             holding = Holding.objects.all()[0]
 
-            ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-            shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
-            holding_ilkin_balans = holding_balans_hesabla()
+            office_initial_balance = office_balance_hesabla(office=office)
+            company_initial_balance = company_balance_hesabla(company=company)
+            holding_initial_balance = holding_balance_hesabla()
 
-            qeyd = f"{user.asa} tərəfindən {isci.asa} adlı işçiyə {mebleg} AZN avans verildi"
+            note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN advancepayment verildi"
 
-            if ofis is not None:
-                ofis_kassa = OfisKassa.objects.get(ofis=ofis)
-                if float(ofis_kassa.balans) < float(mebleg):
-                    return Response({"detail": "Ofisin kassasında yetəri qədər məbləğ yoxdur"})
-                ofis_kassa.balans = float(ofis_kassa.balans) - float(mebleg)
-                ofis_kassa.save()
-                ofis_kassa_mexaric = OfisKassaMexaric.objects.create(
-                    mexaric_eden=user,
-                    ofis_kassa=ofis_kassa,
-                    mebleg=mebleg,
-                    mexaric_tarixi=avans_tarixi,
-                    qeyd=qeyd
+            if office is not None:
+                cashbox = OfficeCashbox.objects.get(office=office)
+                if float(cashbox.balance) < float(amount):
+                    return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
+                cashbox.balance = float(cashbox.balance) - float(amount)
+                cashbox.save()
+                cashbox_expense = OfficeCashboxExpense.objects.create(
+                    executor=user,
+                    cashbox=cashbox,
+                    amount=amount,
+                    expense_datei=date,
+                    note=note
                 )
-                ofis_kassa_mexaric.save()
+                cashbox_expense.save()
 
-                sonraki_balans = holding_umumi_balans_hesabla()
-                ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
+                subsequent_balance = holding_umumi_balance_hesabla()
+                office_subsequent_balance = office_balance_hesabla(office=office)
                 pul_axini_create(
-                    ofis=ofis,
-                    shirket=ofis.shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    ofis_ilkin_balans=ofis_ilkin_balans,
-                    ofis_sonraki_balans=ofis_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(mebleg)
+                    office=office,
+                    company=office.company,
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    office_initial_balance=office_initial_balance,
+                    office_subsequent_balance=office_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏXARİC",
+                    quantity=float(amount)
                 )
-            elif ofis == None and shirket is not None:
-                shirket_kassa = ShirketKassa.objects.get(shirket=shirket)
-                if float(shirket_kassa.balans) < float(mebleg):
+            elif office == None and company is not None:
+                cashbox = CompanyCashbox.objects.get(company=company)
+                if float(cashbox.balance) < float(amount):
                     return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-                shirket_kassa.balans = float(shirket_kassa.balans) - float(mebleg)
-                shirket_kassa.save()
-                shirket_kassa_mexaric = ShirketKassaMexaric.objects.create(
-                    mexaric_eden=user,
-                    shirket_kassa=shirket_kassa,
-                    mebleg=mebleg,
-                    mexaric_tarixi=avans_tarixi,
-                    qeyd=qeyd
+                cashbox.balance = float(cashbox.balance) - float(amount)
+                cashbox.save()
+                cashbox_expense = CompanyCashboxExpense.objects.create(
+                    executor=user,
+                    cashbox=cashbox,
+                    amount=amount,
+                    expense_datei=date,
+                    note=note
                 )
-                shirket_kassa_mexaric.save()
+                cashbox_expense.save()
 
-                sonraki_balans = holding_umumi_balans_hesabla()
-                shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
+                subsequent_balance = holding_umumi_balance_hesabla()
+                company_subsequent_balance = company_balance_hesabla(company=company)
                 pul_axini_create(
-                    shirket=shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    shirket_ilkin_balans=shirket_ilkin_balans,
-                    shirket_sonraki_balans=shirket_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(mebleg)
+                    company=company,
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    company_initial_balance=company_initial_balance,
+                    company_subsequent_balance=company_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏXARİC",
+                    quantity=float(amount)
                 )
 
-            elif ofis == None and shirket == None and holding is not None:
-                holding_kassa = HoldingKassa.objects.get(holding=holding)
-                if float(holding_kassa.balans) < float(mebleg):
+            elif office == None and company == None and holding is not None:
+                cashbox = HoldingCashbox.objects.get(holding=holding)
+                if float(cashbox.balance) < float(amount):
                     return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-                holding_kassa.balans = float(holding_kassa.balans) - float(mebleg)
-                holding_kassa.save()
-                holding_kassa_mexaric = HoldingKassaMexaric.objects.create(
-                    mexaric_eden=user,
-                    holding_kassa=holding_kassa,
-                    mebleg=mebleg,
-                    mexaric_tarixi=avans_tarixi,
-                    qeyd=qeyd
+                cashbox.balance = float(cashbox.balance) - float(amount)
+                cashbox.save()
+                cashbox_expense = HoldingCashboxExpense.objects.create(
+                    executor=user,
+                    cashbox=cashbox,
+                    amount=amount,
+                    expense_datei=date,
+                    note=note
                 )
-                holding_kassa_mexaric.save()
+                cashbox_expense.save()
 
-                sonraki_balans = holding_umumi_balans_hesabla()
-                holding_sonraki_balans = holding_balans_hesabla()
+                subsequent_balance = holding_umumi_balance_hesabla()
+                holding_subsequent_balance = holding_balance_hesabla()
                 pul_axini_create(
                     holding=holding,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    holding_ilkin_balans=holding_ilkin_balans,
-                    holding_sonraki_balans=holding_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏXARİC",
-                    miqdar=float(mebleg)
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    holding_initial_balance=holding_initial_balance,
+                    holding_subsequent_balance=holding_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏXARİC",
+                    quantity=float(amount)
                 )
 
-            maas_goruntuleme.save()
-        serializer.save(mebleg=mebleg, avans_tarixi=avans_tarixi)
-        return Response({"detail": "Avans vermə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+            salary_goruntuleme.save()
+        serializer.save(amount=amount, date=date)
+        return Response({"detail": "AdvancePayment vermə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)

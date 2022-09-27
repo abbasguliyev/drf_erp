@@ -1,46 +1,46 @@
 from rest_framework import serializers
 
 from contract.models import (
-    Muqavile, 
+    Contract, 
 )
 from services.models import (
-    Servis, 
-    ServisOdeme, 
+    Service, 
+    ServicePayment, 
 )
 
 from product.models import (
-    Mehsullar, 
+    Product, 
 )
 
-from restAPI.v1.contract.serializers import MuqavileSerializer
-from restAPI.v1.product.serializers import MehsullarSerializer
+from restAPI.v1.contract.serializers import ContractSerializer
+from restAPI.v1.product.serializers import ProductSerializer
 
-class ServisSerializer(serializers.ModelSerializer):
-    muqavile = MuqavileSerializer(read_only=True)
-    mehsullar = MehsullarSerializer(read_only=True, many=True)
+class ServiceSerializer(serializers.ModelSerializer):
+    contract = ContractSerializer(read_only=True)
+    product = ProductSerializer(read_only=True, many=True)
 
-    muqavile_id = serializers.PrimaryKeyRelatedField(
-        queryset=Muqavile.objects.all(), source='muqavile', write_only=True, required=False, allow_null=True
+    contract_id = serializers.PrimaryKeyRelatedField(
+        queryset=Contract.objects.all(), source='contract', write_only=True, required=False, allow_null=True
     )
-    mehsullar_id = serializers.PrimaryKeyRelatedField(
-        queryset=Mehsullar.objects.all(), source='mehsullar', many=True, write_only=True
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source='product', many=True, write_only=True
     )
 
     is_auto = serializers.BooleanField(read_only=True)
 
     class Meta:
-        model = Servis
+        model = Service
         fields = "__all__"
 
-class ServisStatistikaSerializer(serializers.ModelSerializer):
-    muqavile = MuqavileSerializer(read_only=True)
-    mehsullar = MehsullarSerializer(read_only=True, many=True)
+class ServiceStatistikaSerializer(serializers.ModelSerializer):
+    contract = ContractSerializer(read_only=True)
+    product = ProductSerializer(read_only=True, many=True)
 
-    muqavile_id = serializers.PrimaryKeyRelatedField(
-        queryset=Muqavile.objects.all(), source='muqavile', write_only=True, required=False, allow_null=True
+    contract_id = serializers.PrimaryKeyRelatedField(
+        queryset=Contract.objects.all(), source='contract', write_only=True, required=False, allow_null=True
     )
-    mehsullar_id = serializers.PrimaryKeyRelatedField(
-        queryset=Mehsullar.objects.all(), source='mehsullar', many=True, write_only=True
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source='product', many=True, write_only=True
     )
 
     is_auto = serializers.BooleanField(read_only=True)
@@ -48,27 +48,27 @@ class ServisStatistikaSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        endirim = 0
-        endirim += float(instance.endirim)
+        discount = 0
+        discount += float(instance.discount)
         try:
-            endirim_faizi = (endirim * 100) / float(instance.odenilecek_umumi_mebleg)
+            discount_faizi = (discount * 100) / float(instance.total_amount_to_be_paid)
         except:
-            endirim_faizi = 0
-        representation['endrim_faizi'] = endirim_faizi
+            discount_faizi = 0
+        representation['endrim_faizi'] = discount_faizi
 
         return representation
 
     class Meta:
-        model = Servis
+        model = Service
         fields = "__all__"
 
-class ServisOdemeSerializer(serializers.ModelSerializer):
-    servis = ServisSerializer(read_only=True)
-    servis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Servis.objects.all(), source='servis', write_only=True, required=False, allow_null=True
+class ServicePaymentSerializer(serializers.ModelSerializer):
+    service = ServiceSerializer(read_only=True)
+    service_id = serializers.PrimaryKeyRelatedField(
+        queryset=Service.objects.all(), source='service', write_only=True, required=False, allow_null=True
     )
 
     class Meta:
-        model = ServisOdeme
+        model = ServicePayment
         fields = "__all__"
 

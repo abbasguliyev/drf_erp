@@ -10,14 +10,19 @@ class TaskManagerFilter(django_filters.FilterSet):
     end_date__gte = django_filters.DateFilter(field_name='end_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
     end_date__lte = django_filters.DateFilter(field_name='end_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
+    old_date = django_filters.DateFilter(field_name='old_date', input_formats=["%d-%m-%Y"])
+    old_date__gte = django_filters.DateFilter(field_name='old_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    old_date__lte = django_filters.DateFilter(field_name='old_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
+
     class Meta:
         model = TaskManager
         fields = {
             'creator': ['exact'],
             'title': ['exact', 'icontains'],
-            'position__vezife_adi': ['exact'],
+            'position__name': ['exact'],
             'employee': ['exact'],
-            'employee__asa': ['exact', 'icontains'],
+            'employee__fullname': ['exact', 'icontains'],
             'status': ['exact', 'icontains'],
             'requests': ['exact'],
         }
@@ -51,6 +56,6 @@ class AdvertisementFilter(django_filters.FilterSet):
         fields = {
             'creator': ['exact'],
             'title': ['exact', 'icontains'],
-            'position__vezife_adi': ['exact'],
+            'position__name': ['exact'],
         }
 

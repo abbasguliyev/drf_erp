@@ -1,21 +1,21 @@
 import django
 from django.db import models
 
-# Create your models here.
 
-class Servis(models.Model):
-    kredit = models.BooleanField(default=False, blank=True)
-    kredit_muddeti = models.IntegerField(default=0, blank=True)
-    endirim = models.FloatField(default=0, blank=True)
-    muqavile = models.ForeignKey("contract.Muqavile", related_name="servis_muqavile", null=True, on_delete=models.CASCADE)
-    mehsullar = models.ManyToManyField("product.Mehsullar", related_name="servis_mehsul")
-    servis_tarix = models.DateField(default=django.utils.timezone.now, blank=True)
-    yerine_yetirildi = models.BooleanField(default=False)
-    servis_qiymeti = models.FloatField(default=0, blank=True)
-    ilkin_odenis = models.FloatField(default=0, blank=True)
-    odenilecek_umumi_mebleg = models.FloatField(default=0, blank=True)
-    operator_tesdiq = models.BooleanField(default=False)
-    qeyd = models.TextField(default = "", blank=True)
+class Service(models.Model):
+    installment = models.BooleanField(default=False, blank=True)
+    loan_term = models.IntegerField(default=0, blank=True)
+    discount = models.FloatField(default=0, blank=True)
+    contract = models.ForeignKey("contract.Contract", related_name="services", null=True, on_delete=models.CASCADE)
+    product = models.ManyToManyField("product.Product", related_name="services")
+    customer = models.ForeignKey("account.Customer", on_delete=models.CASCADE, null=True, blank=True, related_name="services")
+    service_date = models.DateField(default=django.utils.timezone.now, blank=True)
+    is_done = models.BooleanField(default=False)
+    price = models.FloatField(default=0, blank=True)
+    initial_payment = models.FloatField(default=0, blank=True)
+    total_amount_to_be_paid = models.FloatField(default=0, blank=True)
+    confirmation = models.BooleanField(default=False)
+    note = models.TextField(default = "", blank=True)
     is_auto = models.BooleanField(default=False)
     create_date = models.DateField(default=django.utils.timezone.now, editable=False)
 
@@ -23,31 +23,49 @@ class Servis(models.Model):
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_servis", "Mövcud servislərə baxa bilər"),
-            ("add_servis", "Servis əlavə edə bilər"),
-            ("change_servis", "Servis məlumatlarını yeniləyə bilər"),
-            ("delete_servis", "Servis silə bilər")
+            ("view_service", "Mövcud servislərə baxa bilər"),
+            ("add_service", "Servis əlavə edə bilər"),
+            ("change_service", "Servis məlumatlarını yeniləyə bilər"),
+            ("delete_service", "Servis silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.pk}.servis-{self.muqavile}"
 
-class ServisOdeme(models.Model):
-    servis = models.ForeignKey(Servis, related_name="servis_odeme", null=True, on_delete=models.CASCADE)
-    odenilecek_umumi_mebleg = models.FloatField(default=0, blank=True)
-    odenilecek_mebleg = models.FloatField(default=0, blank=True)
-    odendi = models.BooleanField(default=False)
-    odeme_tarix = models.DateField(default=django.utils.timezone.now, blank=True)
+class ServicePayment(models.Model):
+    service = models.ForeignKey(Service, related_name="service_payment", null=True, on_delete=models.CASCADE)
+    total_amount_to_be_paid = models.FloatField(default=0, blank=True)
+    amount_to_be_paid = models.FloatField(default=0, blank=True)
+    is_done = models.BooleanField(default=False)
+    payment_date = models.DateField(default=django.utils.timezone.now, blank=True)
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_servisodeme", "Mövcud servis ödəmələrinə baxa bilər"),
-            ("add_servisodeme", "Servis ödəmə əlavə edə bilər"),
-            ("change_servisodeme", "Servis ödəmə məlumatlarını yeniləyə bilər"),
-            ("delete_servisodeme", "Servis ödəmə silə bilər")
+            ("view_servicepayment", "Mövcud service ödəmələrinə baxa bilər"),
+            ("add_servicepayment", "Service ödəmə əlavə edə bilər"),
+            ("change_servicepayment", "Service ödəmə məlumatlarını yeniləyə bilər"),
+            ("delete_servicepayment", "Service ödəmə silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"servis-{self.servis}-{self.odenilecek_mebleg}-{self.odendi}"
+
+class ServiceProductForContract(models.Model):
+    service_period = models.IntegerField(default=1)
+    product = models.ManyToManyField(
+        "product.Product", related_name="service_for_contracts")
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_serviceproductforcontract",
+             "Müqaviləyə periodik servis üçün təyin olunmuş məhsullara baxa bilər"),
+            ("add_serviceproductforcontract",
+             "Müqaviləyə periodik servis üçün məhsullar əlavə edə bilər"),
+            ("change_serviceproductforcontract",
+             "Müqaviləyə periodik servis üçün təyin olunmuş məhsulların məlumatlarını yeniləyə bilər"),
+            ("delete_serviceproductforcontract",
+             "Müqaviləyə periodik servis üçün təyin olunmuş məhsulları silə bilər")
+        )
+
+    def __str__(self) -> str:
+        return f"{self.service_period}"

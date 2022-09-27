@@ -1,31 +1,77 @@
 from django.db import models
-from . import (
-    KARTRIC_NOVU_CHOICES
+from django.db.models import (
+    F
 )
-# Create your models here.
-class Mehsullar(models.Model):
-    mehsulun_adi = models.CharField(max_length=300)
-    qiymet = models.FloatField()
-    shirket = models.ForeignKey('company.Shirket', on_delete=models.CASCADE, null=True, related_name="shirket_mehsul")
-    is_hediyye = models.BooleanField(default=False)
+from django.core.validators import FileExtensionValidator
+from core.image_validator import file_size
 
-    kartric_novu =  models.CharField(
-        max_length=50,
-        choices=KARTRIC_NOVU_CHOICES,
-        default=None,
-        null=True,
-        blank=True
-    )
+# Create your models here.
+
+class UnitOfMeasure(models.Model):
+    name = models.CharField(max_length=200)
 
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_mehsullar", "Mövcud məhsullara baxa bilər"),
-            ("add_mehsullar", "Məhsul əlavə edə bilər"),
-            ("change_mehsullar", "Məhsul məlumatlarını yeniləyə bilər"),
-            ("delete_mehsullar", "Məhsul silə bilər")
+            ("view_unitofmeasure", "Mövcud ölçü vahidlərinə baxa bilər"),
+            ("add_unitofmeasure", "Ölçü vahidi əlavə edə bilər"),
+            ("change_unitofmeasure", "Ölçü vahidi məlumatlarını yeniləyə bilər"),
+            ("delete_unitofmeasure", "Ölçü vahidini silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.shirket} şirkəti {self.mehsulun_adi} - {self.qiymet} AZN"
+    def __str__(self) -> str:
+        return self.name
+
+
+class Category(models.Model):
+    category_name = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_category", "Mövcud kateqoriyalara baxa bilər"),
+            ("add_category", "Kateqoriya əlavə edə bilər"),
+            ("change_category", "Kateqoriya məlumatlarını yeniləyə bilər"),
+            ("delete_category", "Kateqoriya silə bilər")
+        )
+
+    def __str__(self) -> str:
+        return self.category_name
+
+
+class Product(models.Model):
+    product_name = models.CharField(max_length=300)
+    price = models.FloatField()
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, null=True, related_name="company_product")
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, null=True, related_name="products")
+    is_hediyye = models.BooleanField(default=False)
+    unit_of_measure = models.ForeignKey(
+        UnitOfMeasure, on_delete=models.SET_NULL, null=True, blank=True)
+    volume = models.FloatField(null=True, blank=True)
+    weight = models.FloatField(null=True, blank=True)
+    width = models.FloatField(null=True, blank=True)
+    length = models.FloatField(null=True, blank=True)
+    height = models.FloatField(null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
+    product_image = models.ImageField(upload_to="media/product/%Y/%m/%d/", null=True,
+                                      blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    is_gift = models.BooleanField(default=False, blank=True)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_product", "Mövcud məhsullara baxa bilər"),
+            ("add_product", "Məhsul əlavə edə bilər"),
+            ("change_product", "Məhsul məlumatlarını yeniləyə bilər"),
+            ("delete_product", "Məhsul silə bilər")
+        )
+
+    @property
+    def box_volume(self, *args, **kwargs):
+        self.volume = F("weight") * F("width") * F("length")
+        self.save(update_fields=["volume"])
+

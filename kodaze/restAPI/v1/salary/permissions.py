@@ -11,14 +11,14 @@ class GroupLeaderPrimNewPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="group_leaderprimnew", view=view)
         return perm_util.add_user_permission_to_list()
 
-class Menecer1PrimPermissions(permissions.IsAdminUser):
+class Manager1PrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="menecer1prim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="manager1prim", view=view)
         return perm_util.add_user_permission_to_list()
 
-class Menecer1PrimNewPermissions(permissions.IsAdminUser):
+class Manager1PrimNewPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="menecer1primnew", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="manager1primnew", view=view)
         return perm_util.add_user_permission_to_list()
 
 class OfficeLeaderPrimPermissions(permissions.IsAdminUser):
@@ -26,19 +26,19 @@ class OfficeLeaderPrimPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="officeleaderprim", view=view)
         return perm_util.add_user_permission_to_list()
 
-class Menecer2PrimPermissions(permissions.IsAdminUser):
+class Manager2PrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="menecer2prim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="manager2prim", view=view)
         return perm_util.add_user_permission_to_list()
 
-class AvansPermissions(permissions.IsAdminUser):
+class AdvancePaymentPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="avans", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="advancepayment", view=view)
         return perm_util.add_user_permission_to_list()
 
-class KesintiPermissions(permissions.IsAdminUser):
+class SalaryDeductionPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="kesinti", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="salarydeduction", view=view)
         return perm_util.add_user_permission_to_list()
 
 class BonusPermissions(permissions.IsAdminUser):
@@ -46,17 +46,17 @@ class BonusPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="bonus", view=view)
         return perm_util.add_user_permission_to_list()
 
-class MaasGoruntulemePermissions(permissions.IsAdminUser):
+class SalaryViewPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="maasgoruntuleme", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="salaryview", view=view)
         return perm_util.add_user_permission_to_list()
 
-class MaasOdePermissions(permissions.IsAdminUser):
+class PaySalaryPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="maasode", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="paysalary", view=view)
         return perm_util.add_user_permission_to_list()
 
-class KreditorPrimPermissions(permissions.IsAdminUser):
+class CreditorPrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="kreditorprim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="creditorprim", view=view)
         return perm_util.add_user_permission_to_list()

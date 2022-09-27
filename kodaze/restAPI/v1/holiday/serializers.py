@@ -1,198 +1,198 @@
 from rest_framework import serializers
 from account.models import User
 
-from company.models import Holding, Komanda, Ofis, Shirket, Shobe, Vezifeler
+from company.models import Holding, Team, Office, Company, Section, Position
 
 from holiday.models import (
-    HoldingGunler,
-    IsciGelibGetmeVaxtlari,
-    IsciGunler,
-    KomandaGunler,
-    KomandaIstisnaIsci,
-    OfisGunler,
-    OfisIstisnaIsci,
-    ShirketGunler,
-    ShirketIstisnaIsci,
-    ShobeGunler,
-    ShobeIstisnaIsci,
-    VezifeGunler,
-    HoldingIstisnaIsci,
-    VezifeIstisnaIsci
+    HoldingWorkingDay,
+    EmployeeArrivalAndDepartureTimes,
+    EmployeeWorkingDay,
+    TeamWorkingDay,
+    TeamExceptionWorker,
+    OfficeWorkingDay,
+    OfficeExceptionWorker,
+    CompanyWorkingDay,
+    CompanyExceptionWorker,
+    SectionWorkingDay,
+    SectionExceptionWorker,
+    PositionWorkingDay,
+    HoldingExceptionWorker,
+    PositionExceptionWorker
 )
 
-from restAPI.v1.company.serializers import HoldingSerializer, KomandaSerializer, OfisSerializer, ShirketSerializer, ShobeSerializer, VezifelerSerializer
+from restAPI.v1.company.serializers import HoldingSerializer, TeamSerializer, OfficeSerializer, CompanySerializer, SectionSerializer, PositionSerializer
 from restAPI.v1.account.serializers import UserSerializer
 
 
-class HoldingGunlerSerializer(serializers.ModelSerializer):
+class HoldingWorkingDaySerializer(serializers.ModelSerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True
     )
     
     class Meta:
-        model = HoldingGunler
+        model = HoldingWorkingDay
         fields = "__all__"
 
-class IsciGunlerSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', write_only=True,
+class EmployeeWorkingDaySerializer(serializers.ModelSerializer):
+    employee = UserSerializer(read_only=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', write_only=True,
     )
     
     class Meta:
-        model = IsciGunler
+        model = EmployeeWorkingDay
         fields = "__all__"
 
-class IsciGelibGetmeVaxtlariSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', write_only=True,
+class EmployeeArrivalAndDepartureTimesSerializer(serializers.ModelSerializer):
+    employee = UserSerializer(read_only=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', write_only=True,
     )
     
     class Meta:
-        model = IsciGelibGetmeVaxtlari
+        model = EmployeeArrivalAndDepartureTimes
         fields = "__all__"
 
 
-class KomandaGunlerSerializer(serializers.ModelSerializer):
-    komanda = KomandaSerializer(read_only=True)
-    komanda_id = serializers.PrimaryKeyRelatedField(
-        queryset=Komanda.objects.all(), source='komanda', write_only=True,
+class TeamWorkingDaySerializer(serializers.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+    team_id = serializers.PrimaryKeyRelatedField(
+        queryset=Team.objects.all(), source='team', write_only=True,
     )
     
     class Meta:
-        model = KomandaGunler
+        model = TeamWorkingDay
         fields = "__all__"
 
-class OfisGunlerSerializer(serializers.ModelSerializer):
-    ofis = OfisSerializer(read_only=True)
-    ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True,
+class OfficeWorkingDaySerializer(serializers.ModelSerializer):
+    office = OfficeSerializer(read_only=True)
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.all(), source='office', write_only=True,
     )
     
     class Meta:
-        model = OfisGunler
+        model = OfficeWorkingDay
         fields = "__all__"
 
-class ShirketGunlerSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True
+class CompanyWorkingDaySerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
     )
     
     class Meta:
-        model = ShirketGunler
+        model = CompanyWorkingDay
         fields = "__all__"
 
-class ShobeGunlerSerializer(serializers.ModelSerializer):
-    shobe = ShobeSerializer(read_only=True)
-    shobe_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shobe.objects.all(), source='shobe', write_only=True
+class SectionWorkingDaySerializer(serializers.ModelSerializer):
+    section = SectionSerializer(read_only=True)
+    section_id = serializers.PrimaryKeyRelatedField(
+        queryset=Section.objects.all(), source='section', write_only=True
     )
     
     class Meta:
-        model = ShobeGunler
+        model = SectionWorkingDay
         fields = "__all__"
 
-class VezifeGunlerSerializer(serializers.ModelSerializer):
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source='vezife', write_only=True,
+class PositionWorkingDaySerializer(serializers.ModelSerializer):
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source='position', write_only=True,
     )
     
     class Meta:
-        model = VezifeGunler
+        model = PositionWorkingDay
         fields = "__all__"
 
 # ------------------------------------------------------------------
 
-class HoldingIstisnaIsciSerializer(serializers.ModelSerializer):
-    gunler = HoldingGunlerSerializer(read_only=True)
-    gunler_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingGunler.objects.all(), source='gunler', write_only=True,
+class HoldingExceptionWorkerSerializer(serializers.ModelSerializer):
+    working_day = HoldingWorkingDaySerializer(read_only=True)
+    working_day_id = serializers.PrimaryKeyRelatedField(
+        queryset=HoldingWorkingDay.objects.all(), source='working_day', write_only=True,
     )
 
-    istisna_isciler = serializers.StringRelatedField(read_only=True, many=True)
-    istisna_isciler_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='istisna_isciler', write_only=True, many=True
+    exception_workers = serializers.StringRelatedField(read_only=True, many=True)
+    exception_workers_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='exception_workers', write_only=True, many=True
     )
     
     class Meta:
-        model = HoldingIstisnaIsci
+        model = HoldingExceptionWorker
         fields = "__all__"
 
-class ShirketIstisnaIsciSerializer(serializers.ModelSerializer):
-    gunler = ShirketGunlerSerializer(read_only=True)
-    gunler_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketGunler.objects.all(), source='gunler', write_only=True,
+class CompanyExceptionWorkerSerializer(serializers.ModelSerializer):
+    working_day = CompanyWorkingDaySerializer(read_only=True)
+    working_day_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyWorkingDay.objects.all(), source='working_day', write_only=True,
     )
 
-    istisna_isciler = serializers.StringRelatedField(read_only=True, many=True)
-    istisna_isciler_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='istisna_isciler', write_only=True, many=True
+    exception_workers = serializers.StringRelatedField(read_only=True, many=True)
+    exception_workers_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='exception_workers', write_only=True, many=True
     )
     
     class Meta:
-        model = ShirketIstisnaIsci
+        model = CompanyExceptionWorker
         fields = "__all__"
 
-class OfisIstisnaIsciSerializer(serializers.ModelSerializer):
-    gunler = OfisGunlerSerializer(read_only=True)
-    gunler_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfisGunler.objects.all(), source='gunler', write_only=True,
+class OfficeExceptionWorkerSerializer(serializers.ModelSerializer):
+    working_day = OfficeWorkingDaySerializer(read_only=True)
+    working_day_id = serializers.PrimaryKeyRelatedField(
+        queryset=OfficeWorkingDay.objects.all(), source='working_day', write_only=True,
     )
 
-    istisna_isciler = serializers.StringRelatedField(read_only=True, many=True)
-    istisna_isciler_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='istisna_isciler', write_only=True, many=True
+    exception_workers = serializers.StringRelatedField(read_only=True, many=True)
+    exception_workers_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='exception_workers', write_only=True, many=True
     )
     
     class Meta:
-        model = OfisIstisnaIsci
+        model = OfficeExceptionWorker
         fields = "__all__"
 
-class ShobeIstisnaIsciSerializer(serializers.ModelSerializer):
-    gunler = ShobeGunlerSerializer(read_only=True)
-    gunler_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShobeGunler.objects.all(), source='gunler', write_only=True,
+class SectionExceptionWorkerSerializer(serializers.ModelSerializer):
+    working_day = SectionWorkingDaySerializer(read_only=True)
+    working_day_id = serializers.PrimaryKeyRelatedField(
+        queryset=SectionWorkingDay.objects.all(), source='working_day', write_only=True,
     )
 
-    istisna_isciler = serializers.StringRelatedField(read_only=True, many=True)
-    istisna_isciler_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='istisna_isciler', write_only=True, many=True
+    exception_workers = serializers.StringRelatedField(read_only=True, many=True)
+    exception_workers_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='exception_workers', write_only=True, many=True
     )
     
     class Meta:
-        model = ShobeIstisnaIsci
+        model = SectionExceptionWorker
         fields = "__all__"
 
-class KomandaIstisnaIsciSerializer(serializers.ModelSerializer):
-    gunler = KomandaGunlerSerializer(read_only=True)
-    gunler_id = serializers.PrimaryKeyRelatedField(
-        queryset=KomandaGunler.objects.all(), source='gunler', write_only=True,
+class TeamExceptionWorkerSerializer(serializers.ModelSerializer):
+    working_day = TeamWorkingDaySerializer(read_only=True)
+    working_day_id = serializers.PrimaryKeyRelatedField(
+        queryset=TeamWorkingDay.objects.all(), source='working_day', write_only=True,
     )
 
-    istisna_isciler = serializers.StringRelatedField(read_only=True, many=True)
-    istisna_isciler_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='istisna_isciler', write_only=True, many=True
+    exception_workers = serializers.StringRelatedField(read_only=True, many=True)
+    exception_workers_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='exception_workers', write_only=True, many=True
     )
     
     class Meta:
-        model = KomandaIstisnaIsci
+        model = TeamExceptionWorker
         fields = "__all__"
 
-class VezifeIstisnaIsciSerializer(serializers.ModelSerializer):
-    gunler = VezifeGunlerSerializer(read_only=True)
-    gunler_id = serializers.PrimaryKeyRelatedField(
-        queryset=VezifeGunler.objects.all(), source='gunler', write_only=True,
+class PositionExceptionWorkerSerializer(serializers.ModelSerializer):
+    working_day = PositionWorkingDaySerializer(read_only=True)
+    working_day_id = serializers.PrimaryKeyRelatedField(
+        queryset=PositionWorkingDay.objects.all(), source='working_day', write_only=True,
     )
 
-    istisna_isciler = serializers.StringRelatedField(read_only=True, many=True)
-    istisna_isciler_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='istisna_isciler', write_only=True, many=True
+    exception_workers = serializers.StringRelatedField(read_only=True, many=True)
+    exception_workers_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='exception_workers', write_only=True, many=True
     )
     
     class Meta:
-        model = VezifeIstisnaIsci
+        model = PositionExceptionWorker
         fields = "__all__"

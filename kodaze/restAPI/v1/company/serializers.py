@@ -8,188 +8,35 @@ from account.models import (
 from company.models import (
     Department,
     Holding,
-    Shirket,
-    Ofis,
-    Komanda,
-    Shobe,
-    VezifePermission,
-    Vezifeler,
+    Company,
+    Office,
+    Team,
+    Section,
+    PermissionForPosition,
+    Position,
     AppLogo
 )
 from django.contrib.auth.models import Group
 
-
-class VezifeUserSerializer(serializers.ModelSerializer):
+class PositionUserSerializer(serializers.ModelSerializer):
     """
-    Bu Seriazlier UserEmeliyyatSeriazlier-de vezifeleri istifade etmek ucun istifade olunur
+    Bu Seriazlier UserOperationSeriazlier-de positioni istifade etmek ucun istifade olunur
     """
     class Meta:
-        model = Vezifeler
-        fields = ['vezife_adi']
+        model = Position
+        fields = ['name']
 
 
-class UserEmeliyyatSerializer(serializers.ModelSerializer):
+class UserOperationSerializer(serializers.ModelSerializer):
     """
-    Bu Seriazlier Kassa Emeliyyatlarinda User-in(transferi eden ishcinin) melumatlarini gostermek ucun istifade olur
+    Bu Seriazlier Kassa Operationlarinda User-in(transferi eden employeesnin) melumatlarini gostermek ucun istifade olur
     """
-    vezife = VezifeUserSerializer(read_only=True, many=True)
+    position = PositionUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = User
-        fields = ['asa', 'vezife']
+        fields = ['fullname', 'position']
 
-
-class ShirketSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Shirket
-        fields = "__all__"
-
-    def create(self, validated_data):
-        shirket_adi = validated_data.get('shirket_adi')
-        validated_data['shirket_adi'] = shirket_adi.upper()
-        try:
-            return super(ShirketSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə şirkət artıq əlavə olunub'})
-
-    def update(self, instance, validated_data):
-        instance.shirket_adi = validated_data.get(
-            'shirket_adi', instance.shirket_adi).upper()
-        instance.holding = validated_data.get('holding', instance.holding)
-        instance.is_active = validated_data.get(
-            'is_active', instance.is_active)
-        instance.save()
-        return instance
-
-
-class KomandaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Komanda
-        fields = "__all__"
-
-    def create(self, validated_data):
-        komanda_adi = validated_data.get('komanda_adi')
-        validated_data['komanda_adi'] = komanda_adi.upper()
-        try:
-            k = Komanda.objects.filter(
-                komanda_adi=komanda_adi.upper(), is_active=True)
-            if len(k) > 0:
-                raise ValidationError
-            return super(KomandaSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə komanda artıq əlavə olunub'})
-
-
-class DepartmentSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True
-    )
-
-    class Meta:
-        model = Department
-        fields = "__all__"
-
-    def create(self, validated_data):
-        departament_adi = validated_data.get('departament_adi')
-        validated_data['departament_adi'] = departament_adi.upper()
-        shirket = validated_data['shirket']
-        try:
-            departmentt = Department.objects.filter(
-                departament_adi=departament_adi.upper(), shirket=shirket)
-            if len(departmentt) > 0:
-                raise ValidationError
-            return super(DepartmentSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə departament artıq əlavə olunub'})
-
-    def update(self, instance, validated_data):
-        instance.departament_adi = validated_data.get(
-            'departament_adi', instance.departament_adi).upper()
-        instance.shirket = validated_data.get('shirket', instance.shirket)
-        instance.is_active = validated_data.get(
-            'is_active', instance.is_active)
-        instance.save()
-        return instance
-
-
-class OfisSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True
-    )
-
-    class Meta:
-        model = Ofis
-        fields = "__all__"
-
-    def create(self, validated_data):
-        ofis_adi = validated_data.get('ofis_adi')
-        validated_data['ofis_adi'] = ofis_adi.upper()
-        shirket = validated_data['shirket']
-        try:
-            ofiss = Ofis.objects.filter(
-                ofis_adi=ofis_adi.upper(), shirket=shirket)
-            if len(ofiss) > 0:
-                raise ValidationError
-            return super(OfisSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə ofis artıq əlavə olunub'})
-
-    def update(self, instance, validated_data):
-        instance.ofis_adi = validated_data.get(
-            'ofis_adi', instance.ofis_adi).upper()
-        instance.shirket = validated_data.get('shirket', instance.shirket)
-        instance.is_active = validated_data.get(
-            'is_active', instance.is_active)
-        instance.save()
-        return instance
-
-
-class ShobeSerializer(serializers.ModelSerializer):
-    ofis = OfisSerializer(read_only=True)
-    ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True
-    )
-
-    class Meta:
-        model = Shobe
-        fields = "__all__"
-
-    def create(self, validated_data):
-        shobe_adi = validated_data.get('shobe_adi')
-        validated_data['shobe_adi'] = shobe_adi.upper()
-        ofis = validated_data['ofis']
-        try:
-            shobe_qs = Shobe.objects.filter(
-                shobe_adi=shobe_adi.upper(), ofis=ofis)
-            if len(shobe_qs) > 0:
-                raise ValidationError
-            return super(ShobeSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
-
-
-class VezifelerSerializer(serializers.ModelSerializer):
-    shobe = ShobeSerializer(read_only=True, required=False)
-    shirket = ShirketSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True
-    )
-
-    class Meta:
-        model = Vezifeler
-        fields = "__all__"
-
-    def create(self, validated_data):
-        vezife_adi = validated_data.get('vezife_adi')
-        validated_data['vezife_adi'] = vezife_adi.upper()
-        return super(VezifelerSerializer, self).create(validated_data)
 
 
 class HoldingSerializer(serializers.ModelSerializer):
@@ -198,19 +45,188 @@ class HoldingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
-        holding_adi = validated_data.get('holding_adi')
-        validated_data['holding_adi'] = holding_adi.upper()
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
         try:
             return super(HoldingSerializer, self).create(validated_data)
         except:
             raise ValidationError(
                 {"detail": 'Bu ad ilə holding artıq əlavə olunub'})
 
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = "__all__"
 
-class VezifePermissionSerializer(serializers.ModelSerializer):
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source='vezife', write_only=True
+    def create(self, validated_data):
+        name = validated_data.get('name').upper()
+        validated_data['name'] = name.upper()
+        try:
+            return super(CompanySerializer, self).create(validated_data)
+        except:
+            raise ValidationError(
+                {"detail": 'Bu ad ilə şirkət artıq əlavə olunub'})
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name).upper()
+        instance.holding = validated_data.get('holding', instance.holding)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.save()
+        return instance
+
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    holding = HoldingSerializer(read_only=True)
+    holding_id = serializers.PrimaryKeyRelatedField(
+        queryset=Holding.objects.all(), source='holding', write_only=True
+    )
+
+    class Meta:
+        model = Department
+        fields = "__all__"
+
+    def create(self, validated_data):
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
+        holding = validated_data['holding']
+        try:
+            departmentt = Department.objects.filter(
+                name=name.upper(), holding=holding)
+            if len(departmentt) > 0:
+                raise ValidationError
+            return super(DepartmentSerializer, self).create(validated_data)
+        except:
+            raise ValidationError(
+                {"detail": 'Bu ad ilə departament artıq əlavə olunub'})
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get(
+            'name', instance.name).upper()
+        instance.holding = validated_data.get('holding', instance.holding)
+        instance.is_active = validated_data.get(
+            'is_active', instance.is_active)
+        instance.save()
+        return instance
+
+
+class OfficeSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
+    )
+
+    class Meta:
+        model = Office
+        fields = "__all__"
+
+    def create(self, validated_data):
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
+        company = validated_data['company']
+        try:
+            offices = Office.objects.filter(
+                name=name.upper(), company=company)
+            if len(offices) > 0:
+                raise ValidationError
+            return super(OfficeSerializer, self).create(validated_data)
+        except:
+            raise ValidationError(
+                {"detail": 'Bu ad ilə office artıq əlavə olunub'})
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get(
+            'name', instance.name).upper()
+        instance.company = validated_data.get('company', instance.company)
+        instance.is_active = validated_data.get(
+            'is_active', instance.is_active)
+        instance.save()
+        return instance
+
+
+class SectionSerializer(serializers.ModelSerializer):
+    office = OfficeSerializer(read_only=True)
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.all(), source='office', write_only=True
+    )
+
+    class Meta:
+        model = Section
+        fields = "__all__"
+
+    def create(self, validated_data):
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
+        office = validated_data['office']
+        try:
+            section_qs = Section.objects.filter(
+                name=name.upper(), office=office)
+            if len(section_qs) > 0:
+                raise ValidationError
+            return super(SectionSerializer, self).create(validated_data)
+        except:
+            raise ValidationError(
+                {"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name).upper()
+        instance.office = validated_data.get('office', instance.office)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.save()
+        return instance
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = "__all__"
+
+    def create(self, validated_data):
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
+        try:
+            k = Team.objects.filter(
+                name=name.upper(), is_active=True)
+            if len(k) > 0:
+                raise ValidationError
+            return super(TeamSerializer, self).create(validated_data)
+        except:
+            raise ValidationError(
+                {"detail": 'Bu ad ilə team artıq əlavə olunub'})
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name).upper()
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.save()
+        return instance
+
+
+class PositionSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
+    )
+
+    class Meta:
+        model = Position
+        fields = "__all__"
+
+    def create(self, validated_data):
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
+        return super(PositionSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name).upper()
+        instance.company = validated_data.get('company', instance.company)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.save()
+        return instance
+
+
+class PermissionForPositionSerializer(serializers.ModelSerializer):
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source='position', write_only=True
     )
 
     permission_group = serializers.StringRelatedField(read_only=True)
@@ -219,7 +235,7 @@ class VezifePermissionSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = VezifePermission
+        model = PermissionForPosition
         fields = '__all__'
 
 

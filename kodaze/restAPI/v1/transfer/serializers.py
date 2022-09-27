@@ -4,98 +4,98 @@ from rest_framework.exceptions import ValidationError
 from account.models import (
     User
 )
-from cashbox.models import HoldingKassa, OfisKassa, ShirketKassa
-from restAPI.v1.cashbox.serializers import HoldingKassaSerializer, OfisKassaSerializer, ShirketKassaSerializer
+from cashbox.models import HoldingCashbox, OfficeCashbox, CompanyCashbox
+from restAPI.v1.cashbox.serializers import HoldingCashboxSerializer, OfficeCashboxSerializer, CompanyCashboxSerializer
 
 from transfer.models import (
-    HoldingdenShirketlereTransfer,
-    OfisdenShirketeTransfer,
-    ShirketdenHoldingeTransfer,
-    ShirketdenOfislereTransfer
+    TransferFromHoldingToCompany,
+    TransferFromOfficeToCompany,
+    TransferFromCompanyToHolding,
+    TransferFromCompanyToOffices
 )
 
-from contract.models import Muqavile, MuqavileKreditor
+from contract.models import Contract, ContractCreditor
 from django.contrib.auth.models import Group
 
 
-class HoldingdenShirketlereTransferSerializer(serializers.ModelSerializer):
-    transfer_eden = serializers.StringRelatedField()
-    transfer_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='transfer_eden', write_only=True, required=False, allow_null=True
+class TransferFromHoldingToCompanySerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    holding_kassa = HoldingKassaSerializer(read_only=True)
-    holding_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingKassa.objects.all(), source='holding_kassa', write_only=True
-    )
-
-    shirket_kassa = ShirketKassaSerializer(read_only=True, many=True)
-    shirket_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketKassa.objects.all(), source='shirket_kassa', many=True, write_only=True
+    cashbox = HoldingCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=HoldingCashbox.objects.all(), source='cashbox', write_only=True
     )
 
-    class Meta:
-        model = HoldingdenShirketlereTransfer
-        fields = "__all__"
-        read_only_fields = ('qalan_mebleg', 'evvelki_balans', 'sonraki_balans')
-
-
-class ShirketdenHoldingeTransferSerializer(serializers.ModelSerializer):
-    transfer_eden = serializers.StringRelatedField()
-    transfer_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='transfer_eden', write_only=True, required=False, allow_null=True
-    )
-    shirket_kassa = ShirketKassaSerializer(read_only=True)
-    shirket_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketKassa.objects.all(), source='shirket_kassa', write_only=True
-    )
-
-    holding_kassa = HoldingKassaSerializer(read_only=True)
-    holding_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingKassa.objects.all(), source='holding_kassa', write_only=True
+    cashbox = CompanyCashboxSerializer(read_only=True, many=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCashbox.objects.all(), source='cashbox', many=True, write_only=True
     )
 
     class Meta:
-        model = ShirketdenHoldingeTransfer
+        model = TransferFromHoldingToCompany
         fields = "__all__"
-        read_only_fields = ('qalan_mebleg', 'evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
 
-class OfisdenShirketeTransferSerializer(serializers.ModelSerializer):
-    transfer_eden = serializers.StringRelatedField()
-    transfer_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='transfer_eden', write_only=True, required=False, allow_null=True
+class TransferFromCompanyToHoldingSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    ofis_kassa = OfisKassaSerializer(read_only=True)
-    ofis_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfisKassa.objects.all(), source='ofis_kassa', write_only=True
+    cashbox = CompanyCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
     )
-    shirket_kassa = ShirketKassaSerializer(read_only=True)
-    shirket_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketKassa.objects.all(), source='shirket_kassa', write_only=True
+
+    cashbox = HoldingCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=HoldingCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = OfisdenShirketeTransfer
+        model = TransferFromCompanyToHolding
         fields = "__all__"
-        read_only_fields = ('qalan_mebleg', 'evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
-class ShirketdenOfislereTransferSerializer(serializers.ModelSerializer):
-    transfer_eden = serializers.StringRelatedField()
-    transfer_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='transfer_eden', write_only=True, required=False, allow_null=True
-    )
-    shirket_kassa = ShirketKassaSerializer(read_only=True)
-    shirket_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketKassa.objects.all(), source='shirket_kassa', write_only=True
-    )
 
-    ofis_kassa = OfisKassaSerializer(read_only=True, many=True)
-    ofis_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfisKassa.objects.all(), source='ofis_kassa', many=True,  write_only=True
+class TransferFromOfficeToCompanySerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
+    )
+    cashbox = OfficeCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=OfficeCashbox.objects.all(), source='cashbox', write_only=True
+    )
+    cashbox = CompanyCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = ShirketdenOfislereTransfer
+        model = TransferFromOfficeToCompany
         fields = "__all__"
-        read_only_fields = ('qalan_mebleg', 'evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
+
+class TransferFromCompanyToOfficesSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
+    )
+    cashbox = CompanyCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
+    )
+
+    cashbox = OfficeCashboxSerializer(read_only=True, many=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=OfficeCashbox.objects.all(), source='cashbox', many=True,  write_only=True
+    )
+
+    class Meta:
+        model = TransferFromCompanyToOffices
+        fields = "__all__"
+        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 

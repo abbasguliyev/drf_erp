@@ -5,113 +5,113 @@ from account.models import (
 )
 
 from income_expense.models import (
-    HoldingKassaMedaxil,
-    HoldingKassaMexaric,
-    OfisKassaMedaxil,
-    OfisKassaMexaric,
-    ShirketKassaMedaxil,
-    ShirketKassaMexaric
+    HoldingCashboxIncome,
+    HoldingCashboxExpense,
+    OfficeCashboxIncome,
+    OfficeCashboxExpense,
+    CompanyCashboxIncome,
+    CompanyCashboxExpense
 )
 
-from cashbox.models import HoldingKassa, OfisKassa, ShirketKassa
+from cashbox.models import HoldingCashbox, OfficeCashbox, CompanyCashbox
 
 from restAPI.v1.cashbox.serializers import (
-    HoldingKassaSerializer, 
-    OfisKassaSerializer, 
-    ShirketKassaSerializer
+    HoldingCashboxSerializer, 
+    OfficeCashboxSerializer, 
+    CompanyCashboxSerializer
 )
 
-class HoldingKassaMedaxilSerializer(serializers.ModelSerializer):
-    medaxil_eden = serializers.StringRelatedField()
-    medaxil_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='medaxil_eden', write_only=True, required=False, allow_null=True
+class HoldingCashboxIncomeSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    holding_kassa = HoldingKassaSerializer(read_only=True)
-    holding_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingKassa.objects.all(), source='holding_kassa', write_only=True
+    cashbox = HoldingCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=HoldingCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = HoldingKassaMedaxil
+        model = HoldingCashboxIncome
         fields = "__all__"
-        read_only_fields = ('evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class HoldingKassaMexaricSerializer(serializers.ModelSerializer):
-    mexaric_eden = serializers.StringRelatedField()
-    mexaric_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='mexaric_eden', write_only=True, required=False, allow_null=True
+class HoldingCashboxExpenseSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    holding_kassa = HoldingKassaSerializer(read_only=True)
-    holding_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingKassa.objects.all(), source='holding_kassa', write_only=True
+    cashbox = HoldingCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=HoldingCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = HoldingKassaMexaric
+        model = HoldingCashboxExpense
         fields = "__all__"
-        read_only_fields = ('evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class ShirketKassaMedaxilSerializer(serializers.ModelSerializer):
-    medaxil_eden = serializers.StringRelatedField()
-    medaxil_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='medaxil_eden', write_only=True, required=False, allow_null=True
+class CompanyCashboxIncomeSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    shirket_kassa = ShirketKassaSerializer(read_only=True)
-    shirket_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketKassa.objects.all(), source='shirket_kassa', write_only=True
+    cashbox = CompanyCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = ShirketKassaMedaxil
+        model = CompanyCashboxIncome
         fields = "__all__"
-        read_only_fields = ('evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class ShirketKassaMexaricSerializer(serializers.ModelSerializer):
-    mexaric_eden = serializers.StringRelatedField()
-    mexaric_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='mexaric_eden', write_only=True, required=False, allow_null=True
+class CompanyCashboxExpenseSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    shirket_kassa = ShirketKassaSerializer(read_only=True)
-    shirket_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=ShirketKassa.objects.all(), source='shirket_kassa', write_only=True
+    cashbox = CompanyCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = ShirketKassaMexaric
+        model = CompanyCashboxExpense
         fields = "__all__"
-        read_only_fields = ('evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class OfisKassaMedaxilSerializer(serializers.ModelSerializer):
-    medaxil_eden = serializers.StringRelatedField()
-    medaxil_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='medaxil_eden', write_only=True, required=False, allow_null=True
+class OfficeCashboxIncomeSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    ofis_kassa = OfisKassaSerializer(read_only=True)
-    ofis_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfisKassa.objects.all(), source='ofis_kassa', write_only=True
+    cashbox = OfficeCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=OfficeCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = OfisKassaMedaxil
+        model = OfficeCashboxIncome
         fields = '__all__'
-        read_only_fields = ('evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class OfisKassaMexaricSerializer(serializers.ModelSerializer):
-    mexaric_eden = serializers.StringRelatedField()
-    mexaric_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='mexaric_eden', write_only=True, required=False, allow_null=True
+class OfficeCashboxExpenseSerializer(serializers.ModelSerializer):
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    ofis_kassa = OfisKassaSerializer(read_only=True)
-    ofis_kassa_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfisKassa.objects.all(), source='ofis_kassa', write_only=True
+    cashbox = OfficeCashboxSerializer(read_only=True)
+    cashbox_id = serializers.PrimaryKeyRelatedField(
+        queryset=OfficeCashbox.objects.all(), source='cashbox', write_only=True
     )
 
     class Meta:
-        model = OfisKassaMexaric
+        model = OfficeCashboxExpense
         fields = '__all__'
-        read_only_fields = ('evvelki_balans', 'sonraki_balans')
+        read_only_fields = ('previous_balance', 'subsequent_balance')

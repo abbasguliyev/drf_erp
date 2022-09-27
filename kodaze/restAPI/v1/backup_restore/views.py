@@ -45,7 +45,7 @@ def media_back_up(request):
         if settings.DEBUG is True:
             return Response({'detail': f"Could not be backed up: Debug is True"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            call_command("mediabackup", "--output-filename=media.zip")
+            call_command("mediabackup", "--output-filead=media.zip")
             try:
                 backup = BackupAndRestore.objects.all().last()
                 backup.media_backup_date =  f"{datetime.date.today().year}-{datetime.date.today().month}-{datetime.date.today().day}"

@@ -1,72 +1,72 @@
 from rest_framework import permissions
 from restAPI.v1.utils.permission_utils import PermissionUtil
        
-class IsciGunlerPermissions(permissions.IsAdminUser):
+class EmployeeWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="iscigunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="employeeworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class HoldingGunlerPermissions(permissions.IsAdminUser):
+class HoldingWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdinggunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class ShirketGunlerPermissions(permissions.IsAdminUser):
+class CompanyWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shirketgunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="companyworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class OfisGunlerPermissions(permissions.IsAdminUser):
+class OfficeWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="ofisgunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="officeworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class KomandaGunlerPermissions(permissions.IsAdminUser):
+class TeamWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="komandagunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="teamworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class VezifeGunlerPermissions(permissions.IsAdminUser):
+class PositionWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="vezifegunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="positionworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class ShobeGunlerPermissions(permissions.IsAdminUser):
+class SectionWorkingDayPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shobegunler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="sectionworkingday", view=view)
         return perm_util.add_user_permission_to_list()
 
-class HoldingIstisnaIsciPermissions(permissions.IsAdminUser):
+class HoldingExceptionWorkerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingistisnaisci", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingexceptionworker", view=view)
         return perm_util.add_user_permission_to_list()
 
-class ShirketIstisnaIsciPermissions(permissions.IsAdminUser):
+class CompanyExceptionWorkerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shirketistisnaisci", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="companyexceptionworker", view=view)
         return perm_util.add_user_permission_to_list()
 
-class OfisIstisnaIsciPermissions(permissions.IsAdminUser):
+class OfficeExceptionWorkerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="ofisistisnaisci", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="officeexceptionworker", view=view)
         return perm_util.add_user_permission_to_list()
 
-class ShobeIstisnaIsciPermissions(permissions.IsAdminUser):
+class SectionExceptionWorkerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shobeistisnaisci", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="sectionexceptionworker", view=view)
         return perm_util.add_user_permission_to_list()
 
-class KomandaIstisnaIsciPermissions(permissions.IsAdminUser):
+class TeamExceptionWorkerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="komandaistisnaisci", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="teamexceptionworker", view=view)
         return perm_util.add_user_permission_to_list()
 
-class VezifeIstisnaIsciPermissions(permissions.IsAdminUser):
+class PositionExceptionWorkerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="vezifeistisnaisci", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="positionexceptionworker", view=view)
         return perm_util.add_user_permission_to_list()
 
-class IsciGelibGetmeVaxtlariPermissions(permissions.IsAdminUser):
+class EmployeeArrivalAndDepartureTimesPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="iscigelibgetmevaxtlari", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="employeearrivalanddeparturetimes", view=view)
         return perm_util.add_user_permission_to_list()

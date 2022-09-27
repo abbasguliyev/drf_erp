@@ -1,25 +1,25 @@
 from rest_framework import status
 import datetime
 from rest_framework.response import Response
-from cashbox.models import OfisKassa
-from salary.models import KreditorPrim, MaasGoruntuleme
+from cashbox.models import OfficeCashbox
+from salary.models import CreditorPrim, SalaryView
 
 from product.models import (
-    Mehsullar,
+    Product,
 )
 
 from contract.models import (
-    Muqavile, 
-    MuqavileKreditor,
+    Contract, 
+    ContractCreditor,
 )
 
 from services.models import (
-    ServisOdeme, 
-    Servis
+    ServicePayment, 
+    Service
 )
 from warehouse.models import (
-    Anbar, 
-    Stok,
+    Warehouse, 
+    Stock,
 )
 
 import traceback
@@ -27,20 +27,20 @@ import pandas as pd
 
 from rest_framework.generics import get_object_or_404
 
-from restAPI.v1.contract.utils.muqavile_utils import k_medaxil
+from restAPI.v1.contract.utils.contract_utils import c_income
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balans_hesabla, 
+    holding_umumi_balance_hesabla, 
     pul_axini_create,
-    ofis_balans_hesabla, 
+    office_balance_hesabla, 
 )
-def create_is_auto_services_when_update_service(muqavile, created, kartric_novu, **kwargs):
+def create_is_auto_services_when_update_service(contract, created, kartric_novu, **kwargs):
     """
-        Muqavile imzalanarken create olan servislerin vaxti catdiqda ve
-        yerine yetirildikde avtomatik yeni servisin qurulmasina xidmet eden method
+        Contract imzalanarken create olan servicelerin vaxti catdiqda ve
+        yerine yetirildikde avtomatik yeni servicein qurulmasina xidmet eden method
     """
     if created:
-        instance=muqavile
-        indi = instance.muqavile_tarixi
+        instance=contract
+        now = instance.contract_date
 
         month = None
         if kartric_novu == "KARTRIC6AY":
@@ -52,255 +52,255 @@ def create_is_auto_services_when_update_service(muqavile, created, kartric_novu,
         elif kartric_novu == "KARTRIC24AY":
             month = '24M'
 
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{indi.day}")
+        d = pd.to_datetime(f"{now.year}-{now.month}-{now.day}")
         month_service = pd.date_range(start=d, periods=2, freq=month)[1]
-        anbar = get_object_or_404(Anbar, ofis=instance.ofis)
+        warehouse = get_object_or_404(Warehouse, office=instance.office)
         
-        kartric = Mehsullar.objects.filter(kartric_novu=kartric_novu, shirket=instance.shirket)
+        kartric = Product.objects.filter(kartric_novu=kartric_novu, company=instance.company)
         for c in kartric:
-            stok = Stok.objects.filter(anbar=anbar, mehsul=c)[0]
-            if stok == None or stok.say == 0:
-                return Response({"detail":f"Anbarın stokunda {c.mehsulun_adi} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
+            stok = Stock.objects.filter(warehouse=warehouse, product=c)[0]
+            if stok == None or stok.quantity == 0:
+                return Response({"detail":f"Warehouseın stokunda {c.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
         
         q = 0
-        while(q<instance.mehsul_sayi):
+        while(q<instance.product_quantity):
             for i in range(1):
-                servis_qiymeti = 0
+                price = 0
                 for j in kartric:
-                    servis_qiymeti += float(j.qiymet)
+                    price += float(j.price)
                     
-                    stok = Stok.objects.filter(anbar=anbar, mehsul=j)[0]
-                    stok.say = stok.say - 1
+                    stok = Stock.objects.filter(warehouse=warehouse, product=j)[0]
+                    stok.quantity = stok.quantity - 1
                     stok.save()
-                    if (stok.say == 0):
+                    if (stok.quantity == 0):
                         stok.delete()
 
-                if(indi.day < 29):
-                    servis = Servis.objects.create(
-                        muqavile=instance,
-                        servis_tarix = f"{month_service.year}-{month_service.month}-{indi.day}",
-                        servis_qiymeti=servis_qiymeti,
+                if(now.day < 29):
+                    service = Service.objects.create(
+                        contract=instance,
+                        service_date = f"{month_service.year}-{month_service.month}-{now.day}",
+                        price=price,
                         is_auto=True
                     )
-                elif(indi.day == 31 or indi.day == 30 or indi.day == 29):
-                    if(month_service.day <= indi.day):
-                        servis = Servis.objects.create(
-                            muqavile=instance,
-                            servis_tarix = f"{month_service.year}-{month_service.month}-{month_service.day}",
-                            servis_qiymeti=servis_qiymeti,
+                elif(now.day == 31 or now.day == 30 or now.day == 29):
+                    if(month_service.day <= now.day):
+                        service = Service.objects.create(
+                            contract=instance,
+                            service_date = f"{month_service.year}-{month_service.month}-{month_service.day}",
+                            price=price,
                             is_auto=True
                         )
-                    elif(month_service.day > indi.day):
-                        servis = Servis.objects.create(
-                            muqavile=instance,
-                            servis_tarix = f"{month_service.year}-{month_service.month}-{indi.day}",
-                            servis_qiymeti=servis_qiymeti,
+                    elif(month_service.day > now.day):
+                        service = Service.objects.create(
+                            contract=instance,
+                            service_date = f"{month_service.year}-{month_service.month}-{now.day}",
+                            price=price,
                             is_auto=True
                         )
-                servis.mehsullar.set(kartric)
-                servis.save()
+                service.product.set(kartric)
+                service.save()
             q+=1
 
-def servis_create(self, request, *args, **kwargs):
+def service_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
 
     if serializer.is_valid():
-        muqavile_id = request.data.get("muqavile_id")
-        muqavile = Muqavile.objects.get(id=muqavile_id)
+        contract_id = request.data.get("contract_id")
+        contract = Contract.objects.get(id=contract_id)
 
-        kredit = request.data.get("kredit")
+        installment = request.data.get("installment")
 
-        kredit_muddeti = request.data.get("kredit_muddeti")
+        loan_term = request.data.get("loan_term")
 
-        if bool(kredit) == True: 
-            if ((int(kredit_muddeti) == 0) or (int(kredit_muddeti) == 1)):
-                return Response({"detail":"Kredit statusu qeyd olunarsa kredit müddəti 0 və ya 1 daxil edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
-        endirim = serializer.validated_data.get("endirim")
-        if endirim == None:
-            endirim = 0
-        servis_tarixi = request.data.get("servis_tarixi")
-        yerine_yetirildi = request.data.get("yerine_yetirildi")
-        ilkin_odenis = request.data.get("ilkin_odenis")
-        if ilkin_odenis == None:
-            ilkin_odenis = 0
+        if bool(installment) == True: 
+            if ((int(loan_term) == 0) or (int(loan_term) == 1)):
+                return Response({"detail":"Kredit statusu note olunarsa installment müddəti 0 və ya 1 daxil edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
+        discount = serializer.validated_data.get("discount")
+        if discount == None:
+            discount = 0
+        service_datei = request.data.get("service_datei")
+        is_done = request.data.get("is_done")
+        initial_payment = request.data.get("initial_payment")
+        if initial_payment == None:
+            initial_payment = 0
         
-        mehsullar = []
-        mehsullar_data = request.data.get("mehsullar_id")
-        for meh in mehsullar_data:
-            mhs = Mehsullar.objects.get(pk=int(meh))
-            mehsullar.append(mhs)
-        anbar = get_object_or_404(Anbar, ofis=muqavile.ofis)
-        for j in mehsullar:
+        product = []
+        product_data = request.data.get("product_id")
+        for meh in product_data:
+            mhs = Product.objects.get(pk=int(meh))
+            product.append(mhs)
+        warehouse = get_object_or_404(Warehouse, office=contract.office)
+        for j in product:
             try:
-                stok = get_object_or_404(Stok, anbar=anbar, mehsul=j)
+                stok = get_object_or_404(Stock, warehouse=warehouse, product=j)
             except Exception:
-                return Response({"detail": f"Anbarın stokunda {j.mehsulun_adi} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail": f"Warehouseın stokunda {j.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
 
-        servis_qiymeti = 0
-        for i in mehsullar:
-            servis_qiymeti += i.qiymet
+        price = 0
+        for i in product:
+            price += i.price
             try:
-                stok = get_object_or_404(Stok, anbar=anbar, mehsul=i)
-                stok.say = stok.say - 1
+                stok = get_object_or_404(Stock, warehouse=warehouse, product=i)
+                stok.quantity = stok.quantity - 1
                 stok.save()
-                if (stok.say == 0):
+                if (stok.quantity == 0):
                     stok.delete()
             except Exception:
                 traceback.print_exc()
-                return Response({"detail":"Anbarın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail":"Warehouseın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
 
-        if float(endirim) >  float(servis_qiymeti):
-            return Response({"detail":"Endirim qiyməti servis qiymətindən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
+        if float(discount) >  float(price):
+            return Response({"detail":"Endirim qiyməti service qiymətindən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
 
-        odenilecek_umumi_mebleg = float(servis_qiymeti) - float(ilkin_odenis) - float(endirim)
+        total_amount_to_be_paid = float(price) - float(initial_payment) - float(discount)
         
-        serializer.save(odenilecek_umumi_mebleg=odenilecek_umumi_mebleg, servis_qiymeti=servis_qiymeti)
-        return Response({"detail":"Servis düzəldildi"}, status=status.HTTP_200_OK)
+        serializer.save(total_amount_to_be_paid=total_amount_to_be_paid, price=price)
+        return Response({"detail":"Service düzəldildi"}, status=status.HTTP_200_OK)
     else:
         return Response({"detail":"Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-def servis_update(self, request, *args, **kwargs):
-    servis = self.get_object()
-    serializer = self.get_serializer(servis, data=request.data, partial=True)
+def service_update(self, request, *args, **kwargs):
+    service = self.get_object()
+    serializer = self.get_serializer(service, data=request.data, partial=True)
 
     if serializer.is_valid():
-        muqavile = servis.muqavile
-        ofis=muqavile.ofis
-        servis_tarix = serializer.validated_data.get("servis_tarix")
-        mehsullar = serializer.validated_data.get("mehsullar")
+        contract = service.contract
+        office=contract.office
+        service_date = serializer.validated_data.get("service_date")
+        product = serializer.validated_data.get("product")
         
-        kredit = serializer.validated_data.get("kredit")
-        kredit_muddeti = serializer.validated_data.get("kredit_muddeti")
-        ilkin_odenis = serializer.validated_data.get("ilkin_odenis")
+        installment = serializer.validated_data.get("installment")
+        loan_term = serializer.validated_data.get("loan_term")
+        initial_payment = serializer.validated_data.get("initial_payment")
 
-        endirim = serializer.validated_data.get("endirim")
+        discount = serializer.validated_data.get("discount")
 
-        u_yerine_yetirildi = serializer.validated_data.get("yerine_yetirildi")
+        u_is_done = serializer.validated_data.get("is_done")
         
-        yerine_yetirildi = servis.yerine_yetirildi
+        is_done = service.is_done
 
-        anbar = get_object_or_404(Anbar, ofis=muqavile.ofis)
+        warehouse = get_object_or_404(Warehouse, office=contract.office)
 
-        ofis_kassa = get_object_or_404(OfisKassa, ofis=muqavile.ofis) 
+        cashbox = get_object_or_404(OfficeCashbox, office=contract.office) 
         
         user = self.request.user
 
-        for j in servis.mehsullar.all():
+        for j in service.product.all():
             try:
-                stok = get_object_or_404(Stok, anbar=anbar, mehsul=j)
+                stok = get_object_or_404(Stock, warehouse=warehouse, product=j)
             except Exception:
-                return Response({"detail": f"Anbarın stokunda {j.mehsulun_adi} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail": f"Warehouseın stokunda {j.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
 
-        if bool(u_yerine_yetirildi) == True:
-            for i in servis.mehsullar.all():
+        if bool(u_is_done) == True:
+            for i in service.product.all():
                 try:
-                    stok = get_object_or_404(Stok, anbar=anbar, mehsul=i)
-                    stok.say = stok.say - 1
+                    stok = get_object_or_404(Stock, warehouse=warehouse, product=i)
+                    stok.quantity = stok.quantity - 1
                     stok.save()
-                    if (stok.say == 0):
+                    if (stok.quantity == 0):
                         stok.delete()
                 except Exception:
-                    return Response({"detail":"Anbarın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
+                    return Response({"detail":"Warehouseın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
 
-            servis_odemeleri = ServisOdeme.objects.filter(servis=servis)
-            for s in servis_odemeleri:
-                s.odendi = True
+            service_paymentleri = ServicePayment.objects.filter(service=service)
+            for s in service_paymentleri:
+                s.is_done = True
                 s.save()
 
-                if servis.is_auto == True:
-                    kartric_novu = servis.mehsullar.all()[0].kartric_novu
-                    create_is_auto_services_when_update_service(muqavile=muqavile, created=True, kartric_novu=kartric_novu)
+                if service.is_auto == True:
+                    kartric_novu = service.product.all()[0].kartric_novu
+                    create_is_auto_services_when_update_service(contract=contract, created=True, kartric_novu=kartric_novu)
 
-                ilkin_balans = holding_umumi_balans_hesabla()
-                ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
+                initial_balance = holding_umumi_balance_hesabla()
+                office_initial_balance = office_balance_hesabla(office=office)
 
-                qeyd = f"Kreditor - {user.asa}, müştəri - {muqavile.musteri.asa}, servis ödənişi"
-                k_medaxil(ofis_kassa, s.odenilecek_mebleg, user, qeyd)
-                sonraki_balans = holding_umumi_balans_hesabla()
-                ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
+                note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
+                c_income(cashbox, s.amount_to_be_paid, user, note)
+                subsequent_balance = holding_umumi_balance_hesabla()
+                office_subsequent_balance = office_balance_hesabla(office=office)
                 pul_axini_create(
-                    ofis=muqavile.ofis,
-                    shirket=ofis.shirket,
-                    aciqlama=qeyd,
-                    ilkin_balans=ilkin_balans,
-                    sonraki_balans=sonraki_balans,
-                    ofis_ilkin_balans=ofis_ilkin_balans,
-                    ofis_sonraki_balans=ofis_sonraki_balans,
-                    emeliyyat_eden=user,
-                    emeliyyat_uslubu="MƏDAXİL",
-                    miqdar=float(s.odenilecek_mebleg)
+                    office=contract.office,
+                    company=office.company,
+                    description=note,
+                    initial_balance=initial_balance,
+                    subsequent_balance=subsequent_balance,
+                    office_initial_balance=office_initial_balance,
+                    office_subsequent_balance=office_subsequent_balance,
+                    executor=user,
+                    operation_style="MƏDAXİL",
+                    quantity=float(s.amount_to_be_paid)
                 )
         serializer.save()
         return Response({"detail":"Proses yerinə yetirildi"}, status=status.HTTP_200_OK)
 
 
-def servis_odeme_update(self, request, *args, **kwargs):
-    servis_odeme = self.get_object()
-    serializer = self.get_serializer(servis_odeme, data=request.data, partial=True)
+def service_payment_update(self, request, *args, **kwargs):
+    service_payment = self.get_object()
+    serializer = self.get_serializer(service_payment, data=request.data, partial=True)
     
     if serializer.is_valid():
-        odendi = serializer.validated_data.get("odendi")
-        muqavile = servis_odeme.servis.muqavile
+        is_done = serializer.validated_data.get("is_done")
+        contract = service_payment.service.contract
         try:
-            muqavile_kreditor = MuqavileKreditor.objects.filter(muqavile=muqavile)[0]
+            creditor_contracts = ContractCreditor.objects.filter(contract=contract)[0]
         except:
-            return Response({"detail":"Kreditor təyin edilməyib"}, status=status.HTTP_400_BAD_REQUEST)
-        kreditor = muqavile_kreditor.kreditor
+            return Response({"detail":"Creditor təyin edilməyib"}, status=status.HTTP_400_BAD_REQUEST)
+        creditor = creditor_contracts.creditor
 
-        kreditor_prim_all = KreditorPrim.objects.all()
+        creditor_prim_all = CreditorPrim.objects.all()
 
-        kreditor_prim = kreditor_prim_all[0]
+        creditor_prim = creditor_prim_all[0]
 
-        prim_faizi = kreditor_prim.prim_faizi
+        prim_percent = creditor_prim.prim_percent
 
-        indi = datetime.date.today()
+        now = datetime.date.today()
 
-        bu_ay = f"{indi.year}-{indi.month}-{1}"
+        this_month = f"{now.year}-{now.month}-{1}"
 
-        maas_goruntulenme_kreditor = MaasGoruntuleme.objects.get(isci=kreditor, tarix=bu_ay)
+        salary_goruntulenme_creditor = SalaryView.objects.get(employee=creditor, date=this_month)
 
         user = self.request.user
 
-        ofis_kassa = get_object_or_404(OfisKassa, ofis=muqavile.ofis) 
+        cashbox = get_object_or_404(OfficeCashbox, office=contract.office) 
 
-        if odendi is not None:
-            if bool(odendi) == True:
-                servisler_qs = ServisOdeme.objects.filter(servis=servis_odeme.servis, odendi=False)
-                servisler = list(servisler_qs)
-                if servis_odeme == servisler[-1]:
-                    servis_odeme.servis.yerine_yetirildi = True
-                    servis_odeme.servis.save()
-                    servis_odeme.odendi = True
-                    servis_odeme.save()
-                    if servis_odeme.servis.is_auto == True:
-                        kartric_novu = servis_odeme.servis.mehsullar.all()[0].kartric_novu
-                        create_is_auto_services_when_update_service(muqavile=muqavile, created=True, kartric_novu=kartric_novu)
+        if is_done is not None:
+            if bool(is_done) == True:
+                serviceler_qs = ServicePayment.objects.filter(service=service_payment.service, is_done=False)
+                serviceler = list(serviceler_qs)
+                if service_payment == serviceler[-1]:
+                    service_payment.service.is_done = True
+                    service_payment.service.save()
+                    service_payment.is_done = True
+                    service_payment.save()
+                    if service_payment.service.is_auto == True:
+                        kartric_novu = service_payment.service.product.all()[0].kartric_novu
+                        create_is_auto_services_when_update_service(contract=contract, created=True, kartric_novu=kartric_novu)
 
-                    ilkin_balans = holding_umumi_balans_hesabla()
-                    ofis_ilkin_balans = ofis_balans_hesabla(ofis=muqavile.ofis)
+                    initial_balance = holding_umumi_balance_hesabla()
+                    office_initial_balance = office_balance_hesabla(office=contract.office)
                     
-                    qeyd = f"Kreditor - {user.asa}, müştəri - {muqavile.musteri.asa}, servis ödənişi"
-                    k_medaxil(ofis_kassa, servis_odeme.odenilecek_mebleg, user, qeyd)
-                    kreditorun_servisden_alacagi_mebleg = (float(servis_odeme.odenilecek_mebleg) * int(prim_faizi)) / 100
+                    note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
+                    c_income(cashbox, service_payment.amount_to_be_paid, user, note)
+                    creditorun_serviceden_alacagi_amount = (float(service_payment.amount_to_be_paid) * int(prim_percent)) / 100
 
-                    sonraki_balans = holding_umumi_balans_hesabla()
-                    ofis_sonraki_balans = ofis_balans_hesabla(ofis=muqavile.ofis)
+                    subsequent_balance = holding_umumi_balance_hesabla()
+                    office_subsequent_balance = office_balance_hesabla(office=contract.office)
                     pul_axini_create(
-                        ofis=muqavile.ofis,
-                        shirket=muqavile.ofis.shirket,
-                        aciqlama=qeyd,
-                        ilkin_balans=ilkin_balans,
-                        sonraki_balans=sonraki_balans,
-                        ofis_ilkin_balans=ofis_ilkin_balans,
-                        ofis_sonraki_balans=ofis_sonraki_balans,
-                        emeliyyat_eden=user,
-                        emeliyyat_uslubu="MƏDAXİL",
-                        miqdar=float(servis_odeme.odenilecek_mebleg)
+                        office=contract.office,
+                        company=contract.office.company,
+                        description=note,
+                        initial_balance=initial_balance,
+                        subsequent_balance=subsequent_balance,
+                        office_initial_balance=office_initial_balance,
+                        office_subsequent_balance=office_subsequent_balance,
+                        executor=user,
+                        operation_style="MƏDAXİL",
+                        quantity=float(service_payment.amount_to_be_paid)
                     )
 
-                    maas_goruntulenme_kreditor.yekun_maas = maas_goruntulenme_kreditor.yekun_maas + kreditorun_servisden_alacagi_mebleg
-                    maas_goruntulenme_kreditor.save()
+                    salary_goruntulenme_creditor.final_salary = salary_goruntulenme_creditor.final_salary + creditorun_serviceden_alacagi_amount
+                    salary_goruntulenme_creditor.save()
                 serializer.save()
-                return Response({"detail":"Servis məbləği ödəndi"}, status=status.HTTP_200_OK)
+                return Response({"detail":"Service məbləği ödəndi"}, status=status.HTTP_200_OK)
         serializer.save()
-        return Response({"detail":"Servis Ödəmə müvəffəqiyyətlə yeniləndi"}, status=status.HTTP_200_OK)
+        return Response({"detail":"Service Ödəmə müvəffəqiyyətlə yeniləndi"}, status=status.HTTP_200_OK)

@@ -1,114 +1,114 @@
 import django_filters
 
 from services.models import (
-    Servis,
-    ServisOdeme
+    Service,
+    ServicePayment
 )
 
-class ServisFilter(django_filters.FilterSet):
-    muqavile__muqavile_tarixi = django_filters.DateFilter(
-        field_name='muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
-    muqavile__muqavile_tarixi__gte = django_filters.DateFilter(
-        field_name='muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    muqavile__muqavile_tarixi__lte = django_filters.DateFilter(
-        field_name='muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class ServiceFilter(django_filters.FilterSet):
+    contract__contract_date = django_filters.DateFilter(
+        field_name='contract__contract_date', input_formats=["%d-%m-%Y"])
+    contract__contract_date__gte = django_filters.DateFilter(
+        field_name='contract__contract_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    contract__contract_date__lte = django_filters.DateFilter(
+        field_name='contract__contract_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
-    servis_tarix = django_filters.DateFilter(
-        field_name='servis_tarix', input_formats=["%d-%m-%Y"])
-    servis_tarix__gte = django_filters.DateFilter(
-        field_name='servis_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    servis_tarix__lte = django_filters.DateFilter(
-        field_name='servis_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    service_date = django_filters.DateFilter(
+        field_name='service_date', input_formats=["%d-%m-%Y"])
+    service_date__gte = django_filters.DateFilter(
+        field_name='service_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    service_date__lte = django_filters.DateFilter(
+        field_name='service_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = Servis
+        model = Service
         fields = {
-            'muqavile' : ['exact'],
-            'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
-            'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
+            'contract' : ['exact'],
+            'contract__office__name': ['exact', 'icontains'],
+            'contract__company__name': ['exact', 'icontains'],
 
-            'muqavile__group_leader__asa': ['exact', 'icontains'],
-            'muqavile__group_leader__komanda__komanda_adi': ['exact', 'icontains'],
-            'muqavile__group_leader__isci_status__status_adi': ['exact', 'icontains'],
+            'contract__group_leader__fullname': ['exact', 'icontains'],
+            'contract__group_leader__team__name': ['exact', 'icontains'],
+            'contract__group_leader__employee_status__status_name': ['exact', 'icontains'],
 
-            'muqavile__kreditor__kreditor': ['exact'],
-            'muqavile__kreditor__kreditor__asa': ['exact'],
+            'contract__creditors__creditor': ['exact'],
+            'contract__creditors__creditor__fullname': ['exact'],
 
-            'muqavile__odenis_uslubu': ['exact'],
-            'muqavile__muqavile_status': ['exact'],
-            # 'muqavile__muqavile_tarixi': ['exact', 'gte', 'lte'],
-            'muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
-            'muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
+            'contract__payment_style': ['exact'],
+            'contract__contract_status': ['exact'],
+            # 'contract__contract_date': ['exact', 'gte', 'lte'],
+            'contract__total_amount': ['exact', 'gte', 'lte'],
+            'contract__product_quantity': ['exact', 'gte', 'lte'],
 
-            'muqavile__musteri__asa': ['exact', 'icontains'],
-            'muqavile__musteri__unvan': ['exact', 'icontains'],
-            'muqavile__musteri__tel1': ['exact', 'icontains'],
-            'muqavile__musteri__tel2': ['exact', 'icontains'],
-            'muqavile__musteri__tel3': ['exact', 'icontains'],
-            'muqavile__musteri__tel4': ['exact', 'icontains'],
+            'contract__customer__fullname': ['exact', 'icontains'],
+            'contract__customer__address': ['exact', 'icontains'],
+            'contract__customer__phone_number_1': ['exact', 'icontains'],
+            'contract__customer__phone_number_2': ['exact', 'icontains'],
+            'contract__customer__phone_number_3': ['exact', 'icontains'],
+            'contract__customer__phone_number_4': ['exact', 'icontains'],
 
-            # 'servis_tarix': ['exact', 'gte', 'lte'],
-            'yerine_yetirildi': ['exact'],
-            'operator_tesdiq': ['exact'],
+            # 'service_date': ['exact', 'gte', 'lte'],
+            'is_done': ['exact'],
+            'confirmation': ['exact'],
 
         }
 
-class ServisOdemeFilter(django_filters.FilterSet):
-    servis__muqavile__muqavile_tarixi = django_filters.DateFilter(
-        field_name='servis__muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
-    servis__muqavile__muqavile_tarixi__gte = django_filters.DateFilter(
-        field_name='servis__muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    servis__muqavile__muqavile_tarixi__lte = django_filters.DateFilter(
-        field_name='servis__muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class ServicePaymentFilter(django_filters.FilterSet):
+    service__contract__contract_date = django_filters.DateFilter(
+        field_name='service__contract__contract_date', input_formats=["%d-%m-%Y"])
+    service__contract__contract_date__gte = django_filters.DateFilter(
+        field_name='service__contract__contract_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    service__contract__contract_date__lte = django_filters.DateFilter(
+        field_name='service__contract__contract_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
-    servis__servis_tarix = django_filters.DateFilter(
-        field_name='servis__servis_tarix', input_formats=["%d-%m-%Y"])
-    servis__servis_tarix__gte = django_filters.DateFilter(
-        field_name='servis__servis_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    servis__servis_tarix__lte = django_filters.DateFilter(
-        field_name='servis__servis_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    service__service_date = django_filters.DateFilter(
+        field_name='service__service_date', input_formats=["%d-%m-%Y"])
+    service__service_date__gte = django_filters.DateFilter(
+        field_name='service__service_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    service__service_date__lte = django_filters.DateFilter(
+        field_name='service__service_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
-    odeme_tarix = django_filters.DateFilter(
-        field_name='odeme_tarix', input_formats=["%d-%m-%Y"])
-    odeme_tarix__gte = django_filters.DateFilter(
-        field_name='odeme_tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    odeme_tarix__lte = django_filters.DateFilter(
-        field_name='odeme_tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    payment_date = django_filters.DateFilter(
+        field_name='payment_date', input_formats=["%d-%m-%Y"])
+    payment_date__gte = django_filters.DateFilter(
+        field_name='payment_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    payment_date__lte = django_filters.DateFilter(
+        field_name='payment_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ServisOdeme
+        model = ServicePayment
         fields = {
-            'servis' : ['exact'],
-            'odendi': ['exact'],
+            'service' : ['exact'],
+            'is_done': ['exact'],
 
-            'odenilecek_umumi_mebleg' : ['exact'],
-            'odenilecek_mebleg' : ['exact'],
+            'total_amount_to_be_paid' : ['exact'],
+            'amount_to_be_paid' : ['exact'],
 
-            'servis__kredit' : ['exact'],
-            'servis__kredit_muddeti' : ['exact'],
-            'servis__endirim' : ['exact'],
-            'servis__mehsullar' : ['exact'],
-            'servis__servis_qiymeti' : ['exact'],
+            'service__installment' : ['exact'],
+            'service__loan_term' : ['exact'],
+            'service__discount' : ['exact'],
+            'service__product' : ['exact'],
+            'service__price' : ['exact'],
 
-            'servis__muqavile' : ['exact'],
-            'servis__muqavile__ofis__ofis_adi': ['exact', 'icontains'],
-            'servis__muqavile__shirket__shirket_adi': ['exact', 'icontains'],
+            'service__contract' : ['exact'],
+            'service__contract__office__name': ['exact', 'icontains'],
+            'service__contract__company__name': ['exact', 'icontains'],
             
-            'servis__muqavile__group_leader__asa': ['exact', 'icontains'],
-            'servis__muqavile__group_leader__komanda__komanda_adi': ['exact', 'icontains'],
-            'servis__muqavile__group_leader__isci_status__status_adi': ['exact', 'icontains'],
-            'servis__muqavile__kreditor__kreditor': ['exact'],
-            'servis__muqavile__kreditor__kreditor__asa': ['exact'],
-            'servis__muqavile__odenis_uslubu': ['exact'],
-            'servis__muqavile__muqavile_status': ['exact'],
-            'servis__muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
-            'servis__muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
-            'servis__muqavile__musteri__asa': ['exact', 'icontains'],
-            'servis__muqavile__musteri__unvan': ['exact', 'icontains'],
-            'servis__muqavile__musteri__tel1': ['exact', 'icontains'],
-            'servis__muqavile__musteri__tel2': ['exact', 'icontains'],
-            'servis__muqavile__musteri__tel3': ['exact', 'icontains'],
-            'servis__muqavile__musteri__tel4': ['exact', 'icontains'],
-            'servis__yerine_yetirildi': ['exact'],
-            'servis__operator_tesdiq': ['exact'],
+            'service__contract__group_leader__fullname': ['exact', 'icontains'],
+            'service__contract__group_leader__team__name': ['exact', 'icontains'],
+            'service__contract__group_leader__employee_status__status_name': ['exact', 'icontains'],
+            'service__contract__creditors__creditor': ['exact'],
+            'service__contract__creditors__creditor__fullname': ['exact'],
+            'service__contract__payment_style': ['exact'],
+            'service__contract__contract_status': ['exact'],
+            'service__contract__total_amount': ['exact', 'gte', 'lte'],
+            'service__contract__product_quantity': ['exact', 'gte', 'lte'],
+            'service__contract__customer__fullname': ['exact', 'icontains'],
+            'service__contract__customer__address': ['exact', 'icontains'],
+            'service__contract__customer__phone_number_1': ['exact', 'icontains'],
+            'service__contract__customer__phone_number_2': ['exact', 'icontains'],
+            'service__contract__customer__phone_number_3': ['exact', 'icontains'],
+            'service__contract__customer__phone_number_4': ['exact', 'icontains'],
+            'service__is_done': ['exact'],
+            'service__confirmation': ['exact'],
         }

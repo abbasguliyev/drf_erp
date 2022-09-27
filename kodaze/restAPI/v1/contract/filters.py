@@ -1,183 +1,183 @@
 import django_filters
 
 from contract.models import (
-    MuqavileHediyye, 
-    Muqavile, 
-    OdemeTarix,  
-    DemoSatis
+    ContractGift, 
+    Contract, 
+    Installment,  
+    DemoSales
 )
 
-class OdemeTarixFilter(django_filters.FilterSet):
-    muqavile__muqavile_tarixi = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
-    muqavile__muqavile_tarixi__gte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    muqavile__muqavile_tarixi__lte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class InstallmentFilter(django_filters.FilterSet):
+    contract__contract_date = django_filters.DateFilter(field_name='contract__contract_date', input_formats=["%d-%m-%Y"])
+    contract__contract_date__gte = django_filters.DateFilter(field_name='contract__contract_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    contract__contract_date__lte = django_filters.DateFilter(field_name='contract__contract_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
-    tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    date = django_filters.DateFilter(field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
-        model = OdemeTarix
+        model = Installment
         fields = {
-            'muqavile' : ['exact'],
-            'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
-            'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
+            'contract' : ['exact'],
+            'contract__office__name': ['exact', 'icontains'],
+            'contract__company__name': ['exact', 'icontains'],
 
-            'muqavile__group_leader__asa': ['exact', 'icontains'],
-            'muqavile__group_leader__komanda__komanda_adi': ['exact', 'icontains'],
-            'muqavile__group_leader__isci_status__status_adi': ['exact', 'icontains'],
+            'contract__group_leader__fullname': ['exact', 'icontains'],
+            'contract__group_leader__team__name': ['exact', 'icontains'],
+            'contract__group_leader__employee_status__status_name': ['exact', 'icontains'],
 
-            'muqavile__odenis_uslubu': ['exact'],
-            'muqavile__kreditor__kreditor': ['exact'],
-            'muqavile__kreditor__kreditor__asa': ['exact'],
-            'muqavile__muqavile_status': ['exact'],
-            'muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
-            'muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
+            'contract__payment_style': ['exact'],
+            'contract__creditors__creditor': ['exact'],
+            'contract__creditors__creditor__fullname': ['exact'],
+            'contract__contract_status': ['exact'],
+            'contract__total_amount': ['exact', 'gte', 'lte'],
+            'contract__product_quantity': ['exact', 'gte', 'lte'],
 
-            'muqavile__musteri__asa': ['exact', 'icontains'],
-            'muqavile__musteri__unvan': ['exact', 'icontains'],
-            'muqavile__musteri__tel1': ['exact', 'icontains'],
-            'muqavile__musteri__tel2': ['exact', 'icontains'],
-            'muqavile__musteri__tel3': ['exact', 'icontains'],
-            'muqavile__musteri__tel4': ['exact', 'icontains'],
+            'contract__customer__fullname': ['exact', 'icontains'],
+            'contract__customer__address': ['exact', 'icontains'],
+            'contract__customer__phone_number_1': ['exact', 'icontains'],
+            'contract__customer__phone_number_2': ['exact', 'icontains'],
+            'contract__customer__phone_number_3': ['exact', 'icontains'],
+            'contract__customer__phone_number_4': ['exact', 'icontains'],
 
-            'qiymet': ['exact', 'gte', 'lte'],
-            'odenme_status': ['exact', 'icontains'],
-            'gecikdirme_status': ['exact', 'icontains'],
-            'buraxilmis_ay_alt_status': ['exact', 'icontains'],
-            'natamam_ay_alt_status': ['exact', 'icontains'],
-            'artiq_odeme_alt_status': ['exact', 'icontains'],
-            'sertli_odeme_status': ['exact', 'icontains'],
-            'borcu_bagla_status': ['exact', 'icontains'],
+            'price': ['exact', 'gte', 'lte'],
+            'payment_status': ['exact', 'icontains'],
+            'delay_status': ['exact', 'icontains'],
+            'missed_month_substatus': ['exact', 'icontains'],
+            'incomplete_month_substatus': ['exact', 'icontains'],
+            'overpayment_substatus': ['exact', 'icontains'],
+            'conditional_payment_status': ['exact', 'icontains'],
+            'close_the_debt_status': ['exact', 'icontains'],
         }
 
 
-class MuqavileFilter(django_filters.FilterSet):
-    muqavile_tarixi = django_filters.DateFilter(field_name='muqavile_tarixi', input_formats=["%d-%m-%Y"])
-    muqavile_tarixi__gte = django_filters.DateFilter(field_name='muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    muqavile_tarixi__lte = django_filters.DateFilter(field_name='muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class ContractFilter(django_filters.FilterSet):
+    contract_date = django_filters.DateFilter(field_name='contract_date', input_formats=["%d-%m-%Y"])
+    contract_date__gte = django_filters.DateFilter(field_name='contract_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    contract_date__lte = django_filters.DateFilter(field_name='contract_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
-    muqavile_imzalanma_tarixi = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', input_formats=["%d-%m-%Y"])
-    muqavile_imzalanma_tarixi__gte = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    muqavile_imzalanma_tarixi__lte = django_filters.DateFilter(field_name='muqavile_imzalanma_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    contract_created_date = django_filters.DateFilter(field_name='contract_created_date', input_formats=["%d-%m-%Y"])
+    contract_created_date__gte = django_filters.DateFilter(field_name='contract_created_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    contract_created_date__lte = django_filters.DateFilter(field_name='contract_created_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
-    ilkin_odenis_tarixi = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', input_formats=["%d-%m-%Y"])
-    ilkin_odenis_tarixi__gte = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    ilkin_odenis_tarixi__lte = django_filters.DateFilter(field_name='ilkin_odenis_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    initial_payment_date = django_filters.DateFilter(field_name='initial_payment_date', input_formats=["%d-%m-%Y"])
+    initial_payment_date__gte = django_filters.DateFilter(field_name='initial_payment_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    initial_payment_date__lte = django_filters.DateFilter(field_name='initial_payment_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
-    ilkin_odenis_qaliq_tarixi = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', input_formats=["%d-%m-%Y"])
-    ilkin_odenis_qaliq_tarixi__gte = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    ilkin_odenis_qaliq_tarixi__lte = django_filters.DateFilter(field_name='ilkin_odenis_qaliq_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    initial_payment_debt_date = django_filters.DateFilter(field_name='initial_payment_debt_date', input_formats=["%d-%m-%Y"])
+    initial_payment_debt_date__gte = django_filters.DateFilter(field_name='initial_payment_debt_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    initial_payment_debt_date__lte = django_filters.DateFilter(field_name='initial_payment_debt_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
-        model = Muqavile
+        model = Contract
         fields = {
-            'musteri__asa': ['exact', 'icontains'],
-            'musteri__tel1': ['exact', 'icontains'],
-            'musteri__tel2': ['exact', 'icontains'],
-            'musteri__tel3': ['exact', 'icontains'],
-            'musteri__tel4': ['exact', 'icontains'],
-            'musteri__bolge__bolge_adi': ['exact', 'icontains'],
-            'musteri__bolge': ['exact'],
+            'customer__fullname': ['exact', 'icontains'],
+            'customer__phone_number_1': ['exact', 'icontains'],
+            'customer__phone_number_2': ['exact', 'icontains'],
+            'customer__phone_number_3': ['exact', 'icontains'],
+            'customer__phone_number_4': ['exact', 'icontains'],
+            'customer__region__region_name': ['exact', 'icontains'],
+            'customer__region': ['exact'],
 
-            'kreditor__kreditor__asa': ['exact'],
-            'kreditor__kreditor__id': ['exact'],
+            'creditors__creditor__fullname': ['exact'],
+            'creditors__creditor__id': ['exact'],
 
-            'shirket__id': ['exact'],
-            'shirket': ['exact'],
-            'shirket__shirket_adi': ['exact', 'icontains'],
-            'ofis': ['exact'],
-            'ofis__id': ['exact'],
-            'ofis__ofis_adi': ['exact', 'icontains'],
+            'company__id': ['exact'],
+            'company': ['exact'],
+            'company__name': ['exact', 'icontains'],
+            'office': ['exact'],
+            'office__id': ['exact'],
+            'office__name': ['exact', 'icontains'],
 
-            'odenis_uslubu': ['exact', 'icontains'],
-            'deyisilmis_mehsul_status': ['exact', 'icontains'],
-            'muqavile_status': ['exact', 'icontains'],
+            'payment_style': ['exact', 'icontains'],
+            'modified_product_status': ['exact', 'icontains'],
+            'contract_status': ['exact', 'icontains'],
 
-            'yeni_qrafik_mebleg': ['exact', 'gte', 'lte'],
-            'yeni_qrafik_status': ['exact', 'icontains'],
+            'new_graphic_amount': ['exact', 'gte', 'lte'],
+            'new_graphic_status': ['exact', 'icontains'],
             
-            'kredit_muddeti': ['exact', 'gte', 'lte'],
+            'loan_term': ['exact', 'gte', 'lte'],
             
-            'ilkin_odenis': ['exact', 'gte', 'lte'],
-            'ilkin_odenis_qaliq': ['exact', 'gte', 'lte'],
-            'ilkin_odenis_status': ['exact', 'icontains'],
-            'qaliq_ilkin_odenis_status': ['exact', 'icontains'],
+            'initial_payment': ['exact', 'gte', 'lte'],
+            'initial_payment_debt': ['exact', 'gte', 'lte'],
+            'initial_payment_status': ['exact', 'icontains'],
+            'initial_payment_debt_status': ['exact', 'icontains'],
 
-            'group_leader__komanda': ['exact'],
-            'group_leader__komanda__komanda_adi': ['exact', 'icontains'],
-            'group_leader__asa': ['exact', 'icontains'],
-            'group_leader__isci_status__status_adi': ['exact', 'icontains'],
+            'group_leader__team': ['exact'],
+            'group_leader__team__name': ['exact', 'icontains'],
+            'group_leader__fullname': ['exact', 'icontains'],
+            'group_leader__employee_status__status_name': ['exact', 'icontains'],
 
-            'menecer1__asa': ['exact', 'icontains'],
-            'menecer1__isci_status__status_adi': ['exact', 'icontains'],
+            'manager1__fullname': ['exact', 'icontains'],
+            'manager1__employee_status__status_name': ['exact', 'icontains'],
 
-            'menecer2__asa': ['exact', 'icontains'],
-            'menecer2__isci_status__status_adi': ['exact', 'icontains'],
+            'manager2__fullname': ['exact', 'icontains'],
+            'manager2__employee_status__status_name': ['exact', 'icontains'],
 
-            'mehsul_sayi': ['exact', 'gte', 'lte'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'product_quantity': ['exact', 'gte', 'lte'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte'],
 
-            'muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
+            'total_amount': ['exact', 'gte', 'lte'],
 
-            'kompensasiya_medaxil': ['exact', 'gte', 'lte'],
-            'kompensasiya_mexaric': ['exact', 'gte', 'lte'],
+            'compensation_income': ['exact', 'gte', 'lte'],
+            'compensation_expense': ['exact', 'gte', 'lte'],
 
-            'is_sokuntu': ['exact']
+            'is_remove': ['exact']
         }
 
-class MuqavileHediyyeFilter(django_filters.FilterSet):
-    muqavile__muqavile_tarixi = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', input_formats=["%d-%m-%Y"])
-    muqavile__muqavile_tarixi__gte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    muqavile__muqavile_tarixi__lte = django_filters.DateFilter(field_name='muqavile__muqavile_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class ContractGiftFilter(django_filters.FilterSet):
+    contract__contract_date = django_filters.DateFilter(field_name='contract__contract_date', input_formats=["%d-%m-%Y"])
+    contract__contract_date__gte = django_filters.DateFilter(field_name='contract__contract_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    contract__contract_date__lte = django_filters.DateFilter(field_name='contract__contract_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
-        model = MuqavileHediyye
+        model = ContractGift
         fields = {
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'product__id': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte'],
 
-            'muqavile' : ['exact'],
-            'muqavile__ofis__ofis_adi': ['exact', 'icontains'],
-            'muqavile__shirket__shirket_adi': ['exact', 'icontains'],
+            'contract' : ['exact'],
+            'contract__office__name': ['exact', 'icontains'],
+            'contract__company__name': ['exact', 'icontains'],
 
-            'muqavile__group_leader__asa': ['exact', 'icontains'],
-            'muqavile__group_leader__komanda__komanda_adi': ['exact', 'icontains'],
-            'muqavile__group_leader__isci_status__status_adi': ['exact', 'icontains'],
+            'contract__group_leader__fullname': ['exact', 'icontains'],
+            'contract__group_leader__team__name': ['exact', 'icontains'],
+            'contract__group_leader__employee_status__status_name': ['exact', 'icontains'],
 
 
-            'muqavile__odenis_uslubu': ['exact'],
-            'muqavile__muqavile_status': ['exact'],
-            'muqavile__muqavile_umumi_mebleg': ['exact', 'gte', 'lte'],
-            'muqavile__mehsul_sayi': ['exact', 'gte', 'lte'],
+            'contract__payment_style': ['exact'],
+            'contract__contract_status': ['exact'],
+            'contract__total_amount': ['exact', 'gte', 'lte'],
+            'contract__product_quantity': ['exact', 'gte', 'lte'],
 
-            'muqavile__musteri__asa': ['exact', 'icontains'],
-            'muqavile__musteri__unvan': ['exact', 'icontains'],
-            'muqavile__musteri__tel1': ['exact', 'icontains'],
-            'muqavile__musteri__tel2': ['exact', 'icontains'],
-            'muqavile__musteri__tel3': ['exact', 'icontains'],
-            'muqavile__musteri__tel4': ['exact', 'icontains'],
+            'contract__customer__fullname': ['exact', 'icontains'],
+            'contract__customer__address': ['exact', 'icontains'],
+            'contract__customer__phone_number_1': ['exact', 'icontains'],
+            'contract__customer__phone_number_2': ['exact', 'icontains'],
+            'contract__customer__phone_number_3': ['exact', 'icontains'],
+            'contract__customer__phone_number_4': ['exact', 'icontains'],
         }
 
-class DemoSatisFilter(django_filters.FilterSet):
+class DemoSalesFilter(django_filters.FilterSet):
     created_date = django_filters.DateFilter(field_name='created_date', input_formats=["%d-%m-%Y"])
     created_date__gte = django_filters.DateFilter(field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
     created_date__lte = django_filters.DateFilter(field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
-        model = DemoSatis
+        model = DemoSales
         fields = {
             'user': ['exact'],
-            'user__asa': ['exact'],
-            'user__shirket': ['exact'],
-            'user__shirket__shirket_adi': ['exact', 'icontains'],
-            'user__ofis': ['exact'],
-            'user__ofis__ofis_adi': ['exact', 'icontains'],
-            'user__vezife': ['exact'],
-            'user__vezife__vezife_adi': ['exact', 'icontains'],
-            'user__komanda': ['exact'],
-            'user__komanda__komanda_adi': ['exact', 'icontains'],
+            'user__fullname': ['exact'],
+            'user__company': ['exact'],
+            'user__company__name': ['exact', 'icontains'],
+            'user__office': ['exact'],
+            'user__office__name': ['exact', 'icontains'],
+            'user__position': ['exact'],
+            'user__position__name': ['exact', 'icontains'],
+            'user__team': ['exact'],
+            'user__team__name': ['exact', 'icontains'],
             # 'created_date': ['exact', 'gte', 'lte'],
         }

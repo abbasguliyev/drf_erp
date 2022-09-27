@@ -3,33 +3,33 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework import generics
 from restAPI.v1.product.serializers import (
-    MehsullarSerializer,
+    ProductSerializer,
 )
 from product.models import (
-    Mehsullar, 
+    Product, 
 )
 from django_filters.rest_framework import DjangoFilterBackend
 from restAPI.v1.product.filters import (
-    MehsullarFilter,
+    ProductFilter,
 )
-from restAPI.v1.product import permissions as muqavile_permissions
+from restAPI.v1.product import permissions as contract_permissions
 
-# ********************************** mehsullar put get post delete **********************************
+# ********************************** product put get post delete **********************************
 
-class MehsullarListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Mehsullar.objects.all()
-    serializer_class = MehsullarSerializer
+class ProductListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MehsullarFilter
-    permission_classes = [muqavile_permissions.MehsullarPermissions]
+    filterset_class = ProductFilter
+    permission_classes = [contract_permissions.ProductPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Mehsullar.objects.all()
-        elif request.user.shirket is not None:
-            queryset = Mehsullar.objects.filter(shirket=request.user.shirket)
+            queryset = Product.objects.all()
+        elif request.user.company is not None:
+            queryset = Product.objects.filter(company=request.user.company)
         else:
-            queryset = Mehsullar.objects.all()
+            queryset = Product.objects.all()
         
         queryset = self.filter_queryset(queryset)
 
@@ -49,12 +49,12 @@ class MehsullarListCreateAPIView(generics.ListCreateAPIView):
         return Response({"detail": "Məhsul əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class MehsullarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Mehsullar.objects.all()
-    serializer_class = MehsullarSerializer
+class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MehsullarFilter
-    permission_classes = [muqavile_permissions.MehsullarPermissions]
+    filterset_class = ProductFilter
+    permission_classes = [contract_permissions.ProductPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

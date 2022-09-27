@@ -1,18 +1,18 @@
-from warehouse.models import Anbar
-from company.models import Ofis
+from warehouse.models import Warehouse
+from company.models import Office
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-@receiver(post_save, sender=Ofis)
-def create_anbar(sender, instance, created, **kwargs):
-    if created:
-        ofis = instance
-        shirket = ofis.shirket
-        ad = f"{ofis.ofis_adi} anbarı"
-        anbar = Anbar.objects.filter(ad=ad, ofis=ofis, shirket=shirket)
-        if len(anbar) == 0:
-            Anbar.objects.create(
-                ad=ad,
-                ofis=ofis,
-                shirket=shirket
+@receiver(post_save, sender=Office)
+def create_warehouse(sender, instance, created, **kwargs):
+    if created and instance.auto_create_warehouse:
+        office = instance
+        company = office.company
+        name = f"{office.name} warehouse"
+        warehouse = Warehouse.objects.filter(name=name, office=office, company=company)
+        if len(warehouse) == 0:
+            Warehouse.objects.create(
+                name=name,
+                office=office,
+                company=company
             ).save()

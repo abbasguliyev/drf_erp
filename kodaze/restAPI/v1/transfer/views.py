@@ -4,46 +4,46 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
 from restAPI.v1.transfer.serializers import (
-    HoldingdenShirketlereTransferSerializer,
-    ShirketdenHoldingeTransferSerializer,
-    OfisdenShirketeTransferSerializer,
-    ShirketdenOfislereTransferSerializer,
+    TransferFromHoldingToCompanySerializer,
+    TransferFromCompanyToHoldingSerializer,
+    TransferFromOfficeToCompanySerializer,
+    TransferFromCompanyToOfficesSerializer,
 )
 
 from transfer.models import (
-    HoldingdenShirketlereTransfer,
-    ShirketdenHoldingeTransfer,
-    ShirketdenOfislereTransfer,
-    OfisdenShirketeTransfer,
+    TransferFromHoldingToCompany,
+    TransferFromCompanyToHolding,
+    TransferFromCompanyToOffices,
+    TransferFromOfficeToCompany,
 )
 
 from restAPI.v1.transfer import utils as kassa_transfer_utils
 
 from restAPI.v1.transfer.filters import (
-    HoldingdenShirketlereTransferFilter,
-    OfisdenShirketeTransferFilter,
-    ShirketdenHoldingeTransferFilter,
-    ShirketdenOfislereTransferFilter,
+    TransferFromHoldingToCompanyFilter,
+    TransferFromOfficeToCompanyFilter,
+    TransferFromCompanyToHoldingFilter,
+    TransferFromCompanyToOfficesFilter,
 )
 
 from restAPI.v1.transfer import permissions as transfer_permissions
 
 # ********************************** transfer put delete post get **********************************
 
-class HoldingdenShirketlereTransferListCreateAPIView(generics.ListCreateAPIView):
-    queryset = HoldingdenShirketlereTransfer.objects.all()
-    serializer_class = HoldingdenShirketlereTransferSerializer
+class TransferFromHoldingToCompanyListCreateAPIView(generics.ListCreateAPIView):
+    queryset = TransferFromHoldingToCompany.objects.all()
+    serializer_class = TransferFromHoldingToCompanySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingdenShirketlereTransferFilter
-    permission_classes = [transfer_permissions.HoldingdenShirketlereTransferPermissions]
+    filterset_class = TransferFromHoldingToCompanyFilter
+    permission_classes = [transfer_permissions.TransferFromHoldingToCompanyPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = HoldingdenShirketlereTransfer.objects.all()
-        elif request.user.shirket is not None:
-            queryset = HoldingdenShirketlereTransfer.objects.filter(shirket_kassa__shirket=request.user.shirket)
+            queryset = TransferFromHoldingToCompany.objects.all()
+        elif request.user.company is not None:
+            queryset = TransferFromHoldingToCompany.objects.filter(cashbox__company=request.user.company)
         else:
-            queryset = HoldingdenShirketlereTransfer.objects.all()
+            queryset = TransferFromHoldingToCompany.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -55,34 +55,34 @@ class HoldingdenShirketlereTransferListCreateAPIView(generics.ListCreateAPIView)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return kassa_transfer_utils.holding_shirket_transfer_create(self, request, *args, **kwargs)
+        return kassa_transfer_utils.holding_company_transfer_create(self, request, *args, **kwargs)
 
 
-class HoldingdenShirketlereTransferDetailAPIView(generics.RetrieveAPIView):
-    queryset = HoldingdenShirketlereTransfer.objects.all()
-    serializer_class = HoldingdenShirketlereTransferSerializer
+class TransferFromHoldingToCompanyDetailAPIView(generics.RetrieveAPIView):
+    queryset = TransferFromHoldingToCompany.objects.all()
+    serializer_class = TransferFromHoldingToCompanySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingdenShirketlereTransferFilter
-    permission_classes = [transfer_permissions.HoldingdenShirketlereTransferPermissions]
+    filterset_class = TransferFromHoldingToCompanyFilter
+    permission_classes = [transfer_permissions.TransferFromHoldingToCompanyPermissions]
 
 
 
 # **********************************
 
-class ShirketdenHoldingeTransferListCreateAPIView(generics.ListCreateAPIView):
-    queryset = ShirketdenHoldingeTransfer.objects.all()
-    serializer_class = ShirketdenHoldingeTransferSerializer
+class TransferFromCompanyToHoldingListCreateAPIView(generics.ListCreateAPIView):
+    queryset = TransferFromCompanyToHolding.objects.all()
+    serializer_class = TransferFromCompanyToHoldingSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketdenHoldingeTransferFilter
-    permission_classes = [transfer_permissions.ShirketdenHoldingeTransferPermissions]
+    filterset_class = TransferFromCompanyToHoldingFilter
+    permission_classes = [transfer_permissions.TransferFromCompanyToHoldingPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShirketdenHoldingeTransfer.objects.all()
-        elif request.user.shirket is not None:
-            queryset = ShirketdenHoldingeTransfer.objects.filter(shirket_kassa__shirket=request.user.shirket)
+            queryset = TransferFromCompanyToHolding.objects.all()
+        elif request.user.company is not None:
+            queryset = TransferFromCompanyToHolding.objects.filter(cashbox__company=request.user.company)
         else:
-            queryset = ShirketdenHoldingeTransfer.objects.all()
+            queryset = TransferFromCompanyToHolding.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -94,36 +94,36 @@ class ShirketdenHoldingeTransferListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
         
     def create(self, request, *args, **kwargs):
-        return kassa_transfer_utils.shirket_holding_transfer_create(self, request, *args, **kwargs)
+        return kassa_transfer_utils.company_holding_transfer_create(self, request, *args, **kwargs)
 
 
-class ShirketdenHoldingeTransferDetailAPIView(generics.RetrieveAPIView):
-    queryset = ShirketdenHoldingeTransfer.objects.all()
-    serializer_class = ShirketdenHoldingeTransferSerializer
+class TransferFromCompanyToHoldingDetailAPIView(generics.RetrieveAPIView):
+    queryset = TransferFromCompanyToHolding.objects.all()
+    serializer_class = TransferFromCompanyToHoldingSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketdenHoldingeTransferFilter
-    permission_classes = [transfer_permissions.ShirketdenHoldingeTransferPermissions]
+    filterset_class = TransferFromCompanyToHoldingFilter
+    permission_classes = [transfer_permissions.TransferFromCompanyToHoldingPermissions]
 
 
 
 # **********************************
 
-class OfisdenShirketeTransferListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfisdenShirketeTransfer.objects.all()
-    serializer_class = OfisdenShirketeTransferSerializer
+class TransferFromOfficeToCompanyListCreateAPIView(generics.ListCreateAPIView):
+    queryset = TransferFromOfficeToCompany.objects.all()
+    serializer_class = TransferFromOfficeToCompanySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisdenShirketeTransferFilter
-    permission_classes = [transfer_permissions.OfisdenShirketeTransferPermissions]
+    filterset_class = TransferFromOfficeToCompanyFilter
+    permission_classes = [transfer_permissions.TransferFromOfficeToCompanyPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = OfisdenShirketeTransfer.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = OfisdenShirketeTransfer.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket, ofis_kassa__ofis=request.user.ofis, shirket_kassa__shirket=request.user.shirket)
-            queryset = OfisdenShirketeTransfer.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket, shirket_kassa__shirket=request.user.shirket)
+            queryset = TransferFromOfficeToCompany.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = TransferFromOfficeToCompany.objects.filter(cashbox__office__company=request.user.company, cashbox__office=request.user.office, cashbox__company=request.user.company)
+            queryset = TransferFromOfficeToCompany.objects.filter(cashbox__office__company=request.user.company, cashbox__company=request.user.company)
         else:
-            queryset = OfisdenShirketeTransfer.objects.all()
+            queryset = TransferFromOfficeToCompany.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -135,36 +135,36 @@ class OfisdenShirketeTransferListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return kassa_transfer_utils.ofis_shirket_transfer_create(self, request, *args, **kwargs)
+        return kassa_transfer_utils.office_company_transfer_create(self, request, *args, **kwargs)
 
 
-class OfisdenShirketeTransferDetailAPIView(generics.RetrieveAPIView):
-    queryset = OfisdenShirketeTransfer.objects.all()
-    serializer_class = OfisdenShirketeTransferSerializer
+class TransferFromOfficeToCompanyDetailAPIView(generics.RetrieveAPIView):
+    queryset = TransferFromOfficeToCompany.objects.all()
+    serializer_class = TransferFromOfficeToCompanySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisdenShirketeTransferFilter
-    permission_classes = [transfer_permissions.OfisdenShirketeTransferPermissions]
+    filterset_class = TransferFromOfficeToCompanyFilter
+    permission_classes = [transfer_permissions.TransferFromOfficeToCompanyPermissions]
 
 
 
 # **********************************
 
-class ShirketdenOfislereTransferListCreateAPIView(generics.ListCreateAPIView):
-    queryset = ShirketdenOfislereTransfer.objects.all()
-    serializer_class = ShirketdenOfislereTransferSerializer
+class TransferFromCompanyToOfficesListCreateAPIView(generics.ListCreateAPIView):
+    queryset = TransferFromCompanyToOffices.objects.all()
+    serializer_class = TransferFromCompanyToOfficesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketdenOfislereTransferFilter
-    permission_classes = [transfer_permissions.ShirketdenOfislereTransferPermissions]
+    filterset_class = TransferFromCompanyToOfficesFilter
+    permission_classes = [transfer_permissions.TransferFromCompanyToOfficesPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShirketdenOfislereTransfer.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = ShirketdenOfislereTransfer.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket, ofis_kassa__ofis=request.user.ofis, shirket_kassa__shirket=request.user.shirket)
-            queryset = ShirketdenOfislereTransfer.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket, shirket_kassa__shirket=request.user.shirket)
+            queryset = TransferFromCompanyToOffices.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = TransferFromCompanyToOffices.objects.filter(cashbox__office__company=request.user.company, cashbox__office=request.user.office, cashbox__company=request.user.company)
+            queryset = TransferFromCompanyToOffices.objects.filter(cashbox__office__company=request.user.company, cashbox__company=request.user.company)
         else:
-            queryset = ShirketdenOfislereTransfer.objects.all()
+            queryset = TransferFromCompanyToOffices.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -176,12 +176,12 @@ class ShirketdenOfislereTransferListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return kassa_transfer_utils.shirket_ofis_transfer_create(self, request, *args, **kwargs)
+        return kassa_transfer_utils.offices_transfer_create(self, request, *args, **kwargs)
 
 
-class ShirketdenOfislereTransferDetailAPIView(generics.RetrieveAPIView):
-    queryset = ShirketdenOfislereTransfer.objects.all()
-    serializer_class = ShirketdenOfislereTransferSerializer
+class TransferFromCompanyToOfficesDetailAPIView(generics.RetrieveAPIView):
+    queryset = TransferFromCompanyToOffices.objects.all()
+    serializer_class = TransferFromCompanyToOfficesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketdenOfislereTransferFilter
-    permission_classes = [transfer_permissions.ShirketdenOfislereTransferPermissions]
+    filterset_class = TransferFromCompanyToOfficesFilter
+    permission_classes = [transfer_permissions.TransferFromCompanyToOfficesPermissions]

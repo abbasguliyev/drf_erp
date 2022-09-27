@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from company.models import Vezifeler
+from company.models import Position
 from task_manager.models import Advertisement, TaskManager, UserTaskRequest
-from restAPI.v1.company.serializers import VezifelerSerializer
+from restAPI.v1.company.serializers import PositionSerializer
 from restAPI.v1.account.serializers import UserSerializer
 from django.contrib.auth import get_user_model
 
@@ -9,14 +9,14 @@ User = get_user_model()
 
 class PositionForTaskManagerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Vezifeler
-        fields = ['id', 'vezife_adi']
+        model = Position
+        fields = ['id', 'name']
 
 class UserForTaskManagerSerializer(serializers.ModelSerializer):
-    vezife = PositionForTaskManagerSerializer(read_only=True)
+    position = PositionForTaskManagerSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'asa', 'tel1', 'vezife']
+        fields = ['id', 'username', 'fullname', 'phone_number_1', 'position']
 
 class TaskManagerSerializer(serializers.ModelSerializer):
     creator = UserForTaskManagerSerializer(read_only=True)
@@ -35,6 +35,7 @@ class TaskManagerSerializer(serializers.ModelSerializer):
             'creator', 
             'created_date', 
             'end_date', 
+            'old_date', 
             'position', 
             'employee', 
             'status',

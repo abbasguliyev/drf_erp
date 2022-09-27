@@ -2,13 +2,13 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from warehouse.models import (
-    Emeliyyat, 
-    Anbar, 
-    AnbarQeydler, 
-    Stok,
+    Operation, 
+    Warehouse, 
+    WarehouseRequest, 
+    Stock,
 )
 from product.models import (
-    Mehsullar, 
+    Product, 
 )
 
 from account.models import (
@@ -16,137 +16,137 @@ from account.models import (
 )
 
 from company.models import (
-    Shirket,
-    Ofis,
+    Company,
+    Office,
 )
 
 from restAPI.v1.account.serializers import UserSerializer
-from restAPI.v1.product.serializers import MehsullarSerializer
+from restAPI.v1.product.serializers import ProductSerializer
 
-from restAPI.v1.company.serializers import OfisSerializer, ShirketSerializer
+from restAPI.v1.company.serializers import OfficeSerializer, CompanySerializer
 
-class AnbarSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only=True)
-    ofis = OfisSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True
+class WarehouseSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    office = OfficeSerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
     )
-    ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.all(), source='office', write_only=True
     )
 
     class Meta:
-        model = Anbar
+        model = Warehouse
         fields = "__all__"
 
     def create(self, validated_data):
-        ad = validated_data.get('ad')
-        validated_data['ad'] = ad.upper()
+        name = validated_data.get('name')
+        validated_data['name'] = name.upper()
         try:
-            return super(AnbarSerializer, self).create(validated_data)
+            return super(WarehouseSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail" : 'Bu ad ilə anbar artıq əlavə olunub'})
+            raise ValidationError({"detail" : 'Bu ad ilə warehouse artıq əlavə olunub'})
 
-class EmeliyyatSerializer(serializers.ModelSerializer):
-    icraci = UserSerializer(read_only=True)
-    gonderen = AnbarSerializer(read_only=True)
-    qebul_eden = AnbarSerializer(read_only=True)
+class OperationSerializer(serializers.ModelSerializer):
+    executor = UserSerializer(read_only=True)
+    shipping_warehouse = WarehouseSerializer(read_only=True)
+    receiving_warehouse = WarehouseSerializer(read_only=True)
 
-    gonderen_id = serializers.PrimaryKeyRelatedField(
-        queryset=Anbar.objects.all(), source="gonderen", write_only=True, required= True
+    shipping_warehouse_id = serializers.PrimaryKeyRelatedField(
+        queryset=Warehouse.objects.all(), source="shipping_warehouse", write_only=True, required= True
     )
-    qebul_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=Anbar.objects.all(), source="qebul_eden", write_only=True, required= True
+    receiving_warehouse_id = serializers.PrimaryKeyRelatedField(
+        queryset=Warehouse.objects.all(), source="receiving_warehouse", write_only=True, required= True
     )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        mehsul_ve_sayi = instance.mehsul_ve_sayi
-        emeliyyat_novu = instance.emeliyyat_novu
-        stok_ile_gelen_say = instance.say
+        product_and_quantity = instance.product_and_quantity
+        operation_type = instance.operation_type
+        stok_ile_gelen_quantity = instance.quantity
         data = dict()
-        if(mehsul_ve_sayi is not None):
-            if emeliyyat_novu == "transfer":
-                mehsul_ve_sayi_list = mehsul_ve_sayi.split(",")
-                for m in mehsul_ve_sayi_list:
-                    mehsul_ve_say = m.split("-")
-                    mehsul_id = int(mehsul_ve_say[0].strip())
-                    say = int(mehsul_ve_say[1])
-                    mehsul = Mehsullar.objects.get(pk=mehsul_id)
-                    data[mehsul.mehsulun_adi]=say
+        if(product_and_quantity is not None):
+            if operation_type == "transfer":
+                product_and_quantity_list = product_and_quantity.split(",")
+                for m in product_and_quantity_list:
+                    product_ve_quantity = m.split("-")
+                    product_id = int(product_ve_quantity[0].strip())
+                    quantity = int(product_ve_quantity[1])
+                    product = Product.objects.get(pk=product_id)
+                    data[product.product_name]=quantity
             else:
-                data[mehsul_ve_sayi]=stok_ile_gelen_say
+                data[product_and_quantity]=stok_ile_gelen_quantity
 
-        representation['mehsul'] = data
+        representation['product'] = data
 
         return representation
 
     class Meta:
-        model = Emeliyyat
+        model = Operation
         fields = "__all__"
 
-class StokSerializer(serializers.ModelSerializer):
-    anbar = AnbarSerializer(read_only=True)
-    mehsul = MehsullarSerializer(read_only=True)
+class StockSerializer(serializers.ModelSerializer):
+    warehouse = WarehouseSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
 
-    anbar_id = serializers.PrimaryKeyRelatedField(
-        queryset=Anbar.objects.all(), source='anbar', write_only=True
+    warehouse_id = serializers.PrimaryKeyRelatedField(
+        queryset=Warehouse.objects.all(), source='warehouse', write_only=True
     )
 
-    mehsul_id = serializers.PrimaryKeyRelatedField(
-        queryset=Mehsullar.objects.all(), source='mehsul', write_only=True
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source='product', write_only=True
     )
     
     class Meta:
-        model = Stok
+        model = Stock
         fields = "__all__"
 
 
-class AnbarQeydlerSerializer(serializers.ModelSerializer):
-    anbar = AnbarSerializer(read_only=True)
-    anbar_id = serializers.PrimaryKeyRelatedField(
-        queryset=Anbar.objects.all(), source='anbar', write_only=True
+class WarehouseRequestSerializer(serializers.ModelSerializer):
+    warehouse = WarehouseSerializer(read_only=True)
+    warehouse_id = serializers.PrimaryKeyRelatedField(
+        queryset=Warehouse.objects.all(), source='warehouse', write_only=True
     )
 
-    gonderen_user = UserSerializer(read_only=True)
-    gonderen_user_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='gonderen_user', write_only=True, required=False, allow_null=True
+    employee_who_sent_the_request = UserSerializer(read_only=True)
+    employee_who_sent_the_request_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee_who_sent_the_request', write_only=True, required=False, allow_null=True
     )
 
-    stok = StokSerializer(read_only=True)
+    stok = StockSerializer(read_only=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        mehsul_ve_sayi = instance.mehsul_ve_sayi
+        product_and_quantity = instance.product_and_quantity
         stok_list = list()
         
-        if(mehsul_ve_sayi is not None):
-            mehsul_ve_sayi_list = mehsul_ve_sayi.split(",")
-            for m in mehsul_ve_sayi_list:
+        if(product_and_quantity is not None):
+            product_and_quantity_list = product_and_quantity.split(",")
+            for m in product_and_quantity_list:
                 stok_data = dict()
-                mehsul_ve_say = m.split("-")
-                mehsul_id = int(mehsul_ve_say[0].strip())
-                say = int(mehsul_ve_say[1])
-                mehsul = Mehsullar.objects.get(pk=mehsul_id)
+                product_ve_quantity = m.split("-")
+                product_id = int(product_ve_quantity[0].strip())
+                quantity = int(product_ve_quantity[1])
+                product = Product.objects.get(pk=product_id)
                 try:
-                    stok = Stok.objects.filter(mehsul=mehsul, anbar=instance.anbar)[0]
+                    stok = Stock.objects.filter(product=product, warehouse=instance.warehouse)[0]
                     stok_data['id'] = stok.id
-                    stok_data['mehsul_id'] = stok.mehsul.id
-                    stok_data['mehsul'] = stok.mehsul.mehsulun_adi
-                    stok_data['qiymet'] = stok.mehsul.qiymet
-                    stok_data['say'] = stok.say
-                    stok_data['miqdari'] = say
+                    stok_data['product_id'] = stok.product.id
+                    stok_data['product'] = stok.product.product_name
+                    stok_data['price'] = stok.product.price
+                    stok_data['quantity'] = stok.quantity
+                    stok_data['quantityi'] = quantity
                     stok_list.append(stok_data)
                 except:
                     stok_list.append(stok_data)
         
-        representation['mehsul'] = stok_list
+        representation['product'] = stok_list
 
         return representation
 
     class Meta:
-        model = AnbarQeydler
+        model = WarehouseRequest
         fields = "__all__"
-        read_only_fields = ('gonderen_user', 'stok')
+        read_only_fields = ('employee_who_sent_the_request', 'stok')

@@ -19,86 +19,86 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    "maas_goruntuleme_create_task": {
-        "task": "maas_goruntuleme_create_task",
+    "salary_view_create_task_1": {
+        "task": "salary_view_create_task",
         "schedule": crontab(0,0,'*', day_of_month="1"),
     },
-    "maas_goruntuleme_create_task_15": {
-        "task": "maas_goruntuleme_create_task_15",
+    "salary_view_create_task_15": {
+        "task": "salary_view_create_task",
         "schedule": crontab(0,0,'*', day_of_month="15"),
     },
-    "work_day_creater_task1": {
-        "task": "work_day_creater_task1",
+    "work_day_creater_task_1": {
+        "task": "work_day_creater_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_task15": {
-        "task": "work_day_creater_task15",
+    "work_day_creater_task_15": {
+        "task": "work_day_creater_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
 
-    "work_day_creater_holding_task1": {
-        "task": "work_day_creater_holding_task1",
+    "work_day_creater_holding_task_1": {
+        "task": "work_day_creater_holding_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_holding_task15": {
-        "task": "work_day_creater_holding_task15",
+    "work_day_creater_holding_task_15": {
+        "task": "work_day_creater_holding_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
 
-    "work_day_creater_shirket_task1": {
-        "task": "work_day_creater_shirket_task1",
+    "work_day_creater_company_task_1": {
+        "task": "work_day_creater_company_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_shirket_task15": {
-        "task": "work_day_creater_shirket_task15",
+    "work_day_creater_company_task_15": {
+        "task": "work_day_creater_company_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
 
-    "work_day_creater_ofis_task1": {
-        "task": "work_day_creater_ofis_task1",
+    "work_day_creater_office_task_1": {
+        "task": "work_day_creater_office_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_ofis_task15": {
-        "task": "work_day_creater_ofis_task15",
+    "work_day_creater_office_task_15": {
+        "task": "work_day_creater_office_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
 
-    "work_day_creater_shobe_task1": {
-        "task": "work_day_creater_shobe_task1",
+    "work_day_creater_department_task_1": {
+        "task": "work_day_creater_department_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_shobe_task15": {
-        "task": "work_day_creater_shobe_task15",
+    "work_day_creater_department_task_15": {
+        "task": "work_day_creater_department_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
 
-    "work_day_creater_komanda_task1": {
-        "task": "work_day_creater_komanda_task1",
+    "work_day_creater_team_task_1": {
+        "task": "work_day_creater_team_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_komanda_task15": {
-        "task": "work_day_creater_komanda_task15",
+    "work_day_creater_team_task_15": {
+        "task": "work_day_creater_team_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
 
-    "work_day_creater_vezife_task1": {
-        "task": "work_day_creater_vezife_task1",
+    "work_day_creater_position_task_1": {
+        "task": "work_day_creater_position_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "work_day_creater_vezife_task15": {
-        "task": "work_day_creater_vezife_task15",
+    "work_day_creater_position_task_15": {
+        "task": "work_day_creater_position_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
-    "isci_fix_maas_auto_elave_et": {
-        "task": "isci_fix_maas_auto_elave_et",
+    "employee_fix_prim_auto_add": {
+        "task": "employee_fix_prim_auto_add",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "demo": {
-        "task": "demo",
+    "demo_create_task_1": {
+        "task": "demo_create_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),
     },
-    "demo15": {
-        "task": "demo",
+    "demo_create_task_15": {
+        "task": "demo_create_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
     "backup": {

@@ -1,24 +1,24 @@
 from django.contrib import admin
 from .models import (
-    Servis, 
-    ServisOdeme, 
+    Service, 
+    ServicePayment, 
 )
 
-class ServisAdmin(admin.ModelAdmin):
+class ServiceAdmin(admin.ModelAdmin):
     list_filter = [
-        "muqavile",
+        "contract",
     ]
     search_fields = (
-        "muqavile",
+        "contract",
     )
 
-class ServisOdemeAdmin(admin.ModelAdmin):
+class ServicePaymentAdmin(admin.ModelAdmin):
     list_filter = [
-        "servis",
+        "service",
     ]
     search_fields = (
-        "servis",
+        "service",
     )
 
-admin.site.register(Servis, ServisAdmin)
-admin.site.register(ServisOdeme, ServisOdemeAdmin)
+admin.site.register(Service, ServiceAdmin)
+admin.site.register(ServicePayment, ServicePaymentAdmin)

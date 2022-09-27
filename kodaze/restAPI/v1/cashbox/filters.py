@@ -1,71 +1,71 @@
 import django_filters
 
 from cashbox.models import (
-    HoldingKassa,
-    ShirketKassa,
-    OfisKassa,
-    PulAxini
+    HoldingCashbox,
+    CompanyCashbox,
+    OfficeCashbox,
+    CashFlow
 )
-class HoldingKassaFilter(django_filters.FilterSet):
+class HoldingCashboxFilter(django_filters.FilterSet):
     class Meta:
-        model = HoldingKassa
+        model = HoldingCashbox
         fields = {
             'holding__id': ['exact'],
-            'holding__holding_adi': ['exact', 'icontains'],
-            'balans': ['exact', 'gte', 'lte'],
+            'holding__name': ['exact', 'icontains'],
+            'balance': ['exact', 'gte', 'lte'],
         }
 
-class ShirketKassaFilter(django_filters.FilterSet):
+class CompanyCashboxFilter(django_filters.FilterSet):
     class Meta:
-        model = ShirketKassa
+        model = CompanyCashbox
         fields = {
-            'shirket__id': ['exact'],
-            'shirket__shirket_adi': ['exact', 'icontains'],
-            'shirket__is_active': ['exact'],
-            'balans': ['exact', 'gte', 'lte'],
+            'company__id': ['exact'],
+            'company__name': ['exact', 'icontains'],
+            'company__is_active': ['exact'],
+            'balance': ['exact', 'gte', 'lte'],
         }
 
-class OfisKassaFilter(django_filters.FilterSet):
+class OfficeCashboxFilter(django_filters.FilterSet):
     class Meta:
-        model = OfisKassa
+        model = OfficeCashbox
         fields = {
-            'ofis__id': ['exact'],
-            'ofis__ofis_adi': ['exact', 'icontains'],
-            'ofis__is_active': ['exact'],
-            'ofis__shirket__id': ['exact'],
-            'ofis__shirket__shirket_adi': ['exact', 'icontains'],
+            'office__id': ['exact'],
+            'office__name': ['exact', 'icontains'],
+            'office__is_active': ['exact'],
+            'office__company__id': ['exact'],
+            'office__company__name': ['exact', 'icontains'],
 
-            'balans': ['exact', 'gte', 'lte'],
+            'balance': ['exact', 'gte', 'lte'],
         }
 
-class PulAxiniFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class CashFlowFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
-        model = PulAxini
+        model = CashFlow
         fields = {
-            'emeliyyat_eden': ['exact'],
-            'emeliyyat_eden__asa': ['exact', 'icontains'],
+            'executor': ['exact'],
+            'executor__fullname': ['exact', 'icontains'],
 
-            'emeliyyat_eden__vezife__vezife_adi': ['exact', 'icontains'],
-            'emeliyyat_eden__isci_status__status_adi': ['exact', 'icontains'],
+            'executor__position__name': ['exact', 'icontains'],
+            'executor__employee_status__status_name': ['exact', 'icontains'],
 
-            'holding__holding_adi': ['exact', 'icontains'],
+            'holding__name': ['exact', 'icontains'],
             'holding': ['exact'],
 
-            'ofis__ofis_adi': ['exact', 'icontains'],
-            'ofis': ['exact'],
+            'office__name': ['exact', 'icontains'],
+            'office': ['exact'],
 
-            'shirket__shirket_adi': ['exact', 'icontains'],
-            'shirket': ['exact'],
+            'company__name': ['exact', 'icontains'],
+            'company': ['exact'],
 
-            'ilkin_balans': ['exact', 'gte', 'lte'],
-            'sonraki_balans': ['exact', 'gte', 'lte'],
-            'aciqlama': ['exact', 'icontains'],
+            'initial_balance': ['exact', 'gte', 'lte'],
+            'subsequent_balance': ['exact', 'gte', 'lte'],
+            'description': ['exact', 'icontains'],
 
-            'emeliyyat_uslubu': ['exact', 'icontains'],
+            'operation_style': ['exact', 'icontains'],
             
-            # 'tarix': ['exact', 'gte', 'lte'],
+            # 'date': ['exact', 'gte', 'lte'],
         }

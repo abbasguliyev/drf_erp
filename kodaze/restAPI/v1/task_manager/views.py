@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from restAPI.v1.task_manager.serializers import TaskManagerSerializer, UserTaskRequestSerializer, AdvertisementSerializer
 from task_manager.models import TaskManager, UserTaskRequest, Advertisement
-from company.models import Vezifeler
+from company.models import Position
 from restAPI.v1.task_manager.filters import TaskManagerFilter, UserTaskRequestFilter, AdvertisementFilter
 from . import permissions
 
@@ -28,11 +28,11 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
     
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        toplam_tapsiriq_sayi = 0
+        toplam_tapsiriq_quantityi = 0
         tamamlandi = 0
         icra_edilir = 0
         gecikir = 0
-        toplam_tapsiriq_sayi = queryset.aggregate(
+        toplam_tapsiriq_quantityi = queryset.aggregate(
             toplam = Count('id')
         ).get("toplam")
         tamamlandi = queryset.filter(status="Tamamlandı").aggregate(
@@ -53,7 +53,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             serializer = self.get_serializer(page, many=True)
             # serializer.data
             return self.get_paginated_response([{
-                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
+                    'toplam_tapsiriq_quantityi':toplam_tapsiriq_quantityi,
                     'tamamlandi':tamamlandi,
                     'icra_edilir':icra_edilir,
                     'gecikir':gecikir,
@@ -61,7 +61,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             }])
         serializer = self.get_serializer(queryset, many=True)
         return Response([{
-                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
+                    'toplam_tapsiriq_quantityi':toplam_tapsiriq_quantityi,
                     'tamamlandi':tamamlandi,
                     'icra_edilir':icra_edilir,
                     'gecikir':gecikir,
@@ -91,8 +91,8 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
 
             if position_list is not None:
                 for position_id in position_list:
-                    position = Vezifeler.objects.get(pk=position_id)
-                    users = User.objects.filter(vezife=position)
+                    position = Position.objects.get(pk=position_id)
+                    users = User.objects.filter(position=position)
                     for user in users:
                         task_manager = TaskManager.objects.create(
                             creator = creator,
@@ -182,8 +182,8 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
     
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        toplam_tapsiriq_sayi = 0
-        toplam_tapsiriq_sayi = queryset.aggregate(
+        toplam_tapsiriq_quantityi = 0
+        toplam_tapsiriq_quantityi = queryset.aggregate(
             toplam = Count('id')
         ).get("toplam")
 
@@ -192,12 +192,12 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([{
-                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
+                    'toplam_tapsiriq_quantityi':toplam_tapsiriq_quantityi,
                     'data':serializer.data
             }])
         serializer = self.get_serializer(queryset, many=True)
         return Response([{
-                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
+                    'toplam_tapsiriq_quantityi':toplam_tapsiriq_quantityi,
                     'data':serializer.data
             }])
         
@@ -216,7 +216,7 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
 
             if position_list is not None:
                 for position_id in position_list:
-                    position = Vezifeler.objects.get(pk=position_id)
+                    position = Position.objects.get(pk=position_id)
                     advertisement = Advertisement.objects.create(
                         creator = creator,
                         title = serializer.validated_data.get('title'),

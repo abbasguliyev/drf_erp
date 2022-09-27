@@ -1,31 +1,40 @@
-from company.models import Holding, Ofis, Shirket
-from .models import HoldingKassa, OfisKassa, ShirketKassa
+from company.models import Holding, Office, Company
+from .models import HoldingCashbox, OfficeCashbox, CompanyCashbox
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-@receiver(post_save, sender=Ofis)
-def create_ofis_kassa(sender, instance, created, **kwargs):
-    if created:
-        ofis_kassa = OfisKassa.objects.filter(ofis=instance)
-        if len(ofis_kassa) == 0:
-            ofis = instance
-            balans = 0
-            ofis_kassa = OfisKassa.objects.create(ofis=ofis, balans=balans).save()
 
-@receiver(post_save, sender=Shirket)
-def create_shirket_kassa(sender, instance, created, **kwargs):
+@receiver(post_save, sender=Office)
+def create_office_cashbox(sender, instance, created, **kwargs):
     if created:
-        shirket_kassa = ShirketKassa.objects.filter(shirket=instance)
-        if len(shirket_kassa) == 0:
-            shirket = instance
-            balans = 0
-            shirket_kassa = ShirketKassa.objects.create(shirket=shirket, balans=balans).save()
+        office_cashbox = OfficeCashbox.objects.select_related(
+            "office").filter(office=instance)
+        if len(office_cashbox) == 0:
+            office = instance
+            balance = 0
+            office_cashbox = OfficeCashbox.objects.create(
+                office=office, balance=balance).save()
+
+
+@receiver(post_save, sender=Company)
+def create_company_cashbox(sender, instance, created, **kwargs):
+    if created:
+        company_cashbox = CompanyCashbox.objects.select_related(
+            "company").filter(company=instance)
+        if len(company_cashbox) == 0:
+            company = instance
+            balance = 0
+            company_cashbox = CompanyCashbox.objects.create(
+                company=company, balance=balance).save()
+
 
 @receiver(post_save, sender=Holding)
-def create_holding_kassa(sender, instance, created, **kwargs):
+def create_holding_cashbox(sender, instance, created, **kwargs):
     if created:
-        holding_kassa = HoldingKassa.objects.filter(holding=instance)
-        if len(holding_kassa) == 0:
+        holding_cashbox = HoldingCashbox.objects.select_related(
+            "holding").filter(holding=instance)
+        if len(holding_cashbox) == 0:
             holding = instance
-            balans = 0
-            holding_kassa = HoldingKassa.objects.create(holding=holding, balans=balans).save()
+            balance = 0
+            holding_cashbox = HoldingCashbox.objects.create(
+                holding=holding, balance=balance).save()

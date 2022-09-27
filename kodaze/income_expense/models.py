@@ -5,157 +5,121 @@ from core.image_validator import file_size
 
 USER = get_user_model()
 
-# Create your models here.
-class HoldingKassaMedaxil(models.Model):
-    medaxil_eden = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
-                                     related_name="user_holding_medaxil")
-    holding_kassa = models.ForeignKey("cashbox.HoldingKassa", on_delete=models.CASCADE, null=True,
-                                      related_name="holding_kassa_medaxil")
-    mebleg = models.FloatField(default=0)
-    qeyd = models.TextField(null=True, blank=True)
-    medaxil_tarixi = models.DateField(default=None)
-    evvelki_balans = models.FloatField(default=0, blank=True)
-    sonraki_balans = models.FloatField(default=0, blank=True)
+
+
+class AbstractIncomeExpense(models.Model):
+    amount = models.FloatField(default=0)
+    image_of_receipt = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[
+                                         file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
+    note = models.TextField(null=True, blank=True)
+    date = models.DateField(default=None)
+    previous_balance = models.FloatField(default=0, blank=True)
+    subsequent_balance = models.FloatField(default=0, blank=True)
+
+    class Meta:
+        abstract = True
+
+class HoldingCashboxIncome(AbstractIncomeExpense):
+    image_of_receipt = None
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
+                                     related_name="user_holding_income")
+    cashbox = models.ForeignKey("cashbox.HoldingCashbox", on_delete=models.CASCADE, null=True,
+                                      related_name="cashbox_income")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_holdingkassamedaxil", "Mövcud holdinq kassa mədaxillərə baxa bilər"),
-            ("add_holdingkassamedaxil", "Holdinq kassa mədaxil əlavə edə bilər"),
-            ("change_holdingkassamedaxil", "Holdinq kassa mədaxil məlumatlarını yeniləyə bilər"),
-            ("delete_holdingkassamedaxil", "Holdinq kassa mədaxil silə bilər")
+            ("view_holdingcashboxincome", "Mövcud holdinq kassa mədaxillərə baxa bilər"),
+            ("add_holdingcashboxincome", "Holdinq kassa mədaxil əlavə edə bilər"),
+            ("change_holdingcashboxincome", "Holdinq kassa mədaxil məlumatlarını yeniləyə bilər"),
+            ("delete_holdingcashboxincome", "Holdinq kassa mədaxil silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.holding_kassa} kassasına {self.mebleg} azn mədaxil edildi"
 
-
-class HoldingKassaMexaric(models.Model):
-    mexaric_eden = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
-                                     related_name="user_holding_mexaric")
-    holding_kassa = models.ForeignKey("cashbox.HoldingKassa", on_delete=models.CASCADE, null=True,
-                                      related_name="holding_kassa_mexaric")
-    mebleg = models.FloatField(default=0)
-    qebzin_resmi = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    qeyd = models.TextField(null=True, blank=True)
-    mexaric_tarixi = models.DateField(default=None)
-    evvelki_balans = models.FloatField(default=0, blank=True)
-    sonraki_balans = models.FloatField(default=0, blank=True)
+class HoldingCashboxExpense(AbstractIncomeExpense):
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
+                                     related_name="user_holding_expense")
+    cashbox = models.ForeignKey("cashbox.HoldingCashbox", on_delete=models.CASCADE, null=True,
+                                      related_name="cashbox_expense")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_holdingkassamexaric", "Mövcud holdinq kassa məxariclərə baxa bilər"),
-            ("add_holdingkassamexaric", "Holdinq kassa məxaric əlavə edə bilər"),
-            ("change_holdingkassamexaric", "Holdinq kassa məxaric məlumatlarını yeniləyə bilər"),
-            ("delete_holdingkassamexaric", "Holdinq kassa məxaric silə bilər")
+            ("view_holdingcashboxexpense", "Mövcud holdinq kassa məxariclərə baxa bilər"),
+            ("add_holdingcashboxexpense", "Holdinq kassa məxaric əlavə edə bilər"),
+            ("change_holdingcashboxexpense", "Holdinq kassa məxaric məlumatlarını yeniləyə bilər"),
+            ("delete_holdingcashboxexpense", "Holdinq kassa məxaric silə bilər")
         )
-
-    # def __str__(self) -> str:
-    #     return f"{self.holding_kassa} kassasından {self.mebleg} azn məxaric edildi"
 
 
 # -----------------------------------------------------
 
-class ShirketKassaMedaxil(models.Model):
-    medaxil_eden = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
-                                     related_name="user_shirket_medaxil")
-    shirket_kassa = models.ForeignKey("cashbox.ShirketKassa", on_delete=models.CASCADE, null=True,
-                                      related_name="shirket_kassa_medaxil")
-    mebleg = models.FloatField(default=0)
-    qeyd = models.TextField(null=True, blank=True)
-    medaxil_tarixi = models.DateField(default=None)
-    evvelki_balans = models.FloatField(default=0, blank=True)
-    sonraki_balans = models.FloatField(default=0, blank=True)
+class CompanyCashboxIncome(AbstractIncomeExpense):
+    image_of_receipt = None
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
+                                     related_name="user_company_income")
+    cashbox = models.ForeignKey("cashbox.CompanyCashbox", on_delete=models.CASCADE, null=True,
+                                      related_name="cashbox_income")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_shirketkassamedaxil", "Mövcud şirkət kassa mədaxillərə baxa bilər"),
-            ("add_shirketkassamedaxil", "Şirkət kassa mədaxil əlavə edə bilər"),
-            ("change_shirketkassamedaxil", "Şirkət kassa mədaxil məlumatlarını yeniləyə bilər"),
-            ("delete_shirketkassamedaxil", "Şirkət kassa mədaxil silə bilər")
+            ("view_companycashboxincome", "Mövcud şirkət kassa mədaxillərə baxa bilər"),
+            ("add_companycashboxincome", "Şirkət kassa mədaxil əlavə edə bilər"),
+            ("change_companycashboxincome", "Şirkət kassa mədaxil məlumatlarını yeniləyə bilər"),
+            ("delete_companycashboxincome", "Şirkət kassa mədaxil silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.shirket_kassa} kassasına {self.mebleg} azn mədaxil edildi"
 
-
-class ShirketKassaMexaric(models.Model):
-    mexaric_eden = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
-                                     related_name="user_shirket_mexaric")
-    shirket_kassa = models.ForeignKey("cashbox.ShirketKassa", on_delete=models.CASCADE, null=True,
-                                      related_name="shirket_kassa_mexaric")
-    mebleg = models.FloatField(default=0)
-    qebzin_resmi = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    qeyd = models.TextField(null=True, blank=True)
-    mexaric_tarixi = models.DateField(default=None)
-    evvelki_balans = models.FloatField(default=0, blank=True)
-    sonraki_balans = models.FloatField(default=0, blank=True)
+class CompanyCashboxExpense(AbstractIncomeExpense):
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
+                                     related_name="user_company_expense")
+    cashbox = models.ForeignKey("cashbox.CompanyCashbox", on_delete=models.CASCADE, null=True,
+                                      related_name="cashbox_expense")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_shirketkassamexaric", "Mövcud şirkət kassa məxariclərə baxa bilər"),
-            ("add_shirketkassamexaric", "Şirkət kassa məxaric əlavə edə bilər"),
-            ("change_shirketkassamexaric", "Şirkət kassa məxaric məlumatlarını yeniləyə bilər"),
-            ("delete_shirketkassamexaric", "Şirkət kassa məxaric silə bilər")
+            ("view_companycashboxexpense", "Mövcud şirkət kassa məxariclərə baxa bilər"),
+            ("add_companycashboxexpense", "Şirkət kassa məxaric əlavə edə bilər"),
+            ("change_companycashboxexpense", "Şirkət kassa məxaric məlumatlarını yeniləyə bilər"),
+            ("delete_companycashboxexpense", "Şirkət kassa məxaric silə bilər")
         )
-
-    # def __str__(self) -> str:
-    #     return f"{self.shirket_kassa} kassasından {self.mebleg} azn məxaric edildi"
 
 
 # -----------------------------------------------------
 
-class OfisKassaMedaxil(models.Model):
-    medaxil_eden = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
-                                     related_name="user_ofis_medaxil")
-    ofis_kassa = models.ForeignKey("cashbox.OfisKassa", on_delete=models.CASCADE, null=True, related_name="ofis_kassa_medaxil")
-    mebleg = models.FloatField(default=0)
-    qeyd = models.TextField(null=True, blank=True)
-    medaxil_tarixi = models.DateField(default=None)
-    evvelki_balans = models.FloatField(default=0, blank=True)
-    sonraki_balans = models.FloatField(default=0, blank=True)
+class OfficeCashboxIncome(AbstractIncomeExpense):
+    image_of_receipt = None
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
+                                     related_name="user_office_income")
+    cashbox = models.ForeignKey("cashbox.OfficeCashbox", on_delete=models.CASCADE, null=True, related_name="cashbox_income")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_ofiskassamedaxil", "Mövcud ofis kassa mədaxillərə baxa bilər"),
-            ("add_ofiskassamedaxil", "Ofis kassa mədaxil əlavə edə bilər"),
-            ("change_ofiskassamedaxil", "Ofis kassa mədaxil məlumatlarını yeniləyə bilər"),
-            ("delete_ofiskassamedaxil", "Ofis kassa mədaxil silə bilər")
+            ("view_officecashboxincome", "Mövcud office kassa mədaxillərə baxa bilər"),
+            ("add_officecashboxincome", "Office kassa mədaxil əlavə edə bilər"),
+            ("change_officecashboxincome", "Office kassa mədaxil məlumatlarını yeniləyə bilər"),
+            ("delete_officecashboxincome", "Office kassa mədaxil silə bilər")
         )
 
-    # def __str__(self) -> str:
-    #     return f"{self.ofis_kassa} kassasına {self.mebleg} azn mədaxil edildi"
-
-
-class OfisKassaMexaric(models.Model):
-    mexaric_eden = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
-                                     related_name="user_ofis_mexaric")
-    ofis_kassa = models.ForeignKey("cashbox.OfisKassa", on_delete=models.CASCADE, null=True, related_name="ofis_kassa_mexaric")
-    mebleg = models.FloatField(default=0)
-    qebzin_resmi = models.ImageField(upload_to="media/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    qeyd = models.TextField(null=True, blank=True)
-    mexaric_tarixi = models.DateField(default=None)
-    evvelki_balans = models.FloatField(default=0, blank=True)
-    sonraki_balans = models.FloatField(default=0, blank=True)
+class OfficeCashboxExpense(AbstractIncomeExpense):
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True,
+                                     related_name="user_office_expense")
+    cashbox = models.ForeignKey("cashbox.OfficeCashbox", on_delete=models.CASCADE, null=True, related_name="cashbox_expense")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_ofiskassamexaric", "Mövcud ofis kassa məxariclərə baxa bilər"),
-            ("add_ofiskassamexaric", "Ofis kassa məxaric əlavə edə bilər"),
-            ("change_ofiskassamexaric", "Ofis kassa məxaric məlumatlarını yeniləyə bilər"),
-            ("delete_ofiskassamexaric", "Ofis kassa məxaric silə bilər")
+            ("view_officecashboxexpense", "Mövcud office kassa məxariclərə baxa bilər"),
+            ("add_officecashboxexpense", "Office kassa məxaric əlavə edə bilər"),
+            ("change_officecashboxexpense", "Office kassa məxaric məlumatlarını yeniləyə bilər"),
+            ("delete_officecashboxexpense", "Office kassa məxaric silə bilər")
         )
-
-    # def __str__(self) -> str:
-    #     return f"{self.ofis_kassa} kassasından {self.mebleg} azn məxaric edildi"

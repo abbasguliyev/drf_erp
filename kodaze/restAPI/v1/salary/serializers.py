@@ -1,72 +1,70 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from account.models import IsciStatus, User
-from company.models import Vezifeler
-from restAPI.v1.company.serializers import VezifelerSerializer
+from account.models import EmployeeStatus, User
+from company.models import Position
+from restAPI.v1.company.serializers import PositionSerializer
 
 from salary.models import (
-    Avans,
-    Menecer1PrimNew,
-    Kesinti,
+    AdvancePayment,
+    Manager1PrimNew,
+    SalaryDeduction,
     Bonus,
-    MaasGoruntuleme,
-    MaasOde, 
-    GroupLeaderPrim, 
-    Menecer1Prim, 
+    SalaryView,
+    PaySalary, 
     OfficeLeaderPrim,
-    Menecer2Prim,
-    KreditorPrim,
+    Manager2Prim,
+    CreditorPrim,
     GroupLeaderPrimNew
 )
 
-from restAPI.v1.account.serializers import IsciStatusSerializer, UserSerializer
+from restAPI.v1.account.serializers import EmployeeStatusSerializer, UserSerializer
 
-class AvansSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True, many=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', many=True, write_only=True
+class AdvancePaymentSerializer(serializers.ModelSerializer):
+    employee = UserSerializer(read_only=True, many=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', many=True, write_only=True
     )
 
     class Meta:
-        model = Avans
+        model = AdvancePayment
         fields = "__all__"
 
-class KesintiSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', write_only=True
+class SalaryDeductionSerializer(serializers.ModelSerializer):
+    employee = UserSerializer(read_only=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', write_only=True
     )
 
     class Meta:
-        model = Kesinti
+        model = SalaryDeduction
         fields = "__all__"
         
         
 class BonusSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', write_only=True
+    employee = UserSerializer(read_only=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', write_only=True
     )
   
     class Meta:
         model = Bonus
         fields = "__all__"
 
-class MaasOdeSerializer(serializers.ModelSerializer):
+class PaySalarySerializer(serializers.ModelSerializer):
     class Meta:
-        model = MaasOde
-        fields = ('isci', 'mebleg', 'qeyd', 'odeme_tarixi')
-        read_only_fields = ('mebleg',)
+        model = PaySalary
+        fields = ('employee', 'amount', 'note', 'installment')
+        read_only_fields = ('amount',)
 
 class OfficeLeaderPrimSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
+    prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
+        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
     )
 
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source="position", write_only=True
     )
 
     class Meta:
@@ -75,39 +73,25 @@ class OfficeLeaderPrimSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
-        vezife = validated_data.get('vezife')
+        position = validated_data.get('position')
         try:
-            prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, position=position)
             if len(prim)>0:
                 raise ValidationError
             return super(OfficeLeaderPrimSerializer, self).create(validated_data)
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class GroupLeaderPrimSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
-    )
-
-    class Meta:
-        model = GroupLeaderPrim
-        fields = "__all__"
 
 class GroupLeaderPrimNewSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
+    prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
+        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
     )
 
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source="position", write_only=True
     )
 
     class Meta:
@@ -116,122 +100,108 @@ class GroupLeaderPrimNewSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
-        vezife = validated_data.get('vezife')
+        position = validated_data.get('position')
         try:
-            prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, position=position)
             if len(prim)>0:
                 raise ValidationError
             return super(GroupLeaderPrimNewSerializer, self).create(validated_data)
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class Menecer1PrimSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
+
+class Manager1PrimNewSerializer(serializers.ModelSerializer):
+    prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
+        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
     )
 
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source="position", write_only=True
     )
 
     class Meta:
-        model = Menecer1Prim
-        fields = "__all__"
-
-class Menecer1PrimNewSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
-    )
-
-    class Meta:
-        model = Menecer1PrimNew
+        model = Manager1PrimNew
         fields = "__all__"
 
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
-        vezife = validated_data.get('vezife')
+        position = validated_data.get('position')
         try:
-            prim = Menecer1PrimNew.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = Manager1PrimNew.objects.filter(prim_status=prim_status, position=position)
             if len(prim)>0:
                 raise ValidationError
-            return super(Menecer1PrimNewSerializer, self).create(validated_data)
+            return super(Manager1PrimNewSerializer, self).create(validated_data)
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class Menecer2PrimSerializer(serializers.ModelSerializer):
-    prim_status = IsciStatusSerializer(read_only=True)
+class Manager2PrimSerializer(serializers.ModelSerializer):
+    prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source="prim_status", write_only=True
+        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
     )
 
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.all(), source="vezife", write_only=True
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source="position", write_only=True
     )
 
     class Meta:
-        model = Menecer2Prim
+        model = Manager2Prim
         fields = "__all__"
     
     def create(self, validated_data):
         prim_status = validated_data.get('prim_status')
-        vezife = validated_data.get('vezife')
+        position = validated_data.get('position')
         try:
-            prim = Menecer2Prim.objects.filter(prim_status=prim_status, vezife=vezife)
+            prim = Manager2Prim.objects.filter(prim_status=prim_status, position=position)
             if len(prim)>0:
                 raise ValidationError
-            return super(Menecer2PrimSerializer, self).create(validated_data)
+            return super(Manager2PrimSerializer, self).create(validated_data)
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class KreditorPrimSerializer(serializers.ModelSerializer):
+class CreditorPrimSerializer(serializers.ModelSerializer):
     class Meta:
-        model = KreditorPrim
+        model = CreditorPrim
         fields = "__all__"
 
-class MaasGoruntulemeSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', write_only=True
+class SalaryViewSerializer(serializers.ModelSerializer):
+    employee = UserSerializer(read_only=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', write_only=True
     )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        month = instance.tarix.month
+        month = instance.date.month
 
-        avans = Avans.objects.filter(isci = instance.isci, avans_tarixi__month=month)
-        bonus = Bonus.objects.filter(isci = instance.isci, bonus_tarixi__month=month)
-        kesinti = Kesinti.objects.filter(isci = instance.isci, kesinti_tarixi__month=month)
+        advancepayment = AdvancePayment.objects.filter(employee = instance.employee, date__month=month)
+        bonus = Bonus.objects.filter(employee = instance.employee, date__month=month)
+        salarydeduction = SalaryDeduction.objects.filter(employee = instance.employee, date__month=month)
 
-        umumi_avans = 0
+        umumi_advancepayment = 0
         umumi_bonus = 0
-        umumi_kesinti = 0
+        umumi_salarydeduction = 0
 
-        for a in avans:
-            umumi_avans += a.mebleg
+        for a in advancepayment:
+            umumi_advancepayment += a.amount
 
         for b in bonus:
-            umumi_bonus += b.mebleg
+            umumi_bonus += b.amount
 
-        for k in kesinti:
-            umumi_kesinti += k.mebleg
+        for k in salarydeduction:
+            umumi_salarydeduction += k.amount
 
-        representation['avans'] = umumi_avans
+        representation['advancepayment'] = umumi_advancepayment
         representation['bonus'] = umumi_bonus
-        representation['kesinti'] = umumi_kesinti
+        representation['salarydeduction'] = umumi_salarydeduction
 
         return representation
     
     class Meta:
-        model = MaasGoruntuleme
+        model = SalaryView
         fields = '__all__'
-        read_only_fields = ('avans', 'bonus', 'kesinti')
+        read_only_fields = ('advancepayment', 'bonus', 'salarydeduction')

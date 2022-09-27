@@ -2,31 +2,31 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from product.models import (
-    Mehsullar, 
+    Product, 
 )
 from company.models import (
-    Shirket,
+    Company,
 )
-from restAPI.v1.company.serializers import ShirketSerializer
+from restAPI.v1.company.serializers import CompanySerializer
 
 
-class MehsullarSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only = True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset = Shirket.objects.all(), source = "shirket", write_only= True
+class ProductSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only = True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset = Company.objects.all(), source = "company", write_only= True
     )
     class Meta:
-        model = Mehsullar
+        model = Product
         fields = "__all__"
 
     def create(self, validated_data):
-        mehsulun_adi = validated_data.get('mehsulun_adi')
-        validated_data['mehsulun_adi'] = mehsulun_adi
-        shirket = validated_data['shirket']
+        product_name = validated_data.get('product_name')
+        validated_data['product_name'] = product_name
+        company = validated_data['company']
         try:
-            mehsul = Mehsullar.objects.filter(mehsulun_adi=mehsulun_adi, shirket=shirket)
-            if len(mehsul)>0:
+            product = Product.objects.filter(product_name=product_name, company=company)
+            if len(product)>0:
                 raise ValidationError
-            return super(MehsullarSerializer, self).create(validated_data)
+            return super(ProductSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail" : 'Bu ad ilə məhsul artıq əlavə olunub'})
+            raise ValidationError({"detail" : 'Bu name ilə məhsul artıq əlavə olunub'})

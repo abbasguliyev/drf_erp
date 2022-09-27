@@ -3,28 +3,27 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 import django
 from account.models import (
-    IsciSatisSayi,
-    MusteriQeydler,
+    CustomerNote,
     User,
-    Musteri,
-    Bolge,
-    IsciStatus
+    Customer,
+    Region,
+    EmployeeStatus
 )
 from restAPI.v1.company.serializers import (
-    ShirketSerializer,
-    OfisSerializer,
-    ShobeSerializer,
-    KomandaSerializer,
-    VezifelerSerializer
+    CompanySerializer,
+    OfficeSerializer,
+    SectionSerializer,
+    TeamSerializer,
+    PositionSerializer
 )
 
 from company.models import (
-    Shirket,
-    Ofis,
-    Komanda,
-    Shobe,
-    VezifePermission,
-    Vezifeler
+    Company,
+    Office,
+    Team,
+    Section,
+    PermissionForPosition,
+    Position
 )
 
 from django.contrib.auth.models import Permission, Group
@@ -46,20 +45,20 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class IsciStatusSerializer(serializers.ModelSerializer):
+class EmployeeStatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IsciStatus
+        model = EmployeeStatus
         fields = "__all__"
 
     def create(self, validated_data):
-        status_adi = validated_data.get('status_adi')
-        validated_data['status_adi'] = status_adi.upper()
-        return super(IsciStatusSerializer, self).create(validated_data)
+        status_name = validated_data.get('status_name')
+        validated_data['status_name'] = status_name.upper()
+        return super(EmployeeStatusSerializer, self).create(validated_data)
 
 
-class BolgeSerializer(serializers.ModelSerializer):
+class RegionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Bolge
+        model = Region
         fields = "__all__"
 
 
@@ -86,37 +85,37 @@ class RegisterSerializer(serializers.ModelSerializer):
         write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 
-    tel1 = serializers.CharField(required=True)
+    phone_number_1 = serializers.CharField(required=True)
 
-    ishe_baslama_tarixi = serializers.DateField(format="%d-%m-%Y", required=False, allow_null=True)
+    start_date_of_work = serializers.DateField(format="%d-%m-%Y", required=False, allow_null=True)
 
     class Meta:
         model = User
         fields = (
             'id', 
-            'asa', 
-            'ishe_baslama_tarixi',
-            'ishden_cixma_tarixi',
-            'tel1', 
-            'tel2', 
-            'sv_image', 
-            'sv_image2', 
-            'suruculuk_vesiqesi', 
-            'shirket', 
+            'fullname', 
+            'start_date_of_work',
+            'dismissal_date',
+            'phone_number_1', 
+            'phone_number_2', 
+            'photo_ID', 
+            'back_photo_of_ID', 
+            'driving_license_photo', 
+            'company', 
             'department',
-            'ofis', 
-            'shobe', 
-            'vezife', 
-            'komanda', 
-            'isci_status',
+            'office', 
+            'section', 
+            'position', 
+            'team', 
+            'employee_status',
             'user_permissions', 
             'groups', 
             'profile_image',
-            'muqavile_novu', 
-            'maas_uslubu', 
-            'maas', 
+            'contract_type', 
+            'salary_style', 
+            'salary', 
             'supervisor', 
-            'qeyd', 
+            'note', 
             'password', 
             'password2',
         )
@@ -128,9 +127,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         if data['password'] != data['password2']:
             raise serializers.ValidationError(
                 {"password": "Password fields didn't match."})
-        if data['tel1'] == None:
+        if data['phone_number_1'] == None:
             raise serializers.ValidationError(
-                {"tel1": "Ən az 1 telefon nömrəsi daxil edin"})
+                {"phone_number_1": "Ən az 1 telefon nömrəsi daxil edin"})
         return data
 
     def create(self, validated_data):
@@ -138,42 +137,42 @@ class RegisterSerializer(serializers.ModelSerializer):
         username=f"user-{last_user_id+1}"
         user = User.objects.create(
             username=username,
-            asa=validated_data['asa'], 
-            tel1=validated_data['tel1'],
-            sv_image=validated_data['sv_image'],
-            maas_uslubu=validated_data['maas_uslubu'],
-            muqavile_novu=validated_data['muqavile_novu'],
+            fullname=validated_data['fullname'], 
+            phone_number_1=validated_data['phone_number_1'],
+            photo_ID=validated_data['photo_ID'],
+            salary_style=validated_data['salary_style'],
+            contract_type=validated_data['contract_type'],
         )
         user.set_password(validated_data['password'])
         
 
         try:
-            user.sv_image2 = validated_data['sv_image2']
+            user.back_photo_of_ID = validated_data['back_photo_of_ID']
         except:
-            user.sv_image2 = None
+            user.back_photo_of_ID = None
         try:
             user.profile_image = validated_data['profile_image']
         except:
             user.profile_image = None
 
         try:
-            user.suruculuk_vesiqesi = validated_data['suruculuk_vesiqesi']
+            user.driving_license_photo = validated_data['driving_license_photo']
         except:
-            user.suruculuk_vesiqesi = None
+            user.driving_license_photo = None
 
         try:
-            user.ishe_baslama_tarixi = validated_data['ishe_baslama_tarixi']
+            user.start_date_of_work = validated_data['start_date_of_work']
         except:
-            user.ishe_baslama_tarixi = django.utils.timezone.now()
+            user.start_date_of_work = django.utils.timezone.now()
         
         try:
-            user.ishden_cixma_tarixi = validated_data['ishden_cixma_tarixi']
+            user.dismissal_date = validated_data['dismissal_date']
         except:
-            user.ishden_cixma_tarixi = None
+            user.dismissal_date = None
         try:
-            user.maas = validated_data['maas']
+            user.salary = validated_data['salary']
         except:
-            user.maas = 0
+            user.salary = 0
 
         try:
             user.department = validated_data['department']
@@ -181,58 +180,58 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.department = None
         
         try:
-            user.shirket=validated_data['shirket']
+            user.company=validated_data['company']
         except:
-            user.shirket = None
+            user.company = None
         
         try:
-            user.ofis=validated_data['ofis']
+            user.office=validated_data['office']
         except:
-            user.ofis = None
+            user.office = None
 
         try:
-            user.shobe = validated_data['shobe']
+            user.section = validated_data['section']
         except:
-            user.shobe = None
+            user.section = None
         try:
-            user.vezife=validated_data['vezife']
-            vezife_permission = VezifePermission.objects.filter(vezife=user.vezife)
-            if vezife_permission is not None:
-                for vp in vezife_permission:
+            user.position=validated_data['position']
+            permission_for_positions = PermissionForPosition.objects.filter(position=user.position)
+            if permission_for_positions is not None:
+                for vp in permission_for_positions:
                     permission_group = vp.permission_group
                     user.groups.add(permission_group)
         except:
-            user.vezife = None
+            user.position = None
             
         try:
-            user.tel2 = validated_data['tel2']
+            user.phone_number_2 = validated_data['phone_number_2']
         except:
-            user.tel2 = None
+            user.phone_number_2 = None
 
         try:
-            user.komanda = validated_data['komanda']
+            user.team = validated_data['team']
         except:
-            user.komanda = None
+            user.team = None
         
         try:
-            user.isci_status=validated_data['isci_status']
+            user.employee_status=validated_data['employee_status']
         except:
-            user.isci_status = None
+            user.employee_status = None
         try:
             user.supervisor=validated_data['supervisor']
         except:
             user.supervisor = None
 
         try:
-            user.qeyd=validated_data['qeyd']
+            user.note=validated_data['note']
         except:
-            user.qeyd = None
+            user.note = None
 
         user_permissions = validated_data['user_permissions']
         for user_permission in user_permissions:
             user.user_permissions.add(user_permission)
 
-        # vezife_permission = get_object_or_404(VezifePermission, )
+        # permission_for_positions = get_object_or_404(PermissionForPosition, )
         groups = validated_data['groups']
         for group in groups:
             user.groups.add(group)
@@ -242,33 +241,33 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only=True)
-    ofis = OfisSerializer(read_only=True)
-    shobe = ShobeSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.select_related('holding').all(), source='shirket', write_only=True,
+    company = CompanySerializer(read_only=True)
+    office = OfficeSerializer(read_only=True)
+    section = SectionSerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True,
     )
-    ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.select_related('shirket').all(), source='ofis', write_only=True
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.select_related('company').all(), source='office', write_only=True
     )
-    shobe_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shobe.objects.select_related('ofis').all(), source='shobe',
+    section_id = serializers.PrimaryKeyRelatedField(
+        queryset=Section.objects.select_related('office').all(), source='section',
         write_only=True, required=False, allow_null=True
     )
 
-    vezife = VezifelerSerializer(read_only=True)
-    vezife_id = serializers.PrimaryKeyRelatedField(
-        queryset=Vezifeler.objects.select_related('shobe', 'shirket').all(), source='vezife', write_only=True,
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.select_related('section', 'company').all(), source='position', write_only=True,
     )
 
-    komanda = KomandaSerializer(read_only=True)
-    komanda_id = serializers.PrimaryKeyRelatedField(
-        queryset=Komanda.objects.all(), source='komanda', write_only=True,
+    team = TeamSerializer(read_only=True)
+    team_id = serializers.PrimaryKeyRelatedField(
+        queryset=Team.objects.all(), source='team', write_only=True,
     )
 
-    isci_status = IsciStatusSerializer(read_only=True)
-    isci_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=IsciStatus.objects.all(), source='isci_status', write_only=True,
+    employee_status = EmployeeStatusSerializer(read_only=True)
+    employee_status_id = serializers.PrimaryKeyRelatedField(
+        queryset=EmployeeStatus.objects.all(), source='employee_status', write_only=True,
     )
 
     user_permissions = PermissionSerializer(read_only=True, many=True)
@@ -276,7 +275,7 @@ class UserSerializer(serializers.ModelSerializer):
         queryset=Permission.objects.all(), source='user_permissions', write_only=True, many=True
     )
 
-    ishden_cixma_tarixi = serializers.DateField(read_only=True)
+    dismissal_date = serializers.DateField(read_only=True)
 
     class Meta:
         model = User
@@ -293,35 +292,24 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class MusteriSerializer(serializers.ModelSerializer):
-    bolge = BolgeSerializer(read_only=True)
-    bolge_id = serializers.PrimaryKeyRelatedField(
-        queryset=Bolge.objects.all(), source="bolge", write_only=True
+class CustomerSerializer(serializers.ModelSerializer):
+    region = RegionSerializer(read_only=True)
+    region_id = serializers.PrimaryKeyRelatedField(
+        queryset=Region.objects.all(), source="region", write_only=True
     )
 
     class Meta:
-        model = Musteri
+        model = Customer
         fields = "__all__"
 
 
-class MusteriQeydlerSerializer(serializers.ModelSerializer):
-    musteri = MusteriSerializer(read_only=True)
+class CustomerNoteSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer(read_only=True)
 
-    musteri_id = serializers.PrimaryKeyRelatedField(
-        queryset=Musteri.objects.all(), source='musteri', write_only=True
+    customer_id = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all(), source='customer', write_only=True
     )
 
     class Meta:
-        model = MusteriQeydler
-        fields = "__all__"
-
-
-class IsciSatisSayiSerializer(serializers.ModelSerializer):
-    isci = UserSerializer(read_only=True)
-    isci_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='isci', write_only=True
-    )
-
-    class Meta:
-        model = IsciSatisSayi
+        model = CustomerNote
         fields = "__all__"

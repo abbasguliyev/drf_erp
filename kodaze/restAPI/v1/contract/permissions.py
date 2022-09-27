@@ -2,32 +2,32 @@ from rest_framework import permissions
 from restAPI.v1.utils.permission_utils import PermissionUtil
 
 
-class MuqavilePermissions(permissions.IsAdminUser):
+class ContractPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="muqavile", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="contract", view=view)
         return perm_util.add_user_permission_to_list()
 
-class DeyisimPermissions(permissions.IsAdminUser):
+class ContractChangePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="deyisim", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="contractchange", view=view)
         return perm_util.add_user_permission_to_list()
 
-class OdemeTarixleriPermissions(permissions.IsAdminUser):
+class InstallmentleriPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="odemetarix", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="installment", view=view)
         return perm_util.add_user_permission_to_list()
 
-class MuqavileHediyyePermissions(permissions.IsAdminUser):
+class ContractGiftPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="muqavilehediyye", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="contractgift", view=view)
         return perm_util.add_user_permission_to_list()
 
-class DemoSatisPermissions(permissions.IsAdminUser):
+class DemoSalesPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="demosatis", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="demosales", view=view)
         return perm_util.add_user_permission_to_list()
 
-class MuqavileKreditorPermissions(permissions.IsAdminUser):
+class ContractCreditorPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="muqavilekreditor", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="contractcreditor", view=view)
         return perm_util.add_user_permission_to_list()

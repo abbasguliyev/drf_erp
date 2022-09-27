@@ -7,29 +7,24 @@ class UserPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="user", view=view)
         return perm_util.add_user_permission_to_list()
 
-class IsciStatusPermissions(permissions.IsAdminUser):
+class EmployeeStatusPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="iscistatus", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="employeestatus", view=view)
         return perm_util.add_user_permission_to_list()
 
-class BolgePermissions(permissions.IsAdminUser):
+class RegionPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="bolge", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="region", view=view)
         return perm_util.add_user_permission_to_list()
 
-class MusteriPermissions(permissions.IsAdminUser):
+class CustomerPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="musteri", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="customer", view=view)
         return perm_util.add_user_permission_to_list()
 
-class MusteriQeydlerPermissions(permissions.IsAdminUser):
+class CustomerNotePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="musteriqeydler", view=view)
-        return perm_util.add_user_permission_to_list()
-
-class IsciSatisSayiPermissions(permissions.IsAdminUser):
-    def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="iscisatissayi", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="customernote", view=view)
         return perm_util.add_user_permission_to_list()
 
 class PermissionModelPermissions(permissions.IsAdminUser):

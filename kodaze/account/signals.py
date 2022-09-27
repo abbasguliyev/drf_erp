@@ -1,79 +1,78 @@
-from salary.models import MaasGoruntuleme
+from salary.models import SalaryView
 from account.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import datetime
 import pandas as pd
-from holiday.models import IsciGunler
+from holiday.models import EmployeeWorkingDay
 
 @receiver(post_save, sender=User)
-def create_isci_maas_goruntulenme(sender, instance, created, **kwargs):
+def create_employee_salary_view(sender, instance, created, **kwargs):
     if created:
         user = instance
-        indi = datetime.date.today()
+        now = datetime.date.today()
         
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
-       
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
         
-        isci_maas_bu_ay = MaasGoruntuleme.objects.filter(
-            isci=user, 
-            tarix__year = indi.year,
-            tarix__month = indi.month
+        employee_salary_this_month = SalaryView.objects.select_related('employee').filter(
+            employee=user,
+            date__year=now.year,
+            date__month=now.month
         )
-        if len(isci_maas_bu_ay) == 0:
-            if user.maas_uslubu == "FİX":
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{indi.year}-{indi.month}-{1}", yekun_maas=user.maas).save()
-            else:    
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{indi.year}-{indi.month}-{1}").save()
+        if len(employee_salary_this_month) == 0:
+            SalaryView.objects.create(
+                employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary).save()
 
-        isci_maas_novbeti_ay = MaasGoruntuleme.objects.filter(
-            isci=user, 
-            tarix__year = next_m.year,
-            tarix__month = next_m.month
+        employee_salary_novbeti_ay = SalaryView.objects.select_related('employee').filter(
+            employee=user,
+            date__year=next_m.year,
+            date__month=next_m.month
         )
-        if len(isci_maas_novbeti_ay) == 0:
-            if user.maas_uslubu == "FİX":
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{next_m.year}-{next_m.month}-{1}", yekun_maas=user.maas).save()
-            else:    
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{next_m.year}-{next_m.month}-{1}").save()
+        if len(employee_salary_novbeti_ay) == 0:
+            SalaryView.objects.create(
+                employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary).save()
+
 
 @receiver(post_save, sender=User)
-def create_isci_gunler(sender, instance, created, **kwargs):
+def create_employee_working_day(sender, instance, created, **kwargs):
     if created:
         user = instance
-        indi = datetime.date.today()
+        now = datetime.date.today()
 
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
         next_m = d + pd.offsets.MonthBegin(1)
 
-        days_in_this_month = pd.Period(f"{indi.year}-{indi.month}-{1}").days_in_month
+        days_in_this_month = pd.Period(
+            f"{now.year}-{now.month}-{1}").days_in_month
 
-        days_in_mont = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
+        days_in_next_month = pd.Period(
+            f"{next_m.year}-{next_m.month}-{1}").days_in_month
+
+        employee_working_day_this_month = EmployeeWorkingDay.objects.select_related('employee').filter(
+            employee=user,
+            date__year=now.year,
+            date__month=now.month
+        )
         
-        isci_gunler_this_month = IsciGunler.objects.filter(
-            isci = user,
-            tarix__year = indi.year,
-            tarix__month = indi.month
-        )
-        if len(isci_gunler_this_month) == 0:
-            isci_gunler = IsciGunler.objects.create(
-                isci = user,
-                is_gunleri_count=days_in_this_month,
-                tarix = f"{indi.year}-{indi.month}-{1}"
+        if len(employee_working_day_this_month) == 0:
+            employee_working_day = EmployeeWorkingDay.objects.create(
+                employee=user,
+                working_days_count=days_in_this_month,
+                date=f"{now.year}-{now.month}-{1}"
             )
-            isci_gunler.save()
+            employee_working_day.save()
 
-        isci_gunler = IsciGunler.objects.filter(
-            isci = user,
-            tarix__year = next_m.year,
-            tarix__month = next_m.month
+        employee_working_day = EmployeeWorkingDay.objects.select_related('employee').filter(
+            employee=user,
+            date__year=next_m.year,
+            date__month=next_m.month
         )
-        if len(isci_gunler) == 0:
-            isci_gunler = IsciGunler.objects.create(
-                isci = user,
-                is_gunleri_count=days_in_mont,
-                tarix = f"{next_m.year}-{next_m.month}-{1}"
+        if len(employee_working_day) == 0:
+            employee_working_day = EmployeeWorkingDay.objects.create(
+                employee=user,
+                working_days_count=days_in_next_month,
+                date=f"{next_m.year}-{next_m.month}-{1}"
             )
-            isci_gunler.save()
+            employee_working_day.save()

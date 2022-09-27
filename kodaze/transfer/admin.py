@@ -1,12 +1,12 @@
 from django.contrib import admin
 from .models import (
-    HoldingdenShirketlereTransfer,
-    OfisdenShirketeTransfer,
-    ShirketdenHoldingeTransfer,
-    ShirketdenOfislereTransfer
+    TransferFromHoldingToCompany,
+    TransferFromOfficeToCompany,
+    TransferFromCompanyToHolding,
+    TransferFromCompanyToOffices
 )
 # Register your models here.
-admin.site.register(HoldingdenShirketlereTransfer)
-admin.site.register(OfisdenShirketeTransfer)
-admin.site.register(ShirketdenHoldingeTransfer)
-admin.site.register(ShirketdenOfislereTransfer)
+admin.site.register(TransferFromHoldingToCompany)
+admin.site.register(TransferFromOfficeToCompany)
+admin.site.register(TransferFromCompanyToHolding)
+admin.site.register(TransferFromCompanyToOffices)

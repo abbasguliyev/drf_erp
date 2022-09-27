@@ -1,283 +1,283 @@
 import django_filters
 
 from holiday.models import (
-    HoldingGunler,
-    IsciGelibGetmeVaxtlari,
-    IsciGunler,
-    KomandaGunler,
-    KomandaIstisnaIsci,
-    OfisGunler,
-    OfisIstisnaIsci,
-    ShirketGunler,
-    ShirketIstisnaIsci,
-    ShobeGunler,
-    VezifeGunler,
-    HoldingIstisnaIsci,
-    VezifeIstisnaIsci,
-    ShobeIstisnaIsci
+    HoldingWorkingDay,
+    EmployeeArrivalAndDepartureTimes,
+    EmployeeWorkingDay,
+    TeamWorkingDay,
+    TeamExceptionWorker,
+    OfficeWorkingDay,
+    OfficeExceptionWorker,
+    CompanyWorkingDay,
+    CompanyExceptionWorker,
+    SectionWorkingDay,
+    PositionWorkingDay,
+    HoldingExceptionWorker,
+    PositionExceptionWorker,
+    SectionExceptionWorker
 )
 
 
-class IsciGelibGetmeVaxtlariFilter(django_filters.FilterSet):
+class EmployeeArrivalAndDepartureTimesFilter(django_filters.FilterSet):
     class Meta:
-        model = IsciGelibGetmeVaxtlari
+        model = EmployeeArrivalAndDepartureTimes
         fields = {
-            'isci__asa': ['exact', 'icontains'],
-            'gelme_vaxti': ['exact', 'gte', 'lte'],
-            'getme_vaxti': ['exact', 'gte', 'lte'],
+            'employee__fullname': ['exact', 'icontains'],
+            'arrival_time': ['exact', 'gte', 'lte'],
+            'departure_time': ['exact', 'gte', 'lte'],
         }
 
 
-class IsciGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class EmployeeWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = IsciGunler
+        model = EmployeeWorkingDay
         fields = {
-            'isci__id': ['exact'],
-            'isci__asa': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            'icaze_gunleri_odenisli': ['exact', 'icontains'],
-            'icaze_gunleri_odenissiz': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'employee__id': ['exact'],
+            'employee__fullname': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            'paid_leave_days': ['exact', 'icontains'],
+            'unpaid_leave_days': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class HoldingGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class HoldingWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = HoldingGunler
+        model = HoldingWorkingDay
         fields = {
-            'holding__holding_adi': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'holding__name': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class ShirketGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class CompanyWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ShirketGunler
+        model = CompanyWorkingDay
         fields = {
-            'shirket__shirket_adi': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'company__name': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class OfisGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class OfficeWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = OfisGunler
+        model = OfficeWorkingDay
         fields = {
-            'ofis__id': ['exact'],
-            'ofis__ofis_adi': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'office__id': ['exact'],
+            'office__name': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class ShobeGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class SectionWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ShobeGunler
+        model = SectionWorkingDay
         fields = {
-            'shobe__id': ['exact'],
-            'shobe__shobe_adi': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'section__id': ['exact'],
+            'section__name': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class KomandaGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class TeamWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = KomandaGunler
+        model = TeamWorkingDay
         fields = {
-            'komanda__komanda_adi': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'team__name': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class VezifeGunlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class PositionWorkingDayFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = VezifeGunler
+        model = PositionWorkingDay
         fields = {
-            'vezife__vezife_adi': ['exact', 'icontains'],
-            'is_gunleri_count': ['exact', 'gte', 'lte'],
-            'qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'tetil_gunleri': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'position__name': ['exact', 'icontains'],
+            'working_days_count': ['exact', 'gte', 'lte'],
+            'non_working_days_count': ['exact', 'gte', 'lte'],
+            'holidays': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class KomandaIstisnaIsciFilter(django_filters.FilterSet):
-    gunler__tarix = django_filters.DateFilter(
-        field_name='gunler__tarix', input_formats=["%d-%m-%Y"])
-    gunler__tarix__gte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    gunler__tarix__lte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class TeamExceptionWorkerFilter(django_filters.FilterSet):
+    working_day__date = django_filters.DateFilter(
+        field_name='working_day__date', input_formats=["%d-%m-%Y"])
+    working_day__date__gte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    working_day__date__lte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = KomandaIstisnaIsci
+        model = TeamExceptionWorker
         fields = {
-            'gunler__komanda__komanda_adi': ['exact', 'icontains'],
-            'gunler__is_gunleri_count': ['exact', 'gte', 'lte'],
-            'gunler__qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'gunler__tetil_gunleri': ['exact', 'icontains'],
-            # 'gunler__tarix': ['exact', 'gte', 'lte'],
+            'working_day__team__name': ['exact', 'icontains'],
+            'working_day__working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__non_working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__holidays': ['exact', 'icontains'],
+            # 'working_day__date': ['exact', 'gte', 'lte'],
         }
 
 
-class OfisIstisnaIsciFilter(django_filters.FilterSet):
-    gunler__tarix = django_filters.DateFilter(
-        field_name='gunler__tarix', input_formats=["%d-%m-%Y"])
-    gunler__tarix__gte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    gunler__tarix__lte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class OfficeExceptionWorkerFilter(django_filters.FilterSet):
+    working_day__date = django_filters.DateFilter(
+        field_name='working_day__date', input_formats=["%d-%m-%Y"])
+    working_day__date__gte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    working_day__date__lte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = OfisIstisnaIsci
+        model = OfficeExceptionWorker
         fields = {
-            'gunler__ofis__id': ['exact'],
-            'gunler__ofis__ofis_adi': ['exact', 'icontains'],
-            'gunler__is_gunleri_count': ['exact', 'gte', 'lte'],
-            'gunler__qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'gunler__tetil_gunleri': ['exact', 'icontains'],
-            # 'gunler__tarix': ['exact', 'gte', 'lte'],
+            'working_day__office__id': ['exact'],
+            'working_day__office__name': ['exact', 'icontains'],
+            'working_day__working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__non_working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__holidays': ['exact', 'icontains'],
+            # 'working_day__date': ['exact', 'gte', 'lte'],
         }
 
 
-class ShirketIstisnaIsciFilter(django_filters.FilterSet):
-    gunler__tarix = django_filters.DateFilter(
-        field_name='gunler__tarix', input_formats=["%d-%m-%Y"])
-    gunler__tarix__gte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    gunler__tarix__lte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class CompanyExceptionWorkerFilter(django_filters.FilterSet):
+    working_day__date = django_filters.DateFilter(
+        field_name='working_day__date', input_formats=["%d-%m-%Y"])
+    working_day__date__gte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    working_day__date__lte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ShirketIstisnaIsci
+        model = CompanyExceptionWorker
         fields = {
-            'gunler__shirket__shirket_adi': ['exact', 'icontains'],
-            'gunler__is_gunleri_count': ['exact', 'gte', 'lte'],
-            'gunler__qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'gunler__tetil_gunleri': ['exact', 'icontains'],
-            # 'gunler__tarix': ['exact', 'gte', 'lte'],
+            'working_day__company__name': ['exact', 'icontains'],
+            'working_day__working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__non_working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__holidays': ['exact', 'icontains'],
+            # 'working_day__date': ['exact', 'gte', 'lte'],
         }
 
 
-class HoldingIstisnaIsciFilter(django_filters.FilterSet):
-    gunler__tarix = django_filters.DateFilter(
-        field_name='gunler__tarix', input_formats=["%d-%m-%Y"])
-    gunler__tarix__gte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    gunler__tarix__lte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class HoldingExceptionWorkerFilter(django_filters.FilterSet):
+    working_day__date = django_filters.DateFilter(
+        field_name='working_day__date', input_formats=["%d-%m-%Y"])
+    working_day__date__gte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    working_day__date__lte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = HoldingIstisnaIsci
+        model = HoldingExceptionWorker
         fields = {
-            'gunler__holding__holding_adi': ['exact', 'icontains'],
-            'gunler__is_gunleri_count': ['exact', 'gte', 'lte'],
-            'gunler__qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'gunler__tetil_gunleri': ['exact', 'icontains'],
-            # 'gunler__tarix': ['exact', 'gte', 'lte'],
+            'working_day__holding__name': ['exact', 'icontains'],
+            'working_day__working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__non_working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__holidays': ['exact', 'icontains'],
+            # 'working_day__date': ['exact', 'gte', 'lte'],
         }
 
 
-class VezifeIstisnaIsciFilter(django_filters.FilterSet):
-    gunler__tarix = django_filters.DateFilter(
-        field_name='gunler__tarix', input_formats=["%d-%m-%Y"])
-    gunler__tarix__gte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    gunler__tarix__lte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class PositionExceptionWorkerFilter(django_filters.FilterSet):
+    working_day__date = django_filters.DateFilter(
+        field_name='working_day__date', input_formats=["%d-%m-%Y"])
+    working_day__date__gte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    working_day__date__lte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = VezifeIstisnaIsci
+        model = PositionExceptionWorker
         fields = {
-            'gunler__vezife__vezife_adi': ['exact', 'icontains'],
-            'gunler__is_gunleri_count': ['exact', 'gte', 'lte'],
-            'gunler__qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'gunler__tetil_gunleri': ['exact', 'icontains'],
-            # 'gunler__tarix': ['exact', 'gte', 'lte'],
+            'working_day__position__name': ['exact', 'icontains'],
+            'working_day__working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__non_working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__holidays': ['exact', 'icontains'],
+            # 'working_day__date': ['exact', 'gte', 'lte'],
         }
 
 
-class ShobeIstisnaIsciFilter(django_filters.FilterSet):
-    gunler__tarix = django_filters.DateFilter(
-        field_name='gunler__tarix', input_formats=["%d-%m-%Y"])
-    gunler__tarix__gte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    gunler__tarix__lte = django_filters.DateFilter(
-        field_name='gunler__tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class SectionExceptionWorkerFilter(django_filters.FilterSet):
+    working_day__date = django_filters.DateFilter(
+        field_name='working_day__date', input_formats=["%d-%m-%Y"])
+    working_day__date__gte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    working_day__date__lte = django_filters.DateFilter(
+        field_name='working_day__date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ShobeIstisnaIsci
+        model = SectionExceptionWorker
         fields = {
-            'gunler__shobe__id': ['exact'],
-            'gunler__shobe__shobe_adi': ['exact', 'icontains'],
-            'gunler__shobe__shobe_adi': ['exact', 'icontains'],
-            'gunler__is_gunleri_count': ['exact', 'gte', 'lte'],
-            'gunler__qeyri_is_gunu_count': ['exact', 'gte', 'lte'],
-            'gunler__tetil_gunleri': ['exact', 'icontains'],
-            # 'gunler__tarix': ['exact', 'gte', 'lte'],
+            'working_day__section__id': ['exact'],
+            'working_day__section__name': ['exact', 'icontains'],
+            'working_day__section__name': ['exact', 'icontains'],
+            'working_day__working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__non_working_days_count': ['exact', 'gte', 'lte'],
+            'working_day__holidays': ['exact', 'icontains'],
+            # 'working_day__date': ['exact', 'gte', 'lte'],
         }

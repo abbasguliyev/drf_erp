@@ -4,71 +4,71 @@ from account.models import (
 )
 from company.models import (
     Holding,
-    Shirket,
-    Ofis
+    Company,
+    Office
 )
 from cashbox.models import (
-    HoldingKassa,
-    ShirketKassa,
-    OfisKassa,
-    PulAxini
+    HoldingCashbox,
+    CompanyCashbox,
+    OfficeCashbox,
+    CashFlow
 )
-from restAPI.v1.company.serializers import HoldingSerializer, OfisSerializer, ShirketSerializer
+from restAPI.v1.company.serializers import HoldingSerializer, OfficeSerializer, CompanySerializer
 
-class HoldingKassaSerializer(serializers.ModelSerializer):
+class HoldingCashboxSerializer(serializers.ModelSerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True
     )
 
     class Meta:
-        model = HoldingKassa
+        model = HoldingCashbox
         fields = "__all__"
 
 
-class ShirketKassaSerializer(serializers.ModelSerializer):
-    shirket = ShirketSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True
+class CompanyCashboxSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
     )
 
     class Meta:
-        model = ShirketKassa
+        model = CompanyCashbox
         fields = "__all__"
 
 
-class OfisKassaSerializer(serializers.ModelSerializer):
-    ofis = OfisSerializer(read_only=True)
-    ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True
+class OfficeCashboxSerializer(serializers.ModelSerializer):
+    office = OfficeSerializer(read_only=True)
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.all(), source='office', write_only=True
     )
 
     class Meta:
-        model = OfisKassa
+        model = OfficeCashbox
         fields = "__all__"
 
 
-class PulAxiniSerializer(serializers.ModelSerializer):
+class CashFlowSerializer(serializers.ModelSerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True, required=False, allow_null=True
     )
 
-    shirket = ShirketSerializer(read_only=True)
-    shirket_id = serializers.PrimaryKeyRelatedField(
-        queryset=Shirket.objects.all(), source='shirket', write_only=True, required=False, allow_null=True
+    company = CompanySerializer(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True, required=False, allow_null=True
     )
 
-    ofis = OfisSerializer(read_only=True)
-    ofis_id = serializers.PrimaryKeyRelatedField(
-        queryset=Ofis.objects.all(), source='ofis', write_only=True, required=False, allow_null=True
+    office = OfficeSerializer(read_only=True)
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.all(), source='office', write_only=True, required=False, allow_null=True
     )
 
-    emeliyyat_eden = serializers.StringRelatedField()
-    emeliyyat_eden_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='emeliyyat_eden', write_only=True, required=False, allow_null=True
+    executor = serializers.StringRelatedField()
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
     
     class Meta:
-        model = PulAxini
+        model = CashFlow
         fields = '__all__'

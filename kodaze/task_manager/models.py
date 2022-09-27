@@ -1,24 +1,22 @@
 import django
 from django.db import models
 from django.contrib.auth import get_user_model
+from . import  (
+    STATUS_CHOICES,
+    ICRA_EDILIR
+)
+
 User = get_user_model()
 
 class TaskManager(models.Model):
-    ICRA_EDILIR = "İcra edilir"
-    GECIKIR = "Gecikir"
-    TAMAMLANDI = "Tamamlandı"
-    STATUS_CHOICES = [
-        (ICRA_EDILIR, 'İcra edilir'),
-        (GECIKIR, 'Gecikir'),
-        (TAMAMLANDI, 'Tamamlandı'),
-    ]
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="given_tasks")
     title = models.CharField(max_length=250)
     body = models.TextField()
     created_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     end_date = models.DateField()
+    old_date = models.DateField(null=True, blank=True)
     position = models.ForeignKey(
-        "company.Vezifeler", on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
+        "company.Position", on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     employee = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="gettin_tasks", null=True, blank=True)
     status = models.CharField(
@@ -48,7 +46,7 @@ class Advertisement(models.Model):
     body = models.TextField()
     created_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     position = models.ForeignKey(
-        "company.Vezifeler", on_delete=models.CASCADE, related_name="advertisements", null=True, blank=True)
+        "company.Position", on_delete=models.CASCADE, related_name="advertisements", null=True, blank=True)
     
     class Meta:
         ordering = ("pk",)

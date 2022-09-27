@@ -1,16 +1,16 @@
 from django.contrib import admin
 from .models import (
-    HoldingKassaMedaxil,
-    HoldingKassaMexaric,
-    OfisKassaMedaxil,
-    OfisKassaMexaric,
-    ShirketKassaMedaxil,
-    ShirketKassaMexaric
+    HoldingCashboxIncome,
+    HoldingCashboxExpense,
+    OfficeCashboxIncome,
+    OfficeCashboxExpense,
+    CompanyCashboxIncome,
+    CompanyCashboxExpense
 ) 
 # Register your models here.
-admin.site.register(HoldingKassaMedaxil)
-admin.site.register(HoldingKassaMexaric)
-admin.site.register(OfisKassaMedaxil)
-admin.site.register(OfisKassaMexaric)
-admin.site.register(ShirketKassaMedaxil)
-admin.site.register(ShirketKassaMexaric)
+admin.site.register(HoldingCashboxIncome)
+admin.site.register(HoldingCashboxExpense)
+admin.site.register(OfficeCashboxIncome)
+admin.site.register(OfficeCashboxExpense)
+admin.site.register(CompanyCashboxIncome)
+admin.site.register(CompanyCashboxExpense)

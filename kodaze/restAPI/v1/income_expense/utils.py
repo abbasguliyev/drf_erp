@@ -4,115 +4,115 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from company.models import Holding
-from cashbox.models import HoldingKassa, OfisKassa, ShirketKassa
+from cashbox.models import HoldingCashbox, OfficeCashbox, CompanyCashbox
 
-from restAPI.v1.cashbox.utils import holding_umumi_balans_hesabla, pul_axini_create, shirket_balans_hesabla, ofis_balans_hesabla, holding_balans_hesabla
+from restAPI.v1.cashbox.utils import holding_umumi_balance_hesabla, pul_axini_create, company_balance_hesabla, office_balance_hesabla, holding_balance_hesabla
 
 
-# *************** Holding Kassa medaxil mexaric ***************
-def holding_kassa_medaxil_create(self, request, *args, **kwargs):
+# *************** Holding Kassa income expense ***************
+def cashbox_income_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
-    mebleg = request.data.get("mebleg")
+    amount = request.data.get("amount")
     user = request.user
 
-    if(mebleg != None):
-        holding = get_object_or_404(Holding, holding_adi="ALLIANCE")
-        holding_kassa = get_object_or_404(HoldingKassa, holding=holding)
-        evvelki_balans=holding_kassa.balans
+    if(amount != None):
+        holding = get_object_or_404(Holding, name="ALLIANCE")
+        cashbox = get_object_or_404(HoldingCashbox, holding=holding)
+        previous_balance=cashbox.balance
 
-        ilkin_balans = holding_umumi_balans_hesabla()
-        holding_ilkin_balans = holding_balans_hesabla()
+        initial_balance = holding_umumi_balance_hesabla()
+        holding_initial_balance = holding_balance_hesabla()
 
-        medaxil_tarixi = request.data.get("medaxil_tarixi")
+        date = request.data.get("date")
 
-        if(medaxil_tarixi == None):
-            medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
+        if(date == None):
+            date = datetime.today().strftime('%d-%m-%Y')
 
-        qeyd = request.data.get("qeyd")
+        note = request.data.get("note")
 
-        holding_kassa_balans = holding_kassa.balans
+        cashbox_balance = cashbox.balance
 
-        yekun_balans = float(mebleg) + float(holding_kassa_balans)
+        yekun_balance = float(amount) + float(cashbox_balance)
 
         if(serializer.is_valid()):
-            holding_kassa.balans = yekun_balans
-            holding_kassa.save()
+            cashbox.balance = yekun_balance
+            cashbox.save()
 
-            sonraki_kassa_balans=holding_kassa.balans
+            sonraki_kassa_balance=cashbox.balance
 
-            serializer.save(medaxil_eden=user, holding_kassa=holding_kassa, medaxil_tarixi=medaxil_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
+            serializer.save(executor=user, cashbox=cashbox, date=date, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-            sonraki_balans = holding_umumi_balans_hesabla()
-            holding_sonraki_balans = holding_balans_hesabla()
+            subsequent_balance = holding_umumi_balance_hesabla()
+            holding_subsequent_balance = holding_balance_hesabla()
 
             pul_axini_create(
                 holding=holding,
-                emeliyyat_uslubu="MƏDAXİL",
-                aciqlama=f"{holding.holding_adi} holdinq kassasına {float(mebleg)} AZN mədaxil edildi",
-                ilkin_balans=ilkin_balans,
-                sonraki_balans=sonraki_balans,
-                holding_ilkin_balans=holding_ilkin_balans,
-                holding_sonraki_balans=holding_sonraki_balans,
-                emeliyyat_eden=user,
-                tarix=medaxil_tarixi,
-                miqdar=float(mebleg)
+                operation_style="MƏDAXİL",
+                description=f"{holding.name} holdinq kassasına {float(amount)} AZN mədaxil edildi",
+                initial_balance=initial_balance,
+                subsequent_balance=subsequent_balance,
+                holding_initial_balance=holding_initial_balance,
+                holding_subsequent_balance=holding_subsequent_balance,
+                executor=user,
+                date=date,
+                quantity=float(amount)
             )
 
-            return Response({"detail": f"{holding} holdinqinə {mebleg} azn mədaxil edildi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": f"{holding} holdinqinə {amount} azn mədaxil edildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-def holding_kassa_mexaric_create(self, request, *args, **kwargs):
+def cashbox_expense_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
-    mebleg = request.data.get("mebleg")
+    amount = request.data.get("amount")
 
     user = request.user
 
-    qeyd = request.data.get("qeyd")
+    note = request.data.get("note")
 
-    holding = get_object_or_404(Holding, holding_adi="ALLIANCE")
-    holding_kassa = get_object_or_404(HoldingKassa, holding=holding)
-    evvelki_balans=holding_kassa.balans
+    holding = get_object_or_404(Holding, name="ALLIANCE")
+    cashbox = get_object_or_404(HoldingCashbox, holding=holding)
+    previous_balance=cashbox.balance
 
-    ilkin_balans = holding_umumi_balans_hesabla()
-    holding_ilkin_balans = holding_balans_hesabla()
+    initial_balance = holding_umumi_balance_hesabla()
+    holding_initial_balance = holding_balance_hesabla()
 
-    holding_kassa_balans = holding_kassa.balans
+    cashbox_balance = cashbox.balance
 
-    mexaric_tarixi = request.data.get("mexaric_tarixi")
+    expense_datei = request.data.get("expense_datei")
 
-    if(mexaric_tarixi == None):
-        mexaric_tarixi = datetime.today().strftime('%d-%m-%Y')
+    if(expense_datei == None):
+        expense_datei = datetime.today().strftime('%d-%m-%Y')
 
-    if(holding_kassa_balans != 0):
-        if(mebleg != None):
-            if(float(mebleg) <= float(holding_kassa_balans)):
-                yekun_balans = float(holding_kassa_balans) - float(mebleg)
+    if(cashbox_balance != 0):
+        if(amount != None):
+            if(float(amount) <= float(cashbox_balance)):
+                yekun_balance = float(cashbox_balance) - float(amount)
                 if(serializer.is_valid()):
-                    holding_kassa.balans = yekun_balans
-                    holding_kassa.save()
+                    cashbox.balance = yekun_balance
+                    cashbox.save()
                     
-                    sonraki_kassa_balans=holding_kassa.balans
+                    sonraki_kassa_balance=cashbox.balance
 
-                    serializer.save(mexaric_eden=user, holding_kassa=holding_kassa, mexaric_tarixi=mexaric_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
+                    serializer.save(executor=user, cashbox=cashbox, expense_datei=expense_datei, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-                    sonraki_balans = holding_umumi_balans_hesabla()
-                    holding_sonraki_balans = holding_balans_hesabla()
+                    subsequent_balance = holding_umumi_balance_hesabla()
+                    holding_subsequent_balance = holding_balance_hesabla()
 
                     pul_axini_create(
                         holding=holding,
-                        emeliyyat_uslubu="MƏXARİC",
-                        aciqlama=f"{holding.holding_adi} holdinq kassasından {float(mebleg)} AZN məxaric edildi",
-                        ilkin_balans=ilkin_balans,
-                        sonraki_balans=sonraki_balans,
-                        holding_ilkin_balans=holding_ilkin_balans,
-                        holding_sonraki_balans=holding_sonraki_balans,
-                        emeliyyat_eden=user,
-                        tarix=mexaric_tarixi,
-                        miqdar=float(mebleg)
+                        operation_style="MƏXARİC",
+                        description=f"{holding.name} holdinq kassasından {float(amount)} AZN məxaric edildi",
+                        initial_balance=initial_balance,
+                        subsequent_balance=subsequent_balance,
+                        holding_initial_balance=holding_initial_balance,
+                        holding_subsequent_balance=holding_subsequent_balance,
+                        executor=user,
+                        date=expense_datei,
+                        quantity=float(amount)
                     )
 
-                    return Response({"detail": f"{holding} holdinqindən {mebleg} azn məxaric edildi"}, status=status.HTTP_201_CREATED)
+                    return Response({"detail": f"{holding} holdinqindən {amount} azn məxaric edildi"}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"detail": "Daxil etdiyiniz məbləğ holdinqin balansıdan böyük ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -120,114 +120,114 @@ def holding_kassa_mexaric_create(self, request, *args, **kwargs):
     else:
         return Response({"detail": "Holdinqin balansı 0-dır"}, status=status.HTTP_400_BAD_REQUEST)
 
-# *************** Shirket Kassa medaxil mexaric ***************
+# *************** Company Kassa income expense ***************
 
-def shirket_kassa_medaxil_create(self, request, *args, **kwargs):
+def cashbox_income_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
-    mebleg = request.data.get("mebleg")
+    amount = request.data.get("amount")
     user = request.user
     
-    if(mebleg != ""):
-        shirket_kassa_id = request.data.get("shirket_kassa_id")
-        shirket_kassa = get_object_or_404(ShirketKassa, pk=shirket_kassa_id)
+    if(amount != ""):
+        cashbox_id = request.data.get("cashbox_id")
+        cashbox = get_object_or_404(CompanyCashbox, pk=cashbox_id)
 
-        evvelki_balans=shirket_kassa.balans
+        previous_balance=cashbox.balance
 
-        shirket=shirket_kassa.shirket
+        company=cashbox.company
 
-        medaxil_tarixi = request.data.get("medaxil_tarixi")
+        date = request.data.get("date")
 
-        ilkin_balans = holding_umumi_balans_hesabla()
+        initial_balance = holding_umumi_balance_hesabla()
 
-        shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
+        company_initial_balance = company_balance_hesabla(company=company)
 
-        if(medaxil_tarixi == ""):
-            medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
+        if(date == ""):
+            date = datetime.today().strftime('%d-%m-%Y')
 
-        qeyd = request.data.get("qeyd")
+        note = request.data.get("note")
 
-        shirket_kassa_balans = shirket_kassa.balans
+        cashbox_balance = cashbox.balance
 
-        yekun_balans = float(mebleg) + float(shirket_kassa_balans)
+        yekun_balance = float(amount) + float(cashbox_balance)
 
         if(serializer.is_valid()):
-            shirket_kassa.balans = yekun_balans
-            shirket_kassa.save()
+            cashbox.balance = yekun_balance
+            cashbox.save()
 
-            sonraki_kassa_balans=shirket_kassa.balans
+            sonraki_kassa_balance=cashbox.balance
 
-            serializer.save(medaxil_eden=user, shirket_kassa=shirket_kassa, medaxil_tarixi=medaxil_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
+            serializer.save(executor=user, cashbox=cashbox, date=date, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-            sonraki_balans = holding_umumi_balans_hesabla()
-            shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
+            subsequent_balance = holding_umumi_balance_hesabla()
+            company_subsequent_balance = company_balance_hesabla(company=company)
             pul_axini_create(
-                shirket=shirket,
-                emeliyyat_uslubu="MƏDAXİL",
-                aciqlama=f"{shirket.shirket_adi} şirkət kassasına {float(mebleg)} AZN mədaxil edildi",
-                ilkin_balans=ilkin_balans,
-                sonraki_balans=sonraki_balans,
-                shirket_ilkin_balans=shirket_ilkin_balans,
-                shirket_sonraki_balans=shirket_sonraki_balans,
-                emeliyyat_eden=user,
-                tarix=medaxil_tarixi,
-                miqdar=float(mebleg)
+                company=company,
+                operation_style="MƏDAXİL",
+                description=f"{company.name} şirkət kassasına {float(amount)} AZN mədaxil edildi",
+                initial_balance=initial_balance,
+                subsequent_balance=subsequent_balance,
+                company_initial_balance=company_initial_balance,
+                company_subsequent_balance=company_subsequent_balance,
+                executor=user,
+                date=date,
+                quantity=float(amount)
             )
 
-            return Response({"detail": f"{shirket_kassa.shirket} şirkətinə {mebleg} azn mədaxil edildi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": f"{cashbox.company} şirkətinə {amount} azn mədaxil edildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shirket_kassa_mexaric_create(self, request, *args, **kwargs):
+def cashbox_expense_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
-    mebleg = request.data.get("mebleg")
+    amount = request.data.get("amount")
 
     user = request.user
 
-    qeyd = request.data.get("qeyd")
+    note = request.data.get("note")
 
-    shirket_kassa_id = request.data.get("shirket_kassa_id")
-    shirket_kassa = get_object_or_404(ShirketKassa, pk=shirket_kassa_id)
-    shirket=shirket_kassa.shirket
+    cashbox_id = request.data.get("cashbox_id")
+    cashbox = get_object_or_404(CompanyCashbox, pk=cashbox_id)
+    company=cashbox.company
 
-    evvelki_balans=shirket_kassa.balans
+    previous_balance=cashbox.balance
 
-    ilkin_balans = holding_umumi_balans_hesabla()
-    shirket_ilkin_balans = shirket_balans_hesabla(shirket=shirket)
+    initial_balance = holding_umumi_balance_hesabla()
+    company_initial_balance = company_balance_hesabla(company=company)
 
-    shirket_kassa_balans = shirket_kassa.balans
+    cashbox_balance = cashbox.balance
 
-    mexaric_tarixi = request.data.get("mexaric_tarixi")
+    expense_datei = request.data.get("expense_datei")
 
-    if(mexaric_tarixi == ""):
-        mexaric_tarixi = datetime.today().strftime('%d-%m-%Y')
+    if(expense_datei == ""):
+        expense_datei = datetime.today().strftime('%d-%m-%Y')
 
-    if(shirket_kassa_balans != 0):
-        if(mebleg != ""):
-            if(float(mebleg) <= float(shirket_kassa_balans)):
-                yekun_balans = float(shirket_kassa_balans) - float(mebleg)
+    if(cashbox_balance != 0):
+        if(amount != ""):
+            if(float(amount) <= float(cashbox_balance)):
+                yekun_balance = float(cashbox_balance) - float(amount)
                 if(serializer.is_valid()):
-                    shirket_kassa.balans = yekun_balans
-                    shirket_kassa.save()
+                    cashbox.balance = yekun_balance
+                    cashbox.save()
                     
-                    sonraki_kassa_balans=shirket_kassa.balans
+                    sonraki_kassa_balance=cashbox.balance
 
-                    serializer.save(mexaric_eden=user, shirket_kassa=shirket_kassa, mexaric_tarixi=mexaric_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
+                    serializer.save(executor=user, cashbox=cashbox, expense_datei=expense_datei, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-                    sonraki_balans = holding_umumi_balans_hesabla()
-                    shirket_sonraki_balans = shirket_balans_hesabla(shirket=shirket)
+                    subsequent_balance = holding_umumi_balance_hesabla()
+                    company_subsequent_balance = company_balance_hesabla(company=company)
                     pul_axini_create(
-                        shirket=shirket,
-                        emeliyyat_uslubu="MƏXARİC",
-                        aciqlama=f"{shirket.shirket_adi} şirkət kassasından {float(mebleg)} AZN məxaric edildi",
-                        ilkin_balans=ilkin_balans,
-                        sonraki_balans=sonraki_balans,
-                        shirket_ilkin_balans=shirket_ilkin_balans,
-                        shirket_sonraki_balans=shirket_sonraki_balans,
-                        emeliyyat_eden=user,
-                        tarix=mexaric_tarixi,
-                        miqdar=float(mebleg)
+                        company=company,
+                        operation_style="MƏXARİC",
+                        description=f"{company.name} şirkət kassasından {float(amount)} AZN məxaric edildi",
+                        initial_balance=initial_balance,
+                        subsequent_balance=subsequent_balance,
+                        company_initial_balance=company_initial_balance,
+                        company_subsequent_balance=company_subsequent_balance,
+                        executor=user,
+                        date=expense_datei,
+                        quantity=float(amount)
                     )
-                    return Response({"detail": f"{shirket_kassa.shirket} şirkətindən {mebleg} azn məxaric edildi"}, status=status.HTTP_201_CREATED)
+                    return Response({"detail": f"{cashbox.company} şirkətindən {amount} azn məxaric edildi"}, status=status.HTTP_201_CREATED)
             else:
                 return Response({"detail": "Daxil etdiyiniz məbləğ şirkətinin balansıdan böyük ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -235,100 +235,100 @@ def shirket_kassa_mexaric_create(self, request, *args, **kwargs):
     else:
         return Response({"detail": "Şirkətin balansı 0-dır"}, status=status.HTTP_400_BAD_REQUEST)
 
-# *************** Ofis Kassa medaxil mexaric ***************
+# *************** Office Kassa income expense ***************
 
-def ofis_kassa_medaxil_create(self, request, *args, **kwargs):
+def cashbox_income_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
-    mebleg = request.data.get("mebleg")
+    amount = request.data.get("amount")
     user = request.user
 
-    if(mebleg != ""):
-        ofis_kassa_id = request.data.get("ofis_kassa_id")
-        ofis_kassa = get_object_or_404(OfisKassa, pk=ofis_kassa_id)
-        medaxil_tarixi = request.data.get("medaxil_tarixi")
-        ofis=ofis_kassa.ofis
-        evvelki_balans=ofis_kassa.balans
+    if(amount != ""):
+        cashbox_id = request.data.get("cashbox_id")
+        cashbox = get_object_or_404(OfficeCashbox, pk=cashbox_id)
+        date = request.data.get("date")
+        office=cashbox.office
+        previous_balance=cashbox.balance
 
-        ilkin_balans = holding_umumi_balans_hesabla()
-        ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
-        if(medaxil_tarixi == ""):
-            medaxil_tarixi = datetime.today().strftime('%d-%m-%Y')
-        qeyd = request.data.get("qeyd")
-        ofis_kassa_balans = ofis_kassa.balans
-        yekun_balans = float(mebleg) + float(ofis_kassa_balans)
+        initial_balance = holding_umumi_balance_hesabla()
+        office_initial_balance = office_balance_hesabla(office=office)
+        if(date == ""):
+            date = datetime.today().strftime('%d-%m-%Y')
+        note = request.data.get("note")
+        cashbox_balance = cashbox.balance
+        yekun_balance = float(amount) + float(cashbox_balance)
 
         if(serializer.is_valid()):
-            ofis_kassa.balans = yekun_balans
-            ofis_kassa.save()
-            sonraki_kassa_balans=ofis_kassa.balans
-            serializer.save(medaxil_eden=user, ofis_kassa=ofis_kassa, medaxil_tarixi=medaxil_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
-            sonraki_balans = holding_umumi_balans_hesabla()
-            ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
+            cashbox.balance = yekun_balance
+            cashbox.save()
+            sonraki_kassa_balance=cashbox.balance
+            serializer.save(executor=user, cashbox=cashbox, date=date, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
+            subsequent_balance = holding_umumi_balance_hesabla()
+            office_subsequent_balance = office_balance_hesabla(office=office)
             pul_axini_create(
-                ofis=ofis,
-                shirket=ofis.shirket,
-                emeliyyat_uslubu="MƏDAXİL",
-                aciqlama=f"{ofis.ofis_adi} ofis kassasına {float(mebleg)} AZN əlavə edildi",
-                ilkin_balans=ilkin_balans,
-                sonraki_balans=sonraki_balans,
-                ofis_ilkin_balans=ofis_ilkin_balans,
-                ofis_sonraki_balans=ofis_sonraki_balans,
-                emeliyyat_eden=user,
-                tarix=medaxil_tarixi,
-                miqdar=float(mebleg)
+                office=office,
+                company=office.company,
+                operation_style="MƏDAXİL",
+                description=f"{office.name} office kassasına {float(amount)} AZN əlavə edildi",
+                initial_balance=initial_balance,
+                subsequent_balance=subsequent_balance,
+                office_initial_balance=office_initial_balance,
+                office_subsequent_balance=office_subsequent_balance,
+                executor=user,
+                date=date,
+                quantity=float(amount)
             )
-            return Response({"detail": f"{ofis_kassa.ofis} ofisinə {mebleg} azn mədaxil edildi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": f"{cashbox.office} officeinə {amount} azn mədaxil edildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-def ofis_kassa_mexaric_create(self, request, *args, **kwargs):
+def cashbox_expense_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
-    mebleg = request.data.get("mebleg")
-    qeyd = request.data.get("qeyd")
+    amount = request.data.get("amount")
+    note = request.data.get("note")
     user = request.user
 
-    ofis_kassa_id = request.data.get("ofis_kassa_id")
-    ofis_kassa = get_object_or_404(OfisKassa, pk=ofis_kassa_id)
-    ofis=ofis_kassa.ofis
-    evvelki_balans=ofis_kassa.balans
+    cashbox_id = request.data.get("cashbox_id")
+    cashbox = get_object_or_404(OfficeCashbox, pk=cashbox_id)
+    office=cashbox.office
+    previous_balance=cashbox.balance
 
-    ilkin_balans = holding_umumi_balans_hesabla()
+    initial_balance = holding_umumi_balance_hesabla()
 
-    ofis_ilkin_balans = ofis_balans_hesabla(ofis=ofis)
+    office_initial_balance = office_balance_hesabla(office=office)
 
-    ofis_kassa_balans = ofis_kassa.balans
-    mexaric_tarixi = request.data.get("mexaric_tarixi")
-    if(mexaric_tarixi == ""):
-        mexaric_tarixi = datetime.today().strftime('%d-%m-%Y')
+    cashbox_balance = cashbox.balance
+    expense_datei = request.data.get("expense_datei")
+    if(expense_datei == ""):
+        expense_datei = datetime.today().strftime('%d-%m-%Y')
 
-    if(ofis_kassa_balans != 0):
-        if(mebleg != ""):
-            if(float(mebleg) <= float(ofis_kassa_balans)):
-                yekun_balans = float(ofis_kassa_balans) - float(mebleg)
+    if(cashbox_balance != 0):
+        if(amount != ""):
+            if(float(amount) <= float(cashbox_balance)):
+                yekun_balance = float(cashbox_balance) - float(amount)
                 if(serializer.is_valid()):
-                    ofis_kassa.balans = yekun_balans
-                    ofis_kassa.save()
-                    sonraki_kassa_balans=ofis_kassa.balans
-                    serializer.save(mexaric_eden=user, ofis_kassa=ofis_kassa, mexaric_tarixi=mexaric_tarixi, evvelki_balans=evvelki_balans, sonraki_balans=sonraki_kassa_balans)
-                    sonraki_balans = holding_umumi_balans_hesabla()
-                    ofis_sonraki_balans = ofis_balans_hesabla(ofis=ofis)
+                    cashbox.balance = yekun_balance
+                    cashbox.save()
+                    sonraki_kassa_balance=cashbox.balance
+                    serializer.save(executor=user, cashbox=cashbox, expense_datei=expense_datei, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
+                    subsequent_balance = holding_umumi_balance_hesabla()
+                    office_subsequent_balance = office_balance_hesabla(office=office)
                     pul_axini_create(
-                        ofis=ofis,
-                        shirket=ofis.shirket,
-                        emeliyyat_uslubu="MƏXARİC",
-                        aciqlama=f"{ofis.ofis_adi} ofis kassasından {float(mebleg)} AZN məxaric edildi",
-                        ilkin_balans=ilkin_balans,
-                        sonraki_balans=sonraki_balans,
-                        ofis_ilkin_balans=ofis_ilkin_balans,
-                        ofis_sonraki_balans=ofis_sonraki_balans,
-                        emeliyyat_eden=user,
-                        tarix=mexaric_tarixi,
-                        miqdar=float(mebleg)
+                        office=office,
+                        company=office.company,
+                        operation_style="MƏXARİC",
+                        description=f"{office.name} office kassasından {float(amount)} AZN məxaric edildi",
+                        initial_balance=initial_balance,
+                        subsequent_balance=subsequent_balance,
+                        office_initial_balance=office_initial_balance,
+                        office_subsequent_balance=office_subsequent_balance,
+                        executor=user,
+                        date=expense_datei,
+                        quantity=float(amount)
                     )
-                    return Response({"detail": f"{ofis_kassa.ofis} ofisindən {mebleg} azn məxaric edildi"}, status=status.HTTP_201_CREATED)
+                    return Response({"detail": f"{cashbox.office} officeindən {amount} azn məxaric edildi"}, status=status.HTTP_201_CREATED)
             else:
-                return Response({"detail": "Daxil etdiyiniz məbləğ ofisin balansıdan böyük ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Daxil etdiyiniz məbləğ officein balansıdan böyük ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "Məbləği doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"detail": "Ofisin balansı 0-dır"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Officein balansı 0-dır"}, status=status.HTTP_400_BAD_REQUEST)

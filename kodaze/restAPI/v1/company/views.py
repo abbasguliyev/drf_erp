@@ -6,12 +6,12 @@ from rest_framework.response import Response
 
 from restAPI.v1.company.serializers import (
     AppLogoSerializer,
-    ShirketSerializer,
-    KomandaSerializer,
-    OfisSerializer,
-    ShobeSerializer,
-    VezifePermissionSerializer,
-    VezifelerSerializer,
+    CompanySerializer,
+    TeamSerializer,
+    OfficeSerializer,
+    SectionSerializer,
+    PermissionForPositionSerializer,
+    PositionSerializer,
     HoldingSerializer,
     DepartmentSerializer
 )
@@ -21,23 +21,23 @@ from account.models import User
 from company.models import (
     AppLogo,
     Holding,
-    Shirket,
-    Ofis,
-    Komanda,
-    Shobe,
-    VezifePermission,
-    Vezifeler,
+    Company,
+    Office,
+    Team,
+    Section,
+    PermissionForPosition,
+    Position,
     Department
 )
 
 
 from restAPI.v1.company.filters import (
-    KomandaFilter,
-    OfisFilter,
-    ShirketFilter,
-    ShobeFilter,
-    VezifeFilter,
-    VezifePermissionFilter,
+    TeamFilter,
+    OfficeFilter,
+    CompanyFilter,
+    SectionFilter,
+    PositionFilter,
+    PermissionForPositionFilter,
     DepartmentFilter
 )
 
@@ -46,34 +46,34 @@ from django.contrib.auth.models import Group
 
 from core.settings import BASE_DIR
 
-# ********************************** komanda get post put delete **********************************
+# ********************************** team get post put delete **********************************
 
 
-class KomandaListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Komanda.objects.all()
-    serializer_class = KomandaSerializer
+class TeamListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = KomandaFilter
-    permission_classes = [company_permissions.KomandaPermissions]
+    filterset_class = TeamFilter
+    permission_classes = [company_permissions.TeamPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        komanda_adi = serializer.validated_data.get("komanda_adi")
-        komandalar = Komanda.objects.filter(komanda_adi=komanda_adi.upper())
-        if len(komandalar) > 0:
-            return Response({"detail": "Bu adla komanda artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
+        name = serializer.validated_data.get("name")
+        teamlar = Team.objects.filter(name=name.upper())
+        if len(teamlar) > 0:
+            return Response({"detail": "Bu adla team artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Komanda əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"detail": "Team əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class KomandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Komanda.objects.all()
-    serializer_class = KomandaSerializer
+class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = KomandaFilter
-    permission_classes = [company_permissions.KomandaPermissions]
+    filterset_class = TeamFilter
+    permission_classes = [company_permissions.TeamPermissions]
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -88,13 +88,13 @@ class KomandaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
 
-        return Response({"detail": "Komanda məlumatları yeniləndi"})
+        return Response({"detail": "Team məlumatları yeniləndi"})
 
     def destroy(self, request, *args, **kwargs):
-        komanda = self.get_object()
-        komanda.is_active = False
-        komanda.save()
-        return Response({"detail": "Komanda qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
+        team = self.get_object()
+        team.is_active = False
+        team.save()
+        return Response({"detail": "Team qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
 
 # ********************************** department put delete post get **********************************
@@ -110,11 +110,8 @@ class DepartmentListCreateAPIView(generics.ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             queryset = Department.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.department is not None:
-                queryset = Department.objects.filter(
-                    shirket=request.user.shirket, id=request.user.department.id)
-            queryset = Department.objects.filter(shirket=request.user.shirket)
+        elif request.user.department is not None:
+                queryset = Department.objects.filter(id=request.user.department.id)
         else:
             queryset = Department.objects.all()
         queryset = self.filter_queryset(queryset)
@@ -157,26 +154,26 @@ class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Departament deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** ofisler put delete post get **********************************
+# ********************************** officeler put delete post get **********************************
 
 
-class OfisListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Ofis.objects.all()
-    serializer_class = OfisSerializer
+class OfficeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisFilter
-    permission_classes = [company_permissions.OfisPermissions]
+    filterset_class = OfficeFilter
+    permission_classes = [company_permissions.OfficePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Ofis.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Ofis.objects.filter(
-                    shirket=request.user.shirket, id=request.user.ofis.id)
-            queryset = Ofis.objects.filter(shirket=request.user.shirket)
+            queryset = Office.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Office.objects.filter(
+                    company=request.user.company, id=request.user.office.id)
+            queryset = Office.objects.filter(company=request.user.company)
         else:
-            queryset = Ofis.objects.all()
+            queryset = Office.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -192,15 +189,15 @@ class OfisListCreateAPIView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Ofis əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"detail": "Office əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class OfisDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Ofis.objects.all()
-    serializer_class = OfisSerializer
+class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisFilter
-    permission_classes = [company_permissions.OfisPermissions]
+    filterset_class = OfficeFilter
+    permission_classes = [company_permissions.OfficePermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -208,7 +205,7 @@ class OfisDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Ofis məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Office məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -216,25 +213,25 @@ class OfisDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.is_active = False
         instance.save()
-        return Response({"detail": "Ofis deaktiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Office deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** vezifeler put delete post get **********************************
+# ********************************** position put delete post get **********************************
 
 
-class VezifelerListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Vezifeler.objects.all()
-    serializer_class = VezifelerSerializer
+class PositionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifeFilter
-    permission_classes = [company_permissions.VezifelerPermissions]
+    filterset_class = PositionFilter
+    permission_classes = [company_permissions.PositionPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Vezifeler.objects.all()
-        elif request.user.shirket is not None:
-            queryset = Vezifeler.objects.filter(shirket=request.user.shirket)
+            queryset = Position.objects.all()
+        elif request.user.company is not None:
+            queryset = Position.objects.filter(company=request.user.company)
         else:
-            queryset = Vezifeler.objects.all()
+            queryset = Position.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -248,23 +245,23 @@ class VezifelerListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        vezife_adi = serializer.validated_data.get("vezife_adi")
-        shirket = serializer.validated_data.get("shirket")
-        vezife_db = Vezifeler.objects.filter(
-            vezife_adi=vezife_adi.upper(), shirket=shirket)
-        if len(vezife_db) > 0:
+        name = serializer.validated_data.get("name")
+        company = serializer.validated_data.get("company")
+        position_db = Position.objects.filter(
+            name=name.upper(), company=company)
+        if len(position_db) > 0:
             return Response({"detail": "Bu ad və şirkətə uyğun vəzifə artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Vəzifə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class VezifelerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Vezifeler.objects.all()
-    serializer_class = VezifelerSerializer
+class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifeFilter
-    permission_classes = [company_permissions.VezifelerPermissions]
+    filterset_class = PositionFilter
+    permission_classes = [company_permissions.PositionPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -282,23 +279,23 @@ class VezifelerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Vəzifə deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** shirket put delete post get **********************************
+# ********************************** company put delete post get **********************************
 
 
-class ShirketListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Shirket.objects.all()
-    serializer_class = ShirketSerializer
+class CompanyListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketFilter
-    permission_classes = [company_permissions.ShirketPermissions]
+    filterset_class = CompanyFilter
+    permission_classes = [company_permissions.CompanyPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Shirket.objects.all()
-        elif request.user.shirket is not None:
-            queryset = Shirket.objects.filter(id=request.user.shirket.id)
+            queryset = Company.objects.all()
+        elif request.user.company is not None:
+            queryset = Company.objects.filter(id=request.user.company.id)
         else:
-            queryset = Shirket.objects.all()
+            queryset = Company.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -317,12 +314,12 @@ class ShirketListCreateAPIView(generics.ListCreateAPIView):
         return Response({"detail": "Şirkət əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class ShirketDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Shirket.objects.all()
-    serializer_class = ShirketSerializer
+class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketFilter
-    permission_classes = [company_permissions.ShirketPermissions]
+    filterset_class = CompanyFilter
+    permission_classes = [company_permissions.CompanyPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -340,26 +337,26 @@ class ShirketDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** shobe put delete post get **********************************
+# ********************************** section put delete post get **********************************
 
 
-class ShobeListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Shobe.objects.all()
-    serializer_class = ShobeSerializer
+class SectionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Section.objects.all()
+    serializer_class = SectionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShobeFilter
-    permission_classes = [company_permissions.ShobePermissions]
+    filterset_class = SectionFilter
+    permission_classes = [company_permissions.SectionPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Shobe.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Shobe.objects.filter(
-                    ofis__shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = Shobe.objects.filter(ofis__shirket=request.user.shirket)
+            queryset = Section.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Section.objects.filter(
+                    office__company=request.user.company, office=request.user.office)
+            queryset = Section.objects.filter(office__company=request.user.company)
         else:
-            queryset = Shobe.objects.all()
+            queryset = Section.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -378,12 +375,12 @@ class ShobeListCreateAPIView(generics.ListCreateAPIView):
         return Response({"detail": "Şöbə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class ShobeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Shobe.objects.all()
-    serializer_class = ShobeSerializer
+class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Section.objects.all()
+    serializer_class = SectionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShobeFilter
-    permission_classes = [company_permissions.ShobePermissions]
+    filterset_class = SectionFilter
+    permission_classes = [company_permissions.SectionPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -432,24 +429,24 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
-# ********************************** VezifePermission put delete post get **********************************
+# ********************************** PermissionForPosition put delete post get **********************************
 
 
-class VezifePermissionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = VezifePermission.objects.all()
-    serializer_class = VezifePermissionSerializer
-    permission_classes = [company_permissions.VezifePermissionPermissions]
+class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = PermissionForPosition.objects.all()
+    serializer_class = PermissionForPositionSerializer
+    permission_classes = [company_permissions.PermissionForPositionPermissions]
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifePermissionFilter
+    filterset_class = PermissionForPositionFilter
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = VezifePermission.objects.all()
-        elif request.user.shirket is not None:
-            queryset = VezifePermission.objects.filter(
-                vezife__shirket=request.user.shirket)
+            queryset = PermissionForPosition.objects.all()
+        elif request.user.company is not None:
+            queryset = PermissionForPosition.objects.filter(
+                position__company=request.user.company)
         else:
-            queryset = VezifePermission.objects.all()
+            queryset = PermissionForPosition.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -462,34 +459,34 @@ class VezifePermissionListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        vezife_id = request.data.get("vezife_id")
-        vezife = Vezifeler.objects.get(pk=vezife_id)
+        position_id = request.data.get("position_id")
+        position = Position.objects.get(pk=position_id)
         permission_group_id = request.data.get("permission_group_id")
         permission_group = Group.objects.get(pk=permission_group_id)
-        users = User.objects.filter(vezife=vezife)
+        users = User.objects.filter(position=position)
         if permission_group is not None or permission_group == list():
             for user in users:
                 user.groups.add(permission_group)
 
-        VezifePermission.objects.create(
-            vezife=vezife,
+        PermissionForPosition.objects.create(
+            position=position,
             permission_group=permission_group
         ).save()
-        return Response({"detail": f"{vezife} üçün permission təyin olundu"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": f"{position} üçün permission təyin olundu"}, status=status.HTTP_201_CREATED)
 
 
-class VezifePermissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VezifePermission.objects.all()
-    serializer_class = VezifePermissionSerializer
-    permission_classes = [company_permissions.VezifePermissionPermissions]
+class PermissionForPositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = PermissionForPosition.objects.all()
+    serializer_class = PermissionForPositionSerializer
+    permission_classes = [company_permissions.PermissionForPositionPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)
         if serializer.is_valid():
-            vezife = instance.vezife
-            users = User.objects.filter(vezife=vezife)
+            position = instance.position
+            users = User.objects.filter(position=position)
             permission_group = instance.permission_group
             request_permission_group = serializer.validated_data.get(
                 "permission_group")
@@ -500,13 +497,13 @@ class VezifePermissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                     user.save()
 
             serializer.save()
-            return Response({"detail": f"{vezife} üçün permission yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": f"{position} üçün permission yeniləndi"}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         permission_group = instance.permission_group
-        vezife = instance.vezife
-        users = User.objects.filter(vezife=vezife)
+        position = instance.position
+        users = User.objects.filter(position=position)
 
         for user in users:
             user.groups.remove(permission_group)

@@ -1,139 +1,82 @@
 import datetime
-from company.models import Vezifeler
+from company.models import Position
 from .models import User
 from celery import shared_task
 import pandas as pd
-from salary.models import Menecer2Prim, MaasGoruntuleme, OfficeLeaderPrim, GroupLeaderPrim
+from salary.models import Manager2Prim, SalaryView, OfficeLeaderPrim, GroupLeaderPrimNew
 
 
 
-@shared_task(name='maas_goruntuleme_create_task')
-def maas_goruntuleme_create_task():
+@shared_task(name='salary_view_create_task')
+def salary_view_create_task():
     users = User.objects.all()
-    indi = datetime.date.today()
+    now = datetime.date.today()
     
-    d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
     next_m = d + pd.offsets.MonthBegin(1)
 
     for user in users:
-        isci_maas = MaasGoruntuleme.objects.filter(
-            isci=user, 
-            tarix__year = next_m.year,
-            tarix__month = next_m.month
+        employee_salary = SalaryView.objects.select_related('employee').filter(
+            employee=user, 
+            date__year = next_m.year,
+            date__month = next_m.month
         )
-        if len(isci_maas) != 0:
+        if len(employee_salary) != 0:
             continue
         else:
-            if user.maas_uslubu == "FİX": 
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{next_m.year}-{next_m.month}-{1}", yekun_maas=user.maas).save()
-            else:    
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{next_m.year}-{next_m.month}-{1}").save()
-
+            SalaryView.objects.create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary).save()
+            
     for user in users:
-        isci_maas = MaasGoruntuleme.objects.filter(
-            isci=user, 
-            tarix__year = indi.year,
-            tarix__month = indi.month
+        employee_salary = SalaryView.objects.select_related('employee').filter(
+            employee=user, 
+            date__year = now.year,
+            date__month = now.month
         )
-        if len(isci_maas) != 0:
+        if len(employee_salary) != 0:
             continue
         else:
-            if user.maas_uslubu == "FİX": 
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{indi.year}-{indi.month}-{1}", yekun_maas=user.maas).save()
-            else:    
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{indi.year}-{indi.month}-{1}").save()
+            SalaryView.objects.create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary).save()
 
-@shared_task(name='maas_goruntuleme_create_task_15')
-def maas_goruntuleme_create_task_15():
-    users = User.objects.all()
-    indi = datetime.date.today()
+@shared_task(name='employee_fix_prim_auto_add')
+def employee_fix_prim_auto_add():
+    now = datetime.date.today()
+
+    this_month = f"{now.year}-{now.month}-{1}"
     
-    d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
-    next_m = d + pd.offsets.MonthBegin(1)
+    previus_month = d - pd.offsets.MonthBegin(1)
 
-    for user in users:
-        isci_maas = MaasGoruntuleme.objects.filter(
-            isci=user, 
-            tarix__year = next_m.year,
-            tarix__month = next_m.month
-        )
-        if len(isci_maas) != 0:
-            continue
-        else:
-            if user.maas_uslubu == "FİX": 
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{next_m.year}-{next_m.month}-{1}", yekun_maas=user.maas).save()
-            else:    
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{next_m.year}-{next_m.month}-{1}").save()
-
-    for user in users:
-        isci_maas = MaasGoruntuleme.objects.filter(
-            isci=user, 
-            tarix__year = indi.year,
-            tarix__month = indi.month
-        )
-        if len(isci_maas) != 0:
-            continue
-        else:
-            if user.maas_uslubu == "FİX": 
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{indi.year}-{indi.month}-{1}", yekun_maas=user.maas).save()
-            else:    
-                MaasGoruntuleme.objects.create(isci=user, tarix=f"{indi.year}-{indi.month}-{1}").save()
-
-
-@shared_task(name='isci_fix_maas_auto_elave_et')
-def isci_fix_maas_auto_elave_et():
-    indi = datetime.date.today()
-
-    bu_ay = f"{indi.year}-{indi.month}-{1}"
-    
-    d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
-
-    evvelki_ay = d - pd.offsets.MonthBegin(1)
-
-    officeLeaderVezife = Vezifeler.objects.filter(vezife_adi="OFFICE LEADER")[0]
-    officeLeaders = User.objects.filter(vezife__vezife_adi=officeLeaderVezife.vezife_adi)
+    officeLeaderPosition = Position.objects.filter(name="OFFICE LEADER")[0]
+    officeLeaders = User.objects.filter(position__name=officeLeaderPosition.name)
 
     for officeLeader in officeLeaders:
-        officeLeader_status = officeLeader.isci_status
+        officeLeader_status = officeLeader.employee_status
 
-        ofisleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, vezife=officeLeader.vezife)
-        officeLeader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=bu_ay)
+        officeleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, position=officeLeader.position)
+        officeLeader_salary_view_this_month = SalaryView.objects.get(employee=officeLeader, date=this_month)
 
-        officeLeader_maas_goruntulenme_bu_ay.yekun_maas = float(officeLeader_maas_goruntulenme_bu_ay.yekun_maas) + float(ofisleader_prim.fix_maas)
-        officeLeader_maas_goruntulenme_bu_ay.save()
-    
-    # vanLeaderVezife = Vezifeler.objects.get(vezife_adi="VAN LEADER")
-    # vanLeaders = User.objects.filter(vezife=vanLeaderVezife)
+        officeLeader_salary_view_this_month.final_salary = float(officeLeader_salary_view_this_month.final_salary) + float(officeleader_prim.fix_prim)
+        officeLeader_salary_view_this_month.save()
 
-    # for group_leader in vanLeaders:
-    #     group_leader_status = group_leader.isci_status
+    manager2Position = Position.objects.filter(name="CANVASSER")[0]
+    manager2s = User.objects.filter(position__name=manager2Position.name)
 
-    #     group_leader_prim = GroupLeaderPrim.objects.get(prim_status=group_leader_status, odenis_uslubu="NƏĞD")
+    for manager2 in manager2s:
+        manager2_status = manager2.employee_status
 
-    #     group_leader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=bu_ay)
+        manager2_prim = Manager2Prim.objects.get(prim_status=manager2_status, position=manager2.position)
 
-    #     group_leader_maas_goruntulenme_bu_ay.yekun_maas = float(group_leader_maas_goruntulenme_bu_ay.yekun_maas) + float(group_leader_prim.fix_maas)
-    #     group_leader_maas_goruntulenme_bu_ay.save()
+        manager2_salary_view_previus_month = SalaryView.objects.get(employee=manager2, date=previus_month)
+        manager2_salary_goruntulenme_this_month = SalaryView.objects.get(employee=manager2, date=f"{now.year}-{now.month}-{1}")
 
-    menecer2Vezife = Vezifeler.objects.filter(vezife_adi="CANVASSER")[0]
-    menecer2s = User.objects.filter(vezife__vezife_adi=menecer2Vezife.vezife_adi)
+        prim_for_sales_quantity = 0
+        if (manager2_salary_view_previus_month.sale_quantity == 0):
+            prim_for_sales_quantity = manager2_prim.sale0
+        elif (manager2_salary_view_previus_month.sale_quantity >= 1) and (manager2_salary_view_previus_month.sale_quantity <= 8):
+            prim_for_sales_quantity = manager2_prim.sale1_8
 
-    for menecer2 in menecer2s:
-        menecer2_status = menecer2.isci_status
-
-        menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
-
-        menecer2_maas_goruntulenme_evvelki_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=evvelki_ay)
-        menecer2_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=f"{indi.year}-{indi.month}-{1}")
-
-        satis_sayina_gore_prim = 0
-        if (menecer2_maas_goruntulenme_evvelki_ay.satis_sayi == 0):
-            satis_sayina_gore_prim = menecer2_prim.satis0
-        elif (menecer2_maas_goruntulenme_evvelki_ay.satis_sayi >= 1) and (menecer2_maas_goruntulenme_evvelki_ay.satis_sayi <= 8):
-            satis_sayina_gore_prim = menecer2_prim.satis1_8
-
-        menecer2_maas_goruntulenme_bu_ay.yekun_maas = float(menecer2_maas_goruntulenme_bu_ay.yekun_maas) + float(satis_sayina_gore_prim) + float(menecer2_prim.fix_maas)
-        menecer2_maas_goruntulenme_bu_ay.save()
-        menecer2_maas_goruntulenme_evvelki_ay.save()
+        manager2_salary_goruntulenme_this_month.final_salary = float(manager2_salary_goruntulenme_this_month.final_salary) + float(prim_for_sales_quantity) + float(manager2_prim.fix_prim)
+        manager2_salary_goruntulenme_this_month.save()
+        manager2_salary_view_previus_month.save()

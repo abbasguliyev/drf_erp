@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-def holding_shirket_transfer_create(self, request, *args, **kwargs):
+def holding_company_transfer_create(self, request, *args, **kwargs):
     """
         Holdingden sirketlere transfer ucun istifade olunan method
     """
@@ -9,24 +9,24 @@ def holding_shirket_transfer_create(self, request, *args, **kwargs):
     user = request.user
 
     if (serializer.is_valid()):
-        transfer_meblegi = serializer.validated_data.get("transfer_meblegi")
-        gonderen_kassa = serializer.validated_data.get("holding_kassa")
-        gonderen_kassa_balans = gonderen_kassa.balans
-        gonderilen_kassalar = serializer.validated_data.get("shirket_kassa")
+        transfer_amount = serializer.validated_data.get("transfer_amount")
+        shipping_warehouse_kassa = serializer.validated_data.get("cashbox")
+        shipping_warehouse_kassa_balance = shipping_warehouse_kassa.balance
+        gonderilen_kassalar = serializer.validated_data.get("cashbox")
         gonderilen_kassalar_cemi = len(gonderilen_kassalar)
-        evvelki_balans = gonderen_kassa_balans
+        previous_balance = shipping_warehouse_kassa_balance
 
         if(len(gonderilen_kassalar) == 0):
-            return Response({"detail": "Heç bir ofis daxil etməmisiniz"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Heç bir office daxil etməmisiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if (transfer_meblegi != None):
-            if float(transfer_meblegi) <= float(gonderen_kassa_balans):
-                gonderen_kassa_yekun_balans = float(
-                    gonderen_kassa_balans) - (float(transfer_meblegi) * gonderilen_kassalar_cemi)
-                gonderen_kassa.balans = gonderen_kassa_yekun_balans
-                sonraki_balans = gonderen_kassa_yekun_balans
-                gonderen_kassa.save()
-                # qalan_mebleg = float(gonderen_kassa_balans) - float(transfer_meblegi)
+        if (transfer_amount != None):
+            if float(transfer_amount) <= float(shipping_warehouse_kassa_balance):
+                shipping_warehouse_kassa_yekun_balance = float(
+                    shipping_warehouse_kassa_balance) - (float(transfer_amount) * gonderilen_kassalar_cemi)
+                shipping_warehouse_kassa.balance = shipping_warehouse_kassa_yekun_balance
+                subsequent_balance = shipping_warehouse_kassa_yekun_balance
+                shipping_warehouse_kassa.save()
+                # qalan_amount = float(shipping_warehouse_kassa_balance) - float(transfer_amount)
             else:
                 return Response({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -35,21 +35,21 @@ def holding_shirket_transfer_create(self, request, *args, **kwargs):
 
         for i in gonderilen_kassalar:
             gonderilen_kassa = i
-            gonderilen_kassa_balans = gonderilen_kassa.balans
-            gonderilen_kassa_balans = float(
-                transfer_meblegi) + float(gonderilen_kassa_balans)
+            gonderilen_kassa_balance = gonderilen_kassa.balance
+            gonderilen_kassa_balance = float(
+                transfer_amount) + float(gonderilen_kassa_balance)
 
-            gonderilen_kassa.balans = gonderilen_kassa_balans
+            gonderilen_kassa.balance = gonderilen_kassa_balance
             gonderilen_kassa.save()
 
-        serializer.save(qalan_mebleg=gonderen_kassa.balans, evvelki_balans=evvelki_balans,
-                        sonraki_balans=sonraki_balans, transfer_eden=user)
+        serializer.save(qalan_amount=shipping_warehouse_kassa.balance, previous_balance=previous_balance,
+                        subsequent_balance=subsequent_balance, executor=user)
         return Response({"detail": "Transfer edildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def shirket_holding_transfer_create(self, request, *args, **kwargs):
+def company_holding_transfer_create(self, request, *args, **kwargs):
     """
         Sirketden holdinge transfer ucun istifade olunan method
     """
@@ -57,66 +57,66 @@ def shirket_holding_transfer_create(self, request, *args, **kwargs):
     user = request.user
 
     if (serializer.is_valid()):
-        gonderen_kassa = serializer.validated_data.get("shirket_kassa")
-        transfer_meblegi = request.data.get("transfer_meblegi")
+        shipping_warehouse_kassa = serializer.validated_data.get("cashbox")
+        transfer_amount = request.data.get("transfer_amount")
 
-        gonderen_kassa_balans = gonderen_kassa.balans
-        evvelki_balans = gonderen_kassa_balans
-        # qalan_mebleg = float(gonderen_kassa_balans) - float(transfer_meblegi)
+        shipping_warehouse_kassa_balance = shipping_warehouse_kassa.balance
+        previous_balance = shipping_warehouse_kassa_balance
+        # qalan_amount = float(shipping_warehouse_kassa_balance) - float(transfer_amount)
 
-        if (transfer_meblegi != None):
-            if float(transfer_meblegi) <= float(gonderen_kassa_balans):
-                gonderen_kassa.balans = float(
-                    gonderen_kassa_balans) - float(transfer_meblegi)
-                gonderen_kassa.save()
-                sonraki_balans = gonderen_kassa.balans
+        if (transfer_amount != None):
+            if float(transfer_amount) <= float(shipping_warehouse_kassa_balance):
+                shipping_warehouse_kassa.balance = float(
+                    shipping_warehouse_kassa_balance) - float(transfer_amount)
+                shipping_warehouse_kassa.save()
+                subsequent_balance = shipping_warehouse_kassa.balance
             else:
                 return Response({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"},
                                 status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "Məbləği doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-        gonderilen_kassa = serializer.validated_data.get("holding_kassa")
+        gonderilen_kassa = serializer.validated_data.get("cashbox")
 
-        gonderilen_kassa_balans = gonderilen_kassa.balans
-        gonderilen_kassa.balans = float(
-            transfer_meblegi) + float(gonderilen_kassa_balans)
+        gonderilen_kassa_balance = gonderilen_kassa.balance
+        gonderilen_kassa.balance = float(
+            transfer_amount) + float(gonderilen_kassa_balance)
         gonderilen_kassa.save()
 
-        serializer.save(qalan_mebleg=gonderen_kassa.balans, evvelki_balans=evvelki_balans,
-                        sonraki_balans=sonraki_balans, transfer_eden=user)
+        serializer.save(qalan_amount=shipping_warehouse_kassa.balance, previous_balance=previous_balance,
+                        subsequent_balance=subsequent_balance, executor=user)
 
         return Response({"detail": "Transfer edildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def shirket_ofis_transfer_create(self, request, *args, **kwargs):
+def offices_transfer_create(self, request, *args, **kwargs):
     """
-        Sirketden ofislere transfer ucun istifade olunan method
+        Sirketden officelere transfer ucun istifade olunan method
     """
     serializer = self.get_serializer(data=request.data)
     user = request.user
 
     if (serializer.is_valid()):
-        transfer_meblegi = serializer.validated_data.get("transfer_meblegi")
-        gonderen_kassa = serializer.validated_data.get("shirket_kassa")
-        gonderen_kassa_balans = gonderen_kassa.balans
-        gonderilen_kassalar = serializer.validated_data.get("ofis_kassa")
+        transfer_amount = serializer.validated_data.get("transfer_amount")
+        shipping_warehouse_kassa = serializer.validated_data.get("cashbox")
+        shipping_warehouse_kassa_balance = shipping_warehouse_kassa.balance
+        gonderilen_kassalar = serializer.validated_data.get("cashbox")
         if(len(gonderilen_kassalar) == 0):
-            return Response({"detail": "Heç bir ofis daxil etməmisiniz"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Heç bir office daxil etməmisiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
         gonderilen_kassalar_cemi = len(gonderilen_kassalar)
-        evvelki_balans = gonderen_kassa_balans
+        previous_balance = shipping_warehouse_kassa_balance
 
-        if (transfer_meblegi != None):
-            if float(transfer_meblegi) <= float(gonderen_kassa_balans):
-                gonderen_kassa_yekun_balans = float(gonderen_kassa_balans) - (
-                    float(transfer_meblegi) * gonderilen_kassalar_cemi)
-                gonderen_kassa.balans = gonderen_kassa_yekun_balans
-                sonraki_balans = gonderen_kassa_yekun_balans
-                gonderen_kassa.save()
-                # qalan_mebleg = float(gonderen_kassa_balans) - float(transfer_meblegi)
+        if (transfer_amount != None):
+            if float(transfer_amount) <= float(shipping_warehouse_kassa_balance):
+                shipping_warehouse_kassa_yekun_balance = float(shipping_warehouse_kassa_balance) - (
+                    float(transfer_amount) * gonderilen_kassalar_cemi)
+                shipping_warehouse_kassa.balance = shipping_warehouse_kassa_yekun_balance
+                subsequent_balance = shipping_warehouse_kassa_yekun_balance
+                shipping_warehouse_kassa.save()
+                # qalan_amount = float(shipping_warehouse_kassa_balance) - float(transfer_amount)
             else:
                 return Response({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -125,57 +125,57 @@ def shirket_ofis_transfer_create(self, request, *args, **kwargs):
 
         for i in gonderilen_kassalar:
             gonderilen_kassa = i
-            gonderilen_kassa_balans = gonderilen_kassa.balans
-            gonderilen_kassa_balans = float(
-                transfer_meblegi) + float(gonderilen_kassa_balans)
+            gonderilen_kassa_balance = gonderilen_kassa.balance
+            gonderilen_kassa_balance = float(
+                transfer_amount) + float(gonderilen_kassa_balance)
 
-            gonderilen_kassa.balans = gonderilen_kassa_balans
+            gonderilen_kassa.balance = gonderilen_kassa_balance
             gonderilen_kassa.save()
 
-        serializer.save(qalan_mebleg=gonderen_kassa.balans, evvelki_balans=evvelki_balans,
-                        sonraki_balans=sonraki_balans, transfer_eden=user)
+        serializer.save(qalan_amount=shipping_warehouse_kassa.balance, previous_balance=previous_balance,
+                        subsequent_balance=subsequent_balance, executor=user)
         return Response({"detail": "Transfer edildi"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def ofis_shirket_transfer_create(self, request, *args, **kwargs):
+def office_company_transfer_create(self, request, *args, **kwargs):
     """
-        Ofisden sirkete transfer ucun istifade olunan method
+        Officeden sirkete transfer ucun istifade olunan method
     """
     serializer = self.get_serializer(data=request.data)
     user = request.user
 
     if (serializer.is_valid()):
-        gonderen_kassa = serializer.validated_data.get("ofis_kassa")
-        transfer_meblegi = request.data.get("transfer_meblegi")
+        shipping_warehouse_kassa = serializer.validated_data.get("cashbox")
+        transfer_amount = request.data.get("transfer_amount")
 
-        gonderen_kassa_balans = gonderen_kassa.balans
-        evvelki_balans = gonderen_kassa_balans
-        # qalan_mebleg = float(gonderen_kassa_balans) - float(transfer_meblegi)
+        shipping_warehouse_kassa_balance = shipping_warehouse_kassa.balance
+        previous_balance = shipping_warehouse_kassa_balance
+        # qalan_amount = float(shipping_warehouse_kassa_balance) - float(transfer_amount)
 
-        if (transfer_meblegi != None):
-            if float(transfer_meblegi) <= float(gonderen_kassa_balans):
-                gonderen_kassa.balans = float(
-                    gonderen_kassa_balans) - float(transfer_meblegi)
-                sonraki_balans = gonderen_kassa.balans
-                gonderen_kassa.save()
+        if (transfer_amount != None):
+            if float(transfer_amount) <= float(shipping_warehouse_kassa_balance):
+                shipping_warehouse_kassa.balance = float(
+                    shipping_warehouse_kassa_balance) - float(transfer_amount)
+                subsequent_balance = shipping_warehouse_kassa.balance
+                shipping_warehouse_kassa.save()
             else:
                 return Response({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"},
                                 status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "Məbləği doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-        gonderilen_kassa = serializer.validated_data.get("shirket_kassa")
+        gonderilen_kassa = serializer.validated_data.get("cashbox")
 
-        gonderilen_kassa_balans = gonderilen_kassa.balans
+        gonderilen_kassa_balance = gonderilen_kassa.balance
 
-        gonderilen_kassa.balans = float(
-            transfer_meblegi) + float(gonderilen_kassa_balans)
+        gonderilen_kassa.balance = float(
+            transfer_amount) + float(gonderilen_kassa_balance)
         gonderilen_kassa.save()
 
-        serializer.save(qalan_mebleg=gonderen_kassa.balans, evvelki_balans=evvelki_balans,
-                        sonraki_balans=sonraki_balans, transfer_eden=user)
+        serializer.save(qalan_amount=shipping_warehouse_kassa.balance, previous_balance=previous_balance,
+                        subsequent_balance=subsequent_balance, executor=user)
 
         return Response({"detail": "Transfer edildi"}, status=status.HTTP_201_CREATED)
     else:

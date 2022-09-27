@@ -113,7 +113,7 @@ class MinimumLengthValidator(object):
         ) % {'min_length': self.min_length}
 
 class CustomUserAttributeSimilarityValidator(UserAttributeSimilarityValidator):
-    DEFAULT_USER_ATTRIBUTES = ('username', 'asa')
+    DEFAULT_USER_ATTRIBUTES = ('username', 'fullname')
 
     def __init__(self, user_attributes=DEFAULT_USER_ATTRIBUTES, max_similarity=0.7):
         self.user_attributes = user_attributes

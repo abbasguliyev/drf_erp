@@ -1,11 +1,11 @@
 import django_filters
 
 from account.models import (
-    MusteriQeydler, 
+    CustomerNote, 
     User, 
-    Musteri,
-    Bolge,
-    IsciStatus
+    Customer,
+    Region,
+    EmployeeStatus
 )
 
 from django.contrib.auth.models import Permission, Group
@@ -30,70 +30,70 @@ class GroupFilter(django_filters.FilterSet):
         }
 
 class UserFilter(django_filters.FilterSet):
-    ishe_baslama_tarixi = django_filters.DateFilter(field_name='ishe_baslama_tarixi', input_formats=["%d-%m-%Y"])
-    ishe_baslama_tarixi__gte = django_filters.DateFilter(field_name='ishe_baslama_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    ishe_baslama_tarixi__lte = django_filters.DateFilter(field_name='ishe_baslama_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    start_date_of_work = django_filters.DateFilter(field_name='start_date_of_work', input_formats=["%d-%m-%Y"])
+    start_date_of_work__gte = django_filters.DateFilter(field_name='start_date_of_work', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    start_date_of_work__lte = django_filters.DateFilter(field_name='start_date_of_work', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = User
         fields = {
-            'asa': ['exact', 'icontains'],
-            'vezife__vezife_adi': ['exact', 'icontains'],
-            'vezife': ['exact'],
+            'fullname': ['exact', 'icontains'],
+            'position__name': ['exact', 'icontains'],
+            'position': ['exact'],
             'is_superuser': ['exact'],
 
-            'shirket__shirket_adi': ['exact', 'icontains'],
-            'ofis__ofis_adi': ['exact', 'icontains'],
-            'shobe__shobe_adi': ['exact', 'icontains'],
-            'department__departament_adi': ['exact', 'icontains'],
-            # 'ishe_baslama_tarixi': ['exact', 'gte', 'lte'],
+            'company__name': ['exact', 'icontains'],
+            'office__name': ['exact', 'icontains'],
+            'section__name': ['exact', 'icontains'],
+            'department__name': ['exact', 'icontains'],
+            # 'start_date_of_work': ['exact', 'gte', 'lte'],
             'is_active': ['exact'],
-            'isci_status__status_adi': ['exact', 'icontains'],
+            'employee_status__status_name': ['exact', 'icontains'],
         }
 
-class IsciStatusFilter(django_filters.FilterSet):
+class EmployeeStatusFilter(django_filters.FilterSet):
     class Meta:
-        model = IsciStatus
+        model = EmployeeStatus
         fields = {
-            'status_adi': ['exact', 'icontains'],
+            'status_name': ['exact', 'icontains'],
         }
 
-class BolgeFilter(django_filters.FilterSet):
+class RegionFilter(django_filters.FilterSet):
     class Meta:
-        model = Bolge
+        model = Region
         fields = {
-            'bolge_adi': ['exact', 'icontains'],
+            'region_name': ['exact', 'icontains'],
         }
 
-class MusteriFilter(django_filters.FilterSet):
+class CustomerFilter(django_filters.FilterSet):
     class Meta:
-        model = Musteri
+        model = Customer
         fields = {
-            'asa': ['exact', 'icontains'],
-            'tel1': ['exact', 'icontains'],
-            'tel2': ['exact', 'icontains'],
-            'tel3': ['exact', 'icontains'],
-            'tel4': ['exact', 'icontains'],
+            'fullname': ['exact', 'icontains'],
+            'phone_number_1': ['exact', 'icontains'],
+            'phone_number_2': ['exact', 'icontains'],
+            'phone_number_3': ['exact', 'icontains'],
+            'phone_number_4': ['exact', 'icontains'],
             'is_active': ['exact'],
-            'unvan': ['exact', 'icontains'],
-            'bolge__bolge_adi': ['exact', 'icontains'],
+            'address': ['exact', 'icontains'],
+            'region__region_name': ['exact', 'icontains'],
         }
 
-class MusteriQeydlerFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class CustomerNoteFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
-        model = MusteriQeydler
+        model = CustomerNote
         fields = {
-            'musteri__asa': ['exact', 'icontains'],
-            'musteri__tel1': ['exact', 'icontains'],
-            'musteri__tel2': ['exact', 'icontains'],
-            'musteri__tel3': ['exact', 'icontains'],
-            'musteri__tel4': ['exact', 'icontains'],
-            'musteri__bolge__bolge_adi': ['exact', 'icontains'],
-            'musteri__bolge': ['exact'],
-            'qeyd': ['exact', 'icontains'],
-            # 'tarix': ['exact', 'gte', 'lte'],
+            'customer__fullname': ['exact', 'icontains'],
+            'customer__phone_number_1': ['exact', 'icontains'],
+            'customer__phone_number_2': ['exact', 'icontains'],
+            'customer__phone_number_3': ['exact', 'icontains'],
+            'customer__phone_number_4': ['exact', 'icontains'],
+            'customer__region__region_name': ['exact', 'icontains'],
+            'customer__region': ['exact'],
+            'note': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }

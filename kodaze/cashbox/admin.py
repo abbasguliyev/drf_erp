@@ -1,12 +1,12 @@
 from django.contrib import admin
 from cashbox.models import (
-    OfisKassa,
-    ShirketKassa,
-    HoldingKassa,
-    PulAxini
+    OfficeCashbox,
+    CompanyCashbox,
+    HoldingCashbox,
+    CashFlow
 )
 # Register your models here.
-admin.site.register(OfisKassa)
-admin.site.register(ShirketKassa)
-admin.site.register(HoldingKassa)
-admin.site.register(PulAxini)
+admin.site.register(OfficeCashbox)
+admin.site.register(CompanyCashbox)
+admin.site.register(HoldingCashbox)
+admin.site.register(CashFlow)

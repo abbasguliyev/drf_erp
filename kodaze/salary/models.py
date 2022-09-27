@@ -4,6 +4,7 @@ import datetime
 from django.contrib.auth import get_user_model
 
 USER = get_user_model()
+
 class AbstractPrim(models.Model):
     KREDIT = 'KREDİT'
     NAGD = 'NƏĞD'
@@ -12,189 +13,159 @@ class AbstractPrim(models.Model):
         (NAGD, "NƏĞD"),
     ]
 
-    prim_status = models.ForeignKey('account.IsciStatus', on_delete=models.SET_NULL, null=True)
-    mehsul = models.ForeignKey('product.Mehsullar', on_delete=models.CASCADE, null=True, blank=True)
-    satis_meblegi = models.FloatField(default=0, null=True, blank=True)
-    odenis_uslubu =  models.CharField(
+    prim_status = models.ForeignKey('account.EmployeeStatus', on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey('product.Product', on_delete=models.CASCADE, null=True, blank=True)
+    sales_amount = models.FloatField(default=0, null=True, blank=True)
+    payment_style =  models.CharField(
         max_length=20,
         choices=ODENIS_USLUBU_CHOICES,
         default=NAGD
     )
-    vezife = models.ForeignKey('company.Vezifeler', on_delete=models.SET_NULL, null=True)
+    position = models.ForeignKey('company.Position', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         abstract = True
 
-class GroupLeaderPrim(AbstractPrim):
-    komandaya_gore_prim = models.FloatField(default=0, blank=True)
-    fix_maas = models.FloatField(default=0, blank=True)
+class AbstractSalaryMethod(models.Model):
+    employee = models.ForeignKey(USER, on_delete=models.CASCADE)
+    amount = models.FloatField(default=0, blank=True)
+    note = models.TextField(default="", blank=True)
+    date = models.DateField(default=django.utils.timezone.now, blank=True)
 
     class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-
-
-class GroupLeaderPrimNew(AbstractPrim):
-    odenis_uslubu = None
-    negd = models.FloatField(default=0, blank=True)
-    kredit_4_12 = models.FloatField(default=0, blank=True)
-    kredit_13_18 = models.FloatField(default=0, blank=True)
-    kredit_19_24 = models.FloatField(default=0, blank=True)
-
-    class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-        permissions = (
-            ("view_group_leaderprimnew", "Mövcud group_leader primlərə baxa bilər"),
-            ("add_group_leaderprimnew", "GroupLeader prim əlavə edə bilər"),
-            ("change_group_leaderprimnew", "GroupLeader prim məlumatlarını yeniləyə bilər"),
-            ("delete_group_leaderprimnew", "GroupLeader prim silə bilər")
-        )
-
-    # def __str__(self) -> str:
-    #     return f"{self.prim_status} - {self.vezife.vezife_adi}"
-
-class Menecer1Prim(AbstractPrim):
-    komandaya_gore_prim = models.FloatField(default=0, blank=True)
-    fix_maas = models.FloatField(default=0, blank=True)
-
-    class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-
-    def __str__(self) -> str:
-        return f"{self.prim_status} - {self.komandaya_gore_prim} - {self.odenis_uslubu} - {self.vezife.vezife_adi}"
-
-class Menecer1PrimNew(AbstractPrim):
-    odenis_uslubu = None
-    negd = models.FloatField(default=0, blank=True)
-    kredit_4_12 = models.FloatField(default=0, blank=True)
-    kredit_13_18 = models.FloatField(default=0, blank=True)
-    kredit_19_24 = models.FloatField(default=0, blank=True)
-
-    class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-        permissions = (
-            ("view_menecer1primnew", "Mövcud menecer1 primlərə baxa bilər"),
-            ("add_menecer1primnew", "Menecer1 prim əlavə edə bilər"),
-            ("change_menecer1primnew", "Menecer1 prim məlumatlarını yeniləyə bilər"),
-            ("delete_menecer1primnew", "Menecer1 prim silə bilər")
-        )
+        abstract = True
 
 
 class OfficeLeaderPrim(AbstractPrim):
-    odenis_uslubu = None
-    ofise_gore_prim = models.FloatField(default=0, blank=True)
-    fix_maas = models.FloatField(default=0, blank=True)
+    payment_style = None
+    prim_for_office = models.FloatField(default=0, blank=True)
+    fix_prim = models.FloatField(default=0, blank=True)
 
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_officeleaderprim", "Mövcud office leader primlərə baxa bilər"),
-            ("add_officeleaderprim", "Office Leader prim əlavə edə bilər"),
-            ("change_officeleaderprim", "Office Leader prim məlumatlarını yeniləyə bilər"),
-            ("delete_officeleaderprim", "Office Leader prim silə bilər")
+            ("view_officeleaderprim", "Mövcud ofis leader primlərə baxa bilər"),
+            ("add_officeleaderprim", "Ofis Leader prim əlavə edə bilər"),
+            ("change_officeleaderprim", "Ofis Leader prim məlumatlarını yeniləyə bilər"),
+            ("delete_officeleaderprim", "Ofis Leader prim silə bilər")
         )
 
 
-class Menecer2Prim(AbstractPrim):
-    odenis_uslubu = None
-    satis0 = models.FloatField(default=0, blank=True)
-    satis1_8 = models.FloatField(default=0, blank=True)
-    satis9_14 = models.FloatField(default=0, blank=True)
-    satis15p = models.FloatField(default=0, blank=True)
-    satis20p = models.FloatField(default=0, blank=True)
-    komandaya_gore_prim = models.FloatField(default=0, blank=True)
-    ofise_gore_prim = models.FloatField(default=0, blank=True)
-    fix_maas = models.FloatField(default=0, blank=True)
+class GroupLeaderPrimNew(AbstractPrim):
+    payment_style = None
+    cash = models.FloatField(default=0, blank=True)
+    installment_4_12 = models.FloatField(default=0, blank=True)
+    installment_13_18 = models.FloatField(default=0, blank=True)
+    installment_19_24 = models.FloatField(default=0, blank=True)
 
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_menecer2prim", "Mövcud menecer2 primlərə baxa bilər"),
-            ("add_menecer2prim", "Menecer2 prim əlavə edə bilər"),
-            ("change_menecer2prim", "Menecer2 prim məlumatlarını yeniləyə bilər"),
-            ("delete_menecer2prim", "Menecer2 prim silə bilər")
+            ("view_groupleaderprimnew", "Mövcud group leader primlərə baxa bilər"),
+            ("add_groupleaderprimnew", "GroupLeader prim əlavə edə bilər"),
+            ("change_groupleaderprimnew", "GroupLeader prim məlumatlarını yeniləyə bilər"),
+            ("delete_groupleaderprimnew", "GroupLeader prim silə bilər")
         )
 
 
-class KreditorPrim(models.Model):
-    prim_faizi = models.PositiveBigIntegerField(default=0, blank=True)
+class Manager1PrimNew(AbstractPrim):
+    payment_style = None
+    cash = models.FloatField(default=0, blank=True)
+    installment_4_12 = models.FloatField(default=0, blank=True)
+    installment_13_18 = models.FloatField(default=0, blank=True)
+    installment_19_24 = models.FloatField(default=0, blank=True)
 
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_kreditorprim", "Mövcud kreditor primlərə baxa bilər"),
-            ("add_kreditorprim", "Kreditor prim əlavə edə bilər"),
-            ("change_kreditorprim", "Kreditor prim məlumatlarını yeniləyə bilər"),
-            ("delete_kreditorprim", "Kreditor prim silə bilər")
+            ("view_manager1primnew", "Mövcud manager1 primlərə baxa bilər"),
+            ("add_manager1primnew", "Manager1 prim əlavə edə bilər"),
+            ("change_manager1primnew", "Manager1 prim məlumatlarını yeniləyə bilər"),
+            ("delete_manager1primnew", "Manager1 prim silə bilər")
+        )
+
+class Manager2Prim(AbstractPrim):
+    payment_style = None
+    sale0 = models.FloatField(default=0, blank=True)
+    sale1_8 = models.FloatField(default=0, blank=True)
+    sale9_14 = models.FloatField(default=0, blank=True)
+    sale15p = models.FloatField(default=0, blank=True)
+    sale20p = models.FloatField(default=0, blank=True)
+    prim_for_team = models.FloatField(default=0, blank=True)
+    prim_for_office = models.FloatField(default=0, blank=True)
+    fix_prim = models.FloatField(default=0, blank=True)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_manager2prim", "Mövcud manager2 primlərə baxa bilər"),
+            ("add_manager2prim", "Manager2 prim əlavə edə bilər"),
+            ("change_manager2prim", "Manager2 prim məlumatlarını yeniləyə bilər"),
+            ("delete_manager2prim", "Manager2 prim silə bilər")
+        )
+
+
+class CreditorPrim(models.Model):
+    prim_percent = models.PositiveBigIntegerField(default=0, blank=True)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_creditorprim", "Mövcud kreditor primlərə baxa bilər"),
+            ("add_creditorprim", "Kreditor prim əlavə edə bilər"),
+            ("change_creditorprim", "Kreditor prim məlumatlarını yeniləyə bilər"),
+            ("delete_creditorprim", "Kreditor prim silə bilər")
         )
 
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
-class Avans(models.Model):
-    isci = models.ManyToManyField(USER, related_name="isci_avans")
-    mebleg = models.FloatField(default=0, blank=True)
-    yarim_ay_emek_haqqi = models.PositiveBigIntegerField(default=0, blank=True)
-    qeyd = models.TextField(default="", blank=True)
-    avans_tarixi = models.DateField(default=django.utils.timezone.now, blank=True)
+class AdvancePayment(AbstractSalaryMethod):
+    half_month_salary = models.PositiveBigIntegerField(default=0, blank=True)
     
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_avans", "Mövcud avanslara baxa bilər"),
-            ("add_avans", "Avans əlavə edə bilər"),
-            ("change_avans", "Avans məlumatlarını yeniləyə bilər"),
-            ("delete_avans", "Avans silə bilər")
+            ("view_advancepayment", "Mövcud avanslara baxa bilər"),
+            ("add_advancepayment", "Avans əlavə edə bilər"),
+            ("change_advancepayment", "Avans məlumatlarını yeniləyə bilər"),
+            ("delete_advancepayment", "Avans silə bilər")
         )
 
 
-class MaasOde(models.Model):
-    isci = models.ManyToManyField(USER, related_name="maas_ode")
-    mebleg = models.FloatField(default=0, blank=True)
-    qeyd = models.TextField(default="", blank=True)
-    odeme_tarixi = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
+class PaySalary(AbstractSalaryMethod):
+    installment = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_maasode", "Mövcud maaş ödəmələrinə baxa bilər"),
-            ("add_maasode", "Maaş ödəmə əlavə edə bilər"),
-            ("change_maasode", "Maaş ödəmə məlumatlarını yeniləyə bilər"),
-            ("delete_maasode", "Maaş ödəmə silə bilər")
+            ("view_paysalary", "Mövcud maaş ödəmələrinə baxa bilər"),
+            ("add_paysalary", "Maaş ödəmə əlavə edə bilər"),
+            ("change_paysalary", "Maaş ödəmə məlumatlarını yeniləyə bilər"),
+            ("delete_paysalary", "Maaş ödəmə silə bilər")
         )
 
 
-class Kesinti(models.Model):
-    isci = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="isci_kesinti")
-    mebleg = models.FloatField(default=0, blank=True)
-    qeyd = models.TextField(default="", blank=True)
-    kesinti_tarixi = models.DateField(default=django.utils.timezone.now, blank=True)
-    
+class SalaryDeduction(AbstractSalaryMethod):
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_kesinti", "Mövcud kəsintilərə baxa bilər"),
-            ("add_kesinti", "Kəsinti əlavə edə bilər"),
-            ("change_kesinti", "Kəsinti məlumatlarını yeniləyə bilər"),
-            ("delete_kesinti", "Kəsinti silə bilər")
+            ("view_salarydeduction", "Mövcud kəsintilərə baxa bilər"),
+            ("add_salarydeduction", "Kəsinti əlavə edə bilər"),
+            ("change_salarydeduction", "Kəsinti məlumatlarını yeniləyə bilər"),
+            ("delete_salarydeduction", "Kəsinti silə bilər")
         )
 
 
-class Bonus(models.Model):
-    isci = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="isci_bonus")
-    mebleg = models.FloatField(default=0, blank=True)
-    qeyd = models.TextField(default="", blank=True)
-    bonus_tarixi = models.DateField(default=django.utils.timezone.now, blank=True)
-    
+class Bonus(AbstractSalaryMethod):
     class Meta:
         ordering = ("pk",)
         default_permissions = []
@@ -206,20 +177,20 @@ class Bonus(models.Model):
         )
 
 
-class MaasGoruntuleme(models.Model):
-    isci = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="isci_maas_goruntuleme")
-    satis_sayi = models.PositiveBigIntegerField(default=0, blank=True)
-    satis_meblegi = models.FloatField(default=0, blank=True)
-    yekun_maas = models.FloatField(default=0, blank=True)
-    tarix = models.DateField(null=True, blank=True)
-    odendi = models.BooleanField(default=False)
+class SalaryView(AbstractSalaryMethod):
+    employee = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="employee_salary_views")
+    sale_quantity = models.PositiveBigIntegerField(default=0, blank=True)
+    sales_amount = models.FloatField(default=0, blank=True)
+    final_salary = models.FloatField(default=0, blank=True)
+    date = models.DateField(null=True, blank=True)
+    is_done = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_maasgoruntuleme", "Mövcud maaş cədvəllərinə baxa bilər"),
-            ("add_maasgoruntuleme", "Maaş cədvəli əlavə edə bilər"),
-            ("change_maasgoruntuleme", "Maaş cədvəlinin məlumatlarını yeniləyə bilər"),
-            ("delete_maasgoruntuleme", "Maaş cədvəlini silə bilər")
+            ("view_salaryview", "Mövcud maaş cədvəllərinə baxa bilər"),
+            ("add_salaryview", "Maaş cədvəli əlavə edə bilər"),
+            ("change_salaryview", "Maaş cədvəlinin məlumatlarını yeniləyə bilər"),
+            ("delete_salaryview", "Maaş cədvəlini silə bilər")
         )

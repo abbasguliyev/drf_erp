@@ -12,42 +12,42 @@ class DepartmentPermissions(permissions.IsAdminUser):
         return perm_util.add_user_permission_to_list()
 
 
-class ShirketPermissions(permissions.IsAdminUser):
+class CompanyPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shirket", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="company", view=view)
         return perm_util.add_user_permission_to_list()
 
-class OfisPermissions(permissions.IsAdminUser):
+class OfficePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="ofis", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="office", view=view)
         return perm_util.add_user_permission_to_list()
 
     def has_object_permission(self, request, view, obj):
         is_admin = super().has_permission(request, view)
-        request_user_shirket = request.user.shirket
-        object_shirket = obj.shirket
+        request_user_company = request.user.company
+        object_company = obj.company
 
-        return request_user_shirket == object_shirket or is_admin
+        return request_user_company == object_company or is_admin
 
-class ShobePermissions(permissions.IsAdminUser):
+class SectionPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shobe", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="section", view=view)
         return perm_util.add_user_permission_to_list()
 
-class VezifelerPermissions(permissions.IsAdminUser):
+class PositionPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="vezifeler", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="position", view=view)
         return perm_util.add_user_permission_to_list()
 
-class KomandaPermissions(permissions.IsAdminUser):
+class TeamPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="komanda", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="team", view=view)
         return perm_util.add_user_permission_to_list()
 
-# ******************** Vezifeye gore permission *****************************************
-class VezifePermissionPermissions(permissions.IsAdminUser):
+# ******************** Positionye gore permission *****************************************
+class PermissionForPositionPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="vezifepermission", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="permissionforposition", view=view)
         return perm_util.add_user_permission_to_list()
 
 # ******************** AppLogo permission *****************************************

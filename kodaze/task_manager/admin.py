@@ -11,7 +11,7 @@ class TaskManagerAdmin(admin.ModelAdmin):
         'status',
     ]
     search_fields = (
-        "employee__asa",
+        "employee__fullname",
     )
 
 admin.site.register(TaskManager, TaskManagerAdmin)

@@ -1,37 +1,37 @@
 from django.contrib import admin
 from .models import (
-    Avans, 
+    AdvancePayment, 
     Bonus, 
-    Menecer2Prim, 
-    Menecer1PrimNew, 
-    Kesinti, 
-    MaasGoruntuleme,
+    Manager2Prim, 
+    Manager1PrimNew, 
+    SalaryDeduction, 
+    SalaryView,
     GroupLeaderPrimNew, 
-    MaasOde, 
-    KreditorPrim, 
+    PaySalary, 
+    CreditorPrim, 
     OfficeLeaderPrim
 )
 # Register your models here.
 
-class MaasGoruntulemeAdmin(admin.ModelAdmin):
+class SalaryViewAdmin(admin.ModelAdmin):
     search_fields = (
-        "isci__id",
-        "isci__asa",
+        "employee__id",
+        "employee__fullname",
         
     )
     list_filter = [
-        "isci__id",
-        "tarix"
+        "employee__id",
+        "date"
     ]
 
-admin.site.register(Avans)
+admin.site.register(AdvancePayment)
 admin.site.register(Bonus)
-admin.site.register(Menecer2Prim)
-admin.site.register(Menecer1PrimNew)
-admin.site.register(Kesinti)
-admin.site.register(MaasGoruntuleme, MaasGoruntulemeAdmin)
+admin.site.register(Manager2Prim)
+admin.site.register(Manager1PrimNew)
+admin.site.register(SalaryDeduction)
+admin.site.register(SalaryView, SalaryViewAdmin)
 admin.site.register(GroupLeaderPrimNew)
-admin.site.register(MaasOde)
-admin.site.register(KreditorPrim)
+admin.site.register(PaySalary)
+admin.site.register(CreditorPrim)
 admin.site.register(OfficeLeaderPrim)
 

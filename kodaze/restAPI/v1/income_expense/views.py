@@ -4,96 +4,96 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
 from restAPI.v1.income_expense.serializers import (
-    OfisKassaMedaxilSerializer,
-    OfisKassaMexaricSerializer,
-    ShirketKassaMedaxilSerializer,
-    ShirketKassaMexaricSerializer,
-    HoldingKassaMedaxilSerializer,
-    HoldingKassaMexaricSerializer
+    OfficeCashboxIncomeSerializer,
+    OfficeCashboxExpenseSerializer,
+    CompanyCashboxIncomeSerializer,
+    CompanyCashboxExpenseSerializer,
+    HoldingCashboxIncomeSerializer,
+    HoldingCashboxExpenseSerializer
 )
 
 
 from income_expense.models import (
-    HoldingKassaMedaxil,
-    HoldingKassaMexaric,
-    OfisKassaMedaxil,
-    OfisKassaMexaric,
-    ShirketKassaMedaxil,
-    ShirketKassaMexaric,
+    HoldingCashboxIncome,
+    HoldingCashboxExpense,
+    OfficeCashboxIncome,
+    OfficeCashboxExpense,
+    CompanyCashboxIncome,
+    CompanyCashboxExpense,
 )
 
-from restAPI.v1.income_expense import utils as medaxil_mexaric_utils
+from restAPI.v1.income_expense import utils as income_expense_utils
 from restAPI.v1.income_expense.filters import (
-    HoldingKassaMedaxilFilter,
-    HoldingKassaMexaricFilter,
-    OfisKassaMedaxilFilter,
-    OfisKassaMexaricFilter,
-    ShirketKassaMedaxilFilter,
-    ShirketKassaMexaricFilter,
+    HoldingCashboxIncomeFilter,
+    HoldingCashboxExpenseFilter,
+    OfficeCashboxIncomeFilter,
+    OfficeCashboxExpenseFilter,
+    CompanyCashboxIncomeFilter,
+    CompanyCashboxExpenseFilter,
 )
 
 from restAPI.v1.income_expense import permissions as company_permissions
 
-# ********************************** holding kassa medaxil, mexaric put delete post get **********************************
+# ********************************** holding kassa income, expense put delete post get **********************************
 
-class HoldingKassaMedaxilListCreateAPIView(generics.ListCreateAPIView):
-    queryset = HoldingKassaMedaxil.objects.all()
-    serializer_class = HoldingKassaMedaxilSerializer
+class HoldingCashboxIncomeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = HoldingCashboxIncome.objects.all()
+    serializer_class = HoldingCashboxIncomeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingKassaMedaxilFilter
-    permission_classes = [company_permissions.HoldingKassaMedaxilPermissions]
+    filterset_class = HoldingCashboxIncomeFilter
+    permission_classes = [company_permissions.HoldingCashboxIncomePermissions]
 
     def create(self, request, *args, **kwargs):
-        return medaxil_mexaric_utils.holding_kassa_medaxil_create(self, request, *args, **kwargs)
+        return income_expense_utils.cashbox_income_create(self, request, *args, **kwargs)
 
 
-class HoldingKassaMedaxilDetailAPIView(generics.RetrieveAPIView):
-    queryset = HoldingKassaMedaxil.objects.all()
-    serializer_class = HoldingKassaMedaxilSerializer
+class HoldingCashboxIncomeDetailAPIView(generics.RetrieveAPIView):
+    queryset = HoldingCashboxIncome.objects.all()
+    serializer_class = HoldingCashboxIncomeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingKassaMedaxilFilter
-    permission_classes = [company_permissions.HoldingKassaMedaxilPermissions]
+    filterset_class = HoldingCashboxIncomeFilter
+    permission_classes = [company_permissions.HoldingCashboxIncomePermissions]
 
 
 
 # **********************************
 
-class HoldingKassaMexaricListCreateAPIView(generics.ListCreateAPIView):
-    queryset = HoldingKassaMexaric.objects.all()
-    serializer_class = HoldingKassaMexaricSerializer
+class HoldingCashboxExpenseListCreateAPIView(generics.ListCreateAPIView):
+    queryset = HoldingCashboxExpense.objects.all()
+    serializer_class = HoldingCashboxExpenseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingKassaMexaricFilter
-    permission_classes = [company_permissions.HoldingKassaMexaricPermissions]
+    filterset_class = HoldingCashboxExpenseFilter
+    permission_classes = [company_permissions.HoldingCashboxExpensePermissions]
 
     def create(self, request, *args, **kwargs):
-        return medaxil_mexaric_utils.holding_kassa_mexaric_create(self, request, *args, **kwargs)
+        return income_expense_utils.cashbox_expense_create(self, request, *args, **kwargs)
 
 
-class HoldingKassaMexaricDetailAPIView(generics.RetrieveAPIView):
-    queryset = HoldingKassaMexaric.objects.all()
-    serializer_class = HoldingKassaMexaricSerializer
+class HoldingCashboxExpenseDetailAPIView(generics.RetrieveAPIView):
+    queryset = HoldingCashboxExpense.objects.all()
+    serializer_class = HoldingCashboxExpenseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingKassaMexaricFilter
-    permission_classes = [company_permissions.HoldingKassaMexaricPermissions]
+    filterset_class = HoldingCashboxExpenseFilter
+    permission_classes = [company_permissions.HoldingCashboxExpensePermissions]
 
 
 
-# ********************************** shirket kassa medaxil, mexaric put delete post get **********************************
+# ********************************** company kassa income, expense put delete post get **********************************
 
-class ShirketKassaMedaxilListCreateAPIView(generics.ListCreateAPIView):
-    queryset = ShirketKassaMedaxil.objects.all()
-    serializer_class = ShirketKassaMedaxilSerializer
+class CompanyCashboxIncomeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CompanyCashboxIncome.objects.all()
+    serializer_class = CompanyCashboxIncomeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketKassaMedaxilFilter
-    permission_classes = [company_permissions.ShirketKassaMedaxilPermissions]
+    filterset_class = CompanyCashboxIncomeFilter
+    permission_classes = [company_permissions.CompanyCashboxIncomePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShirketKassaMedaxil.objects.all()
-        elif request.user.shirket is not None:
-            queryset = ShirketKassaMedaxil.objects.filter(shirket_kassa__shirket=request.user.shirket)
+            queryset = CompanyCashboxIncome.objects.all()
+        elif request.user.company is not None:
+            queryset = CompanyCashboxIncome.objects.filter(cashbox__company=request.user.company)
         else:
-            queryset = ShirketKassaMedaxil.objects.all()
+            queryset = CompanyCashboxIncome.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -106,34 +106,34 @@ class ShirketKassaMedaxilListCreateAPIView(generics.ListCreateAPIView):
 
 
     def create(self, request, *args, **kwargs):
-        return medaxil_mexaric_utils.shirket_kassa_medaxil_create(self, request, *args, **kwargs)
+        return income_expense_utils.cashbox_income_create(self, request, *args, **kwargs)
 
 
-class ShirketKassaMedaxilDetailAPIView(generics.RetrieveAPIView):
-    queryset = ShirketKassaMedaxil.objects.all()
-    serializer_class = ShirketKassaMedaxilSerializer
+class CompanyCashboxIncomeDetailAPIView(generics.RetrieveAPIView):
+    queryset = CompanyCashboxIncome.objects.all()
+    serializer_class = CompanyCashboxIncomeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketKassaMedaxilFilter
-    permission_classes = [company_permissions.ShirketKassaMedaxilPermissions]
+    filterset_class = CompanyCashboxIncomeFilter
+    permission_classes = [company_permissions.CompanyCashboxIncomePermissions]
 
 
 
 # **********************************
 
-class ShirketKassaMexaricListCreateAPIView(generics.ListCreateAPIView):
-    queryset = ShirketKassaMexaric.objects.all()
-    serializer_class = ShirketKassaMexaricSerializer
+class CompanyCashboxExpenseListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CompanyCashboxExpense.objects.all()
+    serializer_class = CompanyCashboxExpenseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketKassaMexaricFilter
-    permission_classes = [company_permissions.ShirketKassaMexaricPermissions]
+    filterset_class = CompanyCashboxExpenseFilter
+    permission_classes = [company_permissions.CompanyCashboxExpensePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShirketKassaMexaric.objects.all()
-        elif request.user.shirket is not None:
-            queryset = ShirketKassaMexaric.objects.filter(shirket_kassa__shirket=request.user.shirket)
+            queryset = CompanyCashboxExpense.objects.all()
+        elif request.user.company is not None:
+            queryset = CompanyCashboxExpense.objects.filter(cashbox__company=request.user.company)
         else:
-            queryset = ShirketKassaMexaric.objects.all()
+            queryset = CompanyCashboxExpense.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -145,36 +145,36 @@ class ShirketKassaMexaricListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return medaxil_mexaric_utils.shirket_kassa_mexaric_create(self, request, *args, **kwargs)
+        return income_expense_utils.cashbox_expense_create(self, request, *args, **kwargs)
 
 
-class ShirketKassaMexaricDetailAPIView(generics.RetrieveAPIView):
-    queryset = ShirketKassaMexaric.objects.all()
-    serializer_class = ShirketKassaMexaricSerializer
+class CompanyCashboxExpenseDetailAPIView(generics.RetrieveAPIView):
+    queryset = CompanyCashboxExpense.objects.all()
+    serializer_class = CompanyCashboxExpenseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketKassaMexaricFilter
-    permission_classes = [company_permissions.ShirketKassaMexaricPermissions]
+    filterset_class = CompanyCashboxExpenseFilter
+    permission_classes = [company_permissions.CompanyCashboxExpensePermissions]
 
 
 
-# ********************************** Ofis kassa medaxil, mexaric put delete post get **********************************
+# ********************************** Office kassa income, expense put delete post get **********************************
 
-class OfisKassaMedaxilListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfisKassaMedaxil.objects.all()
-    serializer_class = OfisKassaMedaxilSerializer
+class OfficeCashboxIncomeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = OfficeCashboxIncome.objects.all()
+    serializer_class = OfficeCashboxIncomeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisKassaMedaxilFilter
-    permission_classes = [company_permissions.OfisKassaMedaxilPermissions]
+    filterset_class = OfficeCashboxIncomeFilter
+    permission_classes = [company_permissions.OfficeCashboxIncomePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = OfisKassaMedaxil.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = OfisKassaMedaxil.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket, ofis_kassa__ofis=request.user.ofis)
-            queryset = OfisKassaMedaxil.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket)
+            queryset = OfficeCashboxIncome.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = OfficeCashboxIncome.objects.filter(cashbox__office__company=request.user.company, cashbox__office=request.user.office)
+            queryset = OfficeCashboxIncome.objects.filter(cashbox__office__company=request.user.company)
         else:
-            queryset = OfisKassaMedaxil.objects.all()
+            queryset = OfficeCashboxIncome.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -186,36 +186,36 @@ class OfisKassaMedaxilListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return medaxil_mexaric_utils.ofis_kassa_medaxil_create(self, request, *args, **kwargs)
+        return income_expense_utils.cashbox_income_create(self, request, *args, **kwargs)
 
 
-class OfisKassaMedaxilDetailAPIView(generics.RetrieveAPIView):
-    queryset = OfisKassaMedaxil.objects.all()
-    serializer_class = OfisKassaMedaxilSerializer
+class OfficeCashboxIncomeDetailAPIView(generics.RetrieveAPIView):
+    queryset = OfficeCashboxIncome.objects.all()
+    serializer_class = OfficeCashboxIncomeSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisKassaMedaxilFilter
-    permission_classes = [company_permissions.OfisKassaMedaxilPermissions]
+    filterset_class = OfficeCashboxIncomeFilter
+    permission_classes = [company_permissions.OfficeCashboxIncomePermissions]
 
 
 
 # **********************************
 
-class OfisKassaMexaricListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfisKassaMexaric.objects.all()
-    serializer_class = OfisKassaMexaricSerializer
+class OfficeCashboxExpenseListCreateAPIView(generics.ListCreateAPIView):
+    queryset = OfficeCashboxExpense.objects.all()
+    serializer_class = OfficeCashboxExpenseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisKassaMexaricFilter
-    permission_classes = [company_permissions.OfisKassaMexaricPermissions]
+    filterset_class = OfficeCashboxExpenseFilter
+    permission_classes = [company_permissions.OfficeCashboxExpensePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = OfisKassaMexaric.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = OfisKassaMexaric.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket, ofis_kassa__ofis=request.user.ofis)
-            queryset = OfisKassaMexaric.objects.filter(ofis_kassa__ofis__shirket=request.user.shirket)
+            queryset = OfficeCashboxExpense.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = OfficeCashboxExpense.objects.filter(cashbox__office__company=request.user.company, cashbox__office=request.user.office)
+            queryset = OfficeCashboxExpense.objects.filter(cashbox__office__company=request.user.company)
         else:
-            queryset = OfisKassaMexaric.objects.all()
+            queryset = OfficeCashboxExpense.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -227,12 +227,12 @@ class OfisKassaMexaricListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return medaxil_mexaric_utils.ofis_kassa_mexaric_create(self, request, *args, **kwargs)
+        return income_expense_utils.cashbox_expense_create(self, request, *args, **kwargs)
 
 
-class OfisKassaMexaricDetailAPIView(generics.RetrieveAPIView):
-    queryset = OfisKassaMexaric.objects.all()
-    serializer_class = OfisKassaMexaricSerializer
+class OfficeCashboxExpenseDetailAPIView(generics.RetrieveAPIView):
+    queryset = OfficeCashboxExpense.objects.all()
+    serializer_class = OfficeCashboxExpenseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisKassaMexaricFilter
-    permission_classes = [company_permissions.OfisKassaMexaricPermissions]
+    filterset_class = OfficeCashboxExpenseFilter
+    permission_classes = [company_permissions.OfficeCashboxExpensePermissions]

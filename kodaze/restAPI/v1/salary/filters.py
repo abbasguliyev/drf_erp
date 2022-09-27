@@ -1,229 +1,191 @@
 import django_filters
 
 from salary.models import (
-    Avans,
-    Menecer1PrimNew,
-    Kesinti,
+    AdvancePayment,
+    Manager1PrimNew,
+    SalaryDeduction,
     Bonus,
-    MaasGoruntuleme,
-    MaasOde,
-    GroupLeaderPrim,
-    Menecer1Prim,
+    SalaryView,
+    PaySalary,
     OfficeLeaderPrim,
-    Menecer2Prim,
+    Manager2Prim,
     GroupLeaderPrimNew
 )
 
 
-class AvansFilter(django_filters.FilterSet):
-    avans_tarixi = django_filters.DateFilter(
-        field_name='avans_tarixi', input_formats=["%d-%m-%Y"])
-    avans_tarixi__gte = django_filters.DateFilter(
-        field_name='avans_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    avans_tarixi__lte = django_filters.DateFilter(
-        field_name='avans_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class AdvancePaymentFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = Avans
+        model = AdvancePayment
         fields = {
-            'isci__asa': ['exact', 'icontains'],
-            'isci__vezife__vezife_adi': ['exact', 'icontains'],
-            'isci__isci_status__status_adi': ['exact', 'icontains'],
+            'employee__fullname': ['exact', 'icontains'],
+            'employee__position__name': ['exact', 'icontains'],
+            'employee__employee_status__status_name': ['exact', 'icontains'],
 
-            'mebleg': ['exact', 'gte', 'lte'],
-            'yarim_ay_emek_haqqi': ['exact', 'gte', 'lte'],
+            'amount': ['exact', 'gte', 'lte'],
+            'half_month_salary': ['exact', 'gte', 'lte'],
 
-            'qeyd': ['exact', 'icontains'],
-            # 'avans_tarixi': ['exact', 'gte', 'lte'],
+            'note': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class KesintiFilter(django_filters.FilterSet):
-    kesinti_tarixi = django_filters.DateFilter(
-        field_name='kesinti_tarixi', input_formats=["%d-%m-%Y"])
-    kesinti_tarixi__gte = django_filters.DateFilter(
-        field_name='kesinti_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    kesinti_tarixi__lte = django_filters.DateFilter(
-        field_name='kesinti_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class SalaryDeductionFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = Kesinti
+        model = SalaryDeduction
         fields = {
-            'isci__asa': ['exact', 'icontains'],
-            'isci__vezife__vezife_adi': ['exact', 'icontains'],
-            'isci__isci_status__status_adi': ['exact', 'icontains'],
+            'employee__fullname': ['exact', 'icontains'],
+            'employee__position__name': ['exact', 'icontains'],
+            'employee__employee_status__status_name': ['exact', 'icontains'],
 
-            'mebleg': ['exact', 'gte', 'lte'],
+            'amount': ['exact', 'gte', 'lte'],
 
-            'qeyd': ['exact', 'icontains'],
-            # 'kesinti_tarixi': ['exact', 'gte', 'lte'],
+            'note': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
 class BonusFilter(django_filters.FilterSet):
-    bonus_tarixi = django_filters.DateFilter(
-        field_name='bonus_tarixi', input_formats=["%d-%m-%Y"])
-    bonus_tarixi__gte = django_filters.DateFilter(
-        field_name='bonus_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    bonus_tarixi__lte = django_filters.DateFilter(
-        field_name='bonus_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
         model = Bonus
         fields = {
-            'isci__asa': ['exact', 'icontains'],
-            'isci__vezife__vezife_adi': ['exact', 'icontains'],
-            'isci__isci_status__status_adi': ['exact', 'icontains'],
+            'employee__fullname': ['exact', 'icontains'],
+            'employee__position__name': ['exact', 'icontains'],
+            'employee__employee_status__status_name': ['exact', 'icontains'],
 
-            'mebleg': ['exact', 'gte', 'lte'],
+            'amount': ['exact', 'gte', 'lte'],
 
-            'qeyd': ['exact', 'icontains'],
-            # 'bonus_tarixi': ['exact', 'gte', 'lte'],
+            'note': ['exact', 'icontains'],
+            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
-class MaasGoruntulemeFilter(django_filters.FilterSet):
-    tarix = django_filters.DateFilter(
-        field_name='tarix', input_formats=["%d-%m-%Y"])
-    tarix__gte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    tarix__lte = django_filters.DateFilter(
-        field_name='tarix', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class SalaryViewFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = MaasGoruntuleme
+        model = SalaryView
         fields = {
-            'isci__asa': ['exact', 'icontains'],
+            'employee__fullname': ['exact', 'icontains'],
 
-            'isci__is_superuser': ['exact'],
+            'employee__is_superuser': ['exact'],
 
 
-            'isci__ofis': ['exact'],
-            'isci__ofis__id': ['exact'],
-            'isci__ofis__ofis_adi': ['exact', 'icontains'],
+            'employee__office': ['exact'],
+            'employee__office__id': ['exact'],
+            'employee__office__name': ['exact', 'icontains'],
 
-            'isci__shirket': ['exact'],
-            'isci__shirket__id': ['exact'],
-            'isci__shirket__shirket_adi': ['exact', 'icontains'],
+            'employee__company': ['exact'],
+            'employee__company__id': ['exact'],
+            'employee__company__name': ['exact', 'icontains'],
 
-            'isci__vezife': ['exact'],
-            'isci__vezife__id': ['exact'],
-            'isci__vezife__vezife_adi': ['exact', 'icontains'],
+            'employee__position': ['exact'],
+            'employee__position__id': ['exact'],
+            'employee__position__name': ['exact', 'icontains'],
 
-            'isci__isci_status__status_adi': ['exact', 'icontains'],
+            'employee__employee_status__status_name': ['exact', 'icontains'],
 
-            'isci__komanda': ['exact'],
-            'isci__komanda_id': ['exact'],
-            'isci__komanda__komanda_adi': ['exact', 'icontains'],
+            'employee__team': ['exact'],
+            'employee__team_id': ['exact'],
+            'employee__team__name': ['exact', 'icontains'],
 
-            'odendi': ['exact'],
+            'is_done': ['exact'],
 
-            'satis_sayi': ['exact', 'gte', 'lte'],
-            'satis_meblegi': ['exact', 'gte', 'lte'],
-            'yekun_maas': ['exact', 'gte', 'lte'],
+            'sale_quantity': ['exact', 'gte', 'lte'],
+            'sales_amount': ['exact', 'gte', 'lte'],
+            'final_salary': ['exact', 'gte', 'lte'],
 
-            # 'tarix': ['exact', 'gte', 'lte', 'month', 'year'],
+            # 'date': ['exact', 'gte', 'lte', 'month', 'year'],
         }
 
 
-class MaasOdeFilter(django_filters.FilterSet):
-    odeme_tarixi = django_filters.DateFilter(
-        field_name='odeme_tarixi', input_formats=["%d-%m-%Y"])
-    odeme_tarixi__gte = django_filters.DateFilter(
-        field_name='odeme_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    odeme_tarixi__lte = django_filters.DateFilter(
-        field_name='odeme_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class PaySalaryFilter(django_filters.FilterSet):
+    installment = django_filters.DateFilter(
+        field_name='installment', input_formats=["%d-%m-%Y"])
+    installment__gte = django_filters.DateFilter(
+        field_name='installment', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    installment__lte = django_filters.DateFilter(
+        field_name='installment', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = MaasOde
+        model = PaySalary
         fields = {
-            'isci__asa': ['exact', 'icontains'],
-            'isci__id': ['exact', 'icontains'],
-            'isci__vezife__vezife_adi': ['exact', 'icontains'],
-            'isci__isci_status__status_adi': ['exact', 'icontains'],
+            'employee__fullname': ['exact', 'icontains'],
+            'employee__id': ['exact', 'icontains'],
+            'employee__position__name': ['exact', 'icontains'],
+            'employee__employee_status__status_name': ['exact', 'icontains'],
 
-            'mebleg': ['exact', 'gte', 'lte'],
+            'amount': ['exact', 'gte', 'lte'],
 
-            'qeyd': ['exact', 'icontains'],
-            # 'odeme_tarixi': ['exact', 'gte', 'lte'],
+            'note': ['exact', 'icontains'],
+            # 'installment': ['exact', 'gte', 'lte'],
         }
 
-
-class GroupLeaderPrimFilter(django_filters.FilterSet):
-    class Meta:
-        model = GroupLeaderPrim
-        fields = {
-            'prim_status__status_adi': ['exact', 'icontains'],
-            'satis_meblegi': ['exact', 'icontains'],
-            'odenis_uslubu': ['exact', 'gte', 'lte'],
-
-            'vezife__vezife_adi': ['exact', 'icontains'],
-
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
-
-            'komandaya_gore_prim': ['exact', 'gte', 'lte'],
-            'fix_maas': ['exact', 'gte', 'lte'],
-        }
 
 
 class GroupLeaderPrimNewFilter(django_filters.FilterSet):
     class Meta:
         model = GroupLeaderPrimNew
         fields = {
-            'prim_status__status_adi': ['exact', 'icontains'],
-            'satis_meblegi': ['exact', 'icontains'],
+            'prim_status__status_name': ['exact', 'icontains'],
+            'sales_amount': ['exact', 'icontains'],
 
-            'negd': ['exact'],
-            'kredit_4_12': ['exact'],
-            'kredit_13_18': ['exact'],
-            'kredit_19_24': ['exact'],
+            'cash': ['exact'],
+            'installment_4_12': ['exact'],
+            'installment_13_18': ['exact'],
+            'installment_19_24': ['exact'],
 
-            'vezife__vezife_adi': ['exact', 'icontains'],
+            'position__name': ['exact', 'icontains'],
 
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'product__id': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte'],
         }
 
 
-class Menecer1PrimFilter(django_filters.FilterSet):
+
+class Manager1PrimNewFilter(django_filters.FilterSet):
     class Meta:
-        model = Menecer1Prim
+        model = Manager1PrimNew
         fields = {
-            'prim_status__status_adi': ['exact', 'icontains'],
-            'satis_meblegi': ['exact', 'icontains'],
-            'odenis_uslubu': ['exact', 'gte', 'lte'],
+            'prim_status__status_name': ['exact', 'icontains'],
+            'sales_amount': ['exact', 'icontains'],
 
-            'vezife__vezife_adi': ['exact', 'icontains'],
+            'cash': ['exact'],
+            'installment_4_12': ['exact'],
+            'installment_13_18': ['exact'],
+            'installment_19_24': ['exact'],
 
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'position__name': ['exact', 'icontains'],
 
-            'komandaya_gore_prim': ['exact', 'gte', 'lte'],
-            'fix_maas': ['exact', 'gte', 'lte'],
-        }
-
-
-class Menecer1PrimNewFilter(django_filters.FilterSet):
-    class Meta:
-        model = Menecer1PrimNew
-        fields = {
-            'prim_status__status_adi': ['exact', 'icontains'],
-            'satis_meblegi': ['exact', 'icontains'],
-
-            'negd': ['exact'],
-            'kredit_4_12': ['exact'],
-            'kredit_13_18': ['exact'],
-            'kredit_19_24': ['exact'],
-
-            'vezife__vezife_adi': ['exact', 'icontains'],
-
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte']
+            'product__id': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte']
         }
 
 
@@ -231,39 +193,39 @@ class OfficeLeaderPrimFilter(django_filters.FilterSet):
     class Meta:
         model = OfficeLeaderPrim
         fields = {
-            'prim_status__status_adi': ['exact', 'icontains'],
-            'satis_meblegi': ['exact', 'icontains'],
+            'prim_status__status_name': ['exact', 'icontains'],
+            'sales_amount': ['exact', 'icontains'],
 
-            'vezife__vezife_adi': ['exact', 'icontains'],
+            'position__name': ['exact', 'icontains'],
 
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'product__id': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte'],
 
-            'ofise_gore_prim': ['exact', 'gte', 'lte'],
-            'fix_maas': ['exact', 'gte', 'lte'],
+            'prim_for_office': ['exact', 'gte', 'lte'],
+            'fix_prim': ['exact', 'gte', 'lte'],
         }
 
 
-class Menecer2PrimFilter(django_filters.FilterSet):
+class Manager2PrimFilter(django_filters.FilterSet):
     class Meta:
-        model = Menecer2Prim
+        model = Manager2Prim
         fields = {
-            'prim_status__status_adi': ['exact', 'icontains'],
-            'satis_meblegi': ['exact', 'icontains'],
+            'prim_status__status_name': ['exact', 'icontains'],
+            'sales_amount': ['exact', 'icontains'],
 
-            'vezife__vezife_adi': ['exact', 'icontains'],
+            'position__name': ['exact', 'icontains'],
 
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'product__id': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte'],
 
-            'ofise_gore_prim': ['exact', 'gte', 'lte'],
-            'fix_maas': ['exact', 'gte', 'lte'],
-            'satis0': ['exact', 'gte', 'lte'],
-            'satis1_8': ['exact', 'gte', 'lte'],
-            'satis9_14': ['exact', 'gte', 'lte'],
-            'satis15p': ['exact', 'gte', 'lte'],
-            'satis20p': ['exact', 'gte', 'lte'],
-            'komandaya_gore_prim': ['exact', 'gte', 'lte']
+            'prim_for_office': ['exact', 'gte', 'lte'],
+            'fix_prim': ['exact', 'gte', 'lte'],
+            'sale0': ['exact', 'gte', 'lte'],
+            'sale1_8': ['exact', 'gte', 'lte'],
+            'sale9_14': ['exact', 'gte', 'lte'],
+            'sale15p': ['exact', 'gte', 'lte'],
+            'sale20p': ['exact', 'gte', 'lte'],
+            'prim_for_team': ['exact', 'gte', 'lte']
         }

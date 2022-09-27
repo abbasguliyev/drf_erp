@@ -1,32 +1,32 @@
 from rest_framework import permissions
 from restAPI.v1.utils.permission_utils import PermissionUtil
 
-class HoldingKassaMedaxilPermissions(permissions.IsAdminUser):
+class HoldingCashboxIncomePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingkassamedaxil", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingcashboxincome", view=view)
         return perm_util.add_user_permission_to_list()
 
-class HoldingKassaMexaricPermissions(permissions.IsAdminUser):
+class HoldingCashboxExpensePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingkassamexaric", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingcashboxexpense", view=view)
         return perm_util.add_user_permission_to_list()
 
-class ShirketKassaMedaxilPermissions(permissions.IsAdminUser):
+class CompanyCashboxIncomePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shirketkassamedaxil", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="companycashboxincome", view=view)
         return perm_util.add_user_permission_to_list()
 
-class ShirketKassaMexaricPermissions(permissions.IsAdminUser):
+class CompanyCashboxExpensePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="shirketkassamexaric", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="companycashboxexpense", view=view)
         return perm_util.add_user_permission_to_list()
 
-class OfisKassaMedaxilPermissions(permissions.IsAdminUser):
+class OfficeCashboxIncomePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="ofiskassamedaxil", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="officecashboxincome", view=view)
         return perm_util.add_user_permission_to_list()
 
-class OfisKassaMexaricPermissions(permissions.IsAdminUser):
+class OfficeCashboxExpensePermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
-        perm_util = PermissionUtil(user=request.user, request=request, object_name="ofiskassamexaric", view=view)
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="officecashboxexpense", view=view)
         return perm_util.add_user_permission_to_list()

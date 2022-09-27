@@ -2,19 +2,19 @@ import django_filters
 
 from company.models import (
     Department,
-    Shirket,
-    Ofis,
-    Komanda,
-    Shobe,
-    VezifePermission,
-    Vezifeler
+    Company,
+    Office,
+    Team,
+    Section,
+    PermissionForPosition,
+    Position
 )
 
-class ShirketFilter(django_filters.FilterSet):
+class CompanyFilter(django_filters.FilterSet):
     class Meta:
-        model = Shirket
+        model = Company
         fields = {
-            'shirket_adi': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 
@@ -22,58 +22,60 @@ class DepartmentFilter(django_filters.FilterSet):
     class Meta:
         model = Department
         fields = {
-            'departament_adi': ['exact', 'icontains'],
-            'shirket__id': ['exact'],
-            'shirket__shirket_adi': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
+            'holding': ['exact'],
+            'holding__id': ['exact'],
+            'holding__name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 
 
-class OfisFilter(django_filters.FilterSet):
+class OfficeFilter(django_filters.FilterSet):
     class Meta:
-        model = Ofis
+        model = Office
         fields = {
-            'ofis_adi': ['exact', 'icontains'],
-            'shirket__id': ['exact'],
-            'shirket__shirket_adi': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
+            'company': ['exact'],
+            'company__id': ['exact'],
+            'company__name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 
-class ShobeFilter(django_filters.FilterSet):
+class SectionFilter(django_filters.FilterSet):
     class Meta:
-        model = Shobe
+        model = Section
         fields = {
-            'shobe_adi': ['exact', 'icontains'],
-            'ofis': ['exact'],
-            'ofis__id': ['exact'],
-            'ofis__ofis_adi': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
+            'office': ['exact'],
+            'office__id': ['exact'],
+            'office__name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 
-class VezifeFilter(django_filters.FilterSet):
+class PositionFilter(django_filters.FilterSet):
     class Meta:
-        model = Vezifeler
+        model = Position
         fields = {
             'id': ['exact'],
-            'vezife_adi': ['exact', 'icontains'],
-            'shirket__id': ['exact'],
-            'shirket__shirket_adi': ['exact', 'icontains'],
-            'shobe__id': ['exact'],
-            'shobe__shobe_adi': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
+            'company': ['exact'],
+            'company__id': ['exact'],
+            'company__name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 
-class KomandaFilter(django_filters.FilterSet):
+class TeamFilter(django_filters.FilterSet):
     class Meta:
-        model = Komanda
+        model = Team
         fields = {
-            'komanda_adi': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 
-class VezifePermissionFilter(django_filters.FilterSet):
+class PermissionForPositionFilter(django_filters.FilterSet):
     class Meta:
-        model = VezifePermission
+        model = PermissionForPosition
         fields = {
-            'vezife__vezife_adi': ['exact', 'icontains']
+            'position__name': ['exact', 'icontains'],
+            'permission_group__name': ['exact', 'icontains']
         }

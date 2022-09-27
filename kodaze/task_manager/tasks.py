@@ -5,7 +5,7 @@ from . models import TaskManager
 
 @shared_task(name='manage_task_manager')
 def manage_task_manager():
-    indi = datetime.datetime.today()
+    now = datetime.datetime.today()
     tasks = TaskManager.objects.select_related(
         'position', 'employee').filter(status="İcra edilir")
     for task in tasks:

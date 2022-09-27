@@ -1,83 +1,83 @@
 import datetime
-from cashbox.models import HoldingKassa, OfisKassa, PulAxini, ShirketKassa
+from cashbox.models import HoldingCashbox, OfficeCashbox, CashFlow, CompanyCashbox
 
-def holding_umumi_balans_hesabla():
-    umumi_balans = 0
+def holding_umumi_balance_hesabla():
+    umumi_balance = 0
 
-    holding_kassa = HoldingKassa.objects.all()
-    holding_balans = 0
-    for hk in holding_kassa:
-        holding_balans += float(hk.balans)
+    cashbox = HoldingCashbox.objects.all()
+    holding_balance = 0
+    for hk in cashbox:
+        holding_balance += float(hk.balance)
 
-    shirket_kassa = ShirketKassa.objects.all()
-    shirket_balans = 0
-    for sk in shirket_kassa:
-        shirket_balans += float(sk.balans)
+    cashbox = CompanyCashbox.objects.all()
+    company_balance = 0
+    for sk in cashbox:
+        company_balance += float(sk.balance)
 
-    ofis_kassa = OfisKassa.objects.all()
-    ofis_balans = 0
-    for ok in ofis_kassa:
-        ofis_balans += float(ok.balans)
+    cashbox = OfficeCashbox.objects.all()
+    office_balance = 0
+    for ok in cashbox:
+        office_balance += float(ok.balance)
 
-    umumi_balans = holding_balans + shirket_balans + ofis_balans
-    return umumi_balans
+    umumi_balance = holding_balance + company_balance + office_balance
+    return umumi_balance
 
-def holding_balans_hesabla():
-    holding_balans = 0
-    holding_kassa = HoldingKassa.objects.all()[0]
-    holding_balans += float(holding_kassa.balans)
-    return holding_balans
+def holding_balance_hesabla():
+    holding_balance = 0
+    cashbox = HoldingCashbox.objects.all()[0]
+    holding_balance += float(cashbox.balance)
+    return holding_balance
 
-def shirket_balans_hesabla(shirket):
-    shirket_balans = 0
-    shirket_kassa = ShirketKassa.objects.get(shirket=shirket)
-    shirket_balans += float(shirket_kassa.balans)
-    return shirket_balans
+def company_balance_hesabla(company):
+    company_balance = 0
+    cashbox = CompanyCashbox.objects.get(company=company)
+    company_balance += float(cashbox.balance)
+    return company_balance
 
-def ofis_balans_hesabla(ofis):
-    ofis_balans = 0
-    ofis_kassa = OfisKassa.objects.get(ofis=ofis)
-    ofis_balans += float(ofis_kassa.balans)
-    return ofis_balans
+def office_balance_hesabla(office):
+    office_balance = 0
+    cashbox = OfficeCashbox.objects.get(office=office)
+    office_balance += float(cashbox.balance)
+    return office_balance
 
 def pul_axini_create(
     holding=None, 
-    shirket=None, 
-    ofis=None, 
-    tarix=datetime.date.today(), 
-    emeliyyat_uslubu=None, 
-    aciqlama=None, 
-    ilkin_balans=0, 
-    sonraki_balans=0, 
-    miqdar=0, 
-    emeliyyat_eden=None,
-    holding_ilkin_balans=0,
-    holding_sonraki_balans=0,
-    shirket_ilkin_balans=0,
-    shirket_sonraki_balans=0,
-    ofis_ilkin_balans=0,
-    ofis_sonraki_balans=0,
+    company=None, 
+    office=None, 
+    date=datetime.date.today(), 
+    operation_style=None, 
+    description=None, 
+    initial_balance=0, 
+    subsequent_balance=0, 
+    quantity=0, 
+    executor=None,
+    holding_initial_balance=0,
+    holding_subsequent_balance=0,
+    company_initial_balance=0,
+    company_subsequent_balance=0,
+    office_initial_balance=0,
+    office_subsequent_balance=0,
 ):
     """
     Pul axinlarini create eden funksiya
     """
 
-    pul_axini = PulAxini.objects.create(
+    pul_axini = CashFlow.objects.create(
         holding=holding,
-        shirket=shirket,
-        ofis=ofis,
-        tarix=tarix,
-        emeliyyat_uslubu=emeliyyat_uslubu,
-        aciqlama=aciqlama,
-        ilkin_balans=ilkin_balans,
-        sonraki_balans=sonraki_balans,
-        emeliyyat_eden=emeliyyat_eden,
-        holding_ilkin_balans=holding_ilkin_balans,
-        holding_sonraki_balans=holding_sonraki_balans,
-        shirket_ilkin_balans=shirket_ilkin_balans,
-        shirket_sonraki_balans=shirket_sonraki_balans,
-        ofis_ilkin_balans=ofis_ilkin_balans,
-        ofis_sonraki_balans=ofis_sonraki_balans,
-        miqdar=miqdar
+        company=company,
+        office=office,
+        date=date,
+        operation_style=operation_style,
+        description=description,
+        initial_balance=initial_balance,
+        subsequent_balance=subsequent_balance,
+        executor=executor,
+        holding_initial_balance=holding_initial_balance,
+        holding_subsequent_balance=holding_subsequent_balance,
+        company_initial_balance=company_initial_balance,
+        company_subsequent_balance=company_subsequent_balance,
+        office_initial_balance=office_initial_balance,
+        office_subsequent_balance=office_subsequent_balance,
+        quantity=quantity
     )
     return pul_axini.save()

@@ -1,105 +1,105 @@
 import django_filters
 
 from transfer.models import (
-    HoldingdenShirketlereTransfer,
-    ShirketdenHoldingeTransfer,
-    ShirketdenOfislereTransfer,
-    OfisdenShirketeTransfer,
+    TransferFromHoldingToCompany,
+    TransferFromCompanyToHolding,
+    TransferFromCompanyToOffices,
+    TransferFromOfficeToCompany,
 )
 
-class HoldingdenShirketlereTransferFilter(django_filters.FilterSet):
-    transfer_tarixi = django_filters.DateFilter(
-        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__gte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__lte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class TransferFromHoldingToCompanyFilter(django_filters.FilterSet):
+    transfer_date = django_filters.DateFilter(
+        field_name='transfer_date', input_formats=["%d-%m-%Y"])
+    transfer_date__gte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_date__lte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = HoldingdenShirketlereTransfer
+        model = TransferFromHoldingToCompany
         fields = {
-            'transfer_eden__asa': ['exact', 'icontains'],
-            'transfer_eden__vezife__vezife_adi': ['exact', 'icontains'],
-            'transfer_eden__isci_status__status_adi': ['exact', 'icontains'],
+            'executor__fullname': ['exact', 'icontains'],
+            'executor__position__name': ['exact', 'icontains'],
+            'executor__employee_status__status_name': ['exact', 'icontains'],
 
-            'holding_kassa__holding__holding_adi': ['exact', 'icontains'],
-            'shirket_kassa__shirket__shirket_adi': ['exact', 'icontains'],
+            'holding_cashbox__holding__name': ['exact', 'icontains'],
+            'company_cashbox__company__name': ['exact', 'icontains'],
 
-            'transfer_meblegi': ['exact', 'gte', 'lte'],
-            'transfer_qeydi': ['exact', 'icontains'],
+            'transfer_amount': ['exact', 'gte', 'lte'],
+            'transfer_note': ['exact', 'icontains'],
             
-            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_date': ['exact', 'gte', 'lte'],
         }
 
 
-class ShirketdenHoldingeTransferFilter(django_filters.FilterSet):
-    transfer_tarixi = django_filters.DateFilter(
-        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__gte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__lte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class TransferFromCompanyToHoldingFilter(django_filters.FilterSet):
+    transfer_date = django_filters.DateFilter(
+        field_name='transfer_date', input_formats=["%d-%m-%Y"])
+    transfer_date__gte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_date__lte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ShirketdenHoldingeTransfer
+        model = TransferFromCompanyToHolding
         fields = {
-            'transfer_eden__asa': ['exact', 'icontains'],
-            'transfer_eden__vezife__vezife_adi': ['exact', 'icontains'],
-            'transfer_eden__isci_status__status_adi': ['exact', 'icontains'],
+            'executor__fullname': ['exact', 'icontains'],
+            'executor__position__name': ['exact', 'icontains'],
+            'executor__employee_status__status_name': ['exact', 'icontains'],
 
-            'holding_kassa__holding__holding_adi': ['exact', 'icontains'],
-            'shirket_kassa__shirket__shirket_adi': ['exact', 'icontains'],
+            'holding_cashbox__holding__name': ['exact', 'icontains'],
+            'company_cashbox__company__name': ['exact', 'icontains'],
 
-            'transfer_meblegi': ['exact', 'gte', 'lte'],
-            'transfer_qeydi': ['exact', 'icontains'],
+            'transfer_amount': ['exact', 'gte', 'lte'],
+            'transfer_note': ['exact', 'icontains'],
             
-            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_date': ['exact', 'gte', 'lte'],
         }
 
-class ShirketdenOfislereTransferFilter(django_filters.FilterSet):
-    transfer_tarixi = django_filters.DateFilter(
-        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__gte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__lte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class TransferFromCompanyToOfficesFilter(django_filters.FilterSet):
+    transfer_date = django_filters.DateFilter(
+        field_name='transfer_date', input_formats=["%d-%m-%Y"])
+    transfer_date__gte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_date__lte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = ShirketdenOfislereTransfer
+        model = TransferFromCompanyToOffices
         fields = {
-            'transfer_eden__asa': ['exact', 'icontains'],
-            'transfer_eden__vezife__vezife_adi': ['exact', 'icontains'],
-            'transfer_eden__isci_status__status_adi': ['exact', 'icontains'],
+            'executor__fullname': ['exact', 'icontains'],
+            'executor__position__name': ['exact', 'icontains'],
+            'executor__employee_status__status_name': ['exact', 'icontains'],
 
-            'ofis_kassa__ofis__ofis_adi': ['exact', 'icontains'],
-            'shirket_kassa__shirket__shirket_adi': ['exact', 'icontains'],
+            'office_cashbox__office__name': ['exact', 'icontains'],
+            'company_cashbox__company__name': ['exact', 'icontains'],
 
-            'transfer_meblegi': ['exact', 'gte', 'lte'],
-            'transfer_qeydi': ['exact', 'icontains'],
+            'transfer_amount': ['exact', 'gte', 'lte'],
+            'transfer_note': ['exact', 'icontains'],
             
-            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_date': ['exact', 'gte', 'lte'],
         }
 
-class OfisdenShirketeTransferFilter(django_filters.FilterSet):
-    transfer_tarixi = django_filters.DateFilter(
-        field_name='transfer_tarixi', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__gte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    transfer_tarixi__lte = django_filters.DateFilter(
-        field_name='transfer_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class TransferFromOfficeToCompanyFilter(django_filters.FilterSet):
+    transfer_date = django_filters.DateFilter(
+        field_name='transfer_date', input_formats=["%d-%m-%Y"])
+    transfer_date__gte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    transfer_date__lte = django_filters.DateFilter(
+        field_name='transfer_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = OfisdenShirketeTransfer
+        model = TransferFromOfficeToCompany
         fields = {
-            'transfer_eden__asa': ['exact', 'icontains'],
-            'transfer_eden__vezife__vezife_adi': ['exact', 'icontains'],
-            'transfer_eden__isci_status__status_adi': ['exact', 'icontains'],
+            'executor__fullname': ['exact', 'icontains'],
+            'executor__position__name': ['exact', 'icontains'],
+            'executor__employee_status__status_name': ['exact', 'icontains'],
 
-            'ofis_kassa__ofis__ofis_adi': ['exact', 'icontains'],
-            'shirket_kassa__shirket__shirket_adi': ['exact', 'icontains'],
+            'office_cashbox__office__name': ['exact', 'icontains'],
+            'company_cashbox__company__name': ['exact', 'icontains'],
 
-            'transfer_meblegi': ['exact', 'gte', 'lte'],
-            'transfer_qeydi': ['exact', 'icontains'],
+            'transfer_amount': ['exact', 'gte', 'lte'],
+            'transfer_note': ['exact', 'icontains'],
             
-            # 'transfer_tarixi': ['exact', 'gte', 'lte'],
+            # 'transfer_date': ['exact', 'gte', 'lte'],
         }

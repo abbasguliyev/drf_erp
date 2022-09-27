@@ -1,66 +1,65 @@
 import django_filters
 
 from warehouse.models import (
-    Emeliyyat, 
-    Anbar, 
-    AnbarQeydler, 
-    Stok
+    Operation, 
+    Warehouse, 
+    WarehouseRequest, 
+    Stock
 )
 
-class StokFilter(django_filters.FilterSet):
+class StockFilter(django_filters.FilterSet):
     class Meta:
-        model = Stok
+        model = Stock
         fields = {
-            'mehsul__id': ['exact'],
-            'mehsul__mehsulun_adi': ['exact', 'icontains'],
-            'mehsul__qiymet': ['exact', 'gte', 'lte'],
+            'product__id': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__price': ['exact', 'gte', 'lte'],
 
-            'anbar__shirket__shirket_adi': ['exact', 'icontains'],
-            'anbar__ofis__ofis_adi': ['exact', 'icontains'],
-            'anbar__ad': ['exact', 'icontains'],
-            'mehsul__is_hediyye': ['exact'],
-            'mehsul__kartric_novu': ['exact'],
+            'warehouse__company__name': ['exact', 'icontains'],
+            'warehouse__office__name': ['exact', 'icontains'],
+            'warehouse__name': ['exact', 'icontains'],
+            'product__is_hediyye': ['exact'],
         }
 
-class EmeliyyatFilter(django_filters.FilterSet):
-    emeliyyat_tarixi = django_filters.DateFilter(
-        field_name='emeliyyat_tarixi', input_formats=["%d-%m-%Y"])
-    emeliyyat_tarixi__gte = django_filters.DateFilter(
-        field_name='emeliyyat_tarixi', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    emeliyyat_tarixi__lte = django_filters.DateFilter(
-        field_name='emeliyyat_tarixi', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+class OperationFilter(django_filters.FilterSet):
+    operation_date = django_filters.DateFilter(
+        field_name='operation_date', input_formats=["%d-%m-%Y"])
+    operation_date__gte = django_filters.DateFilter(
+        field_name='operation_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    operation_date__lte = django_filters.DateFilter(
+        field_name='operation_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
     class Meta:
-        model = Emeliyyat
+        model = Operation
         fields = {
-            'gonderen__ad': ['exact', 'icontains'],
-            'gonderen__ofis__ofis_adi': ['exact', 'icontains'],
-            'gonderen__shirket__shirket_adi': ['exact', 'icontains'],
+            'shipping_warehouse__name': ['exact', 'icontains'],
+            'shipping_warehouse__office__name': ['exact', 'icontains'],
+            'shipping_warehouse__company__name': ['exact', 'icontains'],
 
-            'qebul_eden__ad': ['exact', 'icontains'],
-            'qebul_eden__ofis__ofis_adi': ['exact', 'icontains'],
-            'qebul_eden__shirket__shirket_adi': ['exact', 'icontains'],
+            'receiving_warehouse__name': ['exact', 'icontains'],
+            'receiving_warehouse__office__name': ['exact', 'icontains'],
+            'receiving_warehouse__company__name': ['exact', 'icontains'],
 
-            'qeyd': ['exact', 'icontains'],
+            'note': ['exact', 'icontains'],
 
-            # 'emeliyyat_tarixi': ['exact', 'gte', 'lte'],
+            # 'operation_date': ['exact', 'gte', 'lte'],
         }
 
-class AnbarFilter(django_filters.FilterSet):
+class WarehouseFilter(django_filters.FilterSet):
     class Meta:
-        model = Anbar
+        model = Warehouse
         fields = {
-            'ad': ['exact', 'icontains'],
+            'name': ['exact', 'icontains'],
             'is_active': ['exact'],
-            'ofis__ofis_adi': ['exact', 'icontains'],
-            'ofis__shirket__shirket_adi': ['exact', 'icontains'],
+            'office__name': ['exact', 'icontains'],
+            'office__company__name': ['exact', 'icontains'],
         }
 
-class AnbarQeydlerFilter(django_filters.FilterSet):
+class WarehouseRequestFilter(django_filters.FilterSet):
     class Meta:
-        model = AnbarQeydler
+        model = WarehouseRequest
         fields = {
-            'qeyd': ['exact', 'icontains'],
-            'anbar__ad': ['exact', 'icontains'],
-            'anbar__ofis__ofis_adi': ['exact', 'icontains'],
+            'note': ['exact', 'icontains'],
+            'warehouse__name': ['exact', 'icontains'],
+            'warehouse__office__name': ['exact', 'icontains'],
         }

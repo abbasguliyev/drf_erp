@@ -5,197 +5,164 @@ import pandas as pd
 import datetime
 
 from account.models import User
-from company.models import Vezifeler
-from .models import Menecer2Prim, Menecer1PrimNew, MaasGoruntuleme, OfficeLeaderPrim, GroupLeaderPrimNew
-from contract.models import Muqavile
+from company.models import Position
+from .models import Manager2Prim, Manager1PrimNew, SalaryView, OfficeLeaderPrim, GroupLeaderPrimNew
+from contract.models import Contract
 import traceback
+from contract import (
+    CASH,
+    INSTALLMENT
+)
 
-@receiver(post_save, sender=Muqavile)
+@receiver(post_save, sender=Contract)
 def create_prim(sender, instance, created, **kwargs):
     if created:
-        indi = datetime.date.today()
-        d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+        now = datetime.date.today()
+        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
+        print(f"{now=}")
+        print(f"{next_m=}")
         days_in_mont = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
         
-        muqavile_kredit_muddeti = instance.kredit_muddeti
-        muqavile_odenis_uslubu = instance.odenis_uslubu
-        if muqavile_odenis_uslubu == "İKİ DƏFƏYƏ NƏĞD":
-            muqavile_odenis_uslubu = "NƏĞD"
+        contract_loan_term = instance.loan_term
+        contract_payment_style = instance.payment_style
 
         group_leader = instance.group_leader
         if group_leader is not None:
-            group_leader_status = group_leader.isci_status
+            group_leader_status = group_leader.employee_status
         else:
             group_leader_status = None
 
-        menecer1 = instance.menecer1
-        if menecer1 is not None:
-            menecer1_status = menecer1.isci_status
-            menecer1_vezife = menecer1.vezife.vezife_adi
+        manager1 = instance.manager1
+        if manager1 is not None:
+            manager1_status = manager1.employee_status
+            manager1_position = manager1.position.name
         else:
-            menecer1_status = None
-            menecer1_vezife = None
+            manager1_status = None
+            manager1_position = None
 
 
-        menecer2 = instance.menecer2
-        if menecer2 is not None:
-            menecer2_status = menecer2.isci_status
-            menecer2_vezife = menecer2.vezife.vezife_adi
+        manager2 = instance.manager2
+        if manager2 is not None:
+            manager2_status = manager2.employee_status
+            manager2_position = manager2.position.name
         else:
-            menecer2_status = None
-            menecer2_vezife = None
+            manager2_status = None
+            manager2_position = None
 
-        ofis = instance.ofis
-        shirket = instance.shirket
-        shobe = instance.group_leader.shobe
-        if (ofis is not None) or (ofis != ""):
-            officeLeaderVezife = Vezifeler.objects.get(vezife_adi__icontains="OFFICE LEADER", shirket=shirket)
-            officeLeaders = User.objects.filter(ofis=ofis, vezife=officeLeaderVezife)
+        office = instance.office
+        company = instance.company
+        # department = instance.group_leader.department
+        print(f"{company=}")
+        # print(f"{department=}")
+        if (office is not None) or (office != ""):
+            officeLeaderPosition = Position.objects.get(name__icontains="OFFICE LEADER")
+            officeLeaders = User.objects.filter(office=office, position=officeLeaderPosition)
 
             for officeLeader in officeLeaders:
-                officeLeader_status = officeLeader.isci_status
-                try:
-                    ofisleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, vezife=officeLeaderVezife)
-                    officeLeader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=f"{indi.year}-{indi.month}-{1}")
-                    officeLeader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=officeLeader, tarix=f"{next_m.year}-{next_m.month}-{1}")
+                officeLeader_status = officeLeader.employee_status
+                officeleader_prim = OfficeLeaderPrim.objects.get(prim_status=officeLeader_status, position=officeLeaderPosition)
 
-                    officeLeader_maas_goruntulenme_bu_ay.satis_sayi = float(officeLeader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-                    officeLeader_maas_goruntulenme_bu_ay.satis_meblegi = float(officeLeader_maas_goruntulenme_bu_ay.satis_meblegi) + (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
-                    officeLeader_maas_goruntulenme_bu_ay.save()
+                officeLeader_salary_view_this_month = SalaryView.objects.get(employee=officeLeader, date=f"{now.year}-{now.month}-{1}")
+                officeLeader_salary_view_novbeti_ay = SalaryView.objects.get(employee=officeLeader, date=f"{next_m.year}-{next_m.month}-{1}")
 
-                    officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas = float(officeLeader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(ofisleader_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
-                    officeLeader_maas_goruntulenme_novbeti_ay.save()
-                except:
-                    ofisleader_prim = None
+                officeLeader_salary_view_this_month.sales_quantity = float(officeLeader_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+                officeLeader_salary_view_this_month.sales_amount = float(officeLeader_salary_view_this_month.sales_amount) + (float(instance.product.price) * float(instance.product_quantity))
+                officeLeader_salary_view_this_month.save()
 
-        # --------------------------------------------------------
-        # if (group_leader_status is not None):
-        #     """
-        #     GroupLeaderin kohne uslubla maas hesablanmasi
-        #     """
-        #     group_leader_prim = GroupLeaderPrim.objects.get(prim_status=group_leader_status, odenis_uslubu=muqavile_odenis_uslubu)
-            
-        #     group_leader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=f"{indi.year}-{indi.month}-{1}")
-        #     group_leader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=next_m)
+                officeLeader_salary_view_novbeti_ay.final_salary = float(officeLeader_salary_view_novbeti_ay.final_salary) + (float(officeleader_prim.prim_for_office) * float(instance.product_quantity))
+                officeLeader_salary_view_novbeti_ay.save()
 
-        #     group_leader_maas_goruntulenme_bu_ay.satis_sayi = float(group_leader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-        #     group_leader_maas_goruntulenme_bu_ay.satis_meblegi = float(group_leader_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
-
-        #     group_leader_maas_goruntulenme_bu_ay.save()
-
-        #     group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.komandaya_gore_prim) * float(instance.mehsul_sayi))
-
-        #     group_leader_maas_goruntulenme_novbeti_ay.save()
         # --------------------------------------------------------
         if (group_leader_status is not None):
             """
-            GroupLeaderin yeni uslubla maas hesablanmasi
+            GroupLeaderin yeni uslubla salary hesablanmasi
             """
-            group_leader_prim = GroupLeaderPrimNew.objects.get(prim_status=group_leader_status, vezife=group_leader.vezife)
+            group_leader_prim = GroupLeaderPrimNew.objects.get(prim_status=group_leader_status, position=group_leader.position)
             
-            group_leader_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=f"{indi.year}-{indi.month}-{1}")
-            group_leader_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=group_leader, tarix=next_m)
+            group_leader_salary_view_this_month = SalaryView.objects.get(employee=group_leader, date=f"{now.year}-{now.month}-{1}")
+            group_leader_salary_view_novbeti_ay = SalaryView.objects.get(employee=group_leader, date=next_m)
 
-            group_leader_maas_goruntulenme_bu_ay.satis_sayi = float(group_leader_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-            group_leader_maas_goruntulenme_bu_ay.satis_meblegi = float(group_leader_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+            group_leader_salary_view_this_month.sales_quantity = float(group_leader_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+            group_leader_salary_view_this_month.sales_amount = float(group_leader_salary_view_this_month.sales_amount) +  (float(instance.product.price) * float(instance.product_quantity))
             
-            group_leader_maas_goruntulenme_bu_ay.save()
-            if muqavile_odenis_uslubu == "NƏĞD":
-                group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.negd) * float(instance.mehsul_sayi))
-            elif muqavile_odenis_uslubu == "KREDİT":
-                if int(muqavile_kredit_muddeti) >= 0 and int(muqavile_kredit_muddeti) <= 3:
-                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.negd) * float(instance.mehsul_sayi))
-                elif int(muqavile_kredit_muddeti) >= 4 and int(muqavile_kredit_muddeti) <= 12:
-                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.kredit_4_12) * float(instance.mehsul_sayi))
-                elif int(muqavile_kredit_muddeti) >= 13 and int(muqavile_kredit_muddeti) <= 18:
-                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.kredit_13_18) * float(instance.mehsul_sayi))
-                elif int(muqavile_kredit_muddeti) >= 19 and int(muqavile_kredit_muddeti) <= 24:
-                    group_leader_maas_goruntulenme_novbeti_ay.yekun_maas = float(group_leader_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(group_leader_prim.kredit_19_24) * float(instance.mehsul_sayi))
+            group_leader_salary_view_this_month.save()
+            if contract_payment_style == CASH:
+                group_leader_salary_view_novbeti_ay.final_salary = float(group_leader_salary_view_novbeti_ay.final_salary) + (float(group_leader_prim.cash) * float(instance.product_quantity))
+            elif contract_payment_style == INSTALLMENT:
+                if int(contract_loan_term) >= 0 and int(contract_loan_term) <= 3:
+                    group_leader_salary_view_novbeti_ay.final_salary = float(group_leader_salary_view_novbeti_ay.final_salary) + (float(group_leader_prim.cash) * float(instance.product_quantity))
+                elif int(contract_loan_term) >= 4 and int(contract_loan_term) <= 12:
+                    group_leader_salary_view_novbeti_ay.final_salary = float(group_leader_salary_view_novbeti_ay.final_salary) + (float(group_leader_prim.installment_4_12) * float(instance.product_quantity))
+                elif int(contract_loan_term) >= 13 and int(contract_loan_term) <= 18:
+                    group_leader_salary_view_novbeti_ay.final_salary = float(group_leader_salary_view_novbeti_ay.final_salary) + (float(group_leader_prim.installment_13_18) * float(instance.product_quantity))
+                elif int(contract_loan_term) >= 19 and int(contract_loan_term) <= 24:
+                    group_leader_salary_view_novbeti_ay.final_salary = float(group_leader_salary_view_novbeti_ay.final_salary) + (float(group_leader_prim.installment_19_24) * float(instance.product_quantity))
 
-            group_leader_maas_goruntulenme_novbeti_ay.save()
+            group_leader_salary_view_novbeti_ay.save()
+        
         # --------------------------------------------------------
-        # if (menecer1_vezife == "DEALER"):
-        #     menecer1_prim = Menecer1Prim.objects.get(prim_status=menecer1_status, odenis_uslubu=muqavile_odenis_uslubu)
-
-        #     menecer1_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=f"{indi.year}-{indi.month}-{1}")
-        #     menecer1_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=next_m)
-
-        #     menecer1_maas_goruntulenme_bu_ay.satis_sayi = float(menecer1_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-        #     menecer1_maas_goruntulenme_bu_ay.satis_meblegi = float(menecer1_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
-
-        #     menecer1_maas_goruntulenme_bu_ay.save()
-
-
-        #     menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.komandaya_gore_prim) * float(instance.mehsul_sayi))
-
-        #     menecer1_maas_goruntulenme_novbeti_ay.save()
-
-        # --------------------------------------------------------
-        if (menecer1_vezife == "DEALER"):
+        if (manager1_position == "DEALER"):
             """
-            Menecer1in yeni uslubla maas hesablanmasi
+            Manager1in yeni uslubla salary hesablanmasi
             """
-            menecer1_prim = Menecer1PrimNew.objects.get(prim_status=menecer1_status, vezife=menecer1.vezife)
+            manager1_prim = Manager1PrimNew.objects.get(prim_status=manager1_status, position=manager1.position)
             
-            menecer1_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=f"{indi.year}-{indi.month}-{1}")
-            menecer1_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer1, tarix=next_m)
+            manager1_salary_view_this_month = SalaryView.objects.get(employee=manager1, date=f"{now.year}-{now.month}-{1}")
+            manager1_salary_view_novbeti_ay = SalaryView.objects.get(employee=manager1, date=next_m)
 
-            menecer1_maas_goruntulenme_bu_ay.satis_sayi = float(menecer1_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-            menecer1_maas_goruntulenme_bu_ay.satis_meblegi = float(menecer1_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
+            manager1_salary_view_this_month.sales_quantity = float(manager1_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+            manager1_salary_view_this_month.sales_amount = float(manager1_salary_view_this_month.sales_amount) +  (float(instance.product.price) * float(instance.product_quantity))
 
-            menecer1_maas_goruntulenme_bu_ay.save()
+            manager1_salary_view_this_month.save()
 
-            if muqavile_odenis_uslubu == "NƏĞD":
-                menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.negd) * float(instance.mehsul_sayi))
-            elif muqavile_odenis_uslubu == "KREDİT":
-                if int(muqavile_kredit_muddeti) >= 0 and int(muqavile_kredit_muddeti) <= 3:
-                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.negd) * float(instance.mehsul_sayi))
-                elif int(muqavile_kredit_muddeti) >= 4 and int(muqavile_kredit_muddeti) <= 12:
-                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.kredit_4_12) * float(instance.mehsul_sayi))
-                elif int(muqavile_kredit_muddeti) >= 13 and int(muqavile_kredit_muddeti) <= 18:
-                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.kredit_13_18) * float(instance.mehsul_sayi))
-                elif int(muqavile_kredit_muddeti) >= 19 and int(muqavile_kredit_muddeti) <= 24:
-                    menecer1_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer1_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer1_prim.kredit_19_24) * float(instance.mehsul_sayi))
-            menecer1_maas_goruntulenme_novbeti_ay.save()
+            if contract_payment_style == CASH:
+                manager1_salary_view_novbeti_ay.final_salary = float(manager1_salary_view_novbeti_ay.final_salary) + (float(manager1_prim.cash) * float(instance.product_quantity))
+            elif contract_payment_style == INSTALLMENT:
+                if int(contract_loan_term) >= 0 and int(contract_loan_term) <= 3:
+                    manager1_salary_view_novbeti_ay.final_salary = float(manager1_salary_view_novbeti_ay.final_salary) + (float(manager1_prim.cash) * float(instance.product_quantity))
+                elif int(contract_loan_term) >= 4 and int(contract_loan_term) <= 12:
+                    manager1_salary_view_novbeti_ay.final_salary = float(manager1_salary_view_novbeti_ay.final_salary) + (float(manager1_prim.installment_4_12) * float(instance.product_quantity))
+                elif int(contract_loan_term) >= 13 and int(contract_loan_term) <= 18:
+                    manager1_salary_view_novbeti_ay.final_salary = float(manager1_salary_view_novbeti_ay.final_salary) + (float(manager1_prim.installment_13_18) * float(instance.product_quantity))
+                elif int(contract_loan_term) >= 19 and int(contract_loan_term) <= 24:
+                    manager1_salary_view_novbeti_ay.final_salary = float(manager1_salary_view_novbeti_ay.final_salary) + (float(manager1_prim.installment_19_24) * float(instance.product_quantity))
+            manager1_salary_view_novbeti_ay.save()
 
         # --------------------------------------------------------
-        if (menecer2_vezife == "CANVASSER"):
-            menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
+        if (manager2_position == "CANVASSER"):
+            manager2_prim = Manager2Prim.objects.get(prim_status=manager2_status, position=manager2.position)
 
-            menecer2_maas_goruntulenme_bu_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=f"{indi.year}-{indi.month}-{1}")
-            menecer2_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=next_m)
+            manager2_salary_view_this_month = SalaryView.objects.get(employee=manager2, date=f"{now.year}-{now.month}-{1}")
+            manager2_salary_view_novbeti_ay = SalaryView.objects.get(employee=manager2, date=next_m)
 
-            menecer2_maas_goruntulenme_bu_ay.satis_sayi = float(menecer2_maas_goruntulenme_bu_ay.satis_sayi) + float(instance.mehsul_sayi)
-            menecer2_maas_goruntulenme_bu_ay.satis_meblegi = float(menecer2_maas_goruntulenme_bu_ay.satis_meblegi) +  (float(instance.mehsul.qiymet) * float(instance.mehsul_sayi))
-            menecer2_maas_goruntulenme_bu_ay.save()
+            manager2_salary_view_this_month.sales_quantity = float(manager2_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+            manager2_salary_view_this_month.sales_amount = float(manager2_salary_view_this_month.sales_amount) +  (float(instance.product.price) * float(instance.product_quantity))
+            manager2_salary_view_this_month.save()
 
-            satis_sayina_gore_prim = 0
+            prim_for_sales_quantity = 0
             
-            if (menecer2_maas_goruntulenme_bu_ay.satis_sayi >= 9) and (menecer2_maas_goruntulenme_bu_ay.satis_sayi <= 14):
-                satis_sayina_gore_prim = menecer2_prim.satis9_14
-            elif (menecer2_maas_goruntulenme_bu_ay.satis_sayi >= 15):
-                satis_sayina_gore_prim = menecer2_prim.satis15p
-            elif (menecer2_maas_goruntulenme_bu_ay.satis_sayi >= 20):
-                satis_sayina_gore_prim = menecer2_prim.satis20p
+            if (manager2_salary_view_this_month.sales_quantity >= 9) and (manager2_salary_view_this_month.sales_quantity <= 14):
+                prim_for_sales_quantity = manager2_prim.sale_9_14
+            elif (manager2_salary_view_this_month.sales_quantity >= 15):
+                prim_for_sales_quantity = manager2_prim.sale_15p
+            elif (manager2_salary_view_this_month.sales_quantity >= 20):
+                prim_for_sales_quantity = manager2_prim.sale_20p
 
-            menecer2_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer2_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer2_prim.komandaya_gore_prim) * float(instance.mehsul_sayi)) + float(satis_sayina_gore_prim)
+            manager2_salary_view_novbeti_ay.final_salary = float(manager2_salary_view_novbeti_ay.final_salary) + (float(manager2_prim.prim_for_team) * float(instance.product_quantity)) + float(prim_for_sales_quantity)
 
-            menecer2_maas_goruntulenme_novbeti_ay.save()
+            manager2_salary_view_novbeti_ay.save()
 
         
-        menecer2Vezife = Vezifeler.objects.get(vezife_adi__icontains="CANVASSER", shirket=shirket)
-        menecer2s = User.objects.filter(ofis=ofis, vezife=menecer2Vezife)
+        manager2Position = Position.objects.get(name__icontains="CANVASSER")
+        manager2s = User.objects.filter(office=office, position=manager2Position)
 
-        for menecer2 in menecer2s:
-            menecer2_status = menecer2.isci_status
-            try:
-                menecer2_prim = Menecer2Prim.objects.get(prim_status=menecer2_status, vezife=menecer2.vezife)
+        for manager2 in manager2s:
+            manager2_status = manager2.employee_status
+            manager2_prim = Manager2Prim.objects.get(prim_status=manager2_status, position=manager2.position)
 
-                menecer2_maas_goruntulenme_novbeti_ay = MaasGoruntuleme.objects.get(isci=menecer2, tarix=next_m)
+            manager2_salary_view_novbeti_ay = SalaryView.objects.get(employee=manager2, date=next_m)
 
-                menecer2_maas_goruntulenme_novbeti_ay.yekun_maas = float(menecer2_maas_goruntulenme_novbeti_ay.yekun_maas) + (float(menecer2_prim.ofise_gore_prim) * float(instance.mehsul_sayi))
+            manager2_salary_view_novbeti_ay.final_salary = float(manager2_salary_view_novbeti_ay.final_salary) + (float(manager2_prim.prim_for_office) * float(instance.product_quantity))
 
-                menecer2_maas_goruntulenme_novbeti_ay.save()
-            except:
-                menecer2_prim = None
+            manager2_salary_view_novbeti_ay.save()

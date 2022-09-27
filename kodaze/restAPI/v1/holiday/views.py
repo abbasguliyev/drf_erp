@@ -1,125 +1,125 @@
 from restAPI.v1.holiday.serializers import (
-    HoldingGunlerSerializer,
-    IsciGelibGetmeVaxtlariSerializer, 
-    IsciGunlerSerializer, 
-    KomandaGunlerSerializer,
-    KomandaIstisnaIsciSerializer, 
-    OfisGunlerSerializer,
-    OfisIstisnaIsciSerializer, 
-    ShirketGunlerSerializer,
-    ShirketIstisnaIsciSerializer, 
-    ShobeGunlerSerializer,
-    ShobeIstisnaIsciSerializer, 
-    VezifeGunlerSerializer,
-    HoldingIstisnaIsciSerializer,
-    VezifeIstisnaIsciSerializer
+    HoldingWorkingDaySerializer,
+    EmployeeArrivalAndDepartureTimesSerializer, 
+    EmployeeWorkingDaySerializer, 
+    TeamWorkingDaySerializer,
+    TeamExceptionWorkerSerializer, 
+    OfficeWorkingDaySerializer,
+    OfficeExceptionWorkerSerializer, 
+    CompanyWorkingDaySerializer,
+    CompanyExceptionWorkerSerializer, 
+    SectionWorkingDaySerializer,
+    SectionExceptionWorkerSerializer, 
+    PositionWorkingDaySerializer,
+    HoldingExceptionWorkerSerializer,
+    PositionExceptionWorkerSerializer
 )
 from holiday.models import (
-    HoldingGunler,
-    IsciGelibGetmeVaxtlari,
-    IsciGunler,
-    KomandaGunler,
-    KomandaIstisnaIsci,
-    OfisGunler,
-    OfisIstisnaIsci,
-    ShirketGunler,
-    ShirketIstisnaIsci,
-    ShobeGunler,
-    ShobeIstisnaIsci,
-    VezifeGunler,
-    HoldingIstisnaIsci,
-    VezifeIstisnaIsci
+    HoldingWorkingDay,
+    EmployeeArrivalAndDepartureTimes,
+    EmployeeWorkingDay,
+    TeamWorkingDay,
+    TeamExceptionWorker,
+    OfficeWorkingDay,
+    OfficeExceptionWorker,
+    CompanyWorkingDay,
+    CompanyExceptionWorker,
+    SectionWorkingDay,
+    SectionExceptionWorker,
+    PositionWorkingDay,
+    HoldingExceptionWorker,
+    PositionExceptionWorker
 )
 
 from rest_framework.response import Response
 
-from restAPI.v1.holiday import utils as gunler_utils
+from restAPI.v1.holiday import utils as working_day_utils
 
 from rest_framework import generics
 
-from restAPI.v1.holiday import permissions as gunler_permissions
+from restAPI.v1.holiday import permissions as working_day_permissions
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from restAPI.v1.holiday.filters import (
-    HoldingGunlerFilter,
-    HoldingIstisnaIsciFilter,
-    IsciGelibGetmeVaxtlariFilter,
-    IsciGunlerFilter,
-    KomandaGunlerFilter,
-    KomandaIstisnaIsciFilter,
-    OfisGunlerFilter,
-    OfisIstisnaIsciFilter,
-    ShirketGunlerFilter,
-    ShirketIstisnaIsciFilter,
-    ShobeGunlerFilter,
-    ShobeIstisnaIsciFilter,
-    VezifeGunlerFilter,
-    VezifeIstisnaIsciFilter,
+    HoldingWorkingDayFilter,
+    HoldingExceptionWorkerFilter,
+    EmployeeArrivalAndDepartureTimesFilter,
+    EmployeeWorkingDayFilter,
+    TeamWorkingDayFilter,
+    TeamExceptionWorkerFilter,
+    OfficeWorkingDayFilter,
+    OfficeExceptionWorkerFilter,
+    CompanyWorkingDayFilter,
+    CompanyExceptionWorkerFilter,
+    SectionWorkingDayFilter,
+    SectionExceptionWorkerFilter,
+    PositionWorkingDayFilter,
+    PositionExceptionWorkerFilter,
 ) 
 from rest_framework import status
 
 # ********************************** Holding Gunler get post put delete **********************************
-class HoldingGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = HoldingGunler.objects.all()
-    serializer_class = HoldingGunlerSerializer
+class HoldingWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = HoldingWorkingDay.objects.all()
+    serializer_class = HoldingWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingGunlerFilter
-    permission_classes = [gunler_permissions.HoldingGunlerPermissions]
+    filterset_class = HoldingWorkingDayFilter
+    permission_classes = [working_day_permissions.HoldingWorkingDayPermissions]
 
-class HoldingGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = HoldingGunler.objects.all()
-    serializer_class = HoldingGunlerSerializer
+class HoldingWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = HoldingWorkingDay.objects.all()
+    serializer_class = HoldingWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingGunlerFilter
-    permission_classes = [gunler_permissions.HoldingGunlerPermissions]
+    filterset_class = HoldingWorkingDayFilter
+    permission_classes = [working_day_permissions.HoldingWorkingDayPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.holding_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.holding_working_day_update(self, request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-class HoldingIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
-    queryset = HoldingIstisnaIsci.objects.all()
-    serializer_class = HoldingIstisnaIsciSerializer
+class HoldingExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = HoldingExceptionWorker.objects.all()
+    serializer_class = HoldingExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingIstisnaIsciFilter
-    permission_classes = [gunler_permissions.HoldingIstisnaIsciPermissions]
+    filterset_class = HoldingExceptionWorkerFilter
+    permission_classes = [working_day_permissions.HoldingExceptionWorkerPermissions]
 
     def create(self, request, *args, **kwargs):
-        return gunler_utils.holding_istisna_isci_gunler_create(self, request, *args, **kwargs)
+        return working_day_utils.holding_exception_worker_working_day_create(self, request, *args, **kwargs)
 
-class HoldingIstisnaIsciDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = HoldingIstisnaIsci.objects.all()
-    serializer_class = HoldingIstisnaIsciSerializer
+class HoldingExceptionWorkerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = HoldingExceptionWorker.objects.all()
+    serializer_class = HoldingExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingIstisnaIsciFilter
-    permission_classes = [gunler_permissions.HoldingIstisnaIsciPermissions]
+    filterset_class = HoldingExceptionWorkerFilter
+    permission_classes = [working_day_permissions.HoldingExceptionWorkerPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.holding_istisna_isci_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.holding_exception_worker_working_day_update(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return gunler_utils.holding_istisna_isci_gunler_delete(self, request, *args, **kwargs)
+        return working_day_utils.holding_exception_worker_working_day_delete(self, request, *args, **kwargs)
 
-# ********************************** Shirket Gunler get post put delete **********************************
-class ShirketGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = ShirketGunler.objects.all()
-    serializer_class = ShirketGunlerSerializer
+# ********************************** Company Gunler get post put delete **********************************
+class CompanyWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = CompanyWorkingDay.objects.all()
+    serializer_class = CompanyWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketGunlerFilter
-    permission_classes = [gunler_permissions.ShirketGunlerPermissions]
+    filterset_class = CompanyWorkingDayFilter
+    permission_classes = [working_day_permissions.CompanyWorkingDayPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShirketGunler.objects.all()
-        elif request.user.shirket is not None:
-            queryset = ShirketGunler.objects.filter(shirket=request.user.shirket)
+            queryset = CompanyWorkingDay.objects.all()
+        elif request.user.company is not None:
+            queryset = CompanyWorkingDay.objects.filter(company=request.user.company)
         else:
-            queryset = ShirketGunler.objects.all()
+            queryset = CompanyWorkingDay.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -131,120 +131,35 @@ class ShirketGunlerListCreateAPIView(generics.ListAPIView):
         return Response(serializer.data)
 
 
-class ShirketGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ShirketGunler.objects.all()
-    serializer_class = ShirketGunlerSerializer
+class CompanyWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CompanyWorkingDay.objects.all()
+    serializer_class = CompanyWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketGunlerFilter
-    permission_classes = [gunler_permissions.ShirketGunlerPermissions]
+    filterset_class = CompanyWorkingDayFilter
+    permission_classes = [working_day_permissions.CompanyWorkingDayPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.shirket_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.company_working_day_update(self, request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-class ShirketIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
-    queryset = ShirketIstisnaIsci.objects.all()
-    serializer_class = ShirketIstisnaIsciSerializer
+class CompanyExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CompanyExceptionWorker.objects.all()
+    serializer_class = CompanyExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketIstisnaIsciFilter
-    permission_classes = [gunler_permissions.ShirketIstisnaIsciPermissions]
+    filterset_class = CompanyExceptionWorkerFilter
+    permission_classes = [working_day_permissions.CompanyExceptionWorkerPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShirketIstisnaIsci.objects.all()
-        elif request.user.shirket is not None:
-            queryset = ShirketIstisnaIsci.objects.filter(gunler__shirket=request.user.shirket)
+            queryset = CompanyExceptionWorker.objects.all()
+        elif request.user.company is not None:
+            queryset = CompanyExceptionWorker.objects.filter(working_day__company=request.user.company)
         else:
-            queryset = ShirketIstisnaIsci.objects.all()
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        return gunler_utils.shirket_istisna_isci_gunler_create(self, request, *args, **kwargs)
-
-class ShirketIstisnaIsciDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ShirketIstisnaIsci.objects.all()
-    serializer_class = ShirketIstisnaIsciSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = ShirketIstisnaIsciFilter
-    permission_classes = [gunler_permissions.ShirketIstisnaIsciPermissions]
-
-    def update(self, request, *args, **kwargs):
-        return gunler_utils.shirket_istisna_isci_gunler_update(self, request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return gunler_utils.shirket_istisna_isci_gunler_delete(self, request, *args, **kwargs)
-
-# ********************************** Ofis Gunler get post put delete **********************************
-class OfisGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = OfisGunler.objects.all()
-    serializer_class = OfisGunlerSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisGunlerFilter
-    permission_classes = [gunler_permissions.OfisGunlerPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = OfisGunler.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = OfisGunler.objects.filter(ofis__shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = OfisGunler.objects.filter(ofis__shirket=request.user.shirket)
-        else:
-            queryset = OfisGunler.objects.all()
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class OfisGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = OfisGunler.objects.all()
-    serializer_class = OfisGunlerSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisGunlerFilter
-    permission_classes = [gunler_permissions.OfisGunlerPermissions]
-
-    def update(self, request, *args, **kwargs):
-        return gunler_utils.ofis_gunler_update(self, request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
-class OfisIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfisIstisnaIsci.objects.all()
-    serializer_class = OfisIstisnaIsciSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisIstisnaIsciFilter
-    permission_classes = [gunler_permissions.OfisIstisnaIsciPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = OfisIstisnaIsci.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = OfisIstisnaIsci.objects.filter(gunler__ofis__shirket=request.user.shirket, gunler__ofis=request.user.ofis)
-            queryset = OfisIstisnaIsci.objects.filter(gunler__ofis__shirket=request.user.shirket)
-        else:
-            queryset = OfisIstisnaIsci.objects.all()
+            queryset = CompanyExceptionWorker.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -256,38 +171,38 @@ class OfisIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return gunler_utils.ofis_istisna_isci_gunler_create(self, request, *args, **kwargs)
+        return working_day_utils.company_exception_worker_working_day_create(self, request, *args, **kwargs)
 
-class OfisIstisnaIsciDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = OfisIstisnaIsci.objects.all()
-    serializer_class = OfisIstisnaIsciSerializer
+class CompanyExceptionWorkerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CompanyExceptionWorker.objects.all()
+    serializer_class = CompanyExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfisIstisnaIsciFilter
-    permission_classes = [gunler_permissions.OfisIstisnaIsciPermissions]
+    filterset_class = CompanyExceptionWorkerFilter
+    permission_classes = [working_day_permissions.CompanyExceptionWorkerPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.ofis_istisna_isci_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.company_exception_worker_working_day_update(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return gunler_utils.ofis_istisna_isci_gunler_delete(self, request, *args, **kwargs)
+        return working_day_utils.company_exception_worker_working_day_delete(self, request, *args, **kwargs)
 
-# ********************************** Shobe Gunler get post put delete **********************************
-class ShobeGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = ShobeGunler.objects.all()
-    serializer_class = ShobeGunlerSerializer
+# ********************************** Office Gunler get post put delete **********************************
+class OfficeWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = OfficeWorkingDay.objects.all()
+    serializer_class = OfficeWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShobeGunlerFilter
-    permission_classes = [gunler_permissions.ShobeGunlerPermissions]
+    filterset_class = OfficeWorkingDayFilter
+    permission_classes = [working_day_permissions.OfficeWorkingDayPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShobeGunler.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = ShobeGunler.objects.filter(shobe__ofis__shirket=request.user.shirket, shobe__ofis=request.user.ofis)
-            queryset = ShobeGunler.objects.filter(shobe__ofis__shirket=request.user.shirket)
+            queryset = OfficeWorkingDay.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = OfficeWorkingDay.objects.filter(office__company=request.user.company, office=request.user.office)
+            queryset = OfficeWorkingDay.objects.filter(office__company=request.user.company)
         else:
-            queryset = ShobeGunler.objects.all()
+            queryset = OfficeWorkingDay.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -299,37 +214,37 @@ class ShobeGunlerListCreateAPIView(generics.ListAPIView):
         return Response(serializer.data)
 
 
-class ShobeGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ShobeGunler.objects.all()
-    serializer_class = ShobeGunlerSerializer
+class OfficeWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OfficeWorkingDay.objects.all()
+    serializer_class = OfficeWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShobeGunlerFilter
-    permission_classes = [gunler_permissions.ShobeGunlerPermissions]
+    filterset_class = OfficeWorkingDayFilter
+    permission_classes = [working_day_permissions.OfficeWorkingDayPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.shobe_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.office_working_day_update(self, request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-class ShobeIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
-    queryset = ShobeIstisnaIsci.objects.all()
-    serializer_class = ShobeIstisnaIsciSerializer
+class OfficeExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = OfficeExceptionWorker.objects.all()
+    serializer_class = OfficeExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShobeIstisnaIsciFilter
-    permission_classes = [gunler_permissions.ShobeIstisnaIsciPermissions]
+    filterset_class = OfficeExceptionWorkerFilter
+    permission_classes = [working_day_permissions.OfficeExceptionWorkerPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = ShobeIstisnaIsci.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = ShobeIstisnaIsci.objects.filter(gunler__shobe__ofis__shirket=request.user.shirket, gunler__shobe__ofis=request.user.ofis)
-            queryset = ShobeIstisnaIsci.objects.filter(gunler__shobe__ofis__shirket=request.user.shirket)
+            queryset = OfficeExceptionWorker.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = OfficeExceptionWorker.objects.filter(working_day__office__company=request.user.company, working_day__office=request.user.office)
+            queryset = OfficeExceptionWorker.objects.filter(working_day__office__company=request.user.company)
         else:
-            queryset = ShobeIstisnaIsci.objects.all()
+            queryset = OfficeExceptionWorker.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -341,83 +256,168 @@ class ShobeIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return gunler_utils.shobe_istisna_isci_gunler_create(self, request, *args, **kwargs)
+        return working_day_utils.office_exception_worker_working_day_create(self, request, *args, **kwargs)
 
-class ShobeIstisnaIsciDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ShobeIstisnaIsci.objects.all()
-    serializer_class = ShobeIstisnaIsciSerializer
+class OfficeExceptionWorkerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OfficeExceptionWorker.objects.all()
+    serializer_class = OfficeExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ShobeIstisnaIsciFilter
-    permission_classes = [gunler_permissions.ShobeIstisnaIsciPermissions]
+    filterset_class = OfficeExceptionWorkerFilter
+    permission_classes = [working_day_permissions.OfficeExceptionWorkerPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.shobe_istisna_isci_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.office_exception_worker_working_day_update(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return gunler_utils.shobe_istisna_isci_gunler_delete(self, request, *args, **kwargs)
+        return working_day_utils.office_exception_worker_working_day_delete(self, request, *args, **kwargs)
 
-# ********************************** Komanda Gunler get post put delete **********************************
-class KomandaGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = KomandaGunler.objects.all()
-    serializer_class = KomandaGunlerSerializer
+# ********************************** Section Gunler get post put delete **********************************
+class SectionWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = SectionWorkingDay.objects.all()
+    serializer_class = SectionWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = KomandaGunlerFilter
-    permission_classes = [gunler_permissions.KomandaGunlerPermissions]
+    filterset_class = SectionWorkingDayFilter
+    permission_classes = [working_day_permissions.SectionWorkingDayPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = SectionWorkingDay.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = SectionWorkingDay.objects.filter(section__office__company=request.user.company, section__office=request.user.office)
+            queryset = SectionWorkingDay.objects.filter(section__office__company=request.user.company)
+        else:
+            queryset = SectionWorkingDay.objects.all()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-class KomandaGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = KomandaGunler.objects.all()
-    serializer_class = KomandaGunlerSerializer
+class SectionWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SectionWorkingDay.objects.all()
+    serializer_class = SectionWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = KomandaGunlerFilter
-    permission_classes = [gunler_permissions.KomandaGunlerPermissions]
+    filterset_class = SectionWorkingDayFilter
+    permission_classes = [working_day_permissions.SectionWorkingDayPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.komanda_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.section_working_day_update(self, request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
+class SectionExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = SectionExceptionWorker.objects.all()
+    serializer_class = SectionExceptionWorkerSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SectionExceptionWorkerFilter
+    permission_classes = [working_day_permissions.SectionExceptionWorkerPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = SectionExceptionWorker.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = SectionExceptionWorker.objects.filter(working_day__section__office__company=request.user.company, working_day__section__office=request.user.office)
+            queryset = SectionExceptionWorker.objects.filter(working_day__section__office__company=request.user.company)
+        else:
+            queryset = SectionExceptionWorker.objects.all()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        return working_day_utils.section_exception_worker_working_day_create(self, request, *args, **kwargs)
+
+class SectionExceptionWorkerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SectionExceptionWorker.objects.all()
+    serializer_class = SectionExceptionWorkerSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SectionExceptionWorkerFilter
+    permission_classes = [working_day_permissions.SectionExceptionWorkerPermissions]
+
+    def update(self, request, *args, **kwargs):
+        return working_day_utils.section_exception_worker_working_day_update(self, request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return working_day_utils.section_exception_worker_working_day_delete(self, request, *args, **kwargs)
+
+# ********************************** Team Gunler get post put delete **********************************
+class TeamWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = TeamWorkingDay.objects.all()
+    serializer_class = TeamWorkingDaySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TeamWorkingDayFilter
+    permission_classes = [working_day_permissions.TeamWorkingDayPermissions]
+
+
+class TeamWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TeamWorkingDay.objects.all()
+    serializer_class = TeamWorkingDaySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TeamWorkingDayFilter
+    permission_classes = [working_day_permissions.TeamWorkingDayPermissions]
+
+    def update(self, request, *args, **kwargs):
+        return working_day_utils.team_working_day_update(self, request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-class KomandaIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
-    queryset = KomandaIstisnaIsci.objects.all()
-    serializer_class = KomandaIstisnaIsciSerializer
+class TeamExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = TeamExceptionWorker.objects.all()
+    serializer_class = TeamExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = KomandaIstisnaIsciFilter
-    permission_classes = [gunler_permissions.KomandaIstisnaIsciPermissions]
+    filterset_class = TeamExceptionWorkerFilter
+    permission_classes = [working_day_permissions.TeamExceptionWorkerPermissions]
 
     def create(self, request, *args, **kwargs):
-        return gunler_utils.komanda_istisna_isci_gunler_create(self, request, *args, **kwargs)
+        return working_day_utils.team_exception_worker_working_day_create(self, request, *args, **kwargs)
 
-class KomandaIstisnaIsciDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = KomandaIstisnaIsci.objects.all()
-    serializer_class = KomandaIstisnaIsciSerializer
+class TeamExceptionWorkerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TeamExceptionWorker.objects.all()
+    serializer_class = TeamExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = KomandaIstisnaIsciFilter
-    permission_classes = [gunler_permissions.KomandaIstisnaIsciPermissions]
+    filterset_class = TeamExceptionWorkerFilter
+    permission_classes = [working_day_permissions.TeamExceptionWorkerPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.komanda_istisna_isci_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.team_exception_worker_working_day_update(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return gunler_utils.komanda_istisna_isci_gunler_delete(self, request, *args, **kwargs)
+        return working_day_utils.team_exception_worker_working_day_delete(self, request, *args, **kwargs)
 
-# ********************************** Vezife Gunler get post put delete **********************************
-class VezifeGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = VezifeGunler.objects.all()
-    serializer_class = VezifeGunlerSerializer
+# ********************************** Position Gunler get post put delete **********************************
+class PositionWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = PositionWorkingDay.objects.all()
+    serializer_class = PositionWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifeGunlerFilter
-    permission_classes = [gunler_permissions.VezifeGunlerPermissions]
+    filterset_class = PositionWorkingDayFilter
+    permission_classes = [working_day_permissions.PositionWorkingDayPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = VezifeGunler.objects.all()
-        elif request.user.shirket is not None:
-            queryset = VezifeGunler.objects.filter(vezife__shirket=request.user.shirket)
+            queryset = PositionWorkingDay.objects.all()
+        elif request.user.company is not None:
+            queryset = PositionWorkingDay.objects.filter(position__company=request.user.company)
         else:
-            queryset = VezifeGunler.objects.all()
+            queryset = PositionWorkingDay.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -428,35 +428,35 @@ class VezifeGunlerListCreateAPIView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-class VezifeGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VezifeGunler.objects.all()
-    serializer_class = VezifeGunlerSerializer
+class PositionWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = PositionWorkingDay.objects.all()
+    serializer_class = PositionWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifeGunlerFilter
-    permission_classes = [gunler_permissions.VezifeGunlerPermissions]
+    filterset_class = PositionWorkingDayFilter
+    permission_classes = [working_day_permissions.PositionWorkingDayPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.vezife_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.position_working_day_update(self, request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-class VezifeIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
-    queryset = VezifeIstisnaIsci.objects.all()
-    serializer_class = VezifeIstisnaIsciSerializer
+class PositionExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = PositionExceptionWorker.objects.all()
+    serializer_class = PositionExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifeIstisnaIsciFilter
-    permission_classes = [gunler_permissions.VezifeIstisnaIsciPermissions]
+    filterset_class = PositionExceptionWorkerFilter
+    permission_classes = [working_day_permissions.PositionExceptionWorkerPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = VezifeIstisnaIsci.objects.all()
-        elif request.user.shirket is not None:
-            queryset = VezifeIstisnaIsci.objects.filter(gunler__vezife__shirket=request.user.shirket)
+            queryset = PositionExceptionWorker.objects.all()
+        elif request.user.company is not None:
+            queryset = PositionExceptionWorker.objects.filter(working_day__position__company=request.user.company)
         else:
-            queryset = VezifeIstisnaIsci.objects.all()
+            queryset = PositionExceptionWorker.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -468,38 +468,38 @@ class VezifeIstisnaIsciListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return gunler_utils.vezife_istisna_isci_gunler_create(self, request, *args, **kwargs)
+        return working_day_utils.position_exception_worker_working_day_create(self, request, *args, **kwargs)
 
-class VezifeIstisnaIsciDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = VezifeIstisnaIsci.objects.all()
-    serializer_class = VezifeIstisnaIsciSerializer
+class PositionExceptionWorkerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = PositionExceptionWorker.objects.all()
+    serializer_class = PositionExceptionWorkerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = VezifeIstisnaIsciFilter
-    permission_classes = [gunler_permissions.VezifeIstisnaIsciPermissions]
+    filterset_class = PositionExceptionWorkerFilter
+    permission_classes = [working_day_permissions.PositionExceptionWorkerPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.vezife_istisna_isci_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.position_exception_worker_working_day_update(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return gunler_utils.vezife_istisna_isci_gunler_delete(self, request, *args, **kwargs)
+        return working_day_utils.position_exception_worker_working_day_delete(self, request, *args, **kwargs)
     
 # ********************************** Isci Gunler get post put delete **********************************
-class IsciGunlerListCreateAPIView(generics.ListAPIView):
-    queryset = IsciGunler.objects.all()
-    serializer_class = IsciGunlerSerializer
+class EmployeeWorkingDayListCreateAPIView(generics.ListAPIView):
+    queryset = EmployeeWorkingDay.objects.all()
+    serializer_class = EmployeeWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = IsciGunlerFilter
-    permission_classes = [gunler_permissions.IsciGunlerPermissions]
+    filterset_class = EmployeeWorkingDayFilter
+    permission_classes = [working_day_permissions.EmployeeWorkingDayPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = IsciGunler.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = IsciGunler.objects.filter(isci__shirket=request.user.shirket, isci__ofis=request.user.ofis)
-            queryset = IsciGunler.objects.filter(isci__shirket=request.user.shirket)
+            queryset = EmployeeWorkingDay.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = EmployeeWorkingDay.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
+            queryset = EmployeeWorkingDay.objects.filter(employee__company=request.user.company)
         else:
-            queryset = IsciGunler.objects.all()
+            queryset = EmployeeWorkingDay.objects.all()
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -511,33 +511,33 @@ class IsciGunlerListCreateAPIView(generics.ListAPIView):
         return Response(serializer.data)
 
 
-class IsciGunlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = IsciGunler.objects.all()
-    serializer_class = IsciGunlerSerializer
+class EmployeeWorkingDayDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = EmployeeWorkingDay.objects.all()
+    serializer_class = EmployeeWorkingDaySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = IsciGunlerFilter
-    permission_classes = [gunler_permissions.IsciGunlerPermissions]
+    filterset_class = EmployeeWorkingDayFilter
+    permission_classes = [working_day_permissions.EmployeeWorkingDayPermissions]
 
     def update(self, request, *args, **kwargs):
-        return gunler_utils.user_gunler_update(self, request, *args, **kwargs)
+        return working_day_utils.user_working_day_update(self, request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
-        return gunler_utils.user_gunler_patch(self, request, *args, **kwargs)
+        return working_day_utils.user_working_day_patch(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        return gunler_utils.user_gunler_delete(self, request, *args, **kwargs)
+        return working_day_utils.user_working_day_delete(self, request, *args, **kwargs)
 
 # ********************************** Isci Gelib getme vaxtlari get post put delete **********************************
-class IsciGelibGetmeVaxtlariListCreateAPIView(generics.ListCreateAPIView):
-    queryset = IsciGelibGetmeVaxtlari.objects.all()
-    serializer_class = IsciGelibGetmeVaxtlariSerializer
+class EmployeeArrivalAndDepartureTimesListCreateAPIView(generics.ListCreateAPIView):
+    queryset = EmployeeArrivalAndDepartureTimes.objects.all()
+    serializer_class = EmployeeArrivalAndDepartureTimesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = IsciGelibGetmeVaxtlariFilter
-    permission_classes = [gunler_permissions.IsciGelibGetmeVaxtlariPermissions]
+    filterset_class = EmployeeArrivalAndDepartureTimesFilter
+    permission_classes = [working_day_permissions.EmployeeArrivalAndDepartureTimesPermissions]
 
-class IsciGelibGetmeVaxtlariDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = IsciGelibGetmeVaxtlari.objects.all()
-    serializer_class = IsciGelibGetmeVaxtlariSerializer
+class EmployeeArrivalAndDepartureTimesDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = EmployeeArrivalAndDepartureTimes.objects.all()
+    serializer_class = EmployeeArrivalAndDepartureTimesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = IsciGelibGetmeVaxtlariFilter
-    permission_classes = [gunler_permissions.IsciGelibGetmeVaxtlariPermissions]
+    filterset_class = EmployeeArrivalAndDepartureTimesFilter
+    permission_classes = [working_day_permissions.EmployeeArrivalAndDepartureTimesPermissions]

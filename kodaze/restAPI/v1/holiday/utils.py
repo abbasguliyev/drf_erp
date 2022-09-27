@@ -3,397 +3,397 @@ import traceback
 import pandas as pd
 from rest_framework import status
 from rest_framework.response import Response
-from salary.models import Kesinti, MaasGoruntuleme
+from salary.models import SalaryDeduction, SalaryView
 from account.models import User
 from restAPI.v1.holiday.serializers import (
-    HoldingIstisnaIsciSerializer,
-    IsciGunlerSerializer,
-    HoldingGunlerSerializer,
-    KomandaGunlerSerializer,
-    KomandaIstisnaIsciSerializer, 
-    OfisGunlerSerializer,
-    OfisIstisnaIsciSerializer,
-    ShirketGunlerSerializer,
-    ShirketIstisnaIsciSerializer,
-    ShobeGunlerSerializer,
-    ShobeIstisnaIsciSerializer,
-    VezifeGunlerSerializer,
-    VezifeIstisnaIsciSerializer
+    HoldingExceptionWorkerSerializer,
+    EmployeeWorkingDaySerializer,
+    HoldingWorkingDaySerializer,
+    TeamWorkingDaySerializer,
+    TeamExceptionWorkerSerializer, 
+    OfficeWorkingDaySerializer,
+    OfficeExceptionWorkerSerializer,
+    CompanyWorkingDaySerializer,
+    CompanyExceptionWorkerSerializer,
+    SectionWorkingDaySerializer,
+    SectionExceptionWorkerSerializer,
+    PositionWorkingDaySerializer,
+    PositionExceptionWorkerSerializer
 )
 from holiday.models import (
-    IsciGunler,
-    KomandaGunler,
-    OfisGunler,
-    ShirketGunler,
-    ShobeGunler,
-    VezifeGunler
+    EmployeeWorkingDay,
+    TeamWorkingDay,
+    OfficeWorkingDay,
+    CompanyWorkingDay,
+    SectionWorkingDay,
+    PositionWorkingDay
 )
 # --------------------------------------------------------------------------------------------------------------------------
 
-def company_isci_tetil_hesablama(company, company_name, tarix, tetil_gunleri, is_gunleri_count, qeyri_is_gunu_count, istisna_isciler=list()):
+def company_employee_tetil_hesablama(company, company_name, date, holidays, working_days_count, non_working_days_count, exception_workers=list()):
     """
-    Bu method holding, shirket, ofis, shobe, komanda ve vezife-nin is ve qeyri is gunleri hesablanan zaman onlarla elaqeli olan
-    iscilerin is ve qeyri is gunlerini hesablamaq ucundur. Hemcinin eger holding-in is ve qeyri is gunleri hesablanirsa bu zaman yuxarida
-    sadaladigim diger obyektlerinde is ve qeyri is gunleri uygun olaraq deyisir.
+    Bu method holding, company, office, section, team ve position-nin is ve qeyri is working_dayi hesablanan zaman onlarla elaqeli olan
+    employeelerin is ve qeyri is working_dayini hesablamaq ucundur. Hemcinin eger holding-in is ve qeyri is working_dayi hesablanirsa bu zaman yuxarida
+    sadaladigim diger obyektlerinde is ve qeyri is working_dayi uygun olaraq deyisir.
     """
     if(company=="holding"):
-        isciler = list(User.objects.all())
-        ofis_gunler = OfisGunler.objects.filter(tarix=tarix)
-        for o in ofis_gunler:
-            o.is_gunleri_count = is_gunleri_count
-            o.qeyri_is_gunu_count = qeyri_is_gunu_count
-            o.tetil_gunleri = tetil_gunleri
+        employeeler = list(User.objects.all())
+        office_working_day = OfficeWorkingDay.objects.filter(date=date)
+        for o in office_working_day:
+            o.working_days_count = working_days_count
+            o.non_working_days_count = non_working_days_count
+            o.holidays = holidays
             o.save()
-        shirket_gunler = ShirketGunler.objects.filter(tarix=tarix)
-        for s in shirket_gunler:
-            s.is_gunleri_count = is_gunleri_count
-            s.qeyri_is_gunu_count = qeyri_is_gunu_count
-            s.tetil_gunleri = tetil_gunleri
+        company_working_day = CompanyWorkingDay.objects.filter(date=date)
+        for s in company_working_day:
+            s.working_days_count = working_days_count
+            s.non_working_days_count = non_working_days_count
+            s.holidays = holidays
             s.save()
-        shobe_gunler = ShobeGunler.objects.filter(tarix=tarix)
-        for sh in shobe_gunler:
-            sh.is_gunleri_count = is_gunleri_count
-            sh.qeyri_is_gunu_count = qeyri_is_gunu_count
-            sh.tetil_gunleri = tetil_gunleri
+        section_working_day = SectionWorkingDay.objects.filter(date=date)
+        for sh in section_working_day:
+            sh.working_days_count = working_days_count
+            sh.non_working_days_count = non_working_days_count
+            sh.holidays = holidays
             sh.save()
-        vezife_gunler = VezifeGunler.objects.filter(tarix=tarix)
-        for v in vezife_gunler:
-            v.is_gunleri_count = is_gunleri_count
-            v.qeyri_is_gunu_count = qeyri_is_gunu_count
-            v.tetil_gunleri = tetil_gunleri
+        position_working_day = PositionWorkingDay.objects.filter(date=date)
+        for v in position_working_day:
+            v.working_days_count = working_days_count
+            v.non_working_days_count = non_working_days_count
+            v.holidays = holidays
             v.save()
-        komanda_gunler = KomandaGunler.objects.filter(tarix=tarix)
-        for k in komanda_gunler:
-            k.is_gunleri_count = is_gunleri_count
-            k.qeyri_is_gunu_count = qeyri_is_gunu_count
-            k.tetil_gunleri = tetil_gunleri
+        team_working_day = TeamWorkingDay.objects.filter(date=date)
+        for k in team_working_day:
+            k.working_days_count = working_days_count
+            k.non_working_days_count = non_working_days_count
+            k.holidays = holidays
             k.save()
-    elif(company=="shirket"):
-        isciler = list(User.objects.filter(shirket=company_name))
-    elif(company=="shobe"):
-        isciler = list(User.objects.filter(shobe=company_name))
-    elif(company=="ofis"):
-        isciler = list(User.objects.filter(ofis=company_name))
-    elif(company=="komanda"):
-        isciler = list(User.objects.filter(komanda=company_name))
-    elif(company=="vezife"):
-        isciler = list(User.objects.filter(vezife=company_name))
+    elif(company=="company"):
+        employeeler = list(User.objects.filter(company=company_name))
+    elif(company=="section"):
+        employeeler = list(User.objects.filter(section=company_name))
+    elif(company=="office"):
+        employeeler = list(User.objects.filter(office=company_name))
+    elif(company=="team"):
+        employeeler = list(User.objects.filter(team=company_name))
+    elif(company=="position"):
+        employeeler = list(User.objects.filter(position=company_name))
 
     z = 1
-    for isci in isciler:
-        if istisna_isciler != list():
-            if isci in istisna_isciler:
+    for employee in employeeler:
+        if exception_workers != list():
+            if employee in exception_workers:
                 continue
         try:
-            isci_gunler = IsciGunler.objects.get(isci=isci, tarix=tarix)
-            isci_gunler.tetil_gunleri = tetil_gunleri
-            isci_gunler.is_gunleri_count = is_gunleri_count
-            isci_gunler.qeyri_is_gunu_count = qeyri_is_gunu_count
-            isci_gunler.save()
+            employee_working_day = EmployeeWorkingDay.objects.get(employee=employee, date=date)
+            employee_working_day.holidays = holidays
+            employee_working_day.working_days_count = working_days_count
+            employee_working_day.non_working_days_count = non_working_days_count
+            employee_working_day.save()
         except:
             traceback.print_exc()
         z+=1
     return True
 
-def instisna_isci_create(serializer, company, company_name, obj_gunler):
-    tarix = obj_gunler.tarix
-    obj_gunler_tetil_gunleri = obj_gunler.tetil_gunleri
+def instisna_employee_create(serializer, company, company_name, obj_working_day):
+    date = obj_working_day.date
+    obj_working_day_holidays = obj_working_day.holidays
     date_list = []
     k_date_list = []
     
-    tetil_gunleri = serializer.validated_data.get("tetil_gunleri")
-    tetil_gunleri_l = tetil_gunleri.rstrip("]").lstrip("[").split(",")
-    for i in tetil_gunleri_l:
+    holidays = serializer.validated_data.get("holidays")
+    holidays_l = holidays.rstrip("]").lstrip("[").split(",")
+    for i in holidays_l:
         new_el = i.strip().strip("'").strip('"')
         date_list.append(new_el)
 
-    istisna_isciler = serializer.validated_data.get("istisna_isciler")
+    exception_workers = serializer.validated_data.get("exception_workers")
 
-    # indi = datetime.date.today()
+    # now = datetime.date.today()
 
-    # d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    # d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
     # next_m = d + pd.offsets.MonthBegin(1)
 
-    days_in_mont = pd.Period(f"{tarix.year}-{tarix.month}-{1}").days_in_month
+    days_in_mont = pd.Period(f"{date.year}-{date.month}-{1}").days_in_month
 
-    for isci in istisna_isciler:
-        isci_gunler = IsciGunler.objects.get(isci=isci, tarix=tarix)
-        if isci_gunler.tetil_gunleri is not None:
-            isci_gunler_tetil_gunleri = obj_gunler_tetil_gunleri.rstrip("]").lstrip("[").split(",")
-            for i in isci_gunler_tetil_gunleri:
+    for employee in exception_workers:
+        employee_working_day = EmployeeWorkingDay.objects.get(employee=employee, date=date)
+        if employee_working_day.holidays is not None:
+            employee_working_day_holidays = obj_working_day_holidays.rstrip("]").lstrip("[").split(",")
+            for i in employee_working_day_holidays:
                 new_el = i.strip().strip("'").strip('"')
                 k_date_list.append(new_el)
 
             for i in date_list:
                 if i in k_date_list:
                     k_date_list.remove(i)
-        isci_gunler.tetil_gunleri = k_date_list
-        isci_gunler.is_gunleri_count = float(days_in_mont) - len(k_date_list)
-        isci_gunler.qeyri_is_gunu_count = len(k_date_list)
-        isci_gunler.save()
+        employee_working_day.holidays = k_date_list
+        employee_working_day.working_days_count = float(days_in_mont) - len(k_date_list)
+        employee_working_day.non_working_days_count = len(k_date_list)
+        employee_working_day.save()
 
-    serializer.save(tetil_gunleri=date_list, istisna_isciler=istisna_isciler)
+    serializer.save(holidays=date_list, exception_workers=exception_workers)
 
-def istisna_isci_update(serializer, company, company_name, obj_gunler, obj_istisna_isci):
-    tarix = obj_gunler.tarix
-    obj_gunler_tetil_gunleri = obj_gunler.tetil_gunleri
+def exception_worker_update(serializer, company, company_name, obj_working_day, obj_exception_worker):
+    date = obj_working_day.date
+    obj_working_day_holidays = obj_working_day.holidays
 
     date_list = []
     k_date_list = []
     q_date_list = []
 
-    k_tetil_gunleri = obj_istisna_isci.tetil_gunleri
-    k_tetil_gunleri_l = k_tetil_gunleri.rstrip("]").lstrip("[").split(",")
-    for i in k_tetil_gunleri_l:
+    k_holidays = obj_exception_worker.holidays
+    k_holidays_l = k_holidays.rstrip("]").lstrip("[").split(",")
+    for i in k_holidays_l:
         new_el = i.strip().strip("'").strip('"')
         k_date_list.append(new_el)
 
-    # indi = datetime.date.today()
+    # now = datetime.date.today()
 
-    # d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    # d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
     # next_m = d + pd.offsets.MonthBegin(1)
 
-    days_in_mont = pd.Period(f"{tarix.year}-{tarix.month}-{1}").days_in_month
+    days_in_mont = pd.Period(f"{date.year}-{date.month}-{1}").days_in_month
 
-    tetil_gunleri = serializer.validated_data.get("tetil_gunleri")
-    if tetil_gunleri == None:
-        tetil_gunleri = k_date_list
-        tetil_gunleri_l = tetil_gunleri
+    holidays = serializer.validated_data.get("holidays")
+    if holidays == None:
+        holidays = k_date_list
+        holidays_l = holidays
         date_list = k_date_list
     else:
-        tetil_gunleri_l = tetil_gunleri.rstrip("]").lstrip("[").split(",")
-        for i in tetil_gunleri_l:
+        holidays_l = holidays.rstrip("]").lstrip("[").split(",")
+        for i in holidays_l:
             new_el = i.strip().strip("'").strip('"')
             date_list.append(new_el)
 
-    u_istisna_isciler = []
+    u_exception_workers = []
 
-    istisna_isciler = serializer.validated_data.get("istisna_isciler")
-    if istisna_isciler == None:
-        istisna_isciler = list(obj_istisna_isci.istisna_isciler.all())
+    exception_workers = serializer.validated_data.get("exception_workers")
+    if exception_workers == None:
+        exception_workers = list(obj_exception_worker.exception_workers.all())
 
-    k_istisna_isciler = list(obj_istisna_isci.istisna_isciler.all())
+    k_exception_workers = list(obj_exception_worker.exception_workers.all())
 
-    for i in k_istisna_isciler:
-        u_istisna_isciler.append(i)
+    for i in k_exception_workers:
+        u_exception_workers.append(i)
 
-    for j in istisna_isciler:
-        if j in u_istisna_isciler:
+    for j in exception_workers:
+        if j in u_exception_workers:
             continue
         else:
-            u_istisna_isciler.append(j)
+            u_exception_workers.append(j)
 
     if (
-        (serializer.validated_data.get("istisna_isciler") == None or serializer.validated_data.get("istisna_isciler") == "") 
+        (serializer.validated_data.get("exception_workers") == None or serializer.validated_data.get("exception_workers") == "") 
         and 
-        (serializer.validated_data.get("tetil_gunleri") != None)
+        (serializer.validated_data.get("holidays") != None)
     ):
-        for isci in u_istisna_isciler:
-            isci_gunler = IsciGunler.objects.get(isci=isci, tarix=tarix)
-            if isci_gunler.tetil_gunleri is not None:
-                isci_gunler_tetil_gunleri = obj_gunler_tetil_gunleri.rstrip("]").lstrip("[").split(",")
-                for i in isci_gunler_tetil_gunleri:
+        for employee in u_exception_workers:
+            employee_working_day = EmployeeWorkingDay.objects.get(employee=employee, date=date)
+            if employee_working_day.holidays is not None:
+                employee_working_day_holidays = obj_working_day_holidays.rstrip("]").lstrip("[").split(",")
+                for i in employee_working_day_holidays:
                     new_el = i.strip().strip("'").strip('"')
                     q_date_list.append(new_el)
 
                 if len(date_list) == len(q_date_list):
-                    isci_gunler.tetil_gunleri = list(q_date_list)
-                    isci_gunler.is_gunleri_count = float(days_in_mont)
-                    isci_gunler.qeyri_is_gunu_count = 0
-                    isci_gunler.save()
+                    employee_working_day.holidays = list(q_date_list)
+                    employee_working_day.working_days_count = float(days_in_mont)
+                    employee_working_day.non_working_days_count = 0
+                    employee_working_day.save()
                 else:
                     for i in date_list:
                         if i in q_date_list:
                             q_date_list.remove(i)
-                        isci_gunler.tetil_gunleri = list(q_date_list)
-                        isci_gunler.is_gunleri_count = float(days_in_mont) - len(date_list)
-                        isci_gunler.qeyri_is_gunu_count = len(date_list)
-                        isci_gunler.save()
+                        employee_working_day.holidays = list(q_date_list)
+                        employee_working_day.working_days_count = float(days_in_mont) - len(date_list)
+                        employee_working_day.non_working_days_count = len(date_list)
+                        employee_working_day.save()
     elif(
-        (serializer.validated_data.get("istisna_isciler") != None) 
+        (serializer.validated_data.get("exception_workers") != None) 
         and 
-        (serializer.validated_data.get("tetil_gunleri") == None)
+        (serializer.validated_data.get("holidays") == None)
     ):
-        for isci in istisna_isciler:
-            isci_gunler = IsciGunler.objects.get(isci=isci, tarix=tarix)
-            if isci_gunler.tetil_gunleri is not None:
-                isci_gunler_tetil_gunleri = obj_gunler_tetil_gunleri.rstrip("]").lstrip("[").split(",")
-                for i in isci_gunler_tetil_gunleri:
+        for employee in exception_workers:
+            employee_working_day = EmployeeWorkingDay.objects.get(employee=employee, date=date)
+            if employee_working_day.holidays is not None:
+                employee_working_day_holidays = obj_working_day_holidays.rstrip("]").lstrip("[").split(",")
+                for i in employee_working_day_holidays:
                     new_el = i.strip().strip("'").strip('"')
                     q_date_list.append(new_el)
 
                 for i in date_list:
                     if i in q_date_list:
                         q_date_list.remove(i)
-            isci_gunler.tetil_gunleri = list(q_date_list)
-            isci_gunler.is_gunleri_count = float(days_in_mont) - len(date_list)
-            isci_gunler.qeyri_is_gunu_count = len(date_list)
-            isci_gunler.save()
+            employee_working_day.holidays = list(q_date_list)
+            employee_working_day.working_days_count = float(days_in_mont) - len(date_list)
+            employee_working_day.non_working_days_count = len(date_list)
+            employee_working_day.save()
     elif(
-        (serializer.validated_data.get("istisna_isciler") != None) 
+        (serializer.validated_data.get("exception_workers") != None) 
         and 
-        (serializer.validated_data.get("tetil_gunleri") != None)
+        (serializer.validated_data.get("holidays") != None)
     ):
-        for isci in u_istisna_isciler:
-            isci_gunler = IsciGunler.objects.get(isci=isci, tarix=tarix)
-            if isci_gunler.tetil_gunleri is not None:
-                isci_gunler_tetil_gunleri = obj_gunler_tetil_gunleri.rstrip("]").lstrip("[").split(",")
-                for i in isci_gunler_tetil_gunleri:
+        for employee in u_exception_workers:
+            employee_working_day = EmployeeWorkingDay.objects.get(employee=employee, date=date)
+            if employee_working_day.holidays is not None:
+                employee_working_day_holidays = obj_working_day_holidays.rstrip("]").lstrip("[").split(",")
+                for i in employee_working_day_holidays:
                     new_el = i.strip().strip("'").strip('"')
                     q_date_list.append(new_el)
 
                 if len(date_list) == len(q_date_list):
-                    isci_gunler.tetil_gunleri = list(q_date_list)
-                    isci_gunler.is_gunleri_count = float(days_in_mont)
-                    isci_gunler.qeyri_is_gunu_count = 0
-                    isci_gunler.save()
+                    employee_working_day.holidays = list(q_date_list)
+                    employee_working_day.working_days_count = float(days_in_mont)
+                    employee_working_day.non_working_days_count = 0
+                    employee_working_day.save()
                 else:
                     for i in date_list:
                         if i in q_date_list:
                             q_date_list.remove(i)
-                        isci_gunler.tetil_gunleri = list(q_date_list)
-                        isci_gunler.is_gunleri_count = float(days_in_mont) - len(date_list)
-                        isci_gunler.qeyri_is_gunu_count = len(date_list)
-                        isci_gunler.save()
+                        employee_working_day.holidays = list(q_date_list)
+                        employee_working_day.working_days_count = float(days_in_mont) - len(date_list)
+                        employee_working_day.non_working_days_count = len(date_list)
+                        employee_working_day.save()
 
-    # serializer.save(tetil_gunleri=date_list, istisna_isciler=u_istisna_isciler)
+    # serializer.save(holidays=date_list, exception_workers=u_exception_workers)
     serializer.save()
 
-def istisna_isci_delete(obj_gunler, obj_istisna_isci):
-    istisna_isciler = obj_istisna_isci.istisna_isciler.all()
+def exception_worker_delete(obj_working_day, obj_exception_worker):
+    exception_workers = obj_exception_worker.exception_workers.all()
 
-    tarix = obj_gunler.tarix
+    date = obj_working_day.date
 
-    indi = datetime.date.today()
+    now = datetime.date.today()
 
-    d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
     next_m = d + pd.offsets.MonthBegin(1)
 
     days_in_mont = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
 
-    for isci in istisna_isciler:
-        isci_gunler = IsciGunler.objects.get(isci=isci, tarix=tarix)
-        if isci_gunler.tetil_gunleri is not None: 
-            isci_gunler.tetil_gunleri = None
-            isci_gunler.is_gunleri_count = float(days_in_mont)
-            isci_gunler.qeyri_is_gunu_count = 0
-            isci_gunler.save()
+    for employee in exception_workers:
+        employee_working_day = EmployeeWorkingDay.objects.get(employee=employee, date=date)
+        if employee_working_day.holidays is not None: 
+            employee_working_day.holidays = None
+            employee_working_day.working_days_count = float(days_in_mont)
+            employee_working_day.non_working_days_count = 0
+            employee_working_day.save()
 
 
-def isci_tetil_gunleri_calc(serializer, obj):
+def employee_holidays_calc(serializer, obj):
     date_list = []
     odenisli_icaze_date_list = []
     odenissiz_icaze_date_list = []
 
-    isci = obj.isci
+    employee = obj.employee
 
-    indi = datetime.date.today()
+    now = datetime.date.today()
 
-    d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
     next_m = d + pd.offsets.MonthBegin(1)
 
     days_in_mont = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
 
-    tetil_gunleri = serializer.validated_data.get("tetil_gunleri")
-    if tetil_gunleri is not None:
-        tetil_gunleri_l = tetil_gunleri.rstrip("]").lstrip("[").split(",")
+    holidays = serializer.validated_data.get("holidays")
+    if holidays is not None:
+        holidays_l = holidays.rstrip("]").lstrip("[").split(",")
     else:
-        tetil_gunleri_l = []
+        holidays_l = []
         
-    for i in tetil_gunleri_l:
+    for i in holidays_l:
         new_el = i.strip().strip("'").strip('"')
         date_list.append(new_el)
 
-    icaze_gunleri_odenisli = serializer.validated_data.get("icaze_gunleri_odenisli")
-    icaze_gunleri_odenissiz = serializer.validated_data.get("icaze_gunleri_odenissiz")
+    paid_leave_days = serializer.validated_data.get("paid_leave_days")
+    unpaid_leave_days = serializer.validated_data.get("unpaid_leave_days")
 
-    if icaze_gunleri_odenisli is not None:
-        icaze_gunleri_odenisli_l = icaze_gunleri_odenisli.rstrip("]").lstrip("[").split(",")
+    if paid_leave_days is not None:
+        paid_leave_days_l = paid_leave_days.rstrip("]").lstrip("[").split(",")
     else:
-        icaze_gunleri_odenisli_l = []
+        paid_leave_days_l = []
 
-    if icaze_gunleri_odenissiz is not None:
-        icaze_gunleri_odenissiz_l = icaze_gunleri_odenissiz.rstrip("]").lstrip("[").split(",")
+    if unpaid_leave_days is not None:
+        unpaid_leave_days_l = unpaid_leave_days.rstrip("]").lstrip("[").split(",")
     else:
-        icaze_gunleri_odenissiz_l = []
+        unpaid_leave_days_l = []
 
-    for i in icaze_gunleri_odenisli_l:
+    for i in paid_leave_days_l:
         new_elm = i.strip().strip("'").strip('"')
         odenisli_icaze_date_list.append(new_elm)
 
-    for i in icaze_gunleri_odenissiz_l:
+    for i in unpaid_leave_days_l:
         new_elm1 = i.strip().strip("'").strip('"')
         odenissiz_icaze_date_list.append(new_elm1)
 
-    k_qeyri_is_gunleri = obj.qeyri_is_gunu_count
+    k_qeyri_working_days = obj.non_working_days_count
 
-    qeyri_is_gunu_count = float(len(date_list)) + float(len(odenisli_icaze_date_list)) + float(len(odenissiz_icaze_date_list))
-    is_gunleri_count = float(days_in_mont)
-    is_gunleri_count = float(is_gunleri_count) - float(qeyri_is_gunu_count)
+    non_working_days_count = float(len(date_list)) + float(len(odenisli_icaze_date_list)) + float(len(odenissiz_icaze_date_list))
+    working_days_count = float(days_in_mont)
+    working_days_count = float(working_days_count) - float(non_working_days_count)
 
-    is_odenisli = serializer.validated_data.get("is_odenisli")
-    odenis_meblegi = serializer.validated_data.get("odenis_meblegi")
+    is_paid = serializer.validated_data.get("is_paid")
+    payment_amount = serializer.validated_data.get("payment_amount")
 
-    if is_odenisli == True:
+    if is_paid == True:
         try:
-            maas_goruntulenme = MaasGoruntuleme.objects.get(isci=isci, tarix=d)
-            maas_goruntulenme.yekun_maas = float(maas_goruntulenme.yekun_maas) - float(odenis_meblegi)
-            maas_goruntulenme.save()
-            kesinti = Kesinti.objects.create(isci=isci, mebleg=odenis_meblegi, qeyd="ödənişli icazə ilə əlaqədar", kesinti_tarixi=indi)
-            kesinti.save()
+            salary_goruntulenme = SalaryView.objects.get(employee=employee, date=d)
+            salary_goruntulenme.final_salary = float(salary_goruntulenme.final_salary) - float(payment_amount)
+            salary_goruntulenme.save()
+            salarydeduction = SalaryDeduction.objects.create(employee=employee, amount=payment_amount, note="ödənişli icazə ilə əlaqədar", date=now)
+            salarydeduction.save()
         except:
             return Response({"detail": "Maaş kartında xəta"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # serializer.save(tetil_gunleri=date_list, is_gunleri_count=is_gunleri_count, qeyri_is_gunu_count=qeyri_is_gunu_count)
-    serializer.save( is_gunleri_count=is_gunleri_count, qeyri_is_gunu_count=qeyri_is_gunu_count)
+    # serializer.save(holidays=date_list, working_days_count=working_days_count, non_working_days_count=non_working_days_count)
+    serializer.save( working_days_count=working_days_count, non_working_days_count=non_working_days_count)
     return True
 
-def isci_tetil_gunleri_delete(obj_gunler):
+def employee_holidays_delete(obj_working_day):
     
-    indi = datetime.date.today()
+    now = datetime.date.today()
 
-    d = pd.to_datetime(f"{indi.year}-{indi.month}-{1}")
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
 
     next_m = d + pd.offsets.MonthBegin(1)
 
     days_in_mont = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
 
-    obj_gunler.tetil_gunleri = None
-    obj_gunler.icaze_gunleri_odenisli = None
-    obj_gunler.icaze_gunleri_odenissiz = None
-    obj_gunler.is_gunleri_count = float(days_in_mont)
-    obj_gunler.qeyri_is_gunu_count = 0
-    obj_gunler.save()
+    obj_working_day.holidays = None
+    obj_working_day.paid_leave_days = None
+    obj_working_day.unpaid_leave_days = None
+    obj_working_day.working_days_count = float(days_in_mont)
+    obj_working_day.non_working_days_count = 0
+    obj_working_day.save()
     
 
-def gunler_update(serializer, company, company_name, obj_gunler):
-    tarix = obj_gunler.tarix
-    is_gunleri_count = obj_gunler.is_gunleri_count
-    qeyri_is_gunu_count = obj_gunler.qeyri_is_gunu_count
+def working_day_update(serializer, company, company_name, obj_working_day):
+    date = obj_working_day.date
+    working_days_count = obj_working_day.working_days_count
+    non_working_days_count = obj_working_day.non_working_days_count
     date_list = []
     k_date_list = []
     u_date_list = []
 
-    k_tetil_gunleri = obj_gunler.tetil_gunleri
-    if k_tetil_gunleri is not None:
-        k_tetil_gunleri_l = k_tetil_gunleri.rstrip("]").lstrip("[").split(",")
-        for i in k_tetil_gunleri_l:
+    k_holidays = obj_working_day.holidays
+    if k_holidays is not None:
+        k_holidays_l = k_holidays.rstrip("]").lstrip("[").split(",")
+        for i in k_holidays_l:
             new_el = i.strip().strip("'").strip('"')
             k_date_list.append(new_el)
     else:
         k_date_list = []
 
-    tetil_gunleri = serializer.validated_data.get("tetil_gunleri")
-    if tetil_gunleri == None:
-        tetil_gunleri = k_date_list
-        tetil_gunleri_l = tetil_gunleri
+    holidays = serializer.validated_data.get("holidays")
+    if holidays == None:
+        holidays = k_date_list
+        holidays_l = holidays
     else:
-        tetil_gunleri_l = tetil_gunleri.rstrip("]").lstrip("[").split(",")
-        for i in tetil_gunleri_l:
+        holidays_l = holidays.rstrip("]").lstrip("[").split(",")
+        for i in holidays_l:
             new_el = i.strip().strip("'").strip('"')
             date_list.append(new_el)
 
@@ -405,294 +405,294 @@ def gunler_update(serializer, company, company_name, obj_gunler):
     #         continue
     #     else:
     #         u_date_list.append(j)
-    k_qeyri_is_gunleri = obj_gunler.qeyri_is_gunu_count
-    qeyri_is_gunu_count = len(date_list)
-    k_is_gunleri_count = obj_gunler.is_gunleri_count
-    is_gunleri_count = float(k_is_gunleri_count) - (float(qeyri_is_gunu_count) - float(k_qeyri_is_gunleri))
-    company_isci_tetil_hesablama(
+    k_qeyri_working_days = obj_working_day.non_working_days_count
+    non_working_days_count = len(date_list)
+    k_working_days_count = obj_working_day.working_days_count
+    working_days_count = float(k_working_days_count) - (float(non_working_days_count) - float(k_qeyri_working_days))
+    company_employee_tetil_hesablama(
         company=company, 
         company_name=company_name, 
-        tarix=tarix, 
-        tetil_gunleri=date_list, 
-        is_gunleri_count=is_gunleri_count, 
-        qeyri_is_gunu_count=qeyri_is_gunu_count
+        date=date, 
+        holidays=date_list, 
+        working_days_count=working_days_count, 
+        non_working_days_count=non_working_days_count
     )
 
     serializer.save(
-        qeyri_is_gunu_count = qeyri_is_gunu_count, 
-        is_gunleri_count = is_gunleri_count,
-        tetil_gunleri=date_list
+        non_working_days_count = non_working_days_count, 
+        working_days_count = working_days_count,
+        holidays=date_list
     )
 
 # --------------------------------------------------------------------------------------------------------------------------
 
-def holding_gunler_update(self, request, *args, **kwargs):
-    holding_gunler = self.get_object()
-    serializer = HoldingGunlerSerializer(holding_gunler, data=request.data, partial=True)
+def holding_working_day_update(self, request, *args, **kwargs):
+    holding_working_day = self.get_object()
+    serializer = HoldingWorkingDaySerializer(holding_working_day, data=request.data, partial=True)
     try:
         if serializer.is_valid():
-            gunler_update(serializer=serializer, company="holding", company_name=holding_gunler.holding, obj_gunler=holding_gunler)
+            working_day_update(serializer=serializer, company="holding", company_name=holding_working_day.holding, obj_working_day=holding_working_day)
             return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         traceback.print_exc()
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def holding_istisna_isci_gunler_create(self, request, *args, **kwargs):
+def holding_exception_worker_working_day_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     
     if serializer.is_valid():
-        holding_gunler = serializer.validated_data.get("gunler")
-        instisna_isci_create(serializer=serializer, company="holding", company_name=holding_gunler.holding, obj_gunler=holding_gunler)
+        holding_working_day = serializer.validated_data.get("working_day")
+        instisna_employee_create(serializer=serializer, company="holding", company_name=holding_working_day.holding, obj_working_day=holding_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def holding_istisna_isci_gunler_update(self, request, *args, **kwargs):
-    holding_istisna_isci_obj = self.get_object()
-    serializer = HoldingIstisnaIsciSerializer(holding_istisna_isci_obj, data=request.data, partial=True)
+def holding_exception_worker_working_day_update(self, request, *args, **kwargs):
+    holding_exception_worker_obj = self.get_object()
+    serializer = HoldingExceptionWorkerSerializer(holding_exception_worker_obj, data=request.data, partial=True)
     
     if serializer.is_valid():
         
-        istisna_isci_update(serializer=serializer, company="holding", company_name=holding_istisna_isci_obj.gunler.holding, obj_gunler=holding_istisna_isci_obj.gunler, obj_istisna_isci=holding_istisna_isci_obj)
+        exception_worker_update(serializer=serializer, company="holding", company_name=holding_exception_worker_obj.working_day.holding, obj_working_day=holding_exception_worker_obj.working_day, obj_exception_worker=holding_exception_worker_obj)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def holding_istisna_isci_gunler_delete(self, request, *args, **kwargs):
-    holding_istisna_isci_obj = self.get_object()
+def holding_exception_worker_working_day_delete(self, request, *args, **kwargs):
+    holding_exception_worker_obj = self.get_object()
     try:
-        istisna_isci_delete(
-            obj_gunler=holding_istisna_isci_obj.gunler, 
-            obj_istisna_isci=holding_istisna_isci_obj
+        exception_worker_delete(
+            obj_working_day=holding_exception_worker_obj.working_day, 
+            obj_exception_worker=holding_exception_worker_obj
         )
-        holding_istisna_isci_obj.delete()
+        holding_exception_worker_obj.delete()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ------------------------------------------------------------------------------------------------
 
-def ofis_gunler_update(self, request, *args, **kwargs):
-    ofis_gunler = self.get_object()
-    serializer = OfisGunlerSerializer(ofis_gunler, data=request.data, partial=True)
+def office_working_day_update(self, request, *args, **kwargs):
+    office_working_day = self.get_object()
+    serializer = OfficeWorkingDaySerializer(office_working_day, data=request.data, partial=True)
 
     if serializer.is_valid():
-        gunler_update(serializer=serializer, company="ofis", company_name=ofis_gunler.ofis, obj_gunler=ofis_gunler)
+        working_day_update(serializer=serializer, company="office", company_name=office_working_day.office, obj_working_day=office_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def ofis_istisna_isci_gunler_create(self, request, *args, **kwargs):
+def office_exception_worker_working_day_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     
     if serializer.is_valid():
-        ofis_gunler = serializer.validated_data.get("gunler")
-        instisna_isci_create(serializer=serializer, company="ofis", company_name=ofis_gunler.ofis, obj_gunler=ofis_gunler)
+        office_working_day = serializer.validated_data.get("working_day")
+        instisna_employee_create(serializer=serializer, company="office", company_name=office_working_day.office, obj_working_day=office_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def ofis_istisna_isci_gunler_update(self, request, *args, **kwargs):
-    ofis_istisna_isci_obj = self.get_object()
-    serializer = OfisIstisnaIsciSerializer(ofis_istisna_isci_obj, data=request.data, partial=True)
+def office_exception_worker_working_day_update(self, request, *args, **kwargs):
+    office_exception_worker_obj = self.get_object()
+    serializer = OfficeExceptionWorkerSerializer(office_exception_worker_obj, data=request.data, partial=True)
     
     if serializer.is_valid():
-        istisna_isci_update(serializer=serializer, company="ofis", company_name=ofis_istisna_isci_obj.gunler.ofis, obj_gunler=ofis_istisna_isci_obj.gunler, obj_istisna_isci=ofis_istisna_isci_obj)
+        exception_worker_update(serializer=serializer, company="office", company_name=office_exception_worker_obj.working_day.office, obj_working_day=office_exception_worker_obj.working_day, obj_exception_worker=office_exception_worker_obj)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def ofis_istisna_isci_gunler_delete(self, request, *args, **kwargs):
-    ofis_istisna_isci_obj = self.get_object()
+def office_exception_worker_working_day_delete(self, request, *args, **kwargs):
+    office_exception_worker_obj = self.get_object()
     try:
-        istisna_isci_delete(
-            obj_gunler=ofis_istisna_isci_obj.gunler, 
-            obj_istisna_isci=ofis_istisna_isci_obj
+        exception_worker_delete(
+            obj_working_day=office_exception_worker_obj.working_day, 
+            obj_exception_worker=office_exception_worker_obj
         )
-        ofis_istisna_isci_obj.delete()
+        office_exception_worker_obj.delete()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ------------------------------------------------------------------------------------------------
 
-def shirket_gunler_update(self, request, *args, **kwargs):
-    shirket_gunler = self.get_object()
-    serializer = ShirketGunlerSerializer(shirket_gunler, data=request.data, partial=True)
+def company_working_day_update(self, request, *args, **kwargs):
+    company_working_day = self.get_object()
+    serializer = CompanyWorkingDaySerializer(company_working_day, data=request.data, partial=True)
 
     if serializer.is_valid():
-        gunler_update(serializer=serializer, company="shirket", company_name=shirket_gunler.shirket, obj_gunler=shirket_gunler)
+        working_day_update(serializer=serializer, company="company", company_name=company_working_day.company, obj_working_day=company_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shirket_istisna_isci_gunler_create(self, request, *args, **kwargs):
+def company_exception_worker_working_day_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     
     if serializer.is_valid():
-        shirket_gunler = serializer.validated_data.get("gunler")
-        instisna_isci_create(serializer=serializer, company="shirket", company_name=shirket_gunler.shirket, obj_gunler=shirket_gunler)
+        company_working_day = serializer.validated_data.get("working_day")
+        instisna_employee_create(serializer=serializer, company="company", company_name=company_working_day.company, obj_working_day=company_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shirket_istisna_isci_gunler_update(self, request, *args, **kwargs):
-    shirket_istisna_isci_obj = self.get_object()
-    serializer = ShirketIstisnaIsciSerializer(shirket_istisna_isci_obj, data=request.data, partial=True)
+def company_exception_worker_working_day_update(self, request, *args, **kwargs):
+    company_exception_worker_obj = self.get_object()
+    serializer = CompanyExceptionWorkerSerializer(company_exception_worker_obj, data=request.data, partial=True)
     
     if serializer.is_valid():
-        istisna_isci_update(serializer=serializer, company="shirket", company_name=shirket_istisna_isci_obj.gunler.shirket, obj_gunler=shirket_istisna_isci_obj.gunler, obj_istisna_isci=shirket_istisna_isci_obj)
+        exception_worker_update(serializer=serializer, company="company", company_name=company_exception_worker_obj.working_day.company, obj_working_day=company_exception_worker_obj.working_day, obj_exception_worker=company_exception_worker_obj)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shirket_istisna_isci_gunler_delete(self, request, *args, **kwargs):
-    shirket_istisna_isci_obj = self.get_object()
+def company_exception_worker_working_day_delete(self, request, *args, **kwargs):
+    company_exception_worker_obj = self.get_object()
     try:
-        istisna_isci_delete(
-            obj_gunler=shirket_istisna_isci_obj.gunler, 
-            obj_istisna_isci=shirket_istisna_isci_obj
+        exception_worker_delete(
+            obj_working_day=company_exception_worker_obj.working_day, 
+            obj_exception_worker=company_exception_worker_obj
         )
-        shirket_istisna_isci_obj.delete()
+        company_exception_worker_obj.delete()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ------------------------------------------------------------------------------------------------
 
-def shobe_gunler_update(self, request, *args, **kwargs):
-    shobe_gunler = self.get_object()
-    serializer = ShobeGunlerSerializer(shobe_gunler, data=request.data, partial=True)
+def section_working_day_update(self, request, *args, **kwargs):
+    section_working_day = self.get_object()
+    serializer = SectionWorkingDaySerializer(section_working_day, data=request.data, partial=True)
 
     if serializer.is_valid():
-        gunler_update(serializer=serializer, company="shobe", company_name=shobe_gunler.shobe, obj_gunler=shobe_gunler)
+        working_day_update(serializer=serializer, company="section", company_name=section_working_day.section, obj_working_day=section_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shobe_istisna_isci_gunler_create(self, request, *args, **kwargs):
+def section_exception_worker_working_day_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     
     if serializer.is_valid():
-        shobe_gunler = serializer.validated_data.get("gunler")
-        instisna_isci_create(serializer=serializer, company="shobe", company_name=shobe_gunler.shobe, obj_gunler=shobe_gunler)
+        section_working_day = serializer.validated_data.get("working_day")
+        instisna_employee_create(serializer=serializer, company="section", company_name=section_working_day.section, obj_working_day=section_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shobe_istisna_isci_gunler_update(self, request, *args, **kwargs):
-    shobe_istisna_isci_obj = self.get_object()
-    serializer = ShobeIstisnaIsciSerializer(shobe_istisna_isci_obj, data=request.data, partial=True)
+def section_exception_worker_working_day_update(self, request, *args, **kwargs):
+    section_exception_worker_obj = self.get_object()
+    serializer = SectionExceptionWorkerSerializer(section_exception_worker_obj, data=request.data, partial=True)
     
     if serializer.is_valid():
-        istisna_isci_update(serializer=serializer, company="shobe", company_name=shobe_istisna_isci_obj.gunler.shobe, obj_gunler=shobe_istisna_isci_obj.gunler, obj_istisna_isci=shobe_istisna_isci_obj)
+        exception_worker_update(serializer=serializer, company="section", company_name=section_exception_worker_obj.working_day.section, obj_working_day=section_exception_worker_obj.working_day, obj_exception_worker=section_exception_worker_obj)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def shobe_istisna_isci_gunler_delete(self, request, *args, **kwargs):
-    shobe_istisna_isci_obj = self.get_object()
+def section_exception_worker_working_day_delete(self, request, *args, **kwargs):
+    section_exception_worker_obj = self.get_object()
     try:
-        istisna_isci_delete(
-            obj_gunler=shobe_istisna_isci_obj.gunler, 
-            obj_istisna_isci=shobe_istisna_isci_obj
+        exception_worker_delete(
+            obj_working_day=section_exception_worker_obj.working_day, 
+            obj_exception_worker=section_exception_worker_obj
         )
-        shobe_istisna_isci_obj.delete()
+        section_exception_worker_obj.delete()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 # ------------------------------------------------------------------------------------------------
 
-def komanda_gunler_update(self, request, *args, **kwargs):
-    komanda_gunler = self.get_object()
-    serializer = KomandaGunlerSerializer(komanda_gunler, data=request.data, partial=True)
+def team_working_day_update(self, request, *args, **kwargs):
+    team_working_day = self.get_object()
+    serializer = TeamWorkingDaySerializer(team_working_day, data=request.data, partial=True)
     if serializer.is_valid():
-        gunler_update(serializer=serializer, company="komanda", company_name=komanda_gunler.komanda, obj_gunler=komanda_gunler)
+        working_day_update(serializer=serializer, company="team", company_name=team_working_day.team, obj_working_day=team_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def komanda_istisna_isci_gunler_create(self, request, *args, **kwargs):
+def team_exception_worker_working_day_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     
     if serializer.is_valid():
-        komanda_gunler = serializer.validated_data.get("komanda_gunler")
-        instisna_isci_create(serializer=serializer, company="komanda", company_name=komanda_gunler.komanda, obj_gunler=komanda_gunler)
+        team_working_day = serializer.validated_data.get("team_working_day")
+        instisna_employee_create(serializer=serializer, company="team", company_name=team_working_day.team, obj_working_day=team_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def komanda_istisna_isci_gunler_update(self, request, *args, **kwargs):
-    komanda_istisna_isci_obj = self.get_object()
-    serializer = KomandaIstisnaIsciSerializer(komanda_istisna_isci_obj, data=request.data, partial=True)
+def team_exception_worker_working_day_update(self, request, *args, **kwargs):
+    team_exception_worker_obj = self.get_object()
+    serializer = TeamExceptionWorkerSerializer(team_exception_worker_obj, data=request.data, partial=True)
     
     if serializer.is_valid():
-        istisna_isci_update(serializer=serializer, company="komanda", company_name=komanda_istisna_isci_obj.gunler.komanda, obj_gunler=komanda_istisna_isci_obj.gunler, obj_istisna_isci=komanda_istisna_isci_obj)
+        exception_worker_update(serializer=serializer, company="team", company_name=team_exception_worker_obj.working_day.team, obj_working_day=team_exception_worker_obj.working_day, obj_exception_worker=team_exception_worker_obj)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def komanda_istisna_isci_gunler_delete(self, request, *args, **kwargs):
-    komanda_istisna_isci_obj = self.get_object()
+def team_exception_worker_working_day_delete(self, request, *args, **kwargs):
+    team_exception_worker_obj = self.get_object()
     try:
-        istisna_isci_delete(
-            obj_gunler=komanda_istisna_isci_obj.gunler, 
-            obj_istisna_isci=komanda_istisna_isci_obj
+        exception_worker_delete(
+            obj_working_day=team_exception_worker_obj.working_day, 
+            obj_exception_worker=team_exception_worker_obj
         )
-        komanda_istisna_isci_obj.delete()
+        team_exception_worker_obj.delete()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ------------------------------------------------------------------------------------------------
 
-def vezife_gunler_update(self, request, *args, **kwargs):
-    vezife_gunler = self.get_object()
-    serializer = VezifeGunlerSerializer(vezife_gunler, data=request.data, partial=True)
+def position_working_day_update(self, request, *args, **kwargs):
+    position_working_day = self.get_object()
+    serializer = PositionWorkingDaySerializer(position_working_day, data=request.data, partial=True)
     if serializer.is_valid():
-        gunler_update(serializer=serializer, company="vezife", company_name=vezife_gunler.vezife, obj_gunler=vezife_gunler)
+        working_day_update(serializer=serializer, company="position", company_name=position_working_day.position, obj_working_day=position_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def vezife_istisna_isci_gunler_create(self, request, *args, **kwargs):
+def position_exception_worker_working_day_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     
     if serializer.is_valid():
-        vezife_gunler = serializer.validated_data.get("gunler")
-        instisna_isci_create(serializer=serializer, company="vezife", company_name=vezife_gunler.vezife, obj_gunler=vezife_gunler)
+        position_working_day = serializer.validated_data.get("working_day")
+        instisna_employee_create(serializer=serializer, company="position", company_name=position_working_day.position, obj_working_day=position_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def vezife_istisna_isci_gunler_update(self, request, *args, **kwargs):
-    vezife_istisna_isci_obj = self.get_object()
-    serializer = VezifeIstisnaIsciSerializer(vezife_istisna_isci_obj, data=request.data, partial=True)
+def position_exception_worker_working_day_update(self, request, *args, **kwargs):
+    position_exception_worker_obj = self.get_object()
+    serializer = PositionExceptionWorkerSerializer(position_exception_worker_obj, data=request.data, partial=True)
     
     if serializer.is_valid():
-        istisna_isci_update(serializer=serializer, company="vezife", company_name=vezife_istisna_isci_obj.gunler.vezife, obj_gunler=vezife_istisna_isci_obj.gunler, obj_istisna_isci=vezife_istisna_isci_obj)
+        exception_worker_update(serializer=serializer, company="position", company_name=position_exception_worker_obj.working_day.position, obj_working_day=position_exception_worker_obj.working_day, obj_exception_worker=position_exception_worker_obj)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
     
-def vezife_istisna_isci_gunler_delete(self, request, *args, **kwargs):
-    vezife_istisna_isci_obj = self.get_object()
+def position_exception_worker_working_day_delete(self, request, *args, **kwargs):
+    position_exception_worker_obj = self.get_object()
     try:
-        istisna_isci_delete(
-            obj_gunler=vezife_istisna_isci_obj.gunler, 
-            obj_istisna_isci=vezife_istisna_isci_obj
+        exception_worker_delete(
+            obj_working_day=position_exception_worker_obj.working_day, 
+            obj_exception_worker=position_exception_worker_obj
         )
-        vezife_istisna_isci_obj.delete()
+        position_exception_worker_obj.delete()
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:
         return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 # ------------------------------------------------------------------------------------------------
 
-def user_gunler_update(self, request, *args, **kwargs):
-    user_gunler = self.get_object()
-    serializer = IsciGunlerSerializer(user_gunler, data=request.data, partial=True)
+def user_working_day_update(self, request, *args, **kwargs):
+    user_working_day = self.get_object()
+    serializer = EmployeeWorkingDaySerializer(user_working_day, data=request.data, partial=True)
     if serializer.is_valid():
-        isci_tetil_gunleri_calc(serializer, user_gunler)
+        employee_holidays_calc(serializer, user_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def user_gunler_patch(self, request, *args, **kwargs):
-    user_gunler = self.get_object()
-    serializer = IsciGunlerSerializer(user_gunler, data=request.data, partial=True)
+def user_working_day_patch(self, request, *args, **kwargs):
+    user_working_day = self.get_object()
+    serializer = EmployeeWorkingDaySerializer(user_working_day, data=request.data, partial=True)
     if serializer.is_valid():
-        isci_tetil_gunleri_calc(serializer, user_gunler)
+        employee_holidays_calc(serializer, user_working_day)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     return Response({"detail": "Xəta!"}, status=status.HTTP_400_BAD_REQUEST)
 
-def user_gunler_delete(self, request, *args, **kwargs):
-    user_gunler = self.get_object()
+def user_working_day_delete(self, request, *args, **kwargs):
+    user_working_day = self.get_object()
     try:
-        isci_tetil_gunleri_delete(
-            obj_gunler=user_gunler
+        employee_holidays_delete(
+            obj_working_day=user_working_day
         )
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     except:

@@ -1,31 +1,31 @@
 from account.models import User
 from restAPI.v1.account.serializers import UserSerializer
-from restAPI.v1.contract.serializers import DemoSatisSerializer, MuqavileSerializer
-from restAPI.v1.services.serializers import ServisStatistikaSerializer
-from restAPI.v1.contract.filters import DemoSatisFilter, MuqavileFilter
-from restAPI.v1.services.filters import ServisFilter
-from contract.models import DemoSatis, Muqavile
-from services.models import Servis
+from restAPI.v1.contract.serializers import DemoSalesSerializer, ContractSerializer
+from restAPI.v1.services.serializers import ServiceStatistikaSerializer
+from restAPI.v1.contract.filters import DemoSalesFilter, ContractFilter
+from restAPI.v1.services.filters import ServiceFilter
+from contract.models import DemoSales, Contract
+from services.models import Service
 from salary.models import (
-    MaasGoruntuleme
+    SalaryView
 )
 from restAPI.v1.salary.serializers import (
-    MaasGoruntulemeSerializer
+    SalaryViewSerializer
 )
 from rest_framework import generics, status
 
 from rest_framework.response import Response
 
-from restAPI.v1.salary import permissions as maas_permissions
+from restAPI.v1.salary import permissions as salary_permissions
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from restAPI.v1.salary.filters import (
-    MaasGoruntulemeFilter
+    SalaryViewFilter
 )
 
-from restAPI.v1.contract import permissions as muqavile_permissions
-from restAPI.v1.services import permissions as servis_permission
+from restAPI.v1.contract import permissions as contract_permissions
+from restAPI.v1.services import permissions as service_permission
 
 from restAPI.v1.account import permissions as account_permissions
 
@@ -33,111 +33,111 @@ from restAPI.v1.account.filters import (
     UserFilter,
 )
 
-class MaasGoruntulemeStatistikaAPIView(generics.ListAPIView):
-    queryset = MaasGoruntuleme.objects.all()
-    serializer_class = MaasGoruntulemeSerializer
+class SalaryViewStatistikaAPIView(generics.ListAPIView):
+    queryset = SalaryView.objects.all()
+    serializer_class = SalaryViewSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MaasGoruntulemeFilter
-    permission_classes = [maas_permissions.MaasGoruntulemePermissions]
+    filterset_class = SalaryViewFilter
+    permission_classes = [salary_permissions.SalaryViewPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = MaasGoruntuleme.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = MaasGoruntuleme.objects.filter(isci__shirket=request.user.shirket, isci__ofis=request.user.ofis)
-            queryset = MaasGoruntuleme.objects.filter(isci__shirket=request.user.shirket)
+            queryset = SalaryView.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = SalaryView.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
+            queryset = SalaryView.objects.filter(employee__company=request.user.company)
         else:
-            queryset = MaasGoruntuleme.objects.all()
+            queryset = SalaryView.objects.all()
         queryset = self.filter_queryset(queryset)
     
-        satis_sayi = 0
+        sale_quantity = 0
         for q in queryset:
-            satis_sayi += q.satis_sayi
+            sale_quantity += q.sale_quantity
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response([{'umumi_satis_sayi':satis_sayi, 'data':serializer.data}])
+            return self.get_paginated_response([{'umumi_sale_quantity':sale_quantity, 'data':serializer.data}])
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response([{'umumi_satis_sayi':satis_sayi, 'data':serializer.data}])
+        return Response([{'umumi_sale_quantity':sale_quantity, 'data':serializer.data}])
 
 class DemoStatistikaListAPIView(generics.ListAPIView):
-    queryset = DemoSatis.objects.all()
-    serializer_class = DemoSatisSerializer
+    queryset = DemoSales.objects.all()
+    serializer_class = DemoSalesSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = DemoSatisFilter
-    permission_classes = [muqavile_permissions.DemoSatisPermissions]
+    filterset_class = DemoSalesFilter
+    permission_classes = [contract_permissions.DemoSalesPermissions]
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
-        demo_sayi = 0
+        demo_quantityi = 0
         sale_count = 0
         for q in queryset:
-            demo_sayi += q.count
+            demo_quantityi += q.count
 
         for q in queryset:
             sale_count += q.sale_count
 
         try:
-            demo_satis_nisbeti = float(demo_sayi)/float(sale_count)
+            demo_sale_nisbeti = float(demo_quantityi)/float(sale_count)
         except:
-           return Response({'detail': "Satış sayı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
+           return Response({'detail': "Satış quantityı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response([{'umumi_demo_sayi':demo_sayi, 'umumi_satis_sayi':sale_count, 'demo_satis_nisbeti':demo_satis_nisbeti, 'data':serializer.data}])
+            return self.get_paginated_response([{'umumi_demo_quantityi':demo_quantityi, 'umumi_sale_quantity':sale_count, 'demo_sale_nisbeti':demo_sale_nisbeti, 'data':serializer.data}])
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response([{'umumi_demo_sayi':demo_sayi, 'umumi_satis_sayi':sale_count, 'demo_satis_nisbeti':demo_satis_nisbeti, 'data':serializer.data}])
+        return Response([{'umumi_demo_quantityi':demo_quantityi, 'umumi_sale_quantity':sale_count, 'demo_sale_nisbeti':demo_sale_nisbeti, 'data':serializer.data}])
 
-class MuqavileStatistikaAPIView(generics.ListAPIView):
-    queryset = Muqavile.objects.all()
-    serializer_class = MuqavileSerializer
+class ContractStatistikaAPIView(generics.ListAPIView):
+    queryset = Contract.objects.all()
+    serializer_class = ContractSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MuqavileFilter
-    permission_classes = [muqavile_permissions.MuqavilePermissions]
+    filterset_class = ContractFilter
+    permission_classes = [contract_permissions.ContractPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Muqavile.objects.all()
-            dusen = Muqavile.objects.filter(muqavile_status="DÜŞƏN")
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Muqavile.objects.filter(shirket=request.user.shirket, ofis=request.user.ofis)
-                dusen = Muqavile.objects.filter(muqavile_status="DÜŞƏN", shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = Muqavile.objects.filter(shirket=request.user.shirket)
-            dusen = Muqavile.objects.filter(muqavile_status="DÜŞƏN", shirket=request.user.shirket)
+            queryset = Contract.objects.all()
+            dusen = Contract.objects.filter(contract_status="DÜŞƏN")
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Contract.objects.filter(company=request.user.company, office=request.user.office)
+                dusen = Contract.objects.filter(contract_status="DÜŞƏN", company=request.user.company, office=request.user.office)
+            queryset = Contract.objects.filter(company=request.user.company)
+            dusen = Contract.objects.filter(contract_status="DÜŞƏN", company=request.user.company)
         else:
-            queryset = Muqavile.objects.all()
-            dusen = Muqavile.objects.filter(muqavile_status="DÜŞƏN")
+            queryset = Contract.objects.all()
+            dusen = Contract.objects.filter(contract_status="DÜŞƏN")
         queryset = self.filter_queryset(queryset)
         queryset_dusen = self.filter_queryset(dusen)
 
-        muqavile_sayi = queryset.count()
-        dusen_muqavile_sayi = queryset_dusen.count()
+        contract_quantityi = queryset.count()
+        dusen_contract_quantityi = queryset_dusen.count()
         try:
-            dusme_faizi = (float(dusen_muqavile_sayi) * 100)/float(muqavile_sayi)
+            dusme_faizi = (float(dusen_contract_quantityi) * 100)/float(contract_quantityi)
         except:
-           return Response({'detail': "Müqavilə sayı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
+           return Response({'detail': "Müqavilə quantityı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
 
-        umumi_qaliq_borc = 0
+        umumi_remaining_debt = 0
         for i in queryset:
-            umumi_qaliq_borc += i.qaliq_borc
+            umumi_remaining_debt += i.remaining_debt
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([
-                {'muqavile_sayi':muqavile_sayi, 'dusen_muqavile_sayi': dusen_muqavile_sayi, 'dusme_faizi': dusme_faizi, 'umumi_qaliq_borc': umumi_qaliq_borc, 'data':serializer.data}
+                {'contract_quantityi':contract_quantityi, 'dusen_contract_quantityi': dusen_contract_quantityi, 'dusme_faizi': dusme_faizi, 'umumi_remaining_debt': umumi_remaining_debt, 'data':serializer.data}
             ])
 
         serializer = self.get_serializer(queryset, many=True)
         return Response([
-            {'muqavile_sayi':muqavile_sayi, 'dusen_muqavile_sayi':dusen_muqavile_sayi, 'dusme_faizi': dusme_faizi, 'umumi_qaliq_borc': umumi_qaliq_borc, 'data':serializer.data}
+            {'contract_quantityi':contract_quantityi, 'dusen_contract_quantityi':dusen_contract_quantityi, 'dusme_faizi': dusme_faizi, 'umumi_remaining_debt': umumi_remaining_debt, 'data':serializer.data}
         ])
 
 class UserStatistikaList(generics.ListAPIView):
@@ -152,14 +152,14 @@ class UserStatistikaList(generics.ListAPIView):
             queryset = User.objects.all()
             deactive_user = User.objects.filter(is_active=False)
             active_user = User.objects.filter(is_active=True)
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = User.objects.filter(shirket=request.user.shirket, ofis=request.user.ofis)
-                deactive_user = User.objects.filter(is_active=False, shirket=request.user.shirket, ofis=request.user.ofis)
-                active_user = User.objects.filter(is_active=True, shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = User.objects.filter(shirket=request.user.shirket)
-            deactive_user = User.objects.filter(is_active=False, shirket=request.user.shirket)
-            active_user = User.objects.filter(is_active=True, shirket=request.user.shirket)
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = User.objects.filter(company=request.user.company, office=request.user.office)
+                deactive_user = User.objects.filter(is_active=False, company=request.user.company, office=request.user.office)
+                active_user = User.objects.filter(is_active=True, company=request.user.company, office=request.user.office)
+            queryset = User.objects.filter(company=request.user.company)
+            deactive_user = User.objects.filter(is_active=False, company=request.user.company)
+            active_user = User.objects.filter(is_active=True, company=request.user.company)
 
         else:
             queryset = User.objects.all()
@@ -176,7 +176,7 @@ class UserStatistikaList(generics.ListAPIView):
         try:
             azad_olma_nisbeti = float(active_user_count)/float(deactive_user_count)
         except:
-           return Response({'detail': "İşdən çıxan işçi sayı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
+           return Response({'detail': "İşdən çıxan işçi quantityı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -190,35 +190,35 @@ class UserStatistikaList(generics.ListAPIView):
                 {'deactive_user_count': deactive_user_count, 'active_user_count': active_user_count, 'azad_olma_nisbeti': azad_olma_nisbeti, 'user_count': user_count, 'data':serializer.data}
             ])
 
-class ServisStatistikaAPIView(generics.ListAPIView):
-    queryset = Servis.objects.all()
-    serializer_class = ServisStatistikaSerializer
+class ServiceStatistikaAPIView(generics.ListAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceStatistikaSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ServisFilter
-    permission_classes = [servis_permission.ServisPermissions]
+    filterset_class = ServiceFilter
+    permission_classes = [service_permission.ServicePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Servis.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Servis.objects.filter(muqavile__shirket=request.user.shirket, muqavile__ofis=request.user.ofis)
-            queryset = Servis.objects.filter(muqavile__shirket=request.user.shirket)
+            queryset = Service.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Service.objects.filter(contract__company=request.user.company, contract__office=request.user.office)
+            queryset = Service.objects.filter(contract__company=request.user.company)
         else:
-            queryset = Servis.objects.all()
+            queryset = Service.objects.all()
         
         queryset = self.filter_queryset(queryset)
 
-        servis_sayi = queryset.count()
+        service_quantityi = queryset.count()
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([
-                {'servis_sayi': servis_sayi, 'data':serializer.data}
+                {'service_quantityi': service_quantityi, 'data':serializer.data}
             ])
 
         serializer = self.get_serializer(queryset, many=True)
         return Response([
-                {'servis_sayi': servis_sayi, 'data':serializer.data}
+                {'service_quantityi': service_quantityi, 'data':serializer.data}
             ])

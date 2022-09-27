@@ -7,27 +7,25 @@ from rest_framework import generics
 from rest_framework.views import APIView
 
 from restAPI.v1.account.serializers import (
-    BolgeSerializer,
+    RegionSerializer,
     GroupReadSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
     UserSerializer,
-    MusteriSerializer,
-    MusteriQeydlerSerializer,
-    IsciSatisSayiSerializer,
-    IsciStatusSerializer,
+    CustomerSerializer,
+    CustomerNoteSerializer,
+    EmployeeStatusSerializer,
     PermissionSerializer,
     GroupSerializer,
     ChangePasswordSerializer
 )
 
 from account.models import (
-    Bolge,
-    IsciSatisSayi,
-    MusteriQeydler, 
+    Region,
+    CustomerNote, 
     User, 
-    Musteri,
-    IsciStatus
+    Customer,
+    EmployeeStatus
 )
 
 from django.contrib.auth.models import Permission, Group
@@ -41,10 +39,10 @@ from restAPI.v1.account import permissions as account_permissions
 from django_filters.rest_framework import DjangoFilterBackend
 
 from restAPI.v1.account.filters import (
-    BolgeFilter,
-    IsciStatusFilter,
-    MusteriFilter,
-    MusteriQeydlerFilter,
+    RegionFilter,
+    EmployeeStatusFilter,
+    CustomerFilter,
+    CustomerNoteFilter,
     UserFilter,
     PermissionFilter,
     GroupFilter
@@ -52,7 +50,7 @@ from restAPI.v1.account.filters import (
 
 import traceback
 
-from company.models import VezifePermission
+from company.models import PermissionForPosition
 from rest_framework.permissions import IsAuthenticated  
 import json
 import os
@@ -170,7 +168,7 @@ class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
 
 class RegisterApi(generics.CreateAPIView):
     queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).all()
     serializer_class = RegisterSerializer
 
@@ -187,7 +185,7 @@ class RegisterApi(generics.CreateAPIView):
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
@@ -197,19 +195,19 @@ class UserList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
+        elif request.user.company is not None:
+            if request.user.office is not None:
                 queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
-            ).filter(shirket=request.user.shirket, ofis=request.user.ofis)
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
+            ).filter(company=request.user.company, office=request.user.office)
             queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
-            ).filter(shirket=request.user.shirket)
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
+            ).filter(company=request.user.company)
         else:
             queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).all()
         
         queryset = self.filter_queryset(queryset)
@@ -225,7 +223,7 @@ class UserList(generics.ListAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
@@ -245,7 +243,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
         user.is_active = False
-        user.ishden_cixma_tarixi = datetime.date.today()
+        user.dismissal_date = datetime.date.today()
         user.save()
         return Response({"detail": "İşçi qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
@@ -259,12 +257,12 @@ class Login(TokenObtainPairView):
         acces_token = utils.jwt_decode_handler(data.get("access"))
 
         if not User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).filter(id=acces_token.get("user_id")).last():
             return Response({"error": True, "message": "No such a user"}, status=status.HTTP_404_NOT_FOUND)
 
         user = User.objects.select_related(
-                'shirket', 'ofis', 'shobe', 'vezife', 'komanda', 'isci_status'
+                'company', 'office', 'section', 'position', 'team', 'employee_status'
             ).filter(id=acces_token.get("user_id")).last()
         user_logged_in.send(sender=type(user), request=request, user=user)
 
@@ -274,13 +272,13 @@ class Login(TokenObtainPairView):
         return Response(data)
 
 
-# ********************************** musteri get post put delete **********************************
-class MusteriListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Musteri.objects.all()
-    serializer_class = MusteriSerializer
+# ********************************** customer get post put delete **********************************
+class CustomerListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MusteriFilter
-    permission_classes = [account_permissions.MusteriPermissions]
+    filterset_class = CustomerFilter
+    permission_classes = [account_permissions.CustomerPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -291,12 +289,12 @@ class MusteriListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail" : "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MusteriDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Musteri.objects.all()
-    serializer_class = MusteriSerializer
+class CustomerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MusteriFilter
-    permission_classes = [account_permissions.MusteriPermissions]
+    filterset_class = CustomerFilter
+    permission_classes = [account_permissions.CustomerPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -306,19 +304,19 @@ class MusteriDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
-        musteri = self.get_object()
-        musteri.is_active = False
-        musteri.save()
+        customer = self.get_object()
+        customer.is_active = False
+        customer.save()
         return Response({"detail": "Müştəri qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** musteriqeydlerin put delete post get **********************************
+# ********************************** customernotein put delete post get **********************************
 
-class MusteriQeydlerListCreateAPIView(generics.ListCreateAPIView):
-    queryset = MusteriQeydler.objects.all()
-    serializer_class = MusteriQeydlerSerializer
+class CustomerNoteListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CustomerNote.objects.all()
+    serializer_class = CustomerNoteSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MusteriQeydlerFilter
-    permission_classes = [account_permissions.MusteriQeydlerPermissions]
+    filterset_class = CustomerNoteFilter
+    permission_classes = [account_permissions.CustomerNotePermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -328,12 +326,12 @@ class MusteriQeydlerListCreateAPIView(generics.ListCreateAPIView):
         return Response({"detail": "Qeyd əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class MusteriQeydlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = MusteriQeydler.objects.all()
-    serializer_class = MusteriQeydlerSerializer
+class CustomerNoteDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CustomerNote.objects.all()
+    serializer_class = CustomerNoteSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = MusteriQeydlerFilter
-    permission_classes = [account_permissions.MusteriQeydlerPermissions]
+    filterset_class = CustomerNoteFilter
+    permission_classes = [account_permissions.CustomerNotePermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -355,48 +353,48 @@ class MusteriQeydlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-# ********************************** bolge put delete post get **********************************
+# ********************************** region put delete post get **********************************
 
-class BolgeListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Bolge.objects.all()
-    serializer_class = BolgeSerializer
+class RegionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = BolgeFilter
-    permission_classes = [account_permissions.BolgePermissions]
+    filterset_class = RegionFilter
+    permission_classes = [account_permissions.RegionPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        bolge = serializer.validated_data.get("bolge_adi")
-        bolgeler = Bolge.objects.filter(bolge_adi=bolge)
-        if len(bolgeler)>0:
+        region = serializer.validated_data.get("region_name")
+        regions = Region.objects.filter(region_name=region)
+        if len(regions)>0:
             return Response({"detail": "Eyni adlı bölgəni 2 dəfə əlavə etmək olmaz!"}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Bölgə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
-class AllBolgeCreate(APIView):
+class AllRegionCreate(APIView):
     def post(self, request, *args, **kwargs):
         try:
             filename = os.path.join(BASE_DIR, 'cities.json')
             with open(filename) as fp:
                 cities = json.load(fp)
             for city in cities:
-                bolgeler = Bolge.objects.filter(bolge_adi=city['name'])
-                if len(bolgeler)>0:
+                regions = Region.objects.filter(region_name=city['name'])
+                if len(regions)>0:
                     continue
-                bolge = Bolge.objects.create(bolge_adi=city['name'])
-                bolge.save()
+                region = Region.objects.create(region_name=city['name'])
+                region.save()
             return Response({"detail": "Bölgələr əlavə olundu"}, status=status.HTTP_201_CREATED)
         except:
             return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_404_NOT_FOUND)
 
-class BolgeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Bolge.objects.all()
-    serializer_class = BolgeSerializer
+class RegionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = BolgeFilter
-    permission_classes = [account_permissions.BolgePermissions]
+    filterset_class = RegionFilter
+    permission_classes = [account_permissions.RegionPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -417,34 +415,21 @@ class BolgeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
 
-# ********************************** isci satis sayi put delete post get **********************************
-
-class IsciSatisSayiListCreateAPIView(generics.ListCreateAPIView):
-    queryset = IsciSatisSayi.objects.all()
-    serializer_class = IsciSatisSayiSerializer
-    permission_classes = [account_permissions.IsciSatisSayiPermissions]
-
-
-class IsciSatisSayiDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = IsciSatisSayi.objects.all()
-    serializer_class = IsciSatisSayiSerializer
-    permission_classes = [account_permissions.IsciSatisSayiPermissions]
-
 
 # ********************************** status put delete post get **********************************
 
-class IsciStatusListCreateAPIView(generics.ListCreateAPIView):
-    queryset = IsciStatus.objects.all()
-    serializer_class = IsciStatusSerializer
+class EmployeeStatusListCreateAPIView(generics.ListCreateAPIView):
+    queryset = EmployeeStatus.objects.all()
+    serializer_class = EmployeeStatusSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = IsciStatusFilter
-    permission_classes = [account_permissions.IsciStatusPermissions]
+    filterset_class = EmployeeStatusFilter
+    permission_classes = [account_permissions.EmployeeStatusPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        status_adi = serializer.validated_data.get("status_adi")
-        statuslar = IsciStatus.objects.filter(status_adi=status_adi.upper())
+        status_name = serializer.validated_data.get("status_name")
+        statuslar = EmployeeStatus.objects.filter(status_name=status_name.upper())
         if len(statuslar)>0:
             return Response({"detail": "Eyni adlı statusu 2 dəfə əlavə etmək olmaz!"}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
@@ -452,12 +437,12 @@ class IsciStatusListCreateAPIView(generics.ListCreateAPIView):
         return Response({"detail": "Status əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class IsciStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = IsciStatus.objects.all()
-    serializer_class = IsciStatusSerializer
+class EmployeeStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = EmployeeStatus.objects.all()
+    serializer_class = EmployeeStatusSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = IsciStatusFilter
-    permission_classes = [account_permissions.IsciStatusPermissions]
+    filterset_class = EmployeeStatusFilter
+    permission_classes = [account_permissions.EmployeeStatusPermissions]
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)

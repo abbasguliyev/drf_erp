@@ -124,10 +124,10 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    # The claim name that is used to store a token’s type
+    # The claim ad that is used to store a token’s type
     'TOKEN_TYPE_CLAIM': 'token_type',
 
-    # The claim name that is used to store a token’s unique identifier.
+    # The claim ad that is used to store a token’s unique identifier.
     'JTI_CLAIM': 'jti',
     # which specifies how long access tokens are valid
     'ACCESS_TOKEN_LIFETIME': timedelta(days=3),

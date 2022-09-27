@@ -4,54 +4,54 @@ from rest_framework.response import Response
 from rest_framework import generics
 
 from restAPI.v1.warehouse.serializers import (
-    AnbarSerializer,
-    EmeliyyatSerializer,
-    AnbarQeydlerSerializer,
-    StokSerializer,
+    WarehouseSerializer,
+    OperationSerializer,
+    WarehouseRequestSerializer,
+    StockSerializer,
 )
 
 from warehouse.models import (
-    Emeliyyat,
-    Anbar,
-    AnbarQeydler,
-    Stok
+    Operation,
+    Warehouse,
+    WarehouseRequest,
+    Stock
 )
 from restAPI.v1.warehouse.utils import (
-    anbar_emeliyyat_utils,
+    warehouse_operation_utils,
     stok_utils
 )
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from restAPI.v1.warehouse.filters import (
-    AnbarFilter,
-    AnbarQeydlerFilter,
-    EmeliyyatFilter,
-    StokFilter,
+    WarehouseFilter,
+    WarehouseRequestFilter,
+    OperationFilter,
+    StockFilter,
 )
 
-from restAPI.v1.warehouse import permissions as muqavile_permissions
+from restAPI.v1.warehouse import permissions as contract_permissions
 
-# ********************************** anbar put get post delete **********************************
+# ********************************** warehouse put get post delete **********************************
 
 
-class AnbarListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Anbar.objects.all()
-    serializer_class = AnbarSerializer
+class WarehouseListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Warehouse.objects.all()
+    serializer_class = WarehouseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = AnbarFilter
-    permission_classes = [muqavile_permissions.AnbarPermissions]
+    filterset_class = WarehouseFilter
+    permission_classes = [contract_permissions.WarehousePermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Anbar.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Anbar.objects.filter(
-                    shirket=request.user.shirket, ofis=request.user.ofis)
-            queryset = Anbar.objects.filter(shirket=request.user.shirket)
+            queryset = Warehouse.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Warehouse.objects.filter(
+                    company=request.user.company, office=request.user.office)
+            queryset = Warehouse.objects.filter(company=request.user.company)
         else:
-            queryset = Anbar.objects.all()
+            queryset = Warehouse.objects.all()
 
         queryset = self.filter_queryset(queryset)
 
@@ -66,22 +66,22 @@ class AnbarListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            ofis = serializer.validated_data.get("ofis")
-            is_have_anbar = Anbar.objects.filter(ofis=ofis)
-            if len(is_have_anbar) > 0:
-                return Response({"detail": "Bir ofisin yalnız bir anbarı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
+            office = serializer.validated_data.get("office")
+            is_have_warehouse = Warehouse.objects.filter(office=office)
+            if len(is_have_warehouse) > 0:
+                return Response({"detail": "Bir officein yalnız bir warehouseı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
-            return Response({"detail": "Anbar quruldu"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Warehouse quruldu"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AnbarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Anbar.objects.all()
-    serializer_class = AnbarSerializer
+class WarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Warehouse.objects.all()
+    serializer_class = WarehouseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = AnbarFilter
-    permission_classes = [muqavile_permissions.AnbarPermissions]
+    filterset_class = WarehouseFilter
+    permission_classes = [contract_permissions.WarehousePermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -89,37 +89,37 @@ class AnbarDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Anbar məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Warehouse məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
-        anbar = self.get_object()
-        anbar.is_active = False
-        anbar.save()
-        return Response({"detail": "Anbar qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
+        warehouse = self.get_object()
+        warehouse.is_active = False
+        warehouse.save()
+        return Response({"detail": "Warehouse qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** anbar put delete post get **********************************
+# ********************************** warehouse put delete post get **********************************
 
 
-class AnbarQeydlerListCreateAPIView(generics.ListCreateAPIView):
-    queryset = AnbarQeydler.objects.all()
-    serializer_class = AnbarQeydlerSerializer
+class WarehouseRequestListCreateAPIView(generics.ListCreateAPIView):
+    queryset = WarehouseRequest.objects.all()
+    serializer_class = WarehouseRequestSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = AnbarQeydlerFilter
-    permission_classes = [muqavile_permissions.AnbarQeydlerPermissions]
+    filterset_class = WarehouseRequestFilter
+    permission_classes = [contract_permissions.WarehouseRequestPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = AnbarQeydler.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = AnbarQeydler.objects.filter(
-                    anbar__shirket=request.user.shirket, anbar__ofis=request.user.ofis)
-            queryset = AnbarQeydler.objects.filter(
-                anbar__shirket=request.user.shirket)
+            queryset = WarehouseRequest.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = WarehouseRequest.objects.filter(
+                    warehouse__company=request.user.company, warehouse__office=request.user.office)
+            queryset = WarehouseRequest.objects.filter(
+                warehouse__company=request.user.company)
         else:
-            queryset = AnbarQeydler.objects.all()
+            queryset = WarehouseRequest.objects.all()
 
         queryset = self.filter_queryset(queryset)
 
@@ -135,18 +135,18 @@ class AnbarQeydlerListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         user = request.user
         if serializer.is_valid():
-            serializer.save(gonderen_user=user)
+            serializer.save(employee_who_sent_the_request=user)
             return Response({"detail": "Sorğu göndərildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AnbarQeydlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = AnbarQeydler.objects.all()
-    serializer_class = AnbarQeydlerSerializer
+class WarehouseRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WarehouseRequest.objects.all()
+    serializer_class = WarehouseRequestSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = AnbarQeydlerFilter
-    permission_classes = [muqavile_permissions.AnbarQeydlerPermissions]
+    filterset_class = WarehouseRequestFilter
+    permission_classes = [contract_permissions.WarehouseRequestPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -163,27 +163,27 @@ class AnbarQeydlerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-# ********************************** emeliyyat put delete post get **********************************
+# ********************************** operation put delete post get **********************************
 
 
-class EmeliyyatListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Emeliyyat.objects.all()
-    serializer_class = EmeliyyatSerializer
+class OperationListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Operation.objects.all()
+    serializer_class = OperationSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = EmeliyyatFilter
-    permission_classes = [muqavile_permissions.EmeliyyatPermissions]
+    filterset_class = OperationFilter
+    permission_classes = [contract_permissions.OperationPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Emeliyyat.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Emeliyyat.objects.filter(gonderen__shirket=request.user.shirket, gonderen__ofis=request.user.ofis,
-                                                    qebul_eden__shirket=request.user.shirket, qebul_eden__ofis=request.user.ofis)
-            queryset = Emeliyyat.objects.filter(
-                gonderen__shirket=request.user.shirket, qebul_eden__shirket=request.user.shirket)
+            queryset = Operation.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Operation.objects.filter(shipping_warehouse__company=request.user.company, shipping_warehouse__office=request.user.office,
+                                                    receiving_warehouse__company=request.user.company, receiving_warehouse__office=request.user.office)
+            queryset = Operation.objects.filter(
+                shipping_warehouse__company=request.user.company, receiving_warehouse__company=request.user.company)
         else:
-            queryset = Emeliyyat.objects.all()
+            queryset = Operation.objects.all()
 
         queryset = self.filter_queryset(queryset)
 
@@ -196,39 +196,39 @@ class EmeliyyatListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return anbar_emeliyyat_utils.emeliyyat_create(self, request, *args, **kwargs)
+        return warehouse_operation_utils.operation_create(self, request, *args, **kwargs)
 
 
-class EmeliyyatDetailAPIView(generics.RetrieveUpdateAPIView):
-    queryset = Emeliyyat.objects.all()
-    serializer_class = EmeliyyatSerializer
+class OperationDetailAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Operation.objects.all()
+    serializer_class = OperationSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = EmeliyyatFilter
-    permission_classes = [muqavile_permissions.EmeliyyatPermissions]
+    filterset_class = OperationFilter
+    permission_classes = [contract_permissions.OperationPermissions]
 
     def update(self, request, *args, **kwargs):
-        return anbar_emeliyyat_utils.emeliyyat_create(self, request, *args, **kwargs)
+        return warehouse_operation_utils.operation_create(self, request, *args, **kwargs)
 
 # ********************************** stok put delete post get **********************************
 
 
-class StokListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Stok.objects.all()
-    serializer_class = StokSerializer
+class StockListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = StokFilter
-    permission_classes = [muqavile_permissions.StokPermissions]
+    filterset_class = StockFilter
+    permission_classes = [contract_permissions.StockPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Stok.objects.all()
-        elif request.user.shirket is not None:
-            if request.user.ofis is not None:
-                queryset = Stok.objects.filter(
-                    anbar__shirket=request.user.shirket, anbar__ofis=request.user.ofis)
-            queryset = Stok.objects.filter(anbar__shirket=request.user.shirket)
+            queryset = Stock.objects.all()
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = Stock.objects.filter(
+                    warehouse__company=request.user.company, warehouse__office=request.user.office)
+            queryset = Stock.objects.filter(warehouse__company=request.user.company)
         else:
-            queryset = Stok.objects.all()
+            queryset = Stock.objects.all()
 
         queryset = self.filter_queryset(queryset)
 
@@ -243,38 +243,38 @@ class StokListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            icraci = request.user
-            anbar = serializer.validated_data.get("anbar")
-            mehsul = serializer.validated_data.get("mehsul")
-            qeyd = serializer.validated_data.get("qeyd")
-            tarix = datetime.date.today()
-            stok = Stok.objects.filter(anbar=anbar, mehsul=mehsul)
-            say = serializer.validated_data.get("say")
+            executor = request.user
+            warehouse = serializer.validated_data.get("warehouse")
+            product = serializer.validated_data.get("product")
+            note = serializer.validated_data.get("note")
+            date = datetime.date.today()
+            stok = Stock.objects.filter(warehouse=warehouse, product=product)
+            quantity = serializer.validated_data.get("quantity")
             if len(stok) > 0:
                 return Response({"detail": "Bu adlı stok artıq var. Yenisini əlavə edə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
-            emeliyyat = Emeliyyat.objects.create(
-                icraci=icraci,
-                say=abs(say),
-                emeliyyat_novu="stok yeniləmə",
-                emeliyyat_tarixi=tarix,
-                qeyd=qeyd,
-                gonderen=None,
-                qebul_eden=None,
-                mehsul_ve_sayi=mehsul.mehsulun_adi
+            operation = Operation.objects.create(
+                executor=executor,
+                quantity=abs(quantity),
+                operation_type="stok yeniləmə",
+                operation_date=date,
+                note=note,
+                shipping_warehouse=None,
+                receiving_warehouse=None,
+                product_and_quantity=product.product_name
             )
-            emeliyyat.save()
+            operation.save()
             serializer.save()
-            return Response({"detail": "Stok əlavə edildi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Stock əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StokDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Stok.objects.all()
-    serializer_class = StokSerializer
+class StockDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = StokFilter
-    permission_classes = [muqavile_permissions.StokPermissions]
+    filterset_class = StockFilter
+    permission_classes = [contract_permissions.StockPermissions]
 
     def update(self, request, *args, **kwargs):
         return stok_utils.stok_update(self, request, *args, **kwargs)
