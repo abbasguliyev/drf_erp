@@ -3,6 +3,7 @@ from restAPI.v1.contract import views as contract_views
 
 urlpatterns = [
     path('test-installment/', contract_views.create_test_installment),
+    
     path('', contract_views.ContractListCreateAPIView.as_view()),
     path('<int:pk>/', contract_views.ContractDetailAPIView.as_view()),
 

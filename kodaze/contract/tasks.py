@@ -6,6 +6,9 @@ from django.contrib.auth import get_user_model
 from .models import DemoSales, Contract, Installment
 from services.models import Service
 from product.models import Product
+from . import (
+    INSTALLMENT
+)
 
 User = get_user_model()
 

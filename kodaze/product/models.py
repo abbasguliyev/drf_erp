@@ -5,7 +5,6 @@ from django.db.models import (
 from django.core.validators import FileExtensionValidator
 from core.image_validator import file_size
 
-# Create your models here.
 
 class UnitOfMeasure(models.Model):
     name = models.CharField(max_length=200)
@@ -19,9 +18,6 @@ class UnitOfMeasure(models.Model):
             ("change_unitofmeasure", "Ölçü vahidi məlumatlarını yeniləyə bilər"),
             ("delete_unitofmeasure", "Ölçü vahidini silə bilər")
         )
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class Category(models.Model):
@@ -37,19 +33,13 @@ class Category(models.Model):
             ("delete_category", "Kateqoriya silə bilər")
         )
 
-    def __str__(self) -> str:
-        return self.category_name
-
 
 class Product(models.Model):
     product_name = models.CharField(max_length=300)
     price = models.FloatField()
-    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, null=True, related_name="company_product")
-    category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, null=True, related_name="products")
-    is_hediyye = models.BooleanField(default=False)
-    unit_of_measure = models.ForeignKey(
-        UnitOfMeasure, on_delete=models.SET_NULL, null=True, blank=True)
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="company_product")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, related_name="products")
+    unit_of_measure = models.ForeignKey(UnitOfMeasure, on_delete=models.SET_NULL, null=True, blank=True)
     volume = models.FloatField(null=True, blank=True)
     weight = models.FloatField(null=True, blank=True)
     width = models.FloatField(null=True, blank=True)
@@ -58,10 +48,15 @@ class Product(models.Model):
     note = models.TextField(null=True, blank=True)
     product_image = models.ImageField(upload_to="media/product/%Y/%m/%d/", null=True,
                                       blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-    is_gift = models.BooleanField(default=False, blank=True)
+    is_gift = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("pk",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["product_name", "category", "company"], name="unique product name for your constraint"
+            )
+        ]
         default_permissions = []
         permissions = (
             ("view_product", "Mövcud məhsullara baxa bilər"),

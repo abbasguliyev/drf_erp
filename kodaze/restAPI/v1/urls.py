@@ -33,45 +33,15 @@ urlpatterns = [
     # task manager url *****************************************
     path('task-manager/', include("restAPI.v1.task_manager.urls")),
 
+    # product_views *****************************************
+    path('product/', include("restAPI.v1.product.urls")),
+
+    # warehouse_views *****************************************
+    path('warehouse/', include("restAPI.v1.warehouse.urls")),
+
     # salary views *****************************************
-    path('salary-goruntuleme/', salary_views.SalaryViewListCreateAPIView.as_view(),
-         name="salary_goruntuleme"),
-    path('salary-goruntuleme/<int:pk>', salary_views.SalaryViewDetailAPIView.as_view(),
-         name="salary_goruntuleme_detail"),
+    path('salaries/', include("restAPI.v1.salary.urls")),
 
-    path('bonus/', salary_views.BonusListCreateAPIView.as_view(), name="bonus"),
-    path('bonus/<int:pk>', salary_views.BonusDetailAPIView.as_view(),
-         name="bonus_detail"),
-
-    path('salary-ode/', salary_views.PaySalaryListCreateAPIView.as_view()),
-    path('salary-ode/<int:pk>', salary_views.PaySalaryDetailAPIView.as_view()),
-
-    path('advancepayment/', salary_views.AdvancePaymentListCreateAPIView.as_view(), name="advancepayment"),
-    path('advancepayment/<int:pk>', salary_views.AdvancePaymentDetailAPIView.as_view(),
-         name="advancepayment_detail"),
-
-    path('salarydeduction/', salary_views.SalaryDeductionListCreateAPIView.as_view(), name="salarydeduction"),
-    path('salarydeduction/<int:pk>', salary_views.SalaryDeductionDetailAPIView.as_view(),
-         name="salarydeduction_detail"),
-
-    path('office-leader-prim/',
-         salary_views.OfficeLeaderPrimListCreateAPIView.as_view()),
-    path('office-leader-prim/<int:pk>',
-         salary_views.OfficeLeaderPrimDetailAPIView.as_view()),
-
-    path('vanleader-prim/', salary_views.GroupLeaderPrimNewListCreateAPIView.as_view()),
-    path('vanleader-prim/<int:pk>',
-         salary_views.GroupLeaderPrimNewDetailAPIView.as_view()),
-
-    path('canvasser-prim/', salary_views.Manager2PrimListCreateAPIView.as_view()),
-    path('canvasser-prim/<int:pk>',
-         salary_views.Manager2PrimDetailAPIView.as_view()),
-
-    path('dealer-prim/', salary_views.Manager1PrimNewListCreateAPIView.as_view()),
-    path('dealer-prim/<int:pk>', salary_views.Manager1PrimNewDetailAPIView.as_view()),
-
-    path('creditor-prim/', salary_views.CreditorPrimListCreateAPIView.as_view()),
-    path('creditor-prim/<int:pk>', salary_views.CreditorPrimDetailAPIView.as_view()),
 
     # working_day views *****************************************
     path('holding-working_day/', holiday_views.HoldingWorkingDayListCreateAPIView.as_view()),
@@ -199,31 +169,6 @@ urlpatterns = [
          name="cashbox_expense"),
     path('office-kassa-expense/<int:pk>', income_expense_views.OfficeCashboxExpenseDetailAPIView.as_view(),
          name="cashbox_expense_detail"),
-
-    # product_views *****************************************
-    path('product/', product_views.ProductListCreateAPIView.as_view(),
-         name="product"),
-    path('product/<int:pk>', product_views.ProductDetailAPIView.as_view(),
-         name="product_detail"),
-
-    # warehouse_views *****************************************
-    path('warehouse/', warehouse_views.WarehouseListCreateAPIView.as_view(), name="warehouse"),
-    path('warehouse/<int:pk>', warehouse_views.WarehouseDetailAPIView.as_view(),
-         name="warehouse_detail"),
-
-    path('warehouse-noteler/', warehouse_views.WarehouseRequestListCreateAPIView.as_view(),
-         name="warehouse_noteler"),
-    path('warehouse-noteler/<int:pk>', warehouse_views.WarehouseRequestDetailAPIView.as_view(),
-         name="warehouse_noteler_detail"),
-
-    path('operation/', warehouse_views.OperationListCreateAPIView.as_view(),
-         name="operation"),
-    path('operation/<int:pk>', warehouse_views.OperationDetailAPIView.as_view(),
-         name="operation_detail"),
-
-    path('stok/', warehouse_views.StockListCreateAPIView.as_view(), name="stok"),
-    path('stok/<int:pk>', warehouse_views.StockDetailAPIView.as_view(),
-         name="stok_detail"),
 
     # services_views *****************************************
     path('service/', services_views.ServiceListCreateAPIView.as_view(), name="service"),

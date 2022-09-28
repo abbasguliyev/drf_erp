@@ -18,7 +18,7 @@ class StockFilter(django_filters.FilterSet):
             'warehouse__company__name': ['exact', 'icontains'],
             'warehouse__office__name': ['exact', 'icontains'],
             'warehouse__name': ['exact', 'icontains'],
-            'product__is_hediyye': ['exact'],
+            'product__is_gift': ['exact'],
         }
 
 class OperationFilter(django_filters.FilterSet):
@@ -41,8 +41,6 @@ class OperationFilter(django_filters.FilterSet):
             'receiving_warehouse__company__name': ['exact', 'icontains'],
 
             'note': ['exact', 'icontains'],
-
-            # 'operation_date': ['exact', 'gte', 'lte'],
         }
 
 class WarehouseFilter(django_filters.FilterSet):

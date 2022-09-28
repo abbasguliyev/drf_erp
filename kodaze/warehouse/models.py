@@ -22,6 +22,11 @@ class Warehouse(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "office"], name="unique name for your warehouse constraint"
+            )
+        ]
         default_permissions = []
         permissions = (
             ("view_warehouse", "Mövcud anbarlara baxa bilər"),
@@ -34,7 +39,7 @@ class WarehouseRequest(models.Model):
     employee_who_sent_the_request = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, related_name="warehouse_requests")
     product_and_quantity = models.CharField(max_length=250, null=True, blank=True)
-    note = models.TextField()
+    note = models.TextField(null=True, blank=True)
     warehouse = models.ForeignKey(
         Warehouse, on_delete=models.CASCADE, related_name="warehouse_note")
     is_done = models.BooleanField(default=False)
@@ -52,9 +57,9 @@ class WarehouseRequest(models.Model):
 
 
 class Stock(models.Model):
-    warehouse = models.ForeignKey(Warehouse, null=True, on_delete=models.CASCADE, related_name="stocks")
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="stocks")
     product = models.ForeignKey(
-        "product.Product", null=True, on_delete=models.CASCADE, related_name="stocks")
+        "product.Product", on_delete=models.CASCADE, related_name="stocks")
     quantity = models.IntegerField(default=0)
     date = models.DateField(auto_now=True, blank=True)
     note = models.TextField(default="", null=True, blank=True)
@@ -63,7 +68,7 @@ class Stock(models.Model):
         ordering = ("pk",)
         constraints = [
             models.UniqueConstraint(
-                fields=["warehouse", "product"], name="unique name for your constraint"
+                fields=["warehouse", "product"], name="unique name for your stock constraint"
             )
         ]
         default_permissions = []

@@ -116,7 +116,7 @@ def c_income(company_cashbox, the_amount_to_enter, responsible_employee_1, note)
 
     income = OfficeCashboxIncome.objects.create(
         executor=responsible_employee_1,
-        office_cashbox=company_cashbox,
+        cashbox=company_cashbox,
         amount=the_amount_to_enter,
         date=date,
         note=note
@@ -133,7 +133,7 @@ def expense(company_cashbox, the_amount_to_enter, responsible_employee_1, note):
 
     expense = OfficeCashboxExpense.objects.create(
         executor=responsible_employee_1,
-        office_cashbox=company_cashbox,
+        cashbox=company_cashbox,
         amount=the_amount_to_enter,
         date=date,
         note=note

@@ -19,6 +19,8 @@ from restAPI.v1.utils.magnus_contract_pdf_create import (
 )
 
 
+from django.db import transaction
+
 @receiver(post_save, sender=Contract)
 def create_installment(sender, instance, created, **kwargs):
     if created:

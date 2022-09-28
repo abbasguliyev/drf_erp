@@ -15,8 +15,6 @@ from reportlab.lib.utils import ImageReader
 from core.settings import BASE_DIR, __PRODUCTION__
 module_dir = os.path.dirname(__file__)  # get current directory
 
-
-
 # ----------------------------------------------Contract pdf creater--------------------------------------------------------
 def ocean_contract_pdf_canvas(customer, contract) -> list:
     """
@@ -130,8 +128,8 @@ def ocean_create_contract_pdf(canvas,contract):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/contract_doc/ocean-contract.pdf')
-    file_path_new = os.path.join(f'media/media/contract_doc/ocean-contract-{contract.pk}.pdf')
+    file_path = os.path.join(BASE_DIR, 'media/media/contract_doc/ocean-muqavile.pdf')
+    file_path_new = os.path.join(f'media/media/contract_doc/ocean-muqavile-{contract.pk}.pdf')
 
     # ****** test **********
     # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/contract_doc/ocean-contract.pdf'
@@ -603,13 +601,8 @@ def ocean_installment_create_contract_pdf(canvas,contract):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/contract_doc/ocean-contract-installment.pdf')
-    file_path_new = os.path.join(f'media/media/contract_doc/ocean-contract-installment-{contract.pk}.pdf')
-
-    # ****** test **********
-    # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/contract_doc/ocean-contract-installment.pdf'
-    # file_path_new = os.path.join(f'/home/abbas/Workspace/alliance/OkeanCRM/media/media/ocean-contract-installment1.pdf')
-    # **********************
+    file_path = os.path.join(BASE_DIR, 'media/media/contract_doc/ocean-muqavile-kredit.pdf')
+    file_path_new = os.path.join(f'media/media/contract_doc/ocean-muqavile-kredit-{contract.pk}.pdf')
 
     existing_pdf = PdfFileReader(
         open(file_path, "rb")

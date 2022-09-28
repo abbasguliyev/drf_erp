@@ -2,7 +2,10 @@ import django_filters
 
 from product.models import (
     Product,
+    Category,
+    UnitOfMeasure
 )
+
 
 class ProductFilter(django_filters.FilterSet):
     class Meta:
@@ -11,5 +14,21 @@ class ProductFilter(django_filters.FilterSet):
             'product_name': ['exact', 'icontains'],
             'price': ['exact', 'gte', 'lte'],
             'company__name': ['exact', 'icontains'],
-            'is_hediyye': ['exact'],
+            'is_gift': ['exact'],
+        }
+
+
+class CategoryFilter(django_filters.FilterSet):
+    class Meta:
+        model = Category
+        fields = {
+            'category_name': ['exact', 'icontains']
+        }
+
+
+class UnitOfMeasureFilter(django_filters.FilterSet):
+    class Meta:
+        model = UnitOfMeasure
+        fields = {
+            'name': ['exact', 'icontains']
         }

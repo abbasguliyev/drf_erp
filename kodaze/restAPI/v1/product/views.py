@@ -4,32 +4,38 @@ from rest_framework.response import Response
 from rest_framework import generics
 from restAPI.v1.product.serializers import (
     ProductSerializer,
+    CategorySerializer,
+    UnitOfMeasureSerializer
 )
 from product.models import (
-    Product, 
+    Product,
+    Category,
+    UnitOfMeasure
 )
 from django_filters.rest_framework import DjangoFilterBackend
 from restAPI.v1.product.filters import (
     ProductFilter,
+    CategoryFilter,
+    UnitOfMeasureFilter
 )
-from restAPI.v1.product import permissions as contract_permissions
+from restAPI.v1.product import permissions as product_permissions
 
 # ********************************** product put get post delete **********************************
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
-    permission_classes = [contract_permissions.ProductPermissions]
+    permission_classes = [product_permissions.ProductPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Product.objects.all()
+            queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
         elif request.user.company is not None:
-            queryset = Product.objects.filter(company=request.user.company)
+            queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').filter(company=request.user.company)
         else:
-            queryset = Product.objects.all()
+            queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
         
         queryset = self.filter_queryset(queryset)
 
@@ -48,13 +54,12 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Məhsul əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
 
-
 class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
-    permission_classes = [contract_permissions.ProductPermissions]
+    permission_classes = [product_permissions.ProductPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -72,4 +77,48 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Məhsul silindi"}, status=status.HTTP_200_OK)
+
+class CategoryListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CategoryFilter
+    permission_classes = [product_permissions.CategoryPermissions]
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({"detail": "Kateqoriya əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CategoryFilter
+    permission_classes = [product_permissions.CategoryPermissions]
+
+class UnitOfMeasureListCreateAPIView(generics.ListCreateAPIView):
+    queryset = UnitOfMeasure.objects.all()
+    serializer_class = UnitOfMeasureSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = UnitOfMeasureFilter
+    permission_classes = [product_permissions.UnitOfMeasurePermissions]
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({"detail": "Ölçü vahidi əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class UnitOfMeasureDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UnitOfMeasure.objects.all()
+    serializer_class = UnitOfMeasureSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = UnitOfMeasureFilter
+    permission_classes = [product_permissions.UnitOfMeasurePermissions]

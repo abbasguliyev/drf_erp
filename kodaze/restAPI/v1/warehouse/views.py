@@ -36,7 +36,7 @@ from restAPI.v1.warehouse import permissions as contract_permissions
 
 
 class WarehouseListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Warehouse.objects.all()
+    queryset = Warehouse.objects.select_related('office', 'company').all()
     serializer_class = WarehouseSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = WarehouseFilter
@@ -44,14 +44,14 @@ class WarehouseListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Warehouse.objects.all()
+            queryset = Warehouse.objects.select_related('office', 'company').all()
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Warehouse.objects.filter(
+                queryset = Warehouse.objects.select_related('office', 'company').filter(
                     company=request.user.company, office=request.user.office)
-            queryset = Warehouse.objects.filter(company=request.user.company)
+            queryset = Warehouse.objects.select_related('office', 'company').filter(company=request.user.company)
         else:
-            queryset = Warehouse.objects.all()
+            queryset = Warehouse.objects.select_related('office', 'company').all()
 
         queryset = self.filter_queryset(queryset)
 
@@ -62,16 +62,16 @@ class WarehouseListCreateAPIView(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
+    
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            office = serializer.validated_data.get("office")
-            is_have_warehouse = Warehouse.objects.filter(office=office)
-            if len(is_have_warehouse) > 0:
-                return Response({"detail": "Bir officein yalnız bir warehouseı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
+            # office = serializer.validated_data.get("office")
+            # is_have_warehouse = Warehouse.objects.select_related('office', 'company').filter(office=office)
+            # if len(is_have_warehouse) > 0:
+            #     return Response({"detail": "Bir ofisin yalnız bir anbarı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()
-            return Response({"detail": "Warehouse quruldu"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Anbar əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -89,7 +89,7 @@ class WarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "Warehouse məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+            return Response({"detail": "Anbar məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,7 +97,7 @@ class WarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         warehouse = self.get_object()
         warehouse.is_active = False
         warehouse.save()
-        return Response({"detail": "Warehouse qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Anbar qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** warehouse put delete post get **********************************
 
@@ -264,7 +264,7 @@ class StockListCreateAPIView(generics.ListCreateAPIView):
             )
             operation.save()
             serializer.save()
-            return Response({"detail": "Stock əlavə edildi"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Stok əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 

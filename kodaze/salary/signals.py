@@ -35,8 +35,12 @@ def create_prim(sender, instance, created, **kwargs):
 
         manager1 = instance.manager1
         if manager1 is not None:
-            manager1_status = manager1.employee_status
-            manager1_position = manager1.position.name
+            try:
+                manager1_status = manager1.employee_status
+                manager1_position = manager1.position.name
+            except:
+                manager1_status = None
+                manager1_position = None    
         else:
             manager1_status = None
             manager1_position = None
@@ -44,8 +48,12 @@ def create_prim(sender, instance, created, **kwargs):
 
         manager2 = instance.manager2
         if manager2 is not None:
-            manager2_status = manager2.employee_status
-            manager2_position = manager2.position.name
+            try:
+                manager2_status = manager2.employee_status
+                manager2_position = manager2.position.name
+            except:
+                manager2_status = None
+                manager2_position = None
         else:
             manager2_status = None
             manager2_position = None

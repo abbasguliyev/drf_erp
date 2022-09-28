@@ -3,6 +3,8 @@ from rest_framework.exceptions import ValidationError
 
 from product.models import (
     Product, 
+    Category,
+    UnitOfMeasure
 )
 from company.models import (
     Company,
@@ -10,11 +12,32 @@ from company.models import (
 from restAPI.v1.company.serializers import CompanySerializer
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+class UnitOfMeasureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UnitOfMeasure
+        fields = "__all__"
+
 class ProductSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only = True)
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset = Company.objects.all(), source = "company", write_only= True
+        queryset = Company.objects.select_related('holding').all(), source = "company", write_only= True
     )
+    
+    category = CategorySerializer(read_only = True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset = Category.objects.all(), source = "category", write_only= True, required=True, allow_null=False
+    )
+
+    unit_of_measure = UnitOfMeasureSerializer(read_only = True)
+    unit_of_measure_id = serializers.PrimaryKeyRelatedField(
+        queryset = UnitOfMeasure.objects.all(), source = "unit_of_measure", write_only= True, required=True, allow_null=False
+    )
+    
     class Meta:
         model = Product
         fields = "__all__"
@@ -29,4 +52,4 @@ class ProductSerializer(serializers.ModelSerializer):
                 raise ValidationError
             return super(ProductSerializer, self).create(validated_data)
         except:
-            raise ValidationError({"detail" : 'Bu name ilə məhsul artıq əlavə olunub'})
+            raise ValidationError({"detail" : 'Bu ad ilə məhsul artıq əlavə olunub'})
