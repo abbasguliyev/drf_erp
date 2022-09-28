@@ -28,11 +28,11 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
     
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        toplam_tapsiriq_quantityi = 0
+        toplam_tapsiriq_sayi = 0
         tamamlandi = 0
         icra_edilir = 0
         gecikir = 0
-        toplam_tapsiriq_quantityi = queryset.aggregate(
+        toplam_tapsiriq_sayi = queryset.aggregate(
             toplam = Count('id')
         ).get("toplam")
         tamamlandi = queryset.filter(status="Tamamlandı").aggregate(
@@ -53,7 +53,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             serializer = self.get_serializer(page, many=True)
             # serializer.data
             return self.get_paginated_response([{
-                    'toplam_tapsiriq_quantityi':toplam_tapsiriq_quantityi,
+                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
                     'tamamlandi':tamamlandi,
                     'icra_edilir':icra_edilir,
                     'gecikir':gecikir,
@@ -61,7 +61,7 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
             }])
         serializer = self.get_serializer(queryset, many=True)
         return Response([{
-                    'toplam_tapsiriq_quantityi':toplam_tapsiriq_quantityi,
+                    'toplam_tapsiriq_sayi':toplam_tapsiriq_sayi,
                     'tamamlandi':tamamlandi,
                     'icra_edilir':icra_edilir,
                     'gecikir':gecikir,
