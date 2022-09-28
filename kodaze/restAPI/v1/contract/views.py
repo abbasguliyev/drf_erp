@@ -49,7 +49,11 @@ from restAPI.v1.contract.filters import (
 )
 
 from restAPI.v1.contract import permissions as contract_permissions
-
+from django.core.cache import cache
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+ 
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 # ********************************** contract get post put delete **********************************
 
 class ContractListCreateAPIView(generics.ListCreateAPIView):
@@ -101,7 +105,7 @@ class ContractListCreateAPIView(generics.ListCreateAPIView):
         else:
             queryset = Contract.objects.all()
         queryset = self.filter_queryset(queryset)
-
+        cache.set('contract', queryset, timeout=CACHE_TTL)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

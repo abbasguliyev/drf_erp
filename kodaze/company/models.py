@@ -69,6 +69,11 @@ class Office(AbstractCompany):
     
     class Meta:
         ordering = ("pk",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "company"], name="unique name for your office constraint"
+            )
+        ]
         default_permissions = []
         permissions = (
             ("view_office", "Mövcud ofislərə baxa bilər"),

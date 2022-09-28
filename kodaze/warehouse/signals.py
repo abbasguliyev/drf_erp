@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=Office)
 def create_warehouse(sender, instance, created, **kwargs):
-    if created and instance.auto_create_warehouse:
+    if created:
         office = instance
         company = office.company
         name = f"{office.name} warehouse"

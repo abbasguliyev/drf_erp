@@ -305,14 +305,24 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-CELERY_CACHE_BACKEND = 'default'
+# CELERY_CACHE_BACKEND = 'default'
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'alliance_cache_table',
+#     }
+# }
+CACHE_TTL = 60 * 15
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'alliance_cache_table',
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "kodaze_cache_table"
     }
 }
-
 
 CELERY_BROKER_URL = os.environ['CELERY_BROKER_URL']
 CELERY_RESULT_BACKEND = os.environ['CELERY_RESULT_BACKEND']

@@ -62,10 +62,10 @@ class TeamListCreateAPIView(generics.ListCreateAPIView):
         name = serializer.validated_data.get("name")
         teamlar = Team.objects.filter(name=name.upper())
         if len(teamlar) > 0:
-            return Response({"detail": "Bu adla team artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Bu adla komanda artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Team əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"detail": "Komanda əlavə edildi"}, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -88,13 +88,13 @@ class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
 
-        return Response({"detail": "Team məlumatları yeniləndi"})
+        return Response({"detail": "Komanda məlumatları yeniləndi"})
 
     def destroy(self, request, *args, **kwargs):
         team = self.get_object()
         team.is_active = False
         team.save()
-        return Response({"detail": "Team qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Komanda qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
 
 # ********************************** department put delete post get **********************************
