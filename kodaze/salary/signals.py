@@ -74,7 +74,7 @@ def create_prim(sender, instance, created, **kwargs):
                 officeLeader_salary_view_this_month = SalaryView.objects.get(employee=officeLeader, date=f"{now.year}-{now.month}-{1}")
                 officeLeader_salary_view_novbeti_ay = SalaryView.objects.get(employee=officeLeader, date=f"{next_m.year}-{next_m.month}-{1}")
 
-                officeLeader_salary_view_this_month.sales_quantity = float(officeLeader_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+                officeLeader_salary_view_this_month.sales_quantity = float(officeLeader_salary_view_this_month.sale_quantity) + float(instance.product_quantity)
                 officeLeader_salary_view_this_month.sales_amount = float(officeLeader_salary_view_this_month.sales_amount) + (float(instance.product.price) * float(instance.product_quantity))
                 officeLeader_salary_view_this_month.save()
 
@@ -91,7 +91,7 @@ def create_prim(sender, instance, created, **kwargs):
             group_leader_salary_view_this_month = SalaryView.objects.get(employee=group_leader, date=f"{now.year}-{now.month}-{1}")
             group_leader_salary_view_novbeti_ay = SalaryView.objects.get(employee=group_leader, date=next_m)
 
-            group_leader_salary_view_this_month.sales_quantity = float(group_leader_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+            group_leader_salary_view_this_month.sales_quantity = float(group_leader_salary_view_this_month.sale_quantity) + float(instance.product_quantity)
             group_leader_salary_view_this_month.sales_amount = float(group_leader_salary_view_this_month.sales_amount) +  (float(instance.product.price) * float(instance.product_quantity))
             
             group_leader_salary_view_this_month.save()
@@ -119,7 +119,7 @@ def create_prim(sender, instance, created, **kwargs):
             manager1_salary_view_this_month = SalaryView.objects.get(employee=manager1, date=f"{now.year}-{now.month}-{1}")
             manager1_salary_view_novbeti_ay = SalaryView.objects.get(employee=manager1, date=next_m)
 
-            manager1_salary_view_this_month.sales_quantity = float(manager1_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+            manager1_salary_view_this_month.sales_quantity = float(manager1_salary_view_this_month.sale_quantity) + float(instance.product_quantity)
             manager1_salary_view_this_month.sales_amount = float(manager1_salary_view_this_month.sales_amount) +  (float(instance.product.price) * float(instance.product_quantity))
 
             manager1_salary_view_this_month.save()
@@ -144,7 +144,7 @@ def create_prim(sender, instance, created, **kwargs):
             manager2_salary_view_this_month = SalaryView.objects.get(employee=manager2, date=f"{now.year}-{now.month}-{1}")
             manager2_salary_view_novbeti_ay = SalaryView.objects.get(employee=manager2, date=next_m)
 
-            manager2_salary_view_this_month.sales_quantity = float(manager2_salary_view_this_month.sales_quantity) + float(instance.product_quantity)
+            manager2_salary_view_this_month.sales_quantity = float(manager2_salary_view_this_month.sale_quantity) + float(instance.product_quantity)
             manager2_salary_view_this_month.sales_amount = float(manager2_salary_view_this_month.sales_amount) +  (float(instance.product.price) * float(instance.product_quantity))
             manager2_salary_view_this_month.save()
 

@@ -20,8 +20,8 @@ urlpatterns = [
     path('office-leader-prim/',salary_views.OfficeLeaderPrimListCreateAPIView.as_view()),
     path('office-leader-prim/<int:pk>/', salary_views.OfficeLeaderPrimDetailAPIView.as_view()),
 
-    path('group-leader/', salary_views.GroupLeaderPrimNewListCreateAPIView.as_view()),
-    path('group-leader/<int:pk>/', salary_views.GroupLeaderPrimNewDetailAPIView.as_view()),
+    path('group-leader-prim/', salary_views.GroupLeaderPrimNewListCreateAPIView.as_view()),
+    path('group-leader-prim/<int:pk>/', salary_views.GroupLeaderPrimNewDetailAPIView.as_view()),
 
     path('manager2-prim/', salary_views.Manager2PrimListCreateAPIView.as_view()),
     path('manager2-prim/<int:pk>/', salary_views.Manager2PrimDetailAPIView.as_view()),
