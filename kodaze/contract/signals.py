@@ -70,7 +70,7 @@ def create_and_add_pdf_to_contract_installment(sender, instance, created, **kwar
             )
             contract_pdf = magnus_installment_create_contract_pdf(
                 contract_pdf_canvas_list, instance)
-        instance.pdf_elave = contract_pdf
+        instance.pdf2 = contract_pdf
         instance.save()
 
 
