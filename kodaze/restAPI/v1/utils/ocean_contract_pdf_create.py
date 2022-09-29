@@ -128,8 +128,8 @@ def ocean_create_contract_pdf(canvas,contract):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/contract_doc/ocean-muqavile.pdf')
-    file_path_new = os.path.join(f'media/media/contract_doc/ocean-muqavile-{contract.pk}.pdf')
+    file_path = os.path.join(BASE_DIR, 'media/media/muqavile_doc/ocean-muqavile.pdf')
+    file_path_new = os.path.join(f'media/media/muqavile_doc/ocean-muqavile-{contract.pk}.pdf')
 
     # ****** test **********
     # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/contract_doc/ocean-contract.pdf'
@@ -601,8 +601,8 @@ def ocean_installment_create_contract_pdf(canvas,contract):
 
     new_pdfs = canvas
     # read your existing PDF
-    file_path = os.path.join(BASE_DIR, 'media/media/contract_doc/ocean-muqavile-kredit.pdf')
-    file_path_new = os.path.join(f'media/media/contract_doc/ocean-muqavile-kredit-{contract.pk}.pdf')
+    file_path = os.path.join(BASE_DIR, 'media/media/muqavile_doc/ocean-muqavile-kredit.pdf')
+    file_path_new = os.path.join(f'media/media/muqavile_doc/ocean-muqavile-kredit-{contract.pk}.pdf')
 
     existing_pdf = PdfFileReader(
         open(file_path, "rb")

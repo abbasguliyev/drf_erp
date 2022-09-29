@@ -128,9 +128,9 @@ def magnus_create_contract_pdf(canvas, contract):
     new_pdfs = canvas
     # read your existing PDF
     file_path = os.path.join(
-        BASE_DIR, 'media/media/contract_doc/magnus-contract.pdf')
+        BASE_DIR, 'media/media/muqavile_doc/magnus-contract.pdf')
     file_path_new = os.path.join(
-        f'media/media/contract_doc/magnus-contract-{contract.pk}.pdf')
+        f'media/media/muqavile_doc/magnus-contract-{contract.pk}.pdf')
 
     # ****** test **********
     # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/contract_doc/magnus-contract.pdf'
@@ -700,9 +700,9 @@ def magnus_installment_create_contract_pdf(canvas, contract):
     new_pdfs = canvas
     # read your existing PDF
     file_path = os.path.join(
-        BASE_DIR, 'media/media/contract_doc/magnus-contract-installment.pdf')
+        BASE_DIR, 'media/media/muqavile_doc/magnus-contract-installment.pdf')
     file_path_new = os.path.join(
-        f'media/media/contract_doc/magnus-contract-installment-{contract.pk}.pdf')
+        f'media/media/muqavile_doc/magnus-contract-installment-{contract.pk}.pdf')
 
     # ****** test **********
     # file_path = '/home/abbas/Workspace/alliance/OkeanCRM/media/media/contract_doc/magnus-contract-installment.pdf'
