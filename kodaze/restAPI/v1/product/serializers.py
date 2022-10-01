@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from restAPI.core import DynamicFieldsCategorySerializer
 
 from product.models import (
     Product, 
@@ -12,17 +13,17 @@ from company.models import (
 from restAPI.v1.company.serializers import CompanySerializer
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Category
         fields = "__all__"
 
-class UnitOfMeasureSerializer(serializers.ModelSerializer):
+class UnitOfMeasureSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = UnitOfMeasure
         fields = "__all__"
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only = True)
     company_id = serializers.PrimaryKeyRelatedField(
         queryset = Company.objects.select_related('holding').all(), source = "company", write_only= True

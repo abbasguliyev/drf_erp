@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from restAPI.core import DynamicFieldsCategorySerializer
 from account.models import (
     User
 )
@@ -15,7 +16,7 @@ from cashbox.models import (
 )
 from restAPI.v1.company.serializers import HoldingSerializer, OfficeSerializer, CompanySerializer
 
-class HoldingCashboxSerializer(serializers.ModelSerializer):
+class HoldingCashboxSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True
@@ -26,7 +27,7 @@ class HoldingCashboxSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CompanyCashboxSerializer(serializers.ModelSerializer):
+class CompanyCashboxSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
@@ -37,7 +38,7 @@ class CompanyCashboxSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class OfficeCashboxSerializer(serializers.ModelSerializer):
+class OfficeCashboxSerializer(DynamicFieldsCategorySerializer):
     office = OfficeSerializer(read_only=True)
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.all(), source='office', write_only=True
@@ -48,7 +49,7 @@ class OfficeCashboxSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CashFlowSerializer(serializers.ModelSerializer):
+class CashFlowSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True, required=False, allow_null=True

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from restAPI.core import DynamicFieldsCategorySerializer
 
 from account.models import (
     User
@@ -21,7 +22,7 @@ from restAPI.v1.cashbox.serializers import (
     CompanyCashboxSerializer
 )
 
-class HoldingCashboxIncomeSerializer(serializers.ModelSerializer):
+class HoldingCashboxIncomeSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -37,7 +38,7 @@ class HoldingCashboxIncomeSerializer(serializers.ModelSerializer):
         read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class HoldingCashboxExpenseSerializer(serializers.ModelSerializer):
+class HoldingCashboxExpenseSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -53,7 +54,7 @@ class HoldingCashboxExpenseSerializer(serializers.ModelSerializer):
         read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class CompanyCashboxIncomeSerializer(serializers.ModelSerializer):
+class CompanyCashboxIncomeSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -69,7 +70,7 @@ class CompanyCashboxIncomeSerializer(serializers.ModelSerializer):
         read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class CompanyCashboxExpenseSerializer(serializers.ModelSerializer):
+class CompanyCashboxExpenseSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -85,7 +86,7 @@ class CompanyCashboxExpenseSerializer(serializers.ModelSerializer):
         read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class OfficeCashboxIncomeSerializer(serializers.ModelSerializer):
+class OfficeCashboxIncomeSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -101,7 +102,7 @@ class OfficeCashboxIncomeSerializer(serializers.ModelSerializer):
         read_only_fields = ('previous_balance', 'subsequent_balance')
 
 
-class OfficeCashboxExpenseSerializer(serializers.ModelSerializer):
+class OfficeCashboxExpenseSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True

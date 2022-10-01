@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 
 from restAPI.v1.account.serializers import (
     RegionSerializer,
-    GroupReadSerializer,
     RegisterSerializer,
     ResetPasswordSerializer,
     UserSerializer,
@@ -128,7 +127,7 @@ class PermissionListApi(generics.ListAPIView):
 # ********************************** permission group model get post put delete **********************************
 class GroupListApi(generics.ListAPIView):
     queryset = Group.objects.all()
-    serializer_class = GroupReadSerializer
+    serializer_class = GroupSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = GroupFilter
     permission_classes = [account_permissions.GroupPermissions]
@@ -165,11 +164,10 @@ class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
 
 # ********************************** user get post put delete **********************************
 
-
 class RegisterApi(generics.CreateAPIView):
     queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).all()
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+            ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = RegisterSerializer
 
     def create(self, request, *args, **kwargs):
@@ -179,14 +177,12 @@ class RegisterApi(generics.CreateAPIView):
             return Response({"detail": "İşçi qeydiyyatdan keçirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": f"{serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST)
-            # return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).all()
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+            ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UserFilter
@@ -194,21 +190,13 @@ class UserList(generics.ListAPIView):
     
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).filter(company=request.user.company, office=request.user.office)
-            queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).filter(company=request.user.company)
+                queryset = self.queryset.filter(company=request.user.company, office=request.user.office)
+            queryset = self.queryset.filter(company=request.user.company)
         else:
-            queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).all()
+            queryset = self.queryset
         
         queryset = self.filter_queryset(queryset)
 
@@ -223,8 +211,8 @@ class UserList(generics.ListAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).all()
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+            ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UserFilter
@@ -257,13 +245,13 @@ class Login(TokenObtainPairView):
         acces_token = utils.jwt_decode_handler(data.get("access"))
 
         if not User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).filter(id=acces_token.get("user_id")).last():
-            return Response({"error": True, "message": "No such a user"}, status=status.HTTP_404_NOT_FOUND)
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+            ).prefetch_related('user_permissions', 'groups').filter(id=acces_token.get("user_id")).last():
+            return Response({"error": True, "detail": "No such a user"}, status=status.HTTP_404_NOT_FOUND)
 
         user = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).filter(id=acces_token.get("user_id")).last()
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+            ).prefetch_related('user_permissions', 'groups').filter(id=acces_token.get("user_id")).last()
         user_logged_in.send(sender=type(user), request=request, user=user)
 
         user_details = UserSerializer(user)

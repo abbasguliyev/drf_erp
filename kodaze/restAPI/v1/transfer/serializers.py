@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from restAPI.core import DynamicFieldsCategorySerializer
+
 from rest_framework.exceptions import ValidationError
 
 from account.models import (
@@ -18,7 +20,7 @@ from contract.models import Contract, ContractCreditor
 from django.contrib.auth.models import Group
 
 
-class TransferFromHoldingToCompanySerializer(serializers.ModelSerializer):
+class TransferFromHoldingToCompanySerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -39,7 +41,7 @@ class TransferFromHoldingToCompanySerializer(serializers.ModelSerializer):
         read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
 
-class TransferFromCompanyToHoldingSerializer(serializers.ModelSerializer):
+class TransferFromCompanyToHoldingSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -60,7 +62,7 @@ class TransferFromCompanyToHoldingSerializer(serializers.ModelSerializer):
         read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
 
-class TransferFromOfficeToCompanySerializer(serializers.ModelSerializer):
+class TransferFromOfficeToCompanySerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
@@ -79,7 +81,7 @@ class TransferFromOfficeToCompanySerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
-class TransferFromCompanyToOfficesSerializer(serializers.ModelSerializer):
+class TransferFromCompanyToOfficesSerializer(DynamicFieldsCategorySerializer):
     executor = serializers.StringRelatedField()
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True

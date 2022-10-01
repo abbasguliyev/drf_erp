@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from account.models import User
+from restAPI.core import DynamicFieldsCategorySerializer
 
 from company.models import Holding, Team, Office, Company, Section, Position
 
@@ -24,7 +25,7 @@ from restAPI.v1.company.serializers import HoldingSerializer, TeamSerializer, Of
 from restAPI.v1.account.serializers import UserSerializer
 
 
-class HoldingWorkingDaySerializer(serializers.ModelSerializer):
+class HoldingWorkingDaySerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True
@@ -34,7 +35,7 @@ class HoldingWorkingDaySerializer(serializers.ModelSerializer):
         model = HoldingWorkingDay
         fields = "__all__"
 
-class EmployeeWorkingDaySerializer(serializers.ModelSerializer):
+class EmployeeWorkingDaySerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
     employee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='employee', write_only=True,
@@ -44,7 +45,7 @@ class EmployeeWorkingDaySerializer(serializers.ModelSerializer):
         model = EmployeeWorkingDay
         fields = "__all__"
 
-class EmployeeArrivalAndDepartureTimesSerializer(serializers.ModelSerializer):
+class EmployeeArrivalAndDepartureTimesSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
     employee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='employee', write_only=True,
@@ -55,7 +56,7 @@ class EmployeeArrivalAndDepartureTimesSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TeamWorkingDaySerializer(serializers.ModelSerializer):
+class TeamWorkingDaySerializer(DynamicFieldsCategorySerializer):
     team = TeamSerializer(read_only=True)
     team_id = serializers.PrimaryKeyRelatedField(
         queryset=Team.objects.all(), source='team', write_only=True,
@@ -65,7 +66,7 @@ class TeamWorkingDaySerializer(serializers.ModelSerializer):
         model = TeamWorkingDay
         fields = "__all__"
 
-class OfficeWorkingDaySerializer(serializers.ModelSerializer):
+class OfficeWorkingDaySerializer(DynamicFieldsCategorySerializer):
     office = OfficeSerializer(read_only=True)
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.all(), source='office', write_only=True,
@@ -75,7 +76,7 @@ class OfficeWorkingDaySerializer(serializers.ModelSerializer):
         model = OfficeWorkingDay
         fields = "__all__"
 
-class CompanyWorkingDaySerializer(serializers.ModelSerializer):
+class CompanyWorkingDaySerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
@@ -85,7 +86,7 @@ class CompanyWorkingDaySerializer(serializers.ModelSerializer):
         model = CompanyWorkingDay
         fields = "__all__"
 
-class SectionWorkingDaySerializer(serializers.ModelSerializer):
+class SectionWorkingDaySerializer(DynamicFieldsCategorySerializer):
     section = SectionSerializer(read_only=True)
     section_id = serializers.PrimaryKeyRelatedField(
         queryset=Section.objects.all(), source='section', write_only=True
@@ -95,7 +96,7 @@ class SectionWorkingDaySerializer(serializers.ModelSerializer):
         model = SectionWorkingDay
         fields = "__all__"
 
-class PositionWorkingDaySerializer(serializers.ModelSerializer):
+class PositionWorkingDaySerializer(DynamicFieldsCategorySerializer):
     position = PositionSerializer(read_only=True)
     position_id = serializers.PrimaryKeyRelatedField(
         queryset=Position.objects.all(), source='position', write_only=True,
@@ -107,7 +108,7 @@ class PositionWorkingDaySerializer(serializers.ModelSerializer):
 
 # ------------------------------------------------------------------
 
-class HoldingExceptionWorkerSerializer(serializers.ModelSerializer):
+class HoldingExceptionWorkerSerializer(DynamicFieldsCategorySerializer):
     working_day = HoldingWorkingDaySerializer(read_only=True)
     working_day_id = serializers.PrimaryKeyRelatedField(
         queryset=HoldingWorkingDay.objects.all(), source='working_day', write_only=True,
@@ -122,7 +123,7 @@ class HoldingExceptionWorkerSerializer(serializers.ModelSerializer):
         model = HoldingExceptionWorker
         fields = "__all__"
 
-class CompanyExceptionWorkerSerializer(serializers.ModelSerializer):
+class CompanyExceptionWorkerSerializer(DynamicFieldsCategorySerializer):
     working_day = CompanyWorkingDaySerializer(read_only=True)
     working_day_id = serializers.PrimaryKeyRelatedField(
         queryset=CompanyWorkingDay.objects.all(), source='working_day', write_only=True,
@@ -137,7 +138,7 @@ class CompanyExceptionWorkerSerializer(serializers.ModelSerializer):
         model = CompanyExceptionWorker
         fields = "__all__"
 
-class OfficeExceptionWorkerSerializer(serializers.ModelSerializer):
+class OfficeExceptionWorkerSerializer(DynamicFieldsCategorySerializer):
     working_day = OfficeWorkingDaySerializer(read_only=True)
     working_day_id = serializers.PrimaryKeyRelatedField(
         queryset=OfficeWorkingDay.objects.all(), source='working_day', write_only=True,
@@ -152,7 +153,7 @@ class OfficeExceptionWorkerSerializer(serializers.ModelSerializer):
         model = OfficeExceptionWorker
         fields = "__all__"
 
-class SectionExceptionWorkerSerializer(serializers.ModelSerializer):
+class SectionExceptionWorkerSerializer(DynamicFieldsCategorySerializer):
     working_day = SectionWorkingDaySerializer(read_only=True)
     working_day_id = serializers.PrimaryKeyRelatedField(
         queryset=SectionWorkingDay.objects.all(), source='working_day', write_only=True,
@@ -167,7 +168,7 @@ class SectionExceptionWorkerSerializer(serializers.ModelSerializer):
         model = SectionExceptionWorker
         fields = "__all__"
 
-class TeamExceptionWorkerSerializer(serializers.ModelSerializer):
+class TeamExceptionWorkerSerializer(DynamicFieldsCategorySerializer):
     working_day = TeamWorkingDaySerializer(read_only=True)
     working_day_id = serializers.PrimaryKeyRelatedField(
         queryset=TeamWorkingDay.objects.all(), source='working_day', write_only=True,
@@ -182,7 +183,7 @@ class TeamExceptionWorkerSerializer(serializers.ModelSerializer):
         model = TeamExceptionWorker
         fields = "__all__"
 
-class PositionExceptionWorkerSerializer(serializers.ModelSerializer):
+class PositionExceptionWorkerSerializer(DynamicFieldsCategorySerializer):
     working_day = PositionWorkingDaySerializer(read_only=True)
     working_day_id = serializers.PrimaryKeyRelatedField(
         queryset=PositionWorkingDay.objects.all(), source='working_day', write_only=True,

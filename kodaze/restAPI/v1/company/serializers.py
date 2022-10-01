@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from restAPI.core import DynamicFieldsCategorySerializer
 
 from account.models import (
     User
@@ -18,7 +19,7 @@ from company.models import (
 )
 from django.contrib.auth.models import Group
 
-class PositionUserSerializer(serializers.ModelSerializer):
+class PositionUserSerializer(DynamicFieldsCategorySerializer):
     """
     Bu Seriazlier UserOperationSeriazlier-de positioni istifade etmek ucun istifade olunur
     """
@@ -27,7 +28,7 @@ class PositionUserSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 
-class UserOperationSerializer(serializers.ModelSerializer):
+class UserOperationSerializer(DynamicFieldsCategorySerializer):
     """
     Bu Seriazlier Kassa Operationlarinda User-in(transferi eden employeesnin) melumatlarini gostermek ucun istifade olur
     """
@@ -39,7 +40,7 @@ class UserOperationSerializer(serializers.ModelSerializer):
 
 
 
-class HoldingSerializer(serializers.ModelSerializer):
+class HoldingSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Holding
         fields = "__all__"
@@ -53,7 +54,7 @@ class HoldingSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {"detail": 'Bu ad ilə holding artıq əlavə olunub'})
 
-class CompanySerializer(serializers.ModelSerializer):
+class CompanySerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Company
         fields = "__all__"
@@ -76,7 +77,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
 
 
-class DepartmentSerializer(serializers.ModelSerializer):
+class DepartmentSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True)
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True
@@ -110,7 +111,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
         return instance
 
 
-class OfficeSerializer(serializers.ModelSerializer):
+class OfficeSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
@@ -144,7 +145,7 @@ class OfficeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class SectionSerializer(serializers.ModelSerializer):
+class SectionSerializer(DynamicFieldsCategorySerializer):
     office = OfficeSerializer(read_only=True)
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.all(), source='office', write_only=True
@@ -175,7 +176,7 @@ class SectionSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Team
         fields = "__all__"
@@ -200,7 +201,7 @@ class TeamSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PositionSerializer(serializers.ModelSerializer):
+class PositionSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
@@ -223,7 +224,7 @@ class PositionSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PermissionForPositionSerializer(serializers.ModelSerializer):
+class PermissionForPositionSerializer(DynamicFieldsCategorySerializer):
     position = PositionSerializer(read_only=True)
     position_id = serializers.PrimaryKeyRelatedField(
         queryset=Position.objects.all(), source='position', write_only=True
@@ -239,7 +240,7 @@ class PermissionForPositionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AppLogoSerializer(serializers.ModelSerializer):
+class AppLogoSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = AppLogo
         fields = '__all__'

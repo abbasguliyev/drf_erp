@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from restAPI.core import DynamicFieldsCategorySerializer
+
 from rest_framework.exceptions import ValidationError
 
 from warehouse.models import (
@@ -25,7 +27,7 @@ from restAPI.v1.product.serializers import ProductSerializer
 
 from restAPI.v1.company.serializers import OfficeSerializer, CompanySerializer
 
-class WarehouseSerializer(serializers.ModelSerializer):
+class WarehouseSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True)
     office = OfficeSerializer(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
@@ -47,7 +49,7 @@ class WarehouseSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError({"detail" : 'Bu ad ilə warehouse artıq əlavə olunub'})
 
-class OperationSerializer(serializers.ModelSerializer):
+class OperationSerializer(DynamicFieldsCategorySerializer):
     executor = UserSerializer(read_only=True)
     shipping_warehouse = WarehouseSerializer(read_only=True)
     receiving_warehouse = WarehouseSerializer(read_only=True)
@@ -86,7 +88,7 @@ class OperationSerializer(serializers.ModelSerializer):
         model = Operation
         fields = "__all__"
 
-class StockSerializer(serializers.ModelSerializer):
+class StockSerializer(DynamicFieldsCategorySerializer):
     warehouse = WarehouseSerializer(read_only=True)
     product = ProductSerializer(read_only=True)
 
@@ -103,7 +105,7 @@ class StockSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class WarehouseRequestSerializer(serializers.ModelSerializer):
+class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
     warehouse = WarehouseSerializer(read_only=True)
     warehouse_id = serializers.PrimaryKeyRelatedField(
         queryset=Warehouse.objects.all(), source='warehouse', write_only=True

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from restAPI.core import DynamicFieldsCategorySerializer
 
 from contract.models import (
     Contract, 
@@ -15,7 +16,7 @@ from product.models import (
 from restAPI.v1.contract.serializers import ContractSerializer
 from restAPI.v1.product.serializers import ProductSerializer
 
-class ServiceSerializer(serializers.ModelSerializer):
+class ServiceSerializer(DynamicFieldsCategorySerializer):
     contract = ContractSerializer(read_only=True)
     product = ProductSerializer(read_only=True, many=True)
 
@@ -32,7 +33,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = "__all__"
 
-class ServiceStatistikaSerializer(serializers.ModelSerializer):
+class ServiceStatistikaSerializer(DynamicFieldsCategorySerializer):
     contract = ContractSerializer(read_only=True)
     product = ProductSerializer(read_only=True, many=True)
 
@@ -62,7 +63,7 @@ class ServiceStatistikaSerializer(serializers.ModelSerializer):
         model = Service
         fields = "__all__"
 
-class ServicePaymentSerializer(serializers.ModelSerializer):
+class ServicePaymentSerializer(DynamicFieldsCategorySerializer):
     service = ServiceSerializer(read_only=True)
     service_id = serializers.PrimaryKeyRelatedField(
         queryset=Service.objects.all(), source='service', write_only=True, required=False, allow_null=True

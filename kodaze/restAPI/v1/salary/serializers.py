@@ -1,5 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers
+from restAPI.core import DynamicFieldsCategorySerializer
+
 from account.models import EmployeeStatus, User
 from company.models import Position
 from restAPI.v1.company.serializers import PositionSerializer
@@ -19,7 +21,7 @@ from salary.models import (
 
 from restAPI.v1.account.serializers import EmployeeStatusSerializer, UserSerializer
 
-class AdvancePaymentSerializer(serializers.ModelSerializer):
+class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True, many=True)
     employee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='employee', many=True, write_only=True
@@ -29,7 +31,7 @@ class AdvancePaymentSerializer(serializers.ModelSerializer):
         model = AdvancePayment
         fields = "__all__"
 
-class SalaryDeductionSerializer(serializers.ModelSerializer):
+class SalaryDeductionSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
     employee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='employee', write_only=True
@@ -40,7 +42,7 @@ class SalaryDeductionSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
         
-class BonusSerializer(serializers.ModelSerializer):
+class BonusSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
     employee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='employee', write_only=True
@@ -50,13 +52,13 @@ class BonusSerializer(serializers.ModelSerializer):
         model = Bonus
         fields = "__all__"
 
-class PaySalarySerializer(serializers.ModelSerializer):
+class PaySalarySerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = PaySalary
         fields = ('employee', 'amount', 'note', 'installment')
         read_only_fields = ('amount',)
 
-class OfficeLeaderPrimSerializer(serializers.ModelSerializer):
+class OfficeLeaderPrimSerializer(DynamicFieldsCategorySerializer):
     prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
@@ -83,7 +85,7 @@ class OfficeLeaderPrimSerializer(serializers.ModelSerializer):
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
 
-class GroupLeaderPrimNewSerializer(serializers.ModelSerializer):
+class GroupLeaderPrimNewSerializer(DynamicFieldsCategorySerializer):
     prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
@@ -110,7 +112,7 @@ class GroupLeaderPrimNewSerializer(serializers.ModelSerializer):
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
 
-class Manager1PrimNewSerializer(serializers.ModelSerializer):
+class Manager1PrimNewSerializer(DynamicFieldsCategorySerializer):
     prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
@@ -136,7 +138,7 @@ class Manager1PrimNewSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class Manager2PrimSerializer(serializers.ModelSerializer):
+class Manager2PrimSerializer(DynamicFieldsCategorySerializer):
     prim_status = EmployeeStatusSerializer(read_only=True)
     prim_status_id = serializers.PrimaryKeyRelatedField(
         queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
@@ -162,12 +164,12 @@ class Manager2PrimSerializer(serializers.ModelSerializer):
         except:
             raise ValidationError({"detail" : 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
 
-class CreditorPrimSerializer(serializers.ModelSerializer):
+class CreditorPrimSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = CreditorPrim
         fields = "__all__"
 
-class SalaryViewSerializer(serializers.ModelSerializer):
+class SalaryViewSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
     employee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='employee', write_only=True

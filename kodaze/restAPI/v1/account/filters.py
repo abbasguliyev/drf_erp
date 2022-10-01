@@ -46,7 +46,6 @@ class UserFilter(django_filters.FilterSet):
             'office__name': ['exact', 'icontains'],
             'section__name': ['exact', 'icontains'],
             'department__name': ['exact', 'icontains'],
-            # 'start_date_of_work': ['exact', 'gte', 'lte'],
             'is_active': ['exact'],
             'employee_status__status_name': ['exact', 'icontains'],
         }

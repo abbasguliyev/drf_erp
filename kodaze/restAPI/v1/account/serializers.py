@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 import django
+from restAPI.core import DynamicFieldsCategorySerializer
 from account.models import (
     CustomerNote,
     User,
@@ -14,7 +15,8 @@ from restAPI.v1.company.serializers import (
     OfficeSerializer,
     SectionSerializer,
     TeamSerializer,
-    PositionSerializer
+    PositionSerializer,
+    DepartmentSerializer
 )
 
 from company.models import (
@@ -23,29 +25,25 @@ from company.models import (
     Team,
     Section,
     PermissionForPosition,
-    Position
+    Position,
+    Department
 )
 
 from django.contrib.auth.models import Permission, Group
-class PermissionSerializer(serializers.ModelSerializer):
+
+
+class PermissionSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Permission
         fields = "__all__"
 
-
-class GroupReadSerializer(serializers.ModelSerializer):
+class GroupSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Group
         fields = "__all__"
 
 
-class GroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = "__all__"
-
-
-class EmployeeStatusSerializer(serializers.ModelSerializer):
+class EmployeeStatusSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = EmployeeStatus
         fields = "__all__"
@@ -56,7 +54,7 @@ class EmployeeStatusSerializer(serializers.ModelSerializer):
         return super(EmployeeStatusSerializer, self).create(validated_data)
 
 
-class RegionSerializer(serializers.ModelSerializer):
+class RegionSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Region
         fields = "__all__"
@@ -80,13 +78,12 @@ class ResetPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
-
+class RegisterSerializer(DynamicFieldsCategorySerializer):
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    contract_type = serializers.CharField(required=True)
+    salary_style = serializers.CharField(required=True)
+    photo_ID = serializers.ImageField(required=True)
     phone_number_1 = serializers.CharField(required=True)
-
     start_date_of_work = serializers.DateField(format="%d-%m-%Y", required=False, allow_null=True)
 
     class Meta:
@@ -117,135 +114,26 @@ class RegisterSerializer(serializers.ModelSerializer):
             'supervisor', 
             'note', 
             'password', 
-            'password2',
         )
 
-    def validate(self, data):
-        """
-        Check that the start is before the stop.
-        """
-        if data['password'] != data['password2']:
-            raise serializers.ValidationError(
-                {"password": "Password fields didn't match."})
-        if data['phone_number_1'] == None:
-            raise serializers.ValidationError(
-                {"phone_number_1": "Ən az 1 telefon nömrəsi daxil edin"})
-        return data
 
-    def create(self, validated_data):
-        last_user_id = User.objects.all().values_list('id', flat=True).last()
-        username=f"user-{last_user_id+1}"
-        user = User.objects.create(
-            username=username,
-            fullname=validated_data['fullname'], 
-            phone_number_1=validated_data['phone_number_1'],
-            photo_ID=validated_data['photo_ID'],
-            salary_style=validated_data['salary_style'],
-            contract_type=validated_data['contract_type'],
-        )
-        user.set_password(validated_data['password'])
-        
+class UserSerializer(DynamicFieldsCategorySerializer):
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
+    department = DepartmentSerializer(read_only=True, fields=['id', 'name'])
+    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
+    section = SectionSerializer(read_only=True, fields=['id', 'name'])
+    position = PositionSerializer(read_only=True, fields=['id', 'name'])
+    team = TeamSerializer(read_only=True, fields=['id', 'name'])
+    employee_status = EmployeeStatusSerializer(read_only=True, fields=['id', 'status_name'])
+    user_permissions = PermissionSerializer(read_only=True, many=True, fields=['id', 'name'])
+    groups = GroupSerializer(read_only=True, many=True, fields=['id', 'name'])
+    dismissal_date = serializers.DateField(read_only=True)
 
-        try:
-            user.back_photo_of_ID = validated_data['back_photo_of_ID']
-        except:
-            user.back_photo_of_ID = None
-        try:
-            user.profile_image = validated_data['profile_image']
-        except:
-            user.profile_image = None
-
-        try:
-            user.driving_license_photo = validated_data['driving_license_photo']
-        except:
-            user.driving_license_photo = None
-
-        try:
-            user.start_date_of_work = validated_data['start_date_of_work']
-        except:
-            user.start_date_of_work = django.utils.timezone.now()
-        
-        try:
-            user.dismissal_date = validated_data['dismissal_date']
-        except:
-            user.dismissal_date = None
-        try:
-            user.salary = validated_data['salary']
-        except:
-            user.salary = 0
-
-        try:
-            user.department = validated_data['department']
-        except:
-            user.department = None
-        
-        try:
-            user.company=validated_data['company']
-        except:
-            user.company = None
-        
-        try:
-            user.office=validated_data['office']
-        except:
-            user.office = None
-
-        try:
-            user.section = validated_data['section']
-        except:
-            user.section = None
-        try:
-            user.position=validated_data['position']
-            permission_for_positions = PermissionForPosition.objects.filter(position=user.position)
-            if permission_for_positions is not None:
-                for vp in permission_for_positions:
-                    permission_group = vp.permission_group
-                    user.groups.add(permission_group)
-        except:
-            user.position = None
-            
-        try:
-            user.phone_number_2 = validated_data['phone_number_2']
-        except:
-            user.phone_number_2 = None
-
-        try:
-            user.team = validated_data['team']
-        except:
-            user.team = None
-        
-        try:
-            user.employee_status=validated_data['employee_status']
-        except:
-            user.employee_status = None
-        try:
-            user.supervisor=validated_data['supervisor']
-        except:
-            user.supervisor = None
-
-        try:
-            user.note=validated_data['note']
-        except:
-            user.note = None
-
-        user_permissions = validated_data['user_permissions']
-        for user_permission in user_permissions:
-            user.user_permissions.add(user_permission)
-
-        # permission_for_positions = get_object_or_404(PermissionForPosition, )
-        groups = validated_data['groups']
-        for group in groups:
-            user.groups.add(group)
-
-        user.save()
-        return user
-
-
-class UserSerializer(serializers.ModelSerializer):
-    company = CompanySerializer(read_only=True)
-    office = OfficeSerializer(read_only=True)
-    section = SectionSerializer(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.select_related('holding').all(), source='company', write_only=True,
+    )
+    department_id = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.select_related('holding').all(), source='department', write_only=True
     )
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.select_related('company').all(), source='office', write_only=True
@@ -255,27 +143,25 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True, required=False, allow_null=True
     )
 
-    position = PositionSerializer(read_only=True)
     position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.select_related('section', 'company').all(), source='position', write_only=True,
+        queryset=Position.objects.select_related('company').all(), source='position', write_only=True,
     )
 
-    team = TeamSerializer(read_only=True)
     team_id = serializers.PrimaryKeyRelatedField(
         queryset=Team.objects.all(), source='team', write_only=True,
     )
 
-    employee_status = EmployeeStatusSerializer(read_only=True)
     employee_status_id = serializers.PrimaryKeyRelatedField(
         queryset=EmployeeStatus.objects.all(), source='employee_status', write_only=True,
     )
 
-    user_permissions = PermissionSerializer(read_only=True, many=True)
     user_permissions_id = serializers.PrimaryKeyRelatedField(
         queryset=Permission.objects.all(), source='user_permissions', write_only=True, many=True
     )
 
-    dismissal_date = serializers.DateField(read_only=True)
+    groups_id = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), source='groups', write_only=True, many=True
+    )
 
     class Meta:
         model = User
@@ -292,7 +178,7 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class CustomerSerializer(serializers.ModelSerializer):
+class CustomerSerializer(DynamicFieldsCategorySerializer):
     region = RegionSerializer(read_only=True)
     region_id = serializers.PrimaryKeyRelatedField(
         queryset=Region.objects.all(), source="region", write_only=True
@@ -303,7 +189,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CustomerNoteSerializer(serializers.ModelSerializer):
+class CustomerNoteSerializer(DynamicFieldsCategorySerializer):
     customer = CustomerSerializer(read_only=True)
 
     customer_id = serializers.PrimaryKeyRelatedField(

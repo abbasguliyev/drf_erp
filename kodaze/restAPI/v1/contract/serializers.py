@@ -4,6 +4,7 @@ from restAPI.v1.company.serializers import OfficeSerializer, CompanySerializer, 
 
 from restAPI.v1.account.serializers import CustomerSerializer, UserSerializer
 from restAPI.v1.product.serializers import ProductSerializer
+from restAPI.core import DynamicFieldsCategorySerializer
 
 from contract.models import (
     ContractGift, 
@@ -33,12 +34,12 @@ from company.models import (
     Section,
 )
         
-class ServiceContractSerializer(serializers.ModelSerializer):
+class ServiceContractSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Service
         fields = ['id', 'is_done']
 
-class ContractSerializer(serializers.ModelSerializer):
+class ContractSerializer(DynamicFieldsCategorySerializer):
     group_leader = UserSerializer(read_only=True)
     manager1 = UserSerializer(read_only=True)
     manager2 = UserSerializer(read_only=True)
@@ -129,7 +130,7 @@ class ContractSerializer(serializers.ModelSerializer):
             'debt_finished'
         )
 
-class ContractGiftSerializer(serializers.ModelSerializer):
+class ContractGiftSerializer(DynamicFieldsCategorySerializer):
     product = ProductSerializer(read_only=True, many=True)
     contract = ContractSerializer(read_only=True)
 
@@ -155,7 +156,7 @@ class ContractGiftSerializer(serializers.ModelSerializer):
         read_only_fields = ('gift_date',)
 
 
-class InstallmentSerializer(serializers.ModelSerializer):
+class InstallmentSerializer(DynamicFieldsCategorySerializer):
     contract = ContractSerializer(read_only=True)
     contract_id = serializers.PrimaryKeyRelatedField(
         queryset=Contract.objects.all(), source='contract', write_only=True
@@ -175,12 +176,12 @@ class InstallmentSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ('last_month', 'month_no')
 
-class ContractChangeSerializer(serializers.ModelSerializer):
+class ContractChangeSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = ContractChange
         fields = "__all__"
 
-class DemoSalesSerializer(serializers.ModelSerializer):
+class DemoSalesSerializer(DynamicFieldsCategorySerializer):
     user = UserSerializer(read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='user', write_only=True, required=False, allow_null=True
@@ -193,7 +194,7 @@ class DemoSalesSerializer(serializers.ModelSerializer):
         read_only_fields = ('sale_count',)
 
 
-class ContractCreditorSerializer(serializers.ModelSerializer):
+class ContractCreditorSerializer(DynamicFieldsCategorySerializer):
     contract = serializers.StringRelatedField(read_only=True)
     contract_id = serializers.PrimaryKeyRelatedField(
         queryset=Contract.objects.all(), source='contract', write_only=True
