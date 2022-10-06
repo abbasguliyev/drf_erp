@@ -1,10 +1,9 @@
 ############
-User Docs
+User Model
 ############
 
-
-```
-print("hello world")
+```{note}
+User Model
 ```
 
 - username

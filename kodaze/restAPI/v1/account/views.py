@@ -166,7 +166,7 @@ class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
 
 class RegisterApi(generics.CreateAPIView):
     queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
             ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = RegisterSerializer
 
@@ -186,7 +186,7 @@ class RegisterApi(generics.CreateAPIView):
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
             ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]

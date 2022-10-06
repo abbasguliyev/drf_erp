@@ -11,7 +11,7 @@ Welcome to Kodaze CRM's documentation!
    :caption: Contents:
 
    modules/all-about-me.rst
-   modules/users.rst
+   modules/users/user-model.rst
 
 
 Indices and tables
