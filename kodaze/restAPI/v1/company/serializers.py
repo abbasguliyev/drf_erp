@@ -30,7 +30,7 @@ class PositionUserSerializer(DynamicFieldsCategorySerializer):
 
 class UserOperationSerializer(DynamicFieldsCategorySerializer):
     """
-    Bu Seriazlier Kassa Operationlarinda User-in(transferi eden employeesnin) melumatlarini gostermek ucun istifade olur
+    Bu Seriazlier Kassa Əməliyyatlarında User-in(transferi eden işçinin) melumatlarini gostermek ucun istifade olur
     """
     position = PositionUserSerializer(read_only=True, many=True)
 
@@ -112,9 +112,9 @@ class DepartmentSerializer(DynamicFieldsCategorySerializer):
 
 
 class OfficeSerializer(DynamicFieldsCategorySerializer):
-    company = CompanySerializer(read_only=True)
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), source='company', write_only=True
+        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True
     )
 
     class Meta:
@@ -146,9 +146,9 @@ class OfficeSerializer(DynamicFieldsCategorySerializer):
 
 
 class SectionSerializer(DynamicFieldsCategorySerializer):
-    office = OfficeSerializer(read_only=True)
+    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
     office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.all(), source='office', write_only=True
+        queryset=Office.objects.select_related('company').all(), source='office', write_only=True
     )
 
     class Meta:

@@ -1,7 +1,9 @@
+alabaster==0.7.12
 amqp==5.1.1
 asgiref==3.5.2
 asposestorage==1.0.2
 autopep8==1.6.0
+Babel==2.10.3
 billiard==3.6.4.0
 celery==5.2.3
 certifi==2022.6.15
@@ -25,11 +27,13 @@ django-filter==21.1
 django-ninja==0.19.1
 django-redis==5.2.0
 django-rest-swagger==2.2.0
+django-sphinx-view==22.1a6
 django-timezone-field==5.0
 django-traceback==2020.12.3
 djangorestframework==3.13.1
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==5.1.0
+docutils==0.19
 drf-yasg==1.21.3
 flower==1.0.0
 gevent==21.12.0
@@ -37,6 +41,7 @@ greenlet==1.1.2
 gunicorn==20.1.0
 humanize==4.2.3
 idna==3.3
+imagesize==1.4.1
 inflection==0.5.1
 itypes==1.2.0
 Jinja2==3.1.2
@@ -52,6 +57,7 @@ prompt-toolkit==3.0.30
 psycopg2-binary==2.9.3
 pycodestyle==2.8.0
 pydantic==1.10.2
+Pygments==2.13.0
 PyJWT==1.7.1
 pyparsing==3.0.9
 PyPDF2==1.28.3
@@ -67,6 +73,14 @@ ruamel.yaml==0.17.21
 ruamel.yaml.clib==0.2.6
 simplejson==3.17.6
 six==1.16.0
+snowballstemmer==2.2.0
+Sphinx==5.2.3
+sphinxcontrib-applehelp==1.0.2
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-htmlhelp==2.0.0
+sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.5
 sqlparse==0.4.2
 toml==0.10.2
 tornado==6.2

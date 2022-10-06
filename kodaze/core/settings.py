@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'dbbackup',
     "corsheaders",
     "debug_toolbar",
+    "sphinx_view",
 
     # apps
     'account.apps.AccountConfig',
@@ -155,7 +156,7 @@ AUTH_USER_MODEL = 'account.User'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -277,10 +278,14 @@ if __PRODUCTION__:
     STATIC_ROOT = '/static/'
 else:
     STATIC_ROOT = 'kodaze/static/'
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR)
+
+DOCS_URL = '/docs/'
+DOCS_ROOT = os.path.join(BASE_DIR, 'docs', '_build')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

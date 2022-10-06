@@ -173,7 +173,12 @@ class RegisterApi(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if(serializer.is_valid()):
-            serializer.save()
+            last_user_id = User.objects.all().values_list('id', flat=True).last()
+            try:
+                username = f"user-{last_user_id+1}"
+            except:
+                username = f"user-1"
+            serializer.save(username=username)
             return Response({"detail": "İşçi qeydiyyatdan keçirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": f"{serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST)
