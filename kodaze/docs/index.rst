@@ -10,8 +10,9 @@ Welcome to Kodaze CRM's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules/all-about-me.rst
-   modules/users/user-model.rst
+   modules/all-about-project.rst
+   modules/account/user.rst
+   modules/account/customer.rst
 
 
 Indices and tables

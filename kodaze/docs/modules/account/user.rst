@@ -229,6 +229,7 @@ Update Users
     "salary": null,
     "supervisor": null,
     "note": "",
+    "is_active": "",
   }
 
 +--------------+

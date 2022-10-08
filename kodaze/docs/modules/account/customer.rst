@@ -1,104 +1,59 @@
-############
-User Model
-############
+##################
+Customer (Müştəri)
+##################
 
-- username
-    - create prosesinde gonderilmir
-    - backend-de avtomatik user-{last_user_id+1} formasinda create olunur. 
-    - (Istifadəçi adı - String)
-- fullname 
-    - required. 
-    - Mutleq gonderilmelidir, ad soyad ata adi. 
-    - (Adı Soyadı Ata adı - String)
-- start_date_of_work 
-    - nullable. 
-    - Null gonderilerse avtomatik bu gunki tarixi verir. 
-    - (İşə başlama tarixi - Date)
-- dismissal_date 
-    - nullable. 
-    - Isci deaktiv edildikde avtomatik deaktiv edildiyi tarix dusur. 
-    - (İşdən ayrılma tarixi - Date)
-- phone_number_1 
-    - required.  
-    - (Telefon1 - String)
-- phone_number_2 
+- "region_id"
+    - required 
+    - (şəhər - Region id)
+- "fullname"
+    - required (
+    - Ad Soyadı Ata adı - String)
+- "email"
     - nullable 
-    - (Telefon2 - String)
-- photo_ID 
-    - required, 
-    - mutleq gonderilmelidir 
-    - (Şəxsiyyət vəsiqəsi - File)
-- back_photo_of_ID 
-    - nullable    
-    - (Şəxsiyyət vəsiqəsi 2- File)
-- driving_license_photo 
-    - nullable 
-    - (Sürücülük vəsiqəsi - File)
-- company
-    - nullable 
-    - (Şirkət - Company id)
-- department 
-    - nullable 
-    - (Departament - Department id)
-- office
-    - nullable 
-    - (Ofis - Office id)
-- section 
-    - nullable
-    - (Şöbə - Section id) 
-    - Dizaynda yığışdırılıb(Göndərilmir)
-- position 
-    - nullable 
-    - (Vəzifə - Position id)
-- team
-    - nullable 
-    - (Team - Team id) 
-    - Dizaynda yığışdırılıb(Göndərilmir)
-- employee_status 
-    - nullable 
-    - (İşçi statusu - Section id) 
-    - Dizaynda yığışdırılıb(Göndərilmir)
-- user_permissions 
-    - nullable 
-    - (İcazə - Permission id) 
-    - Create zamanı lazım deyil, Update zamanı istifadə edilir
-- groups
-    - nullable 
-    - (İcazə Qrupu - Group id) 
-    - Create zamanı lazım deyil, Update zamanı istifadə edilir
-- profile_image 
+    - (email - email field-string kimidir sadəcə @ işarəsi mütləq olmalıdır)
+- "profile_image"
     - nullable 
     - (Profil şəkli - File)
-- contract_type 
+- "photo_ID"
+    - nullable 
+    - (Şəxsiyyət vəsiqəsi ön hissə - File)
+- "back_photo_of_ID"
+    - nullable 
+    - (Şəxsiyyət vəsiqəsi arxa hissə - File)
+- "phone_number_1"
     - required 
-    - (Müqavilə növü - Enum[String]("xidməti müqavilə", "əmək müqaviləsi"))
-- salary_style
+    - (Telefon nömrəsi 1 - String)
+- "phone_number_2"
+    - nullable 
+    - (Telefon nömrəsi 1 - String)
+- "phone_number_3"
+    - nullable 
+    - (Telefon nömrəsi 1 - String)
+- "phone_number_4"
+    - nullable 
+    - (Telefon nömrəsi 1 - String)
+- "address"
     - required 
-    - (Ə/H ödəmə üslubu - Enum[String]("aylıq", "günlük", "həftəlik", "fix"))
-- salary
+    - (ünvan - String)
+- "note"
     - nullable 
-    - (Ə/H - Float)
-- supervizor 
-    - nullable 
-    - (Supervizor - User id)
-- note 
-    - nullable 
-    - (Qeyd - String)
-- password 
-    - required
+    - (qeyd - Textarea)
+- "is_active"
+    - Boolean. 
+    - Create zamanı göndərilmir, default olaraq True olur. Update zamanı isə dəyişilə bilinir
+
+
 
 =====
 
-+-----+
-|Login|
-+-----+
++-----------------+
+|Get all customers|
++-----------------+
 
-Login
+Get all customers
 -----
 
-- login endpoint : "http://localhost:8000/api/v1/users/login/"
-
-- Authorization type : Bearer
+- endpoint : "http://localhost:8000/api/v1/users/customers/"
 
 .. code:: json
 
@@ -229,6 +184,7 @@ Update Users
     "salary": null,
     "supervisor": null,
     "note": "",
+    "is_active": "",
   }
 
 +--------------+

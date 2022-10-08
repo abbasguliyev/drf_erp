@@ -216,7 +216,7 @@ class UserList(generics.ListAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
             ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = UserSerializer
     filter_backends = [DjangoFilterBackend]
@@ -250,12 +250,12 @@ class Login(TokenObtainPairView):
         acces_token = utils.jwt_decode_handler(data.get("access"))
 
         if not User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
             ).prefetch_related('user_permissions', 'groups').filter(id=acces_token.get("user_id")).last():
             return Response({"error": True, "detail": "No such a user"}, status=status.HTTP_404_NOT_FOUND)
 
         user = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status', 'tag','department'
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
             ).prefetch_related('user_permissions', 'groups').filter(id=acces_token.get("user_id")).last()
         user_logged_in.send(sender=type(user), request=request, user=user)
 

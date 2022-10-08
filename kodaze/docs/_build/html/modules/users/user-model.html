@@ -36,9 +36,6 @@
             
   <section id="user-model">
 <h1>User Model<a class="headerlink" href="#user-model" title="Permalink to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">`{note}</span>
-<span class="pre">User</span> <span class="pre">Model</span>
-<span class="pre">`</span></code></p>
 <ul class="simple">
 <li><dl class="simple">
 <dt>username</dt><dd><ul>
@@ -250,6 +247,195 @@
 </dl>
 </li>
 </ul>
+<hr class="docutils" />
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Login</p></td>
+</tr>
+</tbody>
+</table>
+<section id="login">
+<h2>Login<a class="headerlink" href="#login" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>login endpoint : “<a class="reference external" href="http://localhost:8000/api/v1/users/login/">http://localhost:8000/api/v1/users/login/</a>”</p></li>
+<li><p>Authorization type : Bearer</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;admin&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;admin123&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Token Refresh</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="token-refresh">
+<h2>Token Refresh<a class="headerlink" href="#token-refresh" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint : <a class="reference external" href="http://127.0.0.1:8000/api/v1/users/token-refresh/">http://127.0.0.1:8000/api/v1/users/token-refresh/</a></p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;refresh&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;refresh token bura qeyd edilir. Refresh token login zamani elde edilir&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Change Login User Password</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="change-login-user-password">
+<h2>Change Login User Password<a class="headerlink" href="#change-login-user-password" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint : <a class="reference external" href="http://127.0.0.1:8000/api/v1/users/change-password/">http://127.0.0.1:8000/api/v1/users/change-password/</a></p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;old_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;new_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Changing the user’s password by the admin according to the username</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="changing-the-user-s-password-by-the-admin-according-to-the-username">
+<h2>Changing the user’s password by the admin according to the username<a class="headerlink" href="#changing-the-user-s-password-by-the-admin-according-to-the-username" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint : <a class="reference external" href="http://127.0.0.1:8000/api/v1/users/change-password/">http://127.0.0.1:8000/api/v1/users/change-password/</a></p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abbasguliyev&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;new_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;admin-123&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>User Registration</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="user-registration">
+<h2>User Registration<a class="headerlink" href="#user-registration" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>register endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/register/">http://localhost:8000/api/v1/users/register/</a>”</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;fullname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;start_date_of_work&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;dismissal_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;phone_number_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;phone_number_2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;photo_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;back_photo_of_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;driving_license_photo&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;company&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;office&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;section&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;employee_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;user_permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;groups&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;profile_image&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;contract_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;salary_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;salary&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;supervisor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Update Users</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="update-users">
+<h2>Update Users<a class="headerlink" href="#update-users" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/1/">http://localhost:8000/api/v1/users/1/</a>”</p></li>
+<li><p>put sorğusu patch kimi işləyir. Fieldlər tək tək və ya toplu şəkildə update edilə bilinir</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;fullname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;start_date_of_work&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;dismissal_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;phone_number_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;phone_number_2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;photo_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;back_photo_of_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;driving_license_photo&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;company&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;office&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;section&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;employee_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;user_permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;groups&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;profile_image&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;contract_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;salary_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;salary&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;supervisor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Get All Users</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="get-all-users">
+<h2>Get All Users<a class="headerlink" href="#get-all-users" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/">http://localhost:8000/api/v1/users/</a>”</p></li>
+</ul>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Get User By ID</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="get-user-by-id">
+<h2>Get User By ID<a class="headerlink" href="#get-user-by-id" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/1/">http://localhost:8000/api/v1/users/1/</a>”</p></li>
+</ul>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Deactivate User</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deactivate-user">
+<h2>Deactivate User<a class="headerlink" href="#deactivate-user" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/1/">http://localhost:8000/api/v1/users/1/</a>”</p></li>
+<li><p>User-i deaktiv etmək üçün bu endpoint-ə delete sorğusu göndərilir. Delete sorğusu datanı  database-dən silmir. Sadəcə is_active fieldini False edir.</p></li>
+</ul>
+</section>
 </section>
 
 
@@ -272,7 +458,18 @@
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../all-about-me.html">All about me</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">User Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#login">Login</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#token-refresh">Token Refresh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#change-login-user-password">Change Login User Password</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changing-the-user-s-password-by-the-admin-according-to-the-username">Changing the user’s password by the admin according to the username</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#user-registration">User Registration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#update-users">Update Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-all-users">Get All Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-user-by-id">Get User By ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deactivate-user">Deactivate User</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
