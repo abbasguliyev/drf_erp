@@ -11,6 +11,6 @@ def manage_task_manager():
     for task in tasks:
         d1 = datetime.date(task.end_date.year, task.end_date.month, task.end_date.day)
         d2 = datetime.date.today()
-        if d1 >= d2:
+        if d1 <= d2:
             task.status = "Gecikir"
             task.save()
