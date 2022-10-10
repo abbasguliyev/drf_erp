@@ -31,6 +31,9 @@ urlpatterns = [
     path('customers/', account_views.CustomerListCreateAPIView.as_view()),
     path('customers/<int:pk>/', account_views.CustomerDetailAPIView.as_view()),
 
+    path('customer-notes/', account_views.CustomerNoteListCreateAPIView.as_view()),
+    path('customer-notes/<int:pk>/', account_views.CustomerNoteDetailAPIView.as_view()),
+
     path('all-region-create/', account_views.AllRegionCreate.as_view()),
     path('region/', account_views.RegionListCreateAPIView.as_view()),
     path('region/<int:pk>/', account_views.RegionDetailAPIView.as_view()),

@@ -1,10 +1,8 @@
 from django.conf import settings
 from django.urls import include, path
 
-from restAPI.v1.cashbox import views as cashbox_views
 from restAPI.v1.holiday import views as holiday_views
 from restAPI.v1.salary import views as salary_views
-from restAPI.v1.services import views as services_views
 from restAPI.v1.transfer import views as transfer_views
 from restAPI.v1.warehouse import views as warehouse_views
 from restAPI.v1.product import views as product_views
@@ -41,6 +39,9 @@ urlpatterns = [
 
     # salary views *****************************************
     path('salaries/', include("restAPI.v1.salary.urls")),
+
+    # cashbox views *****************************************
+    path('cashbox/', include("restAPI.v1.cashbox.urls")),
 
 
     # working_day views *****************************************
@@ -98,26 +99,6 @@ urlpatterns = [
     path('employee-gelib-getme-vaxtlari/<int:pk>',
          holiday_views.EmployeeArrivalAndDepartureTimesDetailAPIView.as_view()),
 
-    # cashbox views *****************************************
-    path('pul-axini/', cashbox_views.CashFlowListAPIView.as_view(), name="pul_axini"),
-    path('pul-axini/<int:pk>', cashbox_views.CashFlowDetailAPIView.as_view(),
-         name="pul_axini_detail"),
-
-    path('holding-kassa/', cashbox_views.HoldingCashboxListCreateAPIView.as_view(),
-         name="cashbox"),
-    path('holding-kassa/<int:pk>', cashbox_views.HoldingCashboxDetailAPIView.as_view(),
-         name="cashbox_detail"),
-
-    path('company-kassa/', cashbox_views.CompanyCashboxListCreateAPIView.as_view(),
-         name="cashbox"),
-    path('company-kassa/<int:pk>', cashbox_views.CompanyCashboxDetailAPIView.as_view(),
-         name="cashbox_detail"),
-
-    path('office-kassa/', cashbox_views.OfficeCashboxListCreateAPIView.as_view(),
-         name="cashbox"),
-    path('office-kassa/<int:pk>', cashbox_views.OfficeCashboxDetailAPIView.as_view(),
-         name="cashbox_detail"),
-
     # transfer_views ***************************************
     path('company-holding-transfer/', transfer_views.TransferFromCompanyToHoldingListCreateAPIView.as_view(),
          name="company_holding_transfer"),
@@ -171,12 +152,7 @@ urlpatterns = [
          name="cashbox_expense_detail"),
 
     # services_views *****************************************
-    path('service/', services_views.ServiceListCreateAPIView.as_view(), name="service"),
-    path('service/<int:pk>', services_views.ServiceDetailAPIView.as_view(),
-         name="service_detail"),
-
-    path('service-odeme/', services_views.ServicePaymentListCreateAPIView.as_view()),
-    path('service-odeme/<int:pk>', services_views.ServicePaymentDetailAPIView.as_view()),
+    
 
     # statistika views *****************************************
     path('statistika/sale-quantityi', statistika.SalaryViewStatistikaAPIView.as_view(),

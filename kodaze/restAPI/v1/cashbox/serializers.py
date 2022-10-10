@@ -17,7 +17,7 @@ from cashbox.models import (
 from restAPI.v1.company.serializers import HoldingSerializer, OfficeSerializer, CompanySerializer
 
 class HoldingCashboxSerializer(DynamicFieldsCategorySerializer):
-    holding = HoldingSerializer(read_only=True)
+    holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True
     )
@@ -28,7 +28,7 @@ class HoldingCashboxSerializer(DynamicFieldsCategorySerializer):
 
 
 class CompanyCashboxSerializer(DynamicFieldsCategorySerializer):
-    company = CompanySerializer(read_only=True)
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
     )
@@ -39,7 +39,7 @@ class CompanyCashboxSerializer(DynamicFieldsCategorySerializer):
 
 
 class OfficeCashboxSerializer(DynamicFieldsCategorySerializer):
-    office = OfficeSerializer(read_only=True)
+    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.all(), source='office', write_only=True
     )
@@ -50,25 +50,10 @@ class OfficeCashboxSerializer(DynamicFieldsCategorySerializer):
 
 
 class CashFlowSerializer(DynamicFieldsCategorySerializer):
-    holding = HoldingSerializer(read_only=True)
-    holding_id = serializers.PrimaryKeyRelatedField(
-        queryset=Holding.objects.all(), source='holding', write_only=True, required=False, allow_null=True
-    )
-
-    company = CompanySerializer(read_only=True)
-    company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), source='company', write_only=True, required=False, allow_null=True
-    )
-
-    office = OfficeSerializer(read_only=True)
-    office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.all(), source='office', write_only=True, required=False, allow_null=True
-    )
-
+    holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
+    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
     executor = serializers.StringRelatedField()
-    executor_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
-    )
     
     class Meta:
         model = CashFlow

@@ -2,11 +2,11 @@ from rest_framework import status, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balance_hesabla, 
-    pul_axini_create, 
-    office_balance_hesabla, 
-    company_balance_hesabla, 
-    holding_balance_hesabla
+    calculate_holding_total_balance, 
+    cashflow_create, 
+    calculate_office_balance, 
+    calculate_company_balance, 
+    calculate_holding_balance
 )
 from rest_framework.response import Response
 
@@ -49,14 +49,14 @@ class HoldingCashboxListCreateAPIView(generics.ListCreateAPIView):
             holding = serializer.validated_data.get("holding")
             balance = serializer.validated_data.get("balance")
 
-            initial_balance = holding_umumi_balance_hesabla()
-            holding_initial_balance = holding_balance_hesabla()
+            initial_balance = calculate_holding_total_balance()
+            holding_initial_balance = calculate_holding_balance()
 
             serializer.save()
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            holding_subsequent_balance = holding_balance_hesabla()
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            holding_subsequent_balance = calculate_holding_balance()
+            cashflow_create(
                 holding=holding,
                 description=f"{holding.name} holdinq kassasına {float(balance)} AZN əlavə edildi",
                 initial_balance=initial_balance,
@@ -75,8 +75,6 @@ class HoldingCashboxListCreateAPIView(generics.ListCreateAPIView):
 class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = HoldingCashbox.objects.all()
     serializer_class = HoldingCashboxSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = HoldingCashboxFilter
     permission_classes = [company_permissions.HoldingCashboxPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -86,16 +84,16 @@ class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
         if serializer.is_valid():
             holding = instance.holding
 
-            initial_balance = holding_umumi_balance_hesabla()
-            holding_initial_balance = holding_balance_hesabla()
+            initial_balance = calculate_holding_total_balance()
+            holding_initial_balance = calculate_holding_balance()
 
             balance = serializer.validated_data.get("balance")
 
             serializer.save()
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            holding_subsequent_balance = holding_balance_hesabla()
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            holding_subsequent_balance = calculate_holding_balance()
+            cashflow_create(
                 holding=holding,
                 description=f"{holding.name} holdinq kassasına {float(balance)} AZN əlavə edildi",
                 initial_balance=initial_balance,
@@ -114,7 +112,7 @@ class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 # **********************************
 
 class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
-    queryset = CompanyCashbox.objects.all()
+    queryset = CompanyCashbox.objects.select_related('company').all()
     serializer_class = CompanyCashboxSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CompanyCashboxFilter
@@ -122,11 +120,11 @@ class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = CompanyCashbox.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
-            queryset = CompanyCashbox.objects.filter(company=request.user.company)
+            queryset = self.queryset.filter(company=request.user.company)
         else:
-            queryset = CompanyCashbox.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -144,14 +142,14 @@ class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
             company = serializer.validated_data.get("company")
             balance = serializer.validated_data.get("balance")
 
-            initial_balance = holding_umumi_balance_hesabla()
-            company_initial_balance = company_balance_hesabla(company=company)
+            initial_balance = calculate_holding_total_balance()
+            company_initial_balance = calculate_company_balance(company=company)
 
             serializer.save()
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            company_subsequent_balance = company_balance_hesabla(company=company)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            company_subsequent_balance = calculate_company_balance(company=company)
+            cashflow_create(
                 company=company,
                 description=f"{company.name} şirkət kassasına {float(balance)} AZN əlavə edildi",
                 initial_balance=initial_balance,
@@ -168,10 +166,8 @@ class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
 
 
 class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
-    queryset = CompanyCashbox.objects.all()
+    queryset = CompanyCashbox.objects.select_related('company').all()
     serializer_class = CompanyCashboxSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CompanyCashboxFilter
     permission_classes = [company_permissions.CompanyCashboxPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -182,14 +178,14 @@ class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
             company = instance.company
 
             balance = serializer.validated_data.get("balance")
-            initial_balance = holding_umumi_balance_hesabla()
-            company_initial_balance = company_balance_hesabla(company=company)
+            initial_balance = calculate_holding_total_balance()
+            company_initial_balance = calculate_company_balance(company=company)
 
             serializer.save()
             
-            subsequent_balance = holding_umumi_balance_hesabla()
-            company_subsequent_balance = company_balance_hesabla(company=company)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            company_subsequent_balance = calculate_company_balance(company=company)
+            cashflow_create(
                 company=company,
                 description=f"{company.name} şirkət kassasına {float(balance)} AZN əlavə edildi",
                 initial_balance=initial_balance,
@@ -208,7 +204,7 @@ class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 # **********************************
 
 class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfficeCashbox.objects.all()
+    queryset = OfficeCashbox.objects.select_related('office').all()
     serializer_class = OfficeCashboxSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OfficeCashboxFilter
@@ -216,13 +212,13 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = OfficeCashbox.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = OfficeCashbox.objects.filter(office__company=request.user.company, office=request.user.office)
-            queryset = OfficeCashbox.objects.filter(office__company=request.user.company)
+                queryset = self.queryset.filter(office__company=request.user.company, office=request.user.office)
+            queryset = self.queryset.filter(office__company=request.user.company)
         else:
-            queryset = OfficeCashbox.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -240,14 +236,14 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
             office = serializer.validated_data.get("office")
             balance = serializer.validated_data.get("balance")
 
-            initial_balance = holding_umumi_balance_hesabla()
-            office_initial_balance = office_balance_hesabla(office=office)
+            initial_balance = calculate_holding_total_balance()
+            office_initial_balance = calculate_office_balance(office=office)
 
             serializer.save()
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            office_subsequent_balance = office_balance_hesabla(office=office)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            office_subsequent_balance = calculate_office_balance(office=office)
+            cashflow_create(
                 office=office,
                 company=office.company,
                 description=f"{office.name} office kassasına {float(balance)} AZN əlavə edildi",
@@ -265,10 +261,8 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
 
 
 class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
-    queryset = OfficeCashbox.objects.all()
+    queryset = OfficeCashbox.objects.select_related('office').all()
     serializer_class = OfficeCashboxSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfficeCashboxFilter
     permission_classes = [company_permissions.OfficeCashboxPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -279,14 +273,14 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
             office = instance.office
             balance = serializer.validated_data.get("balance")
             
-            initial_balance = holding_umumi_balance_hesabla()
-            office_initial_balance = office_balance_hesabla(office=office)
+            initial_balance = calculate_holding_total_balance()
+            office_initial_balance = calculate_office_balance(office=office)
 
             serializer.save()
             
-            subsequent_balance = holding_umumi_balance_hesabla()
-            office_subsequent_balance = office_balance_hesabla(office=office)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            office_subsequent_balance = calculate_office_balance(office=office)
+            cashflow_create(
                 office=office,
                 company=office.company,
                 description=f"{office.name} office kassasına {float(balance)} AZN əlavə edildi",
@@ -304,7 +298,7 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 # ********************************** Pul Axini get **********************************
 
 class CashFlowListAPIView(generics.ListAPIView):
-    queryset = CashFlow.objects.all()
+    queryset = CashFlow.objects.select_related('holding', 'company', 'office', 'executor').all()
     serializer_class = CashFlowSerializer
     permission_classes = [company_permissions.CashFlowPermissions]
     filter_backends = [DjangoFilterBackend]
@@ -332,8 +326,6 @@ class CashFlowListAPIView(generics.ListAPIView):
             ])
 
 class CashFlowDetailAPIView(generics.RetrieveAPIView):
-    queryset = CashFlow.objects.all()
+    queryset = CashFlow.objects.select_related('holding', 'company', 'office', 'executor').all()
     serializer_class = CashFlowSerializer
     permission_classes = [company_permissions.CashFlowPermissions]
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CashFlowFilter

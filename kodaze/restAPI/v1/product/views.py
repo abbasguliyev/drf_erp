@@ -1,4 +1,3 @@
-import datetime
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework import generics
@@ -31,11 +30,11 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
+            queryset = self.queryset.all()
         elif request.user.company is not None:
-            queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').filter(company=request.user.company)
+            queryset = self.queryset.filter(company=request.user.company)
         else:
-            queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
+            queryset = self.queryset.all()
         
         queryset = self.filter_queryset(queryset)
 
@@ -57,8 +56,6 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.select_related('category', 'company', 'unit_of_measure').all()
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = ProductFilter
     permission_classes = [product_permissions.ProductPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -97,8 +94,6 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CategoryFilter
     permission_classes = [product_permissions.CategoryPermissions]
 
 class UnitOfMeasureListCreateAPIView(generics.ListCreateAPIView):
@@ -119,6 +114,4 @@ class UnitOfMeasureListCreateAPIView(generics.ListCreateAPIView):
 class UnitOfMeasureDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UnitOfMeasure.objects.all()
     serializer_class = UnitOfMeasureSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = UnitOfMeasureFilter
     permission_classes = [product_permissions.UnitOfMeasurePermissions]

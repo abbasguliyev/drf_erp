@@ -267,7 +267,7 @@ class Login(TokenObtainPairView):
 
 # ********************************** customer get post put delete **********************************
 class CustomerListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Customer.objects.all()
+    queryset = Customer.objects.select_related('region').all()
     serializer_class = CustomerSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CustomerFilter
@@ -283,10 +283,8 @@ class CustomerListCreateAPIView(generics.ListCreateAPIView):
 
 
 class CustomerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Customer.objects.all()
+    queryset = Customer.objects.select_related('region').all()
     serializer_class = CustomerSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CustomerFilter
     permission_classes = [account_permissions.CustomerPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -302,10 +300,10 @@ class CustomerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         customer.save()
         return Response({"detail": "Müştəri qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** customernotein put delete post get **********************************
+# ********************************** customer note put delete post get **********************************
 
 class CustomerNoteListCreateAPIView(generics.ListCreateAPIView):
-    queryset = CustomerNote.objects.all()
+    queryset = CustomerNote.objects.select_related('customer').all()
     serializer_class = CustomerNoteSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CustomerNoteFilter
@@ -320,10 +318,8 @@ class CustomerNoteListCreateAPIView(generics.ListCreateAPIView):
 
 
 class CustomerNoteDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomerNote.objects.all()
+    queryset = CustomerNote.objects.select_related('customer').all()
     serializer_class = CustomerNoteSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CustomerNoteFilter
     permission_classes = [account_permissions.CustomerNotePermissions]
 
     def update(self, request, *args, **kwargs):
@@ -420,21 +416,20 @@ class EmployeeStatusListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        status_name = serializer.validated_data.get("status_name")
-        statuslar = EmployeeStatus.objects.filter(status_name=status_name.upper())
-        if len(statuslar)>0:
-            return Response({"detail": "Eyni adlı statusu 2 dəfə əlavə etmək olmaz!"}, status=status.HTTP_400_BAD_REQUEST)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Status əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        if serializer.is_valid(raise_exception=True):
+            status_name = serializer.validated_data.get("status_name")
+            statuslar = EmployeeStatus.objects.filter(status_name=status_name.upper())
+            if len(statuslar)>0:
+                return Response({"detail": "Eyni adlı statusu 2 dəfə əlavə etmək olmaz!"}, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save(status_name=status_name.upper())
+            headers = self.get_success_headers(serializer.data)
+            return Response({"detail": "Status əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EmployeeStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeeStatus.objects.all()
     serializer_class = EmployeeStatusSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = EmployeeStatusFilter
     permission_classes = [account_permissions.EmployeeStatusPermissions]
 
     def update(self, request, *args, **kwargs):

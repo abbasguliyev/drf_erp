@@ -8,7 +8,7 @@ def create_warehouse(sender, instance, created, **kwargs):
     if created:
         office = instance
         company = office.company
-        name = f"{office.name} warehouse"
+        name = f"{office.name} anbarı"
         warehouse = Warehouse.objects.filter(name=name, office=office, company=company)
         if len(warehouse) == 0:
             Warehouse.objects.create(

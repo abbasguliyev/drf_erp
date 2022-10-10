@@ -10,9 +10,9 @@ import pandas as pd
 import django
 
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balance_hesabla, 
-    pul_axini_create, 
-    office_balance_hesabla
+    calculate_holding_total_balance, 
+    cashflow_create, 
+    calculate_office_balance
 )
 
 from restAPI.v1.contract.utils.contract_utils import (
@@ -91,15 +91,15 @@ def installment_update(self, request, *args, **kwargs):
         contract.debt_finished = True
         contract.save()
 
-        initial_balance = holding_umumi_balance_hesabla()
-        office_initial_balance = office_balance_hesabla(office=office)
+        initial_balance = calculate_holding_total_balance()
+        office_initial_balance = calculate_office_balance(office=office)
 
         note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, date - {today}, ödəniş üslubu - {payment_style}. Borcu tam bağlandı"
         c_income(cashbox, float(ay_ucun_olan_amount), group_leader, note)
 
-        subsequent_balance = holding_umumi_balance_hesabla()
-        office_subsequent_balance = office_balance_hesabla(office=office)
-        pul_axini_create(
+        subsequent_balance = calculate_holding_total_balance()
+        office_subsequent_balance = calculate_office_balance(office=office)
+        cashflow_create(
             office=office,
             company=office.company,
             description=note,
@@ -217,8 +217,8 @@ def installment_update(self, request, *args, **kwargs):
         odenmeyen_installmentler = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN", conditional_payment_status=None)
         odemek_istediyi_amount = float(request.data.get("price"))
         
-        initial_balance = holding_umumi_balance_hesabla()
-        office_initial_balance = office_balance_hesabla(office=office)
+        initial_balance = calculate_holding_total_balance()
+        office_initial_balance = calculate_office_balance(office=office)
 
         note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, date - {today}, ödəniş üslubu - {payment_style}, şərtli ödəmə - {nowki_ay.conditional_payment_status}"
         c_income(cashbox, float(odemek_istediyi_amount), group_leader, note)
@@ -227,9 +227,9 @@ def installment_update(self, request, *args, **kwargs):
         contract.remaining_debt = remaining_debt
         contract.save()
 
-        subsequent_balance = holding_umumi_balance_hesabla()
-        office_subsequent_balance = office_balance_hesabla(office=office)
-        pul_axini_create(
+        subsequent_balance = calculate_holding_total_balance()
+        office_subsequent_balance = calculate_office_balance(office=office)
+        cashflow_create(
             office=office,
             company=office.company,
             description=note,
@@ -485,8 +485,8 @@ def installment_update(self, request, *args, **kwargs):
                     contract.remaining_debt = remaining_debt
                     contract.save()
 
-                    initial_balance = holding_umumi_balance_hesabla()
-                    office_initial_balance = office_balance_hesabla(office=office)
+                    initial_balance = calculate_holding_total_balance()
+                    office_initial_balance = calculate_office_balance(office=office)
                     
                     note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, date - {today}, ödəniş üslubu - {payment_style}. installment ödəməsi"
                     c_income(cashbox, float(odemek_istediyi_amount), group_leader, note)
@@ -494,9 +494,9 @@ def installment_update(self, request, *args, **kwargs):
                     nowki_ay.payment_status = "ÖDƏNƏN"
                     nowki_ay.save()
 
-                    subsequent_balance = holding_umumi_balance_hesabla()
-                    office_subsequent_balance = office_balance_hesabla(office=office)
-                    pul_axini_create(
+                    subsequent_balance = calculate_holding_total_balance()
+                    office_subsequent_balance = calculate_office_balance(office=office)
+                    cashflow_create(
                         office=office,
                         company=office.company,
                         description=note,
@@ -636,15 +636,15 @@ def installment_update(self, request, *args, **kwargs):
             contract.remaining_debt = remaining_debt
             contract.save()
 
-            initial_balance = holding_umumi_balance_hesabla()
-            office_initial_balance = office_balance_hesabla(office=office)
+            initial_balance = calculate_holding_total_balance()
+            office_initial_balance = calculate_office_balance(office=office)
             
             note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, date - {today}, ödəniş üslubu - {payment_style}. installment ödəməsi"
             c_income(cashbox, float(odemek_istediyi_amount), group_leader, note)
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            office_subsequent_balance = office_balance_hesabla(office=office)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            office_subsequent_balance = calculate_office_balance(office=office)
+            cashflow_create(
                 office=office,
                 company=office.company,
                 description=note,

@@ -29,9 +29,9 @@ from rest_framework.generics import get_object_or_404
 
 from restAPI.v1.contract.utils.contract_utils import c_income
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balance_hesabla, 
-    pul_axini_create,
-    office_balance_hesabla, 
+    calculate_holding_total_balance, 
+    cashflow_create,
+    calculate_office_balance, 
 )
 def create_is_auto_services_when_update_service(contract, created, kartric_novu, **kwargs):
     """
@@ -60,7 +60,7 @@ def create_is_auto_services_when_update_service(contract, created, kartric_novu,
         for c in kartric:
             stok = Stock.objects.filter(warehouse=warehouse, product=c)[0]
             if stok == None or stok.quantity == 0:
-                return Response({"detail":f"Warehouseın stokunda {c.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"detail":f"Anbarın stokunda {c.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
         
         q = 0
         while(q<instance.product_quantity):
@@ -114,11 +114,11 @@ def service_create(self, request, *args, **kwargs):
 
         if bool(installment) == True: 
             if ((int(loan_term) == 0) or (int(loan_term) == 1)):
-                return Response({"detail":"Kredit statusu note olunarsa installment müddəti 0 və ya 1 daxil edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail":"Kredit statusu qeyd olunarsa, kredit müddəti 0 və ya 1 daxil edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
         discount = serializer.validated_data.get("discount")
         if discount == None:
             discount = 0
-        service_datei = request.data.get("service_datei")
+        service_date = request.data.get("service_date")
         is_done = request.data.get("is_done")
         initial_payment = request.data.get("initial_payment")
         if initial_payment == None:
@@ -211,14 +211,14 @@ def service_update(self, request, *args, **kwargs):
                     kartric_novu = service.product.all()[0].kartric_novu
                     create_is_auto_services_when_update_service(contract=contract, created=True, kartric_novu=kartric_novu)
 
-                initial_balance = holding_umumi_balance_hesabla()
-                office_initial_balance = office_balance_hesabla(office=office)
+                initial_balance = calculate_holding_total_balance()
+                office_initial_balance = calculate_office_balance(office=office)
 
                 note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
                 c_income(cashbox, s.amount_to_be_paid, user, note)
-                subsequent_balance = holding_umumi_balance_hesabla()
-                office_subsequent_balance = office_balance_hesabla(office=office)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                office_subsequent_balance = calculate_office_balance(office=office)
+                cashflow_create(
                     office=contract.office,
                     company=office.company,
                     description=note,
@@ -276,16 +276,16 @@ def service_payment_update(self, request, *args, **kwargs):
                         kartric_novu = service_payment.service.product.all()[0].kartric_novu
                         create_is_auto_services_when_update_service(contract=contract, created=True, kartric_novu=kartric_novu)
 
-                    initial_balance = holding_umumi_balance_hesabla()
-                    office_initial_balance = office_balance_hesabla(office=contract.office)
+                    initial_balance = calculate_holding_total_balance()
+                    office_initial_balance = calculate_office_balance(office=contract.office)
                     
                     note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
                     c_income(cashbox, service_payment.amount_to_be_paid, user, note)
                     creditorun_serviceden_alacagi_amount = (float(service_payment.amount_to_be_paid) * int(prim_percent)) / 100
 
-                    subsequent_balance = holding_umumi_balance_hesabla()
-                    office_subsequent_balance = office_balance_hesabla(office=contract.office)
-                    pul_axini_create(
+                    subsequent_balance = calculate_holding_total_balance()
+                    office_subsequent_balance = calculate_office_balance(office=contract.office)
+                    cashflow_create(
                         office=contract.office,
                         company=contract.office.company,
                         description=note,

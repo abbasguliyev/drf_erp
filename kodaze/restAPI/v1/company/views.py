@@ -71,8 +71,6 @@ class TeamListCreateAPIView(generics.ListCreateAPIView):
 class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = TeamFilter
     permission_classes = [company_permissions.TeamPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -101,7 +99,7 @@ class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class DepartmentListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Department.objects.all()
+    queryset = Department.objects.select_related('holding').all()
     serializer_class = DepartmentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = DepartmentFilter
@@ -109,11 +107,11 @@ class DepartmentListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Department.objects.all()
+            queryset = self.queryset
         elif request.user.department is not None:
-                queryset = Department.objects.filter(id=request.user.department.id)
+                queryset =self.queryset.filter(id=request.user.department.id)
         else:
-            queryset = Department.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -133,9 +131,8 @@ class DepartmentListCreateAPIView(generics.ListCreateAPIView):
 
 
 class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Department.objects.all()
+    queryset = Department.objects.select_related('holding').all()
     serializer_class = DepartmentSerializer
-    filter_backends = [DjangoFilterBackend]
     permission_classes = [company_permissions.DepartmentPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -158,7 +155,7 @@ class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OfficeListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Office.objects.all()
+    queryset = Office.objects.select_related('company').all()
     serializer_class = OfficeSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OfficeFilter
@@ -166,14 +163,14 @@ class OfficeListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Office.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Office.objects.filter(
+                queryset = self.queryset.filter(
                     company=request.user.company, id=request.user.office.id)
-            queryset = Office.objects.filter(company=request.user.company)
+            queryset = self.queryset.filter(company=request.user.company)
         else:
-            queryset = Office.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -193,10 +190,8 @@ class OfficeListCreateAPIView(generics.ListCreateAPIView):
 
 
 class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Office.objects.all()
+    queryset = Office.objects.select_related('company').all()
     serializer_class = OfficeSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfficeFilter
     permission_classes = [company_permissions.OfficePermissions]
 
     def update(self, request, *args, **kwargs):
@@ -219,7 +214,7 @@ class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PositionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Position.objects.all()
+    queryset = Position.objects.select_related('company').all()
     serializer_class = PositionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = PositionFilter
@@ -227,11 +222,11 @@ class PositionListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Position.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
-            queryset = Position.objects.filter(company=request.user.company)
+            queryset = self.queryset.filter(company=request.user.company)
         else:
-            queryset = Position.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -257,10 +252,8 @@ class PositionListCreateAPIView(generics.ListCreateAPIView):
 
 
 class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Position.objects.all()
+    queryset = Position.objects.select_related('company').all()
     serializer_class = PositionSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = PositionFilter
     permission_classes = [company_permissions.PositionPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -283,7 +276,7 @@ class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CompanyListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Company.objects.all()
+    queryset = Company.objects.select_related('holding').all()
     serializer_class = CompanySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CompanyFilter
@@ -291,11 +284,11 @@ class CompanyListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Company.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
-            queryset = Company.objects.filter(id=request.user.company.id)
+            queryset = self.queryset.filter(id=request.user.company.id)
         else:
-            queryset = Company.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -315,10 +308,8 @@ class CompanyListCreateAPIView(generics.ListCreateAPIView):
 
 
 class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Company.objects.all()
+    queryset = Company.objects.select_related('holding').all()
     serializer_class = CompanySerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CompanyFilter
     permission_classes = [company_permissions.CompanyPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -341,7 +332,7 @@ class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SectionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Section.objects.all()
+    queryset = Section.objects.select_related('office').all()
     serializer_class = SectionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = SectionFilter
@@ -349,14 +340,14 @@ class SectionListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Section.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Section.objects.filter(
+                queryset = self.queryset.filter(
                     office__company=request.user.company, office=request.user.office)
-            queryset = Section.objects.filter(office__company=request.user.company)
+            queryset = self.queryset.filter(office__company=request.user.company)
         else:
-            queryset = Section.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -376,10 +367,8 @@ class SectionListCreateAPIView(generics.ListCreateAPIView):
 
 
 class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Section.objects.all()
+    queryset = Section.objects.select_related('office').all()
     serializer_class = SectionSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = SectionFilter
     permission_classes = [company_permissions.SectionPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -433,7 +422,7 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
 
 
 class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = PermissionForPosition.objects.all()
+    queryset = PermissionForPosition.objects.select_related('position', 'permission_group').all()
     serializer_class = PermissionForPositionSerializer
     permission_classes = [company_permissions.PermissionForPositionPermissions]
     filter_backends = [DjangoFilterBackend]
@@ -441,12 +430,12 @@ class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = PermissionForPosition.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
-            queryset = PermissionForPosition.objects.filter(
+            queryset = self.queryset.filter(
                 position__company=request.user.company)
         else:
-            queryset = PermissionForPosition.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -472,11 +461,11 @@ class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
             position=position,
             permission_group=permission_group
         ).save()
-        return Response({"detail": f"{position} üçün permission təyin olundu"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": f"{position.name} üçün permission təyin olundu"}, status=status.HTTP_201_CREATED)
 
 
 class PermissionForPositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = PermissionForPosition.objects.all()
+    queryset = PermissionForPosition.objects.select_related('position', 'permission_group').all()
     serializer_class = PermissionForPositionSerializer
     permission_classes = [company_permissions.PermissionForPositionPermissions]
 

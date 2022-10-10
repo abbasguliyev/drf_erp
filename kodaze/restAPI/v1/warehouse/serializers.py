@@ -28,13 +28,13 @@ from restAPI.v1.product.serializers import ProductSerializer
 from restAPI.v1.company.serializers import OfficeSerializer, CompanySerializer
 
 class WarehouseSerializer(DynamicFieldsCategorySerializer):
-    company = CompanySerializer(read_only=True)
-    office = OfficeSerializer(read_only=True)
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
+    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), source='company', write_only=True
+        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True
     )
     office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.all(), source='office', write_only=True
+        queryset=Office.objects.select_related('company').all(), source='office', write_only=True
     )
 
     class Meta:
@@ -50,15 +50,15 @@ class WarehouseSerializer(DynamicFieldsCategorySerializer):
             raise ValidationError({"detail" : 'Bu ad ilə warehouse artıq əlavə olunub'})
 
 class OperationSerializer(DynamicFieldsCategorySerializer):
-    executor = UserSerializer(read_only=True)
-    shipping_warehouse = WarehouseSerializer(read_only=True)
-    receiving_warehouse = WarehouseSerializer(read_only=True)
+    executor = UserSerializer(read_only=True, fields = ['id', 'fullname'])
+    shipping_warehouse = WarehouseSerializer(read_only=True, fields = ['id', 'name'])
+    receiving_warehouse = WarehouseSerializer(read_only=True, fields = ['id', 'name'])
 
     shipping_warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=Warehouse.objects.all(), source="shipping_warehouse", write_only=True, required= True
+        queryset=Warehouse.objects.select_related('office', 'company').all(), source="shipping_warehouse", write_only=True, required= True
     )
     receiving_warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=Warehouse.objects.all(), source="receiving_warehouse", write_only=True, required= True
+        queryset=Warehouse.objects.select_related('office', 'company').all(), source="receiving_warehouse", write_only=True, required= True
     )
 
     def to_representation(self, instance):
@@ -89,15 +89,15 @@ class OperationSerializer(DynamicFieldsCategorySerializer):
         fields = "__all__"
 
 class StockSerializer(DynamicFieldsCategorySerializer):
-    warehouse = WarehouseSerializer(read_only=True)
-    product = ProductSerializer(read_only=True)
+    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
+    product = ProductSerializer(read_only=True, fields=['id', 'product_name', 'price'])
 
     warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=Warehouse.objects.all(), source='warehouse', write_only=True
+        queryset=Warehouse.objects.select_related('office', 'company').all(), source='warehouse', write_only=True
     )
 
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(), source='product', write_only=True
+        queryset=Product.objects.select_related('company', 'category', 'unit_of_measure').all(), source='product', write_only=True
     )
     
     class Meta:
@@ -106,14 +106,16 @@ class StockSerializer(DynamicFieldsCategorySerializer):
 
 
 class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
-    warehouse = WarehouseSerializer(read_only=True)
+    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
     warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=Warehouse.objects.all(), source='warehouse', write_only=True
+        queryset=Warehouse.objects.select_related('office', 'company').all(), source='warehouse', write_only=True
     )
 
-    employee_who_sent_the_request = UserSerializer(read_only=True)
+    employee_who_sent_the_request = UserSerializer(read_only=True, fields=['id', 'fullname'])
     employee_who_sent_the_request_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='employee_who_sent_the_request', write_only=True, required=False, allow_null=True
+        queryset=User.objects.select_related(
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
+            ).prefetch_related('user_permissions', 'groups').all(), source='employee_who_sent_the_request', write_only=True, required=False, allow_null=True
     )
 
     stok = StockSerializer(read_only=True)
@@ -131,15 +133,18 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
                 product_ve_quantity = m.split("-")
                 product_id = int(product_ve_quantity[0].strip())
                 quantity = int(product_ve_quantity[1])
-                product = Product.objects.get(pk=product_id)
+                try:
+                    product = Product.objects.get(pk=product_id)
+                except:
+                    product=None
                 try:
                     stok = Stock.objects.filter(product=product, warehouse=instance.warehouse)[0]
                     stok_data['id'] = stok.id
                     stok_data['product_id'] = stok.product.id
                     stok_data['product'] = stok.product.product_name
                     stok_data['price'] = stok.product.price
-                    stok_data['quantity'] = stok.quantity
-                    stok_data['quantityi'] = quantity
+                    stok_data['stock_quantity'] = stok.quantity
+                    stok_data['needed_quantity'] = quantity
                     stok_list.append(stok_data)
                 except:
                     stok_list.append(stok_data)

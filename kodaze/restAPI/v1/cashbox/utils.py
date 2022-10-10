@@ -1,7 +1,7 @@
 import datetime
 from cashbox.models import HoldingCashbox, OfficeCashbox, CashFlow, CompanyCashbox
 
-def holding_umumi_balance_hesabla():
+def calculate_holding_total_balance():
     umumi_balance = 0
 
     cashbox = HoldingCashbox.objects.all()
@@ -22,25 +22,25 @@ def holding_umumi_balance_hesabla():
     umumi_balance = holding_balance + company_balance + office_balance
     return umumi_balance
 
-def holding_balance_hesabla():
+def calculate_holding_balance():
     holding_balance = 0
     cashbox = HoldingCashbox.objects.all()[0]
     holding_balance += float(cashbox.balance)
     return holding_balance
 
-def company_balance_hesabla(company):
+def calculate_company_balance(company):
     company_balance = 0
     cashbox = CompanyCashbox.objects.get(company=company)
     company_balance += float(cashbox.balance)
     return company_balance
 
-def office_balance_hesabla(office):
+def calculate_office_balance(office):
     office_balance = 0
     cashbox = OfficeCashbox.objects.get(office=office)
     office_balance += float(cashbox.balance)
     return office_balance
 
-def pul_axini_create(
+def cashflow_create(
     holding=None, 
     company=None, 
     office=None, 
@@ -62,7 +62,7 @@ def pul_axini_create(
     Pul axinlarini create eden funksiya
     """
 
-    pul_axini = CashFlow.objects.create(
+    cashflow = CashFlow.objects.create(
         holding=holding,
         company=company,
         office=office,
@@ -80,4 +80,4 @@ def pul_axini_create(
         office_subsequent_balance=office_subsequent_balance,
         quantity=quantity
     )
-    return pul_axini.save()
+    return cashflow.save()

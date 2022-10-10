@@ -202,7 +202,7 @@ class TeamSerializer(DynamicFieldsCategorySerializer):
 
 
 class PositionSerializer(DynamicFieldsCategorySerializer):
-    company = CompanySerializer(read_only=True)
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
     )
@@ -225,7 +225,7 @@ class PositionSerializer(DynamicFieldsCategorySerializer):
 
 
 class PermissionForPositionSerializer(DynamicFieldsCategorySerializer):
-    position = PositionSerializer(read_only=True)
+    position = PositionSerializer(read_only=True, fields=['id', 'name'])
     position_id = serializers.PrimaryKeyRelatedField(
         queryset=Position.objects.all(), source='position', write_only=True
     )

@@ -19,11 +19,11 @@ from rest_framework.response import Response
 import datetime
 
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balance_hesabla, 
-    pul_axini_create, 
-    office_balance_hesabla, 
-    company_balance_hesabla, 
-    holding_balance_hesabla
+    calculate_holding_total_balance, 
+    cashflow_create, 
+    calculate_office_balance, 
+    calculate_company_balance, 
+    calculate_holding_balance
 )
 def salary_ode_create(self, request, *args, **kwargs):
     """
@@ -60,10 +60,10 @@ def salary_ode_create(self, request, *args, **kwargs):
             company = employee.company
             holding = Holding.objects.all()[0]
 
-            initial_balance = holding_umumi_balance_hesabla()
-            office_initial_balance = office_balance_hesabla(office=office)
-            company_initial_balance = company_balance_hesabla(company=company)
-            holding_initial_balance = holding_balance_hesabla()
+            initial_balance = calculate_holding_total_balance()
+            office_initial_balance = calculate_office_balance(office=office)
+            company_initial_balance = calculate_company_balance(company=company)
+            holding_initial_balance = calculate_holding_balance()
 
             note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN maaş ödəndi"
 
@@ -82,9 +82,9 @@ def salary_ode_create(self, request, *args, **kwargs):
                 )
                 cashbox_expense.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                office_subsequent_balance = office_balance_hesabla(office=office)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                office_subsequent_balance = calculate_office_balance(office=office)
+                cashflow_create(
                     office=office,
                     company= office.company,
                     description=note,
@@ -111,9 +111,9 @@ def salary_ode_create(self, request, *args, **kwargs):
                 )
                 cashbox_expense.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                company_subsequent_balance = company_balance_hesabla(company=company)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                company_subsequent_balance = calculate_company_balance(company=company)
+                cashflow_create(
                     company=company,
                     description=note,
                     initial_balance=initial_balance,
@@ -140,9 +140,9 @@ def salary_ode_create(self, request, *args, **kwargs):
                 )
                 cashbox_expense.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                holding_subsequent_balance = holding_balance_hesabla()
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                holding_subsequent_balance = calculate_holding_balance()
+                cashflow_create(
                     holding=holding,
                     description=note,
                     initial_balance=initial_balance,
@@ -342,7 +342,7 @@ def advancepayment_create(self, request, *args, **kwargs):
 
             advancepaymentdan_sonra_qalan_amount = salary_goruntuleme.final_salary - float(amount)
 
-            initial_balance = holding_umumi_balance_hesabla()
+            initial_balance = calculate_holding_total_balance()
             if float(amount) > salary_goruntuleme.final_salary:
                 return Response({"detail": "Daxil etdiyiniz məbləğ işçinin yekun maaşından daha çoxdur"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -353,9 +353,9 @@ def advancepayment_create(self, request, *args, **kwargs):
             company = employee.company
             holding = Holding.objects.all()[0]
 
-            office_initial_balance = office_balance_hesabla(office=office)
-            company_initial_balance = company_balance_hesabla(company=company)
-            holding_initial_balance = holding_balance_hesabla()
+            office_initial_balance = calculate_office_balance(office=office)
+            company_initial_balance = calculate_company_balance(company=company)
+            holding_initial_balance = calculate_holding_balance()
 
             note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN advancepayment verildi"
 
@@ -374,9 +374,9 @@ def advancepayment_create(self, request, *args, **kwargs):
                 )
                 cashbox_expense.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                office_subsequent_balance = office_balance_hesabla(office=office)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                office_subsequent_balance = calculate_office_balance(office=office)
+                cashflow_create(
                     office=office,
                     company=office.company,
                     description=note,
@@ -403,9 +403,9 @@ def advancepayment_create(self, request, *args, **kwargs):
                 )
                 cashbox_expense.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                company_subsequent_balance = company_balance_hesabla(company=company)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                company_subsequent_balance = calculate_company_balance(company=company)
+                cashflow_create(
                     company=company,
                     description=note,
                     initial_balance=initial_balance,
@@ -432,9 +432,9 @@ def advancepayment_create(self, request, *args, **kwargs):
                 )
                 cashbox_expense.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                holding_subsequent_balance = holding_balance_hesabla()
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                holding_subsequent_balance = calculate_holding_balance()
+                cashflow_create(
                     holding=holding,
                     description=note,
                     initial_balance=initial_balance,

@@ -8,7 +8,7 @@ from holiday.models import EmployeeWorkingDay
 from celery import shared_task, app
 import pandas as pd
 from salary.models import Manager2Prim, SalaryView, OfficeLeaderPrim, GroupLeaderPrimNew
-
+from company.models import PermissionForPosition
 
 
 @shared_task(name='salary_view_create_task')
@@ -159,3 +159,18 @@ def create_employee_working_day_task(id):
             date=f"{next_m.year}-{next_m.month}-{1}"
         )
         employee_working_day.save()
+
+@shared_task(name='create_user_permission_for_position_task')
+def create_user_permission_for_position_task(id):
+    instance = User.objects.select_related(
+            'company', 'office', 'section', 'position', 'team', 'employee_status'
+        ).get(id=id)
+    user = instance
+    user_position = instance.position
+    positions = PermissionForPosition.objects.select_related('position', 'permission_group').filter(position=user_position)
+    perm_list = set()
+    for perm in positions:
+        perm_list.add(perm.permission_group)
+    print(f"{perm_list=}")
+    user.groups.set(perm_list)
+    user.save()

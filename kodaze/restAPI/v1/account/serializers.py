@@ -48,11 +48,6 @@ class EmployeeStatusSerializer(DynamicFieldsCategorySerializer):
         model = EmployeeStatus
         fields = "__all__"
 
-    def create(self, validated_data):
-        status_name = validated_data.get('status_name')
-        validated_data['status_name'] = status_name.upper()
-        return super(EmployeeStatusSerializer, self).create(validated_data)
-
 
 class RegionSerializer(DynamicFieldsCategorySerializer):
     class Meta:
@@ -190,10 +185,10 @@ class CustomerSerializer(DynamicFieldsCategorySerializer):
 
 
 class CustomerNoteSerializer(DynamicFieldsCategorySerializer):
-    customer = CustomerSerializer(read_only=True)
+    customer = CustomerSerializer(read_only=True, fields=['id', 'fullname'])
 
     customer_id = serializers.PrimaryKeyRelatedField(
-        queryset=Customer.objects.all(), source='customer', write_only=True
+        queryset=Customer.objects.select_related('region').all(), source='customer', write_only=True
     )
 
     class Meta:

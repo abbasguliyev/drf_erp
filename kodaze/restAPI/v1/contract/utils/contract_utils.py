@@ -40,9 +40,9 @@ from restAPI.v1.utils.magnus_contract_pdf_create import (
 )
 
 from restAPI.v1.cashbox.utils import (
-    holding_umumi_balance_hesabla, 
-    pul_axini_create, 
-    office_balance_hesabla, 
+    calculate_holding_total_balance, 
+    cashflow_create, 
+    calculate_office_balance, 
 )
 
 import django
@@ -420,8 +420,8 @@ def contract_create(self, request, *args, **kwargs):
                             reduce_product_from_stock(stok, int(product_quantity))
                             total_amount = umumi_amount(product.price, int(product_quantity))
                             
-                            initial_balance = holding_umumi_balance_hesabla()
-                            office_initial_balance = office_balance_hesabla(office=office)
+                            initial_balance = calculate_holding_total_balance()
+                            office_initial_balance = calculate_office_balance(office=office)
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {initial_payment_date}, ödəniş üslubu - {payment_style}, tam ilkin ödəniş"
                             c_income(cashbox, float(
                                 initial_payment), user, note)
@@ -431,9 +431,9 @@ def contract_create(self, request, *args, **kwargs):
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
                                             initial_payment_status="BİTMİŞ", total_amount=total_amount, remaining_debt=remaining_debt,)
-                            subsequent_balance = holding_umumi_balance_hesabla()
-                            office_subsequent_balance = office_balance_hesabla(office=office)
-                            pul_axini_create(
+                            subsequent_balance = calculate_holding_total_balance()
+                            office_subsequent_balance = calculate_office_balance(office=office)
+                            cashflow_create(
                                 office=office,
                                 company=office.company,
                                 description=f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {initial_payment_date}, ödəniş üslubu - {payment_style}, tam ilkin ödəniş",
@@ -494,8 +494,8 @@ def contract_create(self, request, *args, **kwargs):
                             total_amount = umumi_amount(
                                 product.price, int(product_quantity))
 
-                            initial_balance = holding_umumi_balance_hesabla()
-                            office_initial_balance = office_balance_hesabla(office=office)
+                            initial_balance = calculate_holding_total_balance()
+                            office_initial_balance = calculate_office_balance(office=office)
 
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {initial_payment_date}, ödəniş üslubu - {payment_style}, 2-dəfəyə ilkin ödənişin birincisi."
                             c_income(cashbox, float(
@@ -508,9 +508,9 @@ def contract_create(self, request, *args, **kwargs):
                                             initial_payment_debt=initial_payment_debt, initial_payment_status="BİTMİŞ",
                                             initial_payment_debt_status="DAVAM EDƏN",
                                             total_amount=total_amount, remaining_debt=remaining_debt)
-                            subsequent_balance = holding_umumi_balance_hesabla()
-                            office_subsequent_balance = office_balance_hesabla(office=office)
-                            pul_axini_create(
+                            subsequent_balance = calculate_holding_total_balance()
+                            office_subsequent_balance = calculate_office_balance(office=office)
+                            cashflow_create(
                                 office=office,
                                 company=office.company,
                                 description=f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {initial_payment_date}, ödəniş üslubu - {payment_style}, 2-dəfəyə ilkin ödənişin birincisi.",
@@ -607,8 +607,8 @@ def contract_create(self, request, *args, **kwargs):
                 total_amount = umumi_amount(
                     product.price, int(product_quantity))
 
-                initial_balance = holding_umumi_balance_hesabla()
-                office_initial_balance = office_balance_hesabla(office=office)
+                initial_balance = calculate_holding_total_balance()
+                office_initial_balance = calculate_office_balance(office=office)
 
                 note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {nowki_date_date}, ödəniş üslubu - {payment_style}"
                 c_income(cashbox, float(total_amount), user, note)
@@ -616,9 +616,9 @@ def contract_create(self, request, *args, **kwargs):
                 serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company, office=office,
                                 contract_status="BİTMİŞ", total_amount=total_amount)
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                office_subsequent_balance = office_balance_hesabla(office=office)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                office_subsequent_balance = calculate_office_balance(office=office)
+                cashflow_create(
                     office=office,
                     company=office.company,
                     description=note,
@@ -857,8 +857,8 @@ def contract_update(self, request, *args, **kwargs):
                                 status=status.HTTP_400_BAD_REQUEST)
 
             if (compensation_income is not None):
-                initial_balance = holding_umumi_balance_hesabla()
-                office_initial_balance = office_balance_hesabla(office=office)
+                initial_balance = calculate_holding_total_balance()
+                office_initial_balance = calculate_office_balance(office=office)
 
                 user = request.user
                 customer = contract.customer
@@ -871,9 +871,9 @@ def contract_update(self, request, *args, **kwargs):
                 contract.compensation_income = request.data.get("compensation_income")
                 contract.save()
                 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                office_subsequent_balance = office_balance_hesabla(office=office)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                office_subsequent_balance = calculate_office_balance(office=office)
+                cashflow_create(
                     office=contract.office,
                     company=contract.office.company,
                     description=note,
@@ -891,8 +891,8 @@ def contract_update(self, request, *args, **kwargs):
                 if (cashbox_balance < float(compensation_expense)):
                     return Response({"detail": "Kompensasiya məxaric məbləği Officein balanceından çox ola bilməz"},
                                     status=status.HTTP_400_BAD_REQUEST)
-                initial_balance = holding_umumi_balance_hesabla()
-                office_initial_balance = office_balance_hesabla(office=office)
+                initial_balance = calculate_holding_total_balance()
+                office_initial_balance = calculate_office_balance(office=office)
 
                 user = request.user
                 customer = contract.customer
@@ -905,9 +905,9 @@ def contract_update(self, request, *args, **kwargs):
                 contract.compensation_expense = request.data.get("compensation_expense")
                 contract.save()
 
-                subsequent_balance = holding_umumi_balance_hesabla()
-                office_subsequent_balance = office_balance_hesabla(office=office)
-                pul_axini_create(
+                subsequent_balance = calculate_holding_total_balance()
+                office_subsequent_balance = calculate_office_balance(office=office)
+                cashflow_create(
                     office=contract.office,
                     company=contract.office.company,
                     description=note,

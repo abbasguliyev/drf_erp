@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from company.models import Holding
 from cashbox.models import HoldingCashbox, OfficeCashbox, CompanyCashbox
 
-from restAPI.v1.cashbox.utils import holding_umumi_balance_hesabla, pul_axini_create, company_balance_hesabla, office_balance_hesabla, holding_balance_hesabla
+from restAPI.v1.cashbox.utils import calculate_holding_total_balance, cashflow_create, calculate_company_balance, calculate_office_balance, calculate_holding_balance
 
 
 # *************** Holding Kassa income expense ***************
@@ -20,8 +20,8 @@ def cashbox_income_create(self, request, *args, **kwargs):
         cashbox = get_object_or_404(HoldingCashbox, holding=holding)
         previous_balance=cashbox.balance
 
-        initial_balance = holding_umumi_balance_hesabla()
-        holding_initial_balance = holding_balance_hesabla()
+        initial_balance = calculate_holding_total_balance()
+        holding_initial_balance = calculate_holding_balance()
 
         date = request.data.get("date")
 
@@ -42,10 +42,10 @@ def cashbox_income_create(self, request, *args, **kwargs):
 
             serializer.save(executor=user, cashbox=cashbox, date=date, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            holding_subsequent_balance = holding_balance_hesabla()
+            subsequent_balance = calculate_holding_total_balance()
+            holding_subsequent_balance = calculate_holding_balance()
 
-            pul_axini_create(
+            cashflow_create(
                 holding=holding,
                 operation_style="MƏDAXİL",
                 description=f"{holding.name} holdinq kassasına {float(amount)} AZN mədaxil edildi",
@@ -74,8 +74,8 @@ def cashbox_expense_create(self, request, *args, **kwargs):
     cashbox = get_object_or_404(HoldingCashbox, holding=holding)
     previous_balance=cashbox.balance
 
-    initial_balance = holding_umumi_balance_hesabla()
-    holding_initial_balance = holding_balance_hesabla()
+    initial_balance = calculate_holding_total_balance()
+    holding_initial_balance = calculate_holding_balance()
 
     cashbox_balance = cashbox.balance
 
@@ -96,10 +96,10 @@ def cashbox_expense_create(self, request, *args, **kwargs):
 
                     serializer.save(executor=user, cashbox=cashbox, expense_datei=expense_datei, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-                    subsequent_balance = holding_umumi_balance_hesabla()
-                    holding_subsequent_balance = holding_balance_hesabla()
+                    subsequent_balance = calculate_holding_total_balance()
+                    holding_subsequent_balance = calculate_holding_balance()
 
-                    pul_axini_create(
+                    cashflow_create(
                         holding=holding,
                         operation_style="MƏXARİC",
                         description=f"{holding.name} holdinq kassasından {float(amount)} AZN məxaric edildi",
@@ -137,9 +137,9 @@ def cashbox_income_create(self, request, *args, **kwargs):
 
         date = request.data.get("date")
 
-        initial_balance = holding_umumi_balance_hesabla()
+        initial_balance = calculate_holding_total_balance()
 
-        company_initial_balance = company_balance_hesabla(company=company)
+        company_initial_balance = calculate_company_balance(company=company)
 
         if(date == ""):
             date = datetime.today().strftime('%d-%m-%Y')
@@ -158,9 +158,9 @@ def cashbox_income_create(self, request, *args, **kwargs):
 
             serializer.save(executor=user, cashbox=cashbox, date=date, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-            subsequent_balance = holding_umumi_balance_hesabla()
-            company_subsequent_balance = company_balance_hesabla(company=company)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            company_subsequent_balance = calculate_company_balance(company=company)
+            cashflow_create(
                 company=company,
                 operation_style="MƏDAXİL",
                 description=f"{company.name} şirkət kassasına {float(amount)} AZN mədaxil edildi",
@@ -191,8 +191,8 @@ def cashbox_expense_create(self, request, *args, **kwargs):
 
     previous_balance=cashbox.balance
 
-    initial_balance = holding_umumi_balance_hesabla()
-    company_initial_balance = company_balance_hesabla(company=company)
+    initial_balance = calculate_holding_total_balance()
+    company_initial_balance = calculate_company_balance(company=company)
 
     cashbox_balance = cashbox.balance
 
@@ -213,9 +213,9 @@ def cashbox_expense_create(self, request, *args, **kwargs):
 
                     serializer.save(executor=user, cashbox=cashbox, expense_datei=expense_datei, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
 
-                    subsequent_balance = holding_umumi_balance_hesabla()
-                    company_subsequent_balance = company_balance_hesabla(company=company)
-                    pul_axini_create(
+                    subsequent_balance = calculate_holding_total_balance()
+                    company_subsequent_balance = calculate_company_balance(company=company)
+                    cashflow_create(
                         company=company,
                         operation_style="MƏXARİC",
                         description=f"{company.name} şirkət kassasından {float(amount)} AZN məxaric edildi",
@@ -249,8 +249,8 @@ def cashbox_income_create(self, request, *args, **kwargs):
         office=cashbox.office
         previous_balance=cashbox.balance
 
-        initial_balance = holding_umumi_balance_hesabla()
-        office_initial_balance = office_balance_hesabla(office=office)
+        initial_balance = calculate_holding_total_balance()
+        office_initial_balance = calculate_office_balance(office=office)
         if(date == ""):
             date = datetime.today().strftime('%d-%m-%Y')
         note = request.data.get("note")
@@ -262,9 +262,9 @@ def cashbox_income_create(self, request, *args, **kwargs):
             cashbox.save()
             sonraki_kassa_balance=cashbox.balance
             serializer.save(executor=user, cashbox=cashbox, date=date, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
-            subsequent_balance = holding_umumi_balance_hesabla()
-            office_subsequent_balance = office_balance_hesabla(office=office)
-            pul_axini_create(
+            subsequent_balance = calculate_holding_total_balance()
+            office_subsequent_balance = calculate_office_balance(office=office)
+            cashflow_create(
                 office=office,
                 company=office.company,
                 operation_style="MƏDAXİL",
@@ -292,9 +292,9 @@ def cashbox_expense_create(self, request, *args, **kwargs):
     office=cashbox.office
     previous_balance=cashbox.balance
 
-    initial_balance = holding_umumi_balance_hesabla()
+    initial_balance = calculate_holding_total_balance()
 
-    office_initial_balance = office_balance_hesabla(office=office)
+    office_initial_balance = calculate_office_balance(office=office)
 
     cashbox_balance = cashbox.balance
     expense_datei = request.data.get("expense_datei")
@@ -310,9 +310,9 @@ def cashbox_expense_create(self, request, *args, **kwargs):
                     cashbox.save()
                     sonraki_kassa_balance=cashbox.balance
                     serializer.save(executor=user, cashbox=cashbox, expense_datei=expense_datei, previous_balance=previous_balance, subsequent_balance=sonraki_kassa_balance)
-                    subsequent_balance = holding_umumi_balance_hesabla()
-                    office_subsequent_balance = office_balance_hesabla(office=office)
-                    pul_axini_create(
+                    subsequent_balance = calculate_holding_total_balance()
+                    office_subsequent_balance = calculate_office_balance(office=office)
+                    cashflow_create(
                         office=office,
                         company=office.company,
                         operation_style="MƏXARİC",

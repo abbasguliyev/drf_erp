@@ -1,4 +1,5 @@
 from email.policy import default
+from enum import unique
 from django.db import models
 import django
 from django.contrib.auth.models import AbstractUser
@@ -15,7 +16,7 @@ from . import (
 )
 
 class EmployeeStatus(models.Model):
-    status_name = models.CharField(max_length=200)
+    status_name = models.CharField(max_length=200, unique=True)
 
     def __str__(self) -> str:
         return self.status_name
