@@ -226,7 +226,14 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
                     )
                     advertisement.save()
             else:
-                serializer.save()
+                advertisement = Advertisement.objects.create(
+                    creator = creator,
+                    title = serializer.validated_data.get('title'),
+                    body = serializer.validated_data.get('body'),
+                    created_date = created_date,
+                    position = None
+                )
+                advertisement.save()
             return Response({"detail": "Elan əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({'detail' : "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
