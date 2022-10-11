@@ -56,9 +56,10 @@ class UserTaskRequestSerializer(DynamicFieldsCategorySerializer):
 class AdvertisementSerializer(DynamicFieldsCategorySerializer):
     creator = UserForTaskManagerSerializer(read_only=True)
 
-    position = PositionForTaskManagerSerializer(read_only=True)
-    positions = serializers.CharField(write_only=True,required=False, allow_null=True)
-
+    position = PositionForTaskManagerSerializer(read_only=True, many=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.select_related('company').all(), source='position', write_only=True, many=True
+    )
     class Meta:
         model = Advertisement
         fields = (
@@ -68,5 +69,5 @@ class AdvertisementSerializer(DynamicFieldsCategorySerializer):
             'body', 
             'created_date', 
             'position', 
-            'positions'
+            'position_id' 
         )

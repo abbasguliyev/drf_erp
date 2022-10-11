@@ -181,7 +181,7 @@ class UserTaskRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Advertisement.objects.select_related('position').all()
+    queryset = Advertisement.objects.prefetch_related('position').all()
     serializer_class = AdvertisementSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = AdvertisementFilter
@@ -212,35 +212,35 @@ class AdvertisementListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             creator = request.user
-            position_str = serializer.validated_data.get("positions")
-            if position_str is not None:
-                position_list = position_str.split(',')
-            else:
-                position_list = None
+            # position_str = serializer.validated_data.get("positions")
+            # if position_str is not None:
+            #     position_list = position_str.split(',')
+            # else:
+            #     position_list = None
             created_date = serializer.validated_data.get('created_date')
             if created_date == None:
                 created_date = datetime.today()
 
-            if position_list is not None:
-                for position_id in position_list:
-                    position = Position.objects.get(pk=position_id)
-                    advertisement = Advertisement.objects.create(
-                        creator = creator,
-                        title = serializer.validated_data.get('title'),
-                        body = serializer.validated_data.get('body'),
-                        created_date = created_date,
-                        position = position,
-                    )
-                    advertisement.save()
-            else:
-                advertisement = Advertisement.objects.create(
-                    creator = creator,
-                    title = serializer.validated_data.get('title'),
-                    body = serializer.validated_data.get('body'),
-                    created_date = created_date,
-                    position = None
-                )
-                advertisement.save()
+            # if position_list is not None:
+            #     for position_id in position_list:
+            #         position = Position.objects.get(pk=position_id)
+            #         advertisement = Advertisement.objects.create(
+            #             creator = creator,
+            #             title = serializer.validated_data.get('title'),
+            #             body = serializer.validated_data.get('body'),
+            #             created_date = created_date,
+            #             position = position,
+            #         )
+            #         advertisement.save()
+            # else:
+            #     advertisement = Advertisement.objects.create(
+            #         creator = creator,
+            #         title = serializer.validated_data.get('title'),
+            #         body = serializer.validated_data.get('body'),
+            #         created_date = created_date,
+            #         position = None
+            #     )
+            serializer.save(creator=creator, created_date=created_date)
             return Response({"detail": "Elan əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({'detail' : "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
