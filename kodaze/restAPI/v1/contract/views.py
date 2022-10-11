@@ -105,7 +105,6 @@ class ContractListCreateAPIView(generics.ListCreateAPIView):
         else:
             queryset = Contract.objects.all()
         queryset = self.filter_queryset(queryset)
-        cache.set('contract', queryset, timeout=CACHE_TTL)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

@@ -4,6 +4,7 @@ from rest_framework import status, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.response import Response
+from task_manager import ICRA_EDILIR
 
 from restAPI.v1.task_manager.serializers import TaskManagerSerializer, UserTaskRequestSerializer, AdvertisementSerializer
 from task_manager.models import TaskManager, UserTaskRequest, Advertisement
@@ -129,11 +130,17 @@ class TaskManagerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({"detail": "Məlumatlar yeniləndi"})
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            current_end_date = instance.end_date
+            if serializer.validated_data.get('end_date') is not None:
+                new_end_date = serializer.validated_data.get('end_date')
+                if current_end_date >= new_end_date:
+                    return Response({"detail": "Bitmə tarixi keçmiş tarixə təyin oluna bilməz"}, status=status.HTTP_400_BAD_REQUEST)
+                serializer.save(end_date=new_end_date, old_date=current_end_date, status=ICRA_EDILIR)
+                return Response({"detail": "Məlumatlar yeniləndi"})
+            self.perform_update(serializer)
+            return Response({"detail": "Məlumatlar yeniləndi"})
 
 
 class UserTaskRequestListCreateAPIView(generics.ListCreateAPIView):

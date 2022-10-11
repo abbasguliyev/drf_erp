@@ -246,7 +246,7 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
             cashflow_create(
                 office=office,
                 company=office.company,
-                description=f"{office.name} office kassasına {float(balance)} AZN əlavə edildi",
+                description=f"{office.name} ofis kassasına {float(balance)} AZN əlavə edildi",
                 initial_balance=initial_balance,
                 subsequent_balance=subsequent_balance,
                 office_initial_balance=office_initial_balance,
@@ -254,7 +254,7 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
                 executor=user,
                 quantity=float(balance)
             )
-            return Response({"detail":"Office kassa əlavə olundu"}, status=status.HTTP_201_CREATED)
+            return Response({"detail":"Ofis kassa əlavə olundu"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -307,7 +307,6 @@ class CashFlowListAPIView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         
-        # umumi_quantity = queryset.count()
         umumi_quantity = 0
 
         for q in queryset:
