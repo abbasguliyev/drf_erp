@@ -7,16 +7,25 @@ Welcome to Kodaze CRM's documentation!
 ======================================
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+   :maxdepth: 2
+   :caption: All about project:
 
    modules/all-about-project.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User:
+
    modules/account/user.rst
    modules/account/employee_status.rst
    modules/account/region.rst
    modules/account/customer.rst
    modules/account/customer-note.rst
-   
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Company:
+ 
    modules/company/holding.rst
    modules/company/company.rst
    modules/company/department.rst
@@ -26,27 +35,55 @@ Welcome to Kodaze CRM's documentation!
    modules/company/team.rst
    modules/company/permission_for_position.rst
    modules/company/logo.rst
-   
+
+.. toctree::
+   :maxdepth: 2
+   :caption: CashBox:
+  
    modules/cashbox/holding_cashbox.rst
    modules/cashbox/company_cashbox.rst
    modules/cashbox/office_cashbox.rst
    modules/cashbox/cashflow.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Produc:
+  
    modules/product/product.rst
    modules/product/category.rst
    modules/product/unit_of_measure.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Backup And Restore:
+  
    modules/backup_restore/backup.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Warehouse:
+  
    modules/warehouse/warehouse.rst
    modules/warehouse/warehouse_request.rst
    modules/warehouse/stock.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Task Manager:
+  
    modules/task_manager/task_manager.rst
    modules/task_manager/task_requests.rst
    modules/task_manager/advertisement.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Contract:
+  
    modules/contract/contract.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Salary:
 
    modules/salary/office_leader_prim.rst
    modules/salary/group_leader_prim.rst
