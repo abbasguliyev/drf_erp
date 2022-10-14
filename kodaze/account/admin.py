@@ -14,7 +14,10 @@ class RegionAdmin(admin.ModelAdmin):
     )
 
 # Register your models here.
-admin.site.register(User)
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ("id", "fullname")
+    list_display_links = ("id", "fullname")
 
 admin.site.register(Customer)
 admin.site.register(CustomerNote)

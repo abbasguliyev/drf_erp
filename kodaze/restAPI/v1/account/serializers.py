@@ -179,9 +179,11 @@ class CustomerSerializer(DynamicFieldsCategorySerializer):
         queryset=Region.objects.all(), source="region", write_only=True
     )
 
+    is_active = serializers.BooleanField(read_only=True)
     class Meta:
         model = Customer
         fields = "__all__"
+        
 
 
 class CustomerNoteSerializer(DynamicFieldsCategorySerializer):

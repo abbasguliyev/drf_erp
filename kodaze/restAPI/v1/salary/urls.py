@@ -16,6 +16,9 @@ urlpatterns = [
 
     path('salary-deduction/', salary_views.SalaryDeductionListCreateAPIView.as_view()),
     path('salary-deduction/<int:pk>/', salary_views.SalaryDeductionDetailAPIView.as_view()),
+    
+    path('salary-punishment/', salary_views.SalaryPunishmentListCreateAPIView.as_view()),
+    path('salary-punishment/<int:pk>/', salary_views.SalaryPunishmentDetailAPIView.as_view()),
 
     path('office-leader-prim/',salary_views.OfficeLeaderPrimListCreateAPIView.as_view()),
     path('office-leader-prim/<int:pk>/', salary_views.OfficeLeaderPrimDetailAPIView.as_view()),

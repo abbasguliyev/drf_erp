@@ -18,6 +18,7 @@ All Region create
 
 - endpoint: "http://localhost:8000/api/v1/users/all-region-create/"
 - Boş json ilə post sorğusu göndərilir. Avtomatik backend-də olan cities.json-da qeyd olunmuş bölgələr database-d əlavə olunur
+
 .. code:: json
 
   {}

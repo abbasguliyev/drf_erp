@@ -11,6 +11,7 @@ from salary.models import (
     Manager1PrimNew,
     SalaryDeduction,
     Bonus,
+    SalaryPunishment,
     SalaryView,
     PaySalary, 
     OfficeLeaderPrim,
@@ -22,9 +23,11 @@ from salary.models import (
 from restAPI.v1.account.serializers import EmployeeStatusSerializer, UserSerializer
 
 class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
-    employee = UserSerializer(read_only=True, many=True)
+    employee = UserSerializer(read_only=True, fields = ["id", "fullname"])
     employee_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='employee', many=True, write_only=True
+        queryset=User.objects.select_related(
+                'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
+            ).prefetch_related('user_permissions', 'groups').all(), source='employee', write_only=True
     )
 
     class Meta:
@@ -40,7 +43,17 @@ class SalaryDeductionSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = SalaryDeduction
         fields = "__all__"
-        
+
+class SalaryPunishmentSerializer(DynamicFieldsCategorySerializer):
+    employee = UserSerializer(read_only=True)
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='employee', write_only=True
+    )
+
+    class Meta:
+        model = SalaryPunishment
+        fields = "__all__"
+          
         
 class BonusSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
@@ -183,27 +196,34 @@ class SalaryViewSerializer(DynamicFieldsCategorySerializer):
         advancepayment = AdvancePayment.objects.filter(employee = instance.employee, date__month=month)
         bonus = Bonus.objects.filter(employee = instance.employee, date__month=month)
         salarydeduction = SalaryDeduction.objects.filter(employee = instance.employee, date__month=month)
+        salarypunishment = SalaryPunishment.objects.filter(employee = instance.employee, date__month=month)
 
-        umumi_advancepayment = 0
-        umumi_bonus = 0
-        umumi_salarydeduction = 0
+        total_advancepayment = 0
+        total_bonus = 0
+        total_salarydeduction = 0
+        total_salarypunishment = 0
 
         for a in advancepayment:
-            umumi_advancepayment += a.amount
+            total_advancepayment += a.amount
 
         for b in bonus:
-            umumi_bonus += b.amount
+            total_bonus += b.amount
 
         for k in salarydeduction:
-            umumi_salarydeduction += k.amount
+            total_salarydeduction += k.amount
 
-        representation['advancepayment'] = umumi_advancepayment
-        representation['bonus'] = umumi_bonus
-        representation['salarydeduction'] = umumi_salarydeduction
+        for p in salarypunishment:
+            total_salarypunishment += p.amount
+
+
+        representation['advancepayment'] = total_advancepayment
+        representation['bonus'] = total_bonus
+        representation['salarydeduction'] = total_salarydeduction
+        representation['salarypunishment'] = total_salarypunishment
 
         return representation
     
     class Meta:
         model = SalaryView
         fields = '__all__'
-        read_only_fields = ('advancepayment', 'bonus', 'salarydeduction')
+        read_only_fields = ('advancepayment', 'bonus', 'salarydeduction', 'salarypunishment')

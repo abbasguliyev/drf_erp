@@ -126,7 +126,7 @@ class CreditorPrim(models.Model):
 # -----------------------------------------------------------------------------------------------------------------------------
 
 class AdvancePayment(AbstractSalaryMethod):
-    half_month_salary = models.PositiveBigIntegerField(default=0, blank=True)
+    amount = models.FloatField(default=0, null=True, blank=True)
     
     class Meta:
         ordering = ("pk",)
@@ -162,6 +162,17 @@ class SalaryDeduction(AbstractSalaryMethod):
             ("add_salarydeduction", "Kəsinti əlavə edə bilər"),
             ("change_salarydeduction", "Kəsinti məlumatlarını yeniləyə bilər"),
             ("delete_salarydeduction", "Kəsinti silə bilər")
+        )
+
+class SalaryPunishment(AbstractSalaryMethod):
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_punishment", "Mövcud cərimələrə baxa bilər"),
+            ("add_punishment", "Cərimə əlavə edə bilər"),
+            ("change_punishment", "Cərimə məlumatlarını yeniləyə bilər"),
+            ("delete_punishment", "Cərimə silə bilər")
         )
 
 

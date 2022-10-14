@@ -12,7 +12,6 @@ from .tasks import create_services_task
 @receiver(post_save, sender=Contract)
 def create_services(sender, instance, created, **kwargs):
     if created:
-        print(f"{instance.id}")
         transaction.on_commit(lambda: create_services_task.delay(instance.id))
 
 

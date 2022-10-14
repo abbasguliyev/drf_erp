@@ -4,6 +4,7 @@ from salary.models import (
     SalaryDeduction,
     Bonus,
     CreditorPrim,
+    SalaryPunishment,
     SalaryView,
     PaySalary, 
     OfficeLeaderPrim,
@@ -15,6 +16,7 @@ from restAPI.v1.salary.serializers import (
     BonusSerializer,
     Manager1PrimNewSerializer,
     SalaryDeductionSerializer,
+    SalaryPunishmentSerializer,
     SalaryViewSerializer,
     Manager2PrimSerializer,
     PaySalarySerializer,
@@ -26,7 +28,7 @@ from rest_framework import status, generics
 
 from rest_framework.response import Response
 
-from restAPI.v1.salary import utils as salary_utils
+from restAPI.v1.salary import services as salary_services
 
 from restAPI.v1.salary import permissions as salary_permissions
 
@@ -38,6 +40,7 @@ from restAPI.v1.salary.filters import (
     Manager2PrimFilter,
     Manager1PrimNewFilter,
     SalaryDeductionFilter,
+    SalaryPunishmentFilter,
     SalaryViewFilter,
     PaySalaryFilter,
     OfficeLeaderPrimFilter,
@@ -46,7 +49,7 @@ from restAPI.v1.salary.filters import (
 
 # ********************************** AdvancePayment get post put delete **********************************
 class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
-    queryset = AdvancePayment.objects.all()
+    queryset = AdvancePayment.objects.select_related('employee').all()
     serializer_class = AdvancePaymentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = AdvancePaymentFilter
@@ -54,13 +57,13 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = AdvancePayment.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = AdvancePayment.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
-            queryset = AdvancePayment.objects.filter(employee__company=request.user.company)
+                queryset = self.queryset.filter(employee__company=request.user.company, employee__office=request.user.office)
+            queryset = self.queryset.filter(employee__company=request.user.company)
         else:
-            queryset = AdvancePayment.objects.all()
+            queryset = self.queryset
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -72,7 +75,7 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_utils.advancepayment_create(self, request, *args, **kwargs)
+        return salary_services.advancepayment_create(self, request, *args, **kwargs)
 
 class AdvancePaymentDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = AdvancePayment.objects.all()
@@ -109,7 +112,7 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_utils.salarydeduction_create(self, request, *args, **kwargs)
+        return salary_services.salarydeduction_create(self, request, *args, **kwargs)
 
 
 class SalaryDeductionDetailAPIView(generics.RetrieveUpdateAPIView):
@@ -118,6 +121,44 @@ class SalaryDeductionDetailAPIView(generics.RetrieveUpdateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = SalaryDeductionFilter
     permission_classes = [salary_permissions.SalaryDeductionPermissions]
+
+# ********************************** SalaryPunishment get post put delete **********************************
+class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
+    queryset = SalaryPunishment.objects.all()
+    serializer_class = SalaryPunishmentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SalaryPunishmentFilter
+    permission_classes = [salary_permissions.SalaryPunishmentPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = self.queryset
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = self.queryset.filter(employee__company=request.user.company, employee__office=request.user.office)
+            queryset = self.queryset.filter(employee__company=request.user.company)
+        else:
+            queryset = self.queryset
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        return salary_services.salarypunishment_create(self, request, *args, **kwargs)
+
+
+class SalaryPunishmentDetailAPIView(generics.RetrieveUpdateAPIView):
+    queryset = SalaryPunishment.objects.all()
+    serializer_class = SalaryPunishmentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SalaryPunishmentFilter
+    permission_classes = [salary_permissions.SalaryPunishmentPermissions]
 
 # ********************************** Bonus get post put delete **********************************
 class BonusListCreateAPIView(generics.ListCreateAPIView):
@@ -147,7 +188,7 @@ class BonusListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_utils.bonus_create(self, request, *args, **kwargs)
+        return salary_services.bonus_create(self, request, *args, **kwargs)
 
 
 class BonusDetailAPIView(generics.RetrieveUpdateAPIView):
@@ -185,18 +226,16 @@ class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_utils.salary_ode_create(self, request, *args, **kwargs)
+        return salary_services.salary_pay_create(self, request, *args, **kwargs)
 
 
 class PaySalaryDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = PaySalary.objects.all()
     serializer_class = PaySalarySerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = PaySalaryFilter
     permission_classes = [salary_permissions.PaySalaryPermissions]
 
 # ********************************** SalaryView get post put delete **********************************
-class SalaryViewListCreateAPIView(generics.ListCreateAPIView):
+class SalaryViewListCreateAPIView(generics.ListAPIView):
     queryset = SalaryView.objects.all()
     serializer_class = SalaryViewSerializer
     filter_backends = [DjangoFilterBackend]
@@ -215,9 +254,10 @@ class SalaryViewListCreateAPIView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(queryset)
     
         sale_quantity = 0
-        umumi_advancepayment = 0
-        umumi_bonus = 0
-        umumi_salarydeduction = 0
+        total_advancepayment = 0
+        total_bonus = 0
+        total_salarydeduction = 0
+        total_salarypunishment = 0
 
         for q in queryset:
             sale_quantity += q.sale_quantity
@@ -227,24 +267,29 @@ class SalaryViewListCreateAPIView(generics.ListCreateAPIView):
             advancepayment = AdvancePayment.objects.filter(employee = q.employee, date__month=month)
             bonus = Bonus.objects.filter(employee = q.employee, date__month=month)
             salarydeduction = SalaryDeduction.objects.filter(employee = q.employee, date__month=month)
+            salarypunishment = SalaryPunishment.objects.filter(employee = q.employee, date__month=month)
 
             for a in advancepayment:
-                umumi_advancepayment += a.amount
+                total_advancepayment += a.amount
 
             for b in bonus:
-                umumi_bonus += b.amount
+                total_bonus += b.amount
 
             for k in salarydeduction:
-                umumi_salarydeduction += k.amount
+                total_salarydeduction += k.amount
+
+            for p in salarypunishment:
+                total_salarypunishment += p.amount
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(
                 {
-                    'umumi_advancepayment': umumi_advancepayment, 
-                    'umumi_bonus': umumi_bonus, 
-                    'umumi_salarydeduction': umumi_salarydeduction,
+                    'total_advancepayment': total_advancepayment, 
+                    'total_bonus': total_bonus, 
+                    'total_salarydeduction': total_salarydeduction,
+                    'total_salarypunishment': total_salarypunishment,
                     'data':serializer.data
                 }
             )
@@ -253,11 +298,9 @@ class SalaryViewListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
 
-class SalaryViewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class SalaryViewDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = SalaryView.objects.all()
     serializer_class = SalaryViewSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = SalaryViewFilter
     permission_classes = [salary_permissions.SalaryViewPermissions]
 
     def destroy(self, request, *args, **kwargs):

@@ -5,6 +5,7 @@ from salary.models import (
     Manager1PrimNew,
     SalaryDeduction,
     Bonus,
+    SalaryPunishment,
     SalaryView,
     PaySalary,
     OfficeLeaderPrim,
@@ -27,12 +28,7 @@ class AdvancePaymentFilter(django_filters.FilterSet):
             'employee__fullname': ['exact', 'icontains'],
             'employee__position__name': ['exact', 'icontains'],
             'employee__employee_status__status_name': ['exact', 'icontains'],
-
-            'amount': ['exact', 'gte', 'lte'],
-            'half_month_salary': ['exact', 'gte', 'lte'],
-
             'note': ['exact', 'icontains'],
-            # 'date': ['exact', 'gte', 'lte'],
         }
 
 
@@ -54,7 +50,26 @@ class SalaryDeductionFilter(django_filters.FilterSet):
             'amount': ['exact', 'gte', 'lte'],
 
             'note': ['exact', 'icontains'],
-            # 'date': ['exact', 'gte', 'lte'],
+        }
+
+class SalaryPunishmentFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
+    class Meta:
+        model = SalaryPunishment
+        fields = {
+            'employee__fullname': ['exact', 'icontains'],
+            'employee__position__name': ['exact', 'icontains'],
+            'employee__employee_status__status_name': ['exact', 'icontains'],
+
+            'amount': ['exact', 'gte', 'lte'],
+
+            'note': ['exact', 'icontains'],
         }
 
 

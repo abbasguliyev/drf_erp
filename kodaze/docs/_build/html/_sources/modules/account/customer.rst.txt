@@ -40,7 +40,7 @@ Customer (Müştəri)
     - (qeyd - Textarea)
 - "is_active"
     - Boolean. 
-    - Create zamanı göndərilmir, default olaraq True olur. Update zamanı isə dəyişilə bilinir
+    - Create zamanı göndərilmir, default olaraq True olur. Delete zamanı avtomatik False olur.
 
 
 
@@ -98,7 +98,6 @@ Update Customer
     "phone_number_4": "",
     "address": "",
     "note": "",
-    "is_active": true
   }
 
 +-----------------+

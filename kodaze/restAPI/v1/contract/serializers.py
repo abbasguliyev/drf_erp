@@ -40,13 +40,14 @@ class ServiceContractSerializer(DynamicFieldsCategorySerializer):
         fields = ['id', 'is_done']
 
 class ContractSerializer(DynamicFieldsCategorySerializer):
-    group_leader = UserSerializer(read_only=True)
-    manager1 = UserSerializer(read_only=True)
-    manager2 = UserSerializer(read_only=True)
-    customer = CustomerSerializer(read_only=True)
-    product = ProductSerializer(read_only=True)
-    company = CompanySerializer(read_only=True)
-    office = OfficeSerializer(read_only=True)
+    group_leader = UserSerializer(read_only=True, fields=["id", "fullname"])
+    manager1 = UserSerializer(read_only=True, fields=["id", "fullname"])
+    manager2 = UserSerializer(read_only=True, fields=["id", "fullname"])
+    customer = CustomerSerializer(read_only=True, fields=["id", "fullname", "phone_number_1", "phone_number_2", "region", "address"])
+    product = ProductSerializer(read_only=True, fields=["id", "product_name", "price"])
+    company = CompanySerializer(read_only=True, fields=["id", "name"])
+    office = OfficeSerializer(read_only=True, fields=["id", "name"])
+
     cancelled_date = serializers.DateField(read_only=True)
     is_remove = serializers.BooleanField(read_only=True)
     debt_finished = serializers.BooleanField(read_only=True)
@@ -55,24 +56,24 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
 
     group_leader_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
+                'company', 'office', 'section', 'department', 'position', 'team', 'employee_status'
             ).all(), source='group_leader', write_only=True, required=False, allow_null=True
     )
     manager1_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
+                'company', 'office', 'section', 'department', 'position', 'team', 'employee_status'
             ).all(), source='manager1', write_only=True, required=False, allow_null=True
     )
     manager2_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
+                'company', 'office', 'section', 'department', 'position', 'team', 'employee_status'
             ).all(), source='manager2', write_only=True, required=False, allow_null=True
     )
     customer_id = serializers.PrimaryKeyRelatedField(
         queryset=Customer.objects.select_related('region').all(), source='customer', write_only=True, required=False, allow_null=True
     )
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.select_related('company').all(), source='product', write_only=True, required=False, allow_null=True
+        queryset=Product.objects.select_related('category', 'company', 'unit_of_measure').all(), source='product', write_only=True, required=False, allow_null=True
     )
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.select_related('holding').all(), source='company', write_only=True, required=False, allow_null=True
@@ -86,9 +87,10 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
+        contract_gifts = ContractGift.objects.select_related("contract", "product").filter(contract=instance)
         creditor_contracts = ContractCreditor.objects.select_related('creditor', 'contract').filter(contract=instance).first()
         creditor = None
+        gift = None
         if creditor_contracts is not None:
             creditor = dict()
             user_creditor = creditor_contracts.creditor
@@ -97,8 +99,19 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
 
             creditor['id'] = creditor_contracts_id
             creditor['creditor_fullname'] = creditor_fullname
-        
+        if contract_gifts is not None:
+            gift = list()
+            for prod in contract_gifts:
+                products = dict()
+                prod_id = prod.id
+                prod_name = prod.product.product_name
+                prod_quantity = prod.quantity
+                products['id'] = prod_id
+                products['product_name'] = prod_name
+                products['quantity'] = prod_quantity
+                gift.append(products)
         representation['creditor_contracts'] = creditor
+        representation['contract_gifts'] = gift
         return representation
 
     def create(self, validated_data):
@@ -123,6 +136,7 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
             'initial_payment_debt_status',
             'service_contract',
             'remaining_debt',
+            'pdf',
             'pdf2',
             'cancelled_date',
             'contract_created_date',
@@ -131,24 +145,27 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
         )
 
 class ContractGiftSerializer(DynamicFieldsCategorySerializer):
-    product = ProductSerializer(read_only=True, many=True)
-    contract = ContractSerializer(read_only=True)
+    product = ProductSerializer(read_only=True, fields=["id", "product_name", "price"])
+    contract = ContractSerializer(read_only=True, fields=["id", "customer"])
 
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(), source='product',  many=True, write_only=True
+        queryset=Product.objects.select_related('category', 'company', 'unit_of_measure').all(), source='product', write_only=True, allow_null=True
     )
 
     contract_id = serializers.PrimaryKeyRelatedField(
-        queryset=Contract.objects.all(), source='contract', write_only=True
-    )
-
-    office = OfficeSerializer(read_only=True)
-    office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.all(), source='office', write_only=True, required=False, allow_null=True
+        queryset=Contract.objects.select_related(
+                    'group_leader', 
+                    'manager1', 
+                    'manager2', 
+                    'customer', 
+                    'product', 
+                    'company', 
+                    'office', 
+                ).all(), source='contract', write_only=True
     )
 
     gift_date = serializers.DateField(read_only=True)
-
+    products_and_quantity = serializers.CharField(write_only=True)
 
     class Meta:
         model = ContractGift
@@ -157,9 +174,17 @@ class ContractGiftSerializer(DynamicFieldsCategorySerializer):
 
 
 class InstallmentSerializer(DynamicFieldsCategorySerializer):
-    contract = ContractSerializer(read_only=True)
+    contract = ContractSerializer(read_only=True, fields=["id", "customer", "contract_date"])
     contract_id = serializers.PrimaryKeyRelatedField(
-        queryset=Contract.objects.all(), source='contract', write_only=True
+        queryset=Contract.objects.select_related(
+                    'group_leader', 
+                    'manager1', 
+                    'manager2', 
+                    'customer', 
+                    'product', 
+                    'company', 
+                    'office', 
+                ).all(), source='contract', write_only=True
     )
 
     def to_representation(self, instance):
@@ -182,9 +207,11 @@ class ContractChangeSerializer(DynamicFieldsCategorySerializer):
         fields = "__all__"
 
 class DemoSalesSerializer(DynamicFieldsCategorySerializer):
-    user = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True, fields=["id", "fullname"])
     user_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='user', write_only=True, required=False, allow_null=True
+        queryset=User.objects.select_related(
+                'company', 'office', 'section', 'department', 'position', 'team', 'employee_status'
+            ).all(), source='user', write_only=True, required=False, allow_null=True
     )
     sale_count = serializers.IntegerField(read_only=True)
     
@@ -195,13 +222,23 @@ class DemoSalesSerializer(DynamicFieldsCategorySerializer):
 
 
 class ContractCreditorSerializer(DynamicFieldsCategorySerializer):
-    contract = serializers.StringRelatedField(read_only=True)
+    contract = ContractSerializer(read_only=True, fields=["id", "customer", "contract_date"])
     contract_id = serializers.PrimaryKeyRelatedField(
-        queryset=Contract.objects.all(), source='contract', write_only=True
+        queryset=Contract.objects.select_related(
+                    'group_leader', 
+                    'manager1', 
+                    'manager2', 
+                    'customer', 
+                    'product', 
+                    'company', 
+                    'office', 
+                ).all(), source='contract', write_only=True
     )
-    creditor = serializers.StringRelatedField()
+    creditor = UserSerializer(read_only=True, fields=["id", "fullname"])
     creditor_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='creditor', write_only=True
+        queryset=User.objects.select_related(
+                'company', 'office', 'section', 'department', 'position', 'team', 'employee_status'
+            ).all(), source='creditor', write_only=True
     )
     class Meta:
         model = ContractCreditor

@@ -41,6 +41,12 @@ class SalaryDeductionPermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="salarydeduction", view=view)
         return perm_util.add_user_permission_to_list()
 
+class SalaryPunishmentPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="salarypunishment", view=view)
+        return perm_util.add_user_permission_to_list()
+
+
 class BonusPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="bonus", view=view)

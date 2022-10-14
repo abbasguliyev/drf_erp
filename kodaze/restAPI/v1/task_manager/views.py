@@ -1,9 +1,9 @@
 from datetime import datetime
-import traceback
 from rest_framework import status, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.response import Response
+from restAPI.v1.task_manager.services import task_manager_create
 from task_manager import ICRA_EDILIR
 
 from restAPI.v1.task_manager.serializers import TaskManagerSerializer, UserTaskRequestSerializer, AdvertisementSerializer
@@ -73,55 +73,10 @@ class TaskManagerListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             creator = request.user
-            position_str = serializer.validated_data.get("positions")
-            if position_str is not None:
-                position_list = position_str.split(',')
-            else:
-                position_list = None
-            user_str = serializer.validated_data.get("users")
-            if user_str is not None:
-                user_list = user_str.split(',')
-            else:
-                user_list = None
-            created_date = serializer.validated_data.get('created_date')
-            if created_date == None:
-                created_date = datetime.today()
-            end_date = serializer.validated_data.get('end_date')
-            if end_date == None:
-                end_date = None
-
-            if position_list is not None:
-                for position_id in position_list:
-                    position = Position.objects.get(pk=position_id)
-                    users = User.objects.filter(position=position)
-                    for user in users:
-                        task_manager = TaskManager.objects.create(
-                            creator = creator,
-                            title = serializer.validated_data.get('title'),
-                            body = serializer.validated_data.get('body'),
-                            created_date = created_date,
-                            end_date = end_date,
-                            position = position,
-                            employee = user,
-                        )
-                        task_manager.save()
-            if user_list is not None:
-                for user_id in user_list:
-                    user = User.objects.get(pk=user_id)
-                    task_manager = TaskManager.objects.create(
-                        creator = creator,
-                        title = serializer.validated_data.get('title'),
-                        body = serializer.validated_data.get('body'),
-                        created_date = created_date,
-                        end_date = end_date,
-                        employee = user,
-                    )
-                    task_manager.save()
-            if user_list == None and position_list == None:
-                return Response({'detail' : "İşçi və ya vəzifədən biri mütləq seçilməlidir"}, status=status.HTTP_400_BAD_REQUEST)
+            task_manager_create(creator=creator, **serializer.validated_data)
             return Response({"detail": "Tapşırıq əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({'detail' : "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail' : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class TaskManagerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TaskManager.objects.all()
@@ -141,6 +96,8 @@ class TaskManagerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                 return Response({"detail": "Məlumatlar yeniləndi"})
             self.perform_update(serializer)
             return Response({"detail": "Məlumatlar yeniləndi"})
+        else:
+            return Response({"detail": serializer.errors}, status = status.HTTP_400_BAD_REQUEST)
 
 
 class UserTaskRequestListCreateAPIView(generics.ListCreateAPIView):

@@ -36,6 +36,7 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
+    email = models.EmailField(_("email address"), null=True, blank=True)
     fullname = models.CharField(max_length=200, help_text=_('Adı Soyadı Ata adı'))
     start_date_of_work = models.DateField(default=django.utils.timezone.now, null=True, blank=True, help_text=_('İşə başlama tarixi'))
     dismissal_date = models.DateField(null=True, blank=True, help_text=_('İşdən ayrılma tarixi'))

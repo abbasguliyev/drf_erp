@@ -18,15 +18,18 @@ from restAPI.v1.utils.magnus_contract_pdf_create import (
     magnus_installment_contract_pdf_canvas
 )
 
+from . import (
+    INSTALLMENT
+)
 
 from django.db import transaction
 
 @receiver(post_save, sender=Contract)
 def create_installment(sender, instance, created, **kwargs):
     if created:
-        instance_id = instance.id
-        transaction.on_commit(
-            lambda: create_installment_task.delay(instance_id, True))
+        if(instance.payment_style == INSTALLMENT):
+            instance_id = instance.id
+            transaction.on_commit(lambda: create_installment_task.delay(instance_id, True))
 
 
 @receiver(post_save, sender=Contract)

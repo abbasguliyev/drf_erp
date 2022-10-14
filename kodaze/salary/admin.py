@@ -13,6 +13,7 @@ from .models import (
 )
 # Register your models here.
 
+@admin.register(SalaryView)
 class SalaryViewAdmin(admin.ModelAdmin):
     search_fields = (
         "employee__id",
@@ -23,13 +24,23 @@ class SalaryViewAdmin(admin.ModelAdmin):
         "employee__id",
         "date"
     ]
+    list_display = (
+        "id",
+        "employee",
+        "date",
+        "sale_quantity",
+        "sales_amount",
+        "final_salary",
+        "is_done",
+        "amount",
+        "note",
+    )
 
 admin.site.register(AdvancePayment)
 admin.site.register(Bonus)
 admin.site.register(Manager2Prim)
 admin.site.register(Manager1PrimNew)
 admin.site.register(SalaryDeduction)
-admin.site.register(SalaryView, SalaryViewAdmin)
 admin.site.register(GroupLeaderPrimNew)
 admin.site.register(PaySalary)
 admin.site.register(CreditorPrim)

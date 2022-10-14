@@ -15,7 +15,11 @@ admin.site.register(Company)
 admin.site.register(Office)
 admin.site.register(Section)
 
-admin.site.register(Position)
 admin.site.register(Team)
 admin.site.register(PermissionForPosition)
 admin.site.register(Department)
+
+@admin.register(Position)
+class PositionAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    list_display_links = ("id", "name")

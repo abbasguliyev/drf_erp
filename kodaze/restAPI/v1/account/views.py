@@ -55,6 +55,8 @@ import json
 import os
 from core.settings import BASE_DIR
 
+from restAPI.v1.account.services import all_region_create, create_customer, create_employee_status, create_user, region_create
+
 # ********************************** Password change **********************************
 class ChangePasswordView(generics.UpdateAPIView):
     """
@@ -146,8 +148,6 @@ class GroupCreateApi(generics.CreateAPIView):
 class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = GroupFilter
     permission_classes = [account_permissions.GroupPermissions]
 
     def update(self, request, *args, **kwargs):
@@ -173,15 +173,10 @@ class RegisterApi(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if(serializer.is_valid()):
-            last_user_id = User.objects.all().values_list('id', flat=True).last()
-            try:
-                username = f"user-{last_user_id+1}"
-            except:
-                username = f"user-1"
-            serializer.save(username=username)
+            create_user(**serializer.validated_data)
             return Response({"detail": "İşçi qeydiyyatdan keçirildi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail": f"{serializer.errors}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserList(generics.ListAPIView):
@@ -276,10 +271,10 @@ class CustomerListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
-            serializer.save(is_active=True)
+            create_customer(**serializer.validated_data)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail" : "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -353,27 +348,15 @@ class RegionListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        region = serializer.validated_data.get("region_name")
-        regions = Region.objects.filter(region_name=region)
-        if len(regions)>0:
-            return Response({"detail": "Eyni adlı bölgəni 2 dəfə əlavə etmək olmaz!"}, status=status.HTTP_400_BAD_REQUEST)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Bölgə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
+        if serializer.is_valid():
+            region_create(**serializer.validated_data)
+            return Response({"detail": "Bölgə əlavə olundu"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 class AllRegionCreate(APIView):
     def post(self, request, *args, **kwargs):
         try:
-            filename = os.path.join(BASE_DIR, 'cities.json')
-            with open(filename) as fp:
-                cities = json.load(fp)
-            for city in cities:
-                regions = Region.objects.filter(region_name=city['name'])
-                if len(regions)>0:
-                    continue
-                region = Region.objects.create(region_name=city['name'])
-                region.save()
+            all_region_create()
             return Response({"detail": "Bölgələr əlavə olundu"}, status=status.HTTP_201_CREATED)
         except:
             return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_404_NOT_FOUND)
@@ -416,35 +399,16 @@ class EmployeeStatusListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            status_name = serializer.validated_data.get("status_name")
-            statuslar = EmployeeStatus.objects.filter(status_name=status_name.upper())
-            if len(statuslar)>0:
-                return Response({"detail": "Eyni adlı statusu 2 dəfə əlavə etmək olmaz!"}, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save(status_name=status_name.upper())
-            headers = self.get_success_headers(serializer.data)
-            return Response({"detail": "Status əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        if serializer.is_valid():
+            create_employee_status(**serializer.validated_data)
+            return Response({"detail": "Status əlavə olundu"}, status=status.HTTP_201_CREATED)
         return Response({"detail": "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EmployeeStatusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeStatusDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = EmployeeStatus.objects.all()
     serializer_class = EmployeeStatusSerializer
     permission_classes = [account_permissions.EmployeeStatusPermissions]
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response({"detail": "Status məlumatları yeniləndi"})
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

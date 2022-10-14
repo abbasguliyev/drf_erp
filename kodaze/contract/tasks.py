@@ -4,8 +4,6 @@ from celery import shared_task
 import pandas as pd
 from django.contrib.auth import get_user_model
 from .models import DemoSales, Contract, Installment
-from services.models import Service
-from product.models import Product
 from . import (
     INSTALLMENT
 )
@@ -67,7 +65,7 @@ def create_installment_task(id, created):
             initial_payment_debt = float(initial_payment_debt)
 
         total_amount = instance.total_amount
-        if(initial_payment_debt == 0):
+        if(initial_payment_debt == 0 or initial_payment_debt == None):
             initial_payment_total = initial_payment
         elif(initial_payment_debt != 0):
             initial_payment_total = initial_payment + initial_payment_debt

@@ -56,8 +56,8 @@ class Contract(models.Model):
     remaining_debt = models.FloatField(default=0, blank=True)
     is_remove = models.BooleanField(default=False)
     loan_term = models.IntegerField(default=0, blank=True)
-    initial_payment = models.FloatField(blank=True, default=0)
-    initial_payment_debt = models.FloatField(blank=True, default=0)
+    initial_payment = models.FloatField(blank=True, null=True)
+    initial_payment_debt = models.FloatField(blank=True, null=True)
     initial_payment_date = models.DateField(blank=True, null=True)
     initial_payment_debt_date = models.DateField(blank=True, null=True)
     pdf = models.FileField(upload_to="media/media/contract_doc/%Y/%m/%d/", blank=True, null=True,
@@ -140,27 +140,27 @@ class ContractCreditor(models.Model):
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_contractcreditor", "Mövcud installmentorlara baxa bilər"),
-            ("add_contractcreditor", "Müqavilə Creditor əlavə edə bilər"),
-            ("change_contractcreditor", "Müqavilə Creditor məlumatlarını yeniləyə bilər"),
-            ("delete_contractcreditor", "Müqavilə Creditor silə bilər")
+            ("view_contractcreditor", "Mövcud kreditorlara baxa bilər"),
+            ("add_contractcreditor", "Müqaviləyə kreditor əlavə edə bilər"),
+            ("change_contractcreditor", "Müqavilənin kreditor məlumatlarını yeniləyə bilər"),
+            ("delete_contractcreditor", "Müqavilənin kreditorunu silə bilər")
         )
 
 
 class ContractGift(models.Model):
-    product = models.ManyToManyField("product.Product", related_name="gifts")
+    product = models.ForeignKey("product.Product", on_delete=models.CASCADE, null=True, blank=True, related_name="gifts")
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="gifts")
     quantity = models.PositiveBigIntegerField(default=1)
-    gift_date = models.DateField(auto_now_add=True, null=True)
+    gift_date = models.DateField(auto_now_add=True)
 
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
             ("view_contractgift", "Mövcud müqavilə hədiyyələrə baxa bilər"),
-            ("add_contractgift", "Müqavilə hədiyyə əlavə edə bilər"),
-            ("change_contractgift", "Müqavilə hədiyyə məlumatlarını yeniləyə bilər"),
-            ("delete_contractgift", "Müqavilə hədiyyə silə bilər")
+            ("add_contractgift", "Müqaviləy' hədiyyə əlavə edə bilər"),
+            ("change_contractgift", "Müqavilənin hədiyyə məlumatlarını yeniləyə bilər"),
+            ("delete_contractgift", "Müqavilənin hədiyyəsini silə bilər")
         )
 
 
@@ -243,7 +243,8 @@ class ContractChange(models.Model):
     payment_style = models.CharField(max_length=100, choices=ODENIS_USLUBU_CHOICES, default=INSTALLMENT)
     loan_term = models.IntegerField(default=0, blank=True)
     product = models.ForeignKey("product.Product", related_name="changed_contracts", on_delete=models.CASCADE)
-
+    note = models.TextField(null=True, blank=True)
+    
     class Meta:
         ordering = ("-pk",)
         default_permissions = []

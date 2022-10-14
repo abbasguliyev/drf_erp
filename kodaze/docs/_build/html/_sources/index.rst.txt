@@ -7,7 +7,7 @@ Welcome to Kodaze CRM's documentation!
 ======================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    modules/all-about-project.rst
@@ -41,6 +41,25 @@ Welcome to Kodaze CRM's documentation!
    modules/warehouse/warehouse.rst
    modules/warehouse/warehouse_request.rst
    modules/warehouse/stock.rst
+
+   modules/task_manager/task_manager.rst
+   modules/task_manager/task_requests.rst
+   modules/task_manager/advertisement.rst
+
+   modules/contract/contract.rst
+
+   modules/salary/office_leader_prim.rst
+   modules/salary/group_leader_prim.rst
+   modules/salary/manager1_prim.rst
+   modules/salary/manager2_prim.rst
+   modules/salary/advancedpayment.rst
+   modules/salary/bonus.rst
+   modules/salary/salary_deduction.rst
+   modules/salary/salary_punishment.rst
+   modules/salary/salary_view.rst
+
+   
+
 
 Indices and tables
 ==================

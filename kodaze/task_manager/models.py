@@ -45,8 +45,6 @@ class Advertisement(models.Model):
     title = models.CharField(max_length=250)
     body = models.TextField()
     created_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
-    # position = models.ForeignKey(
-    #     "company.Position", on_delete=models.CASCADE, related_name="advertisements", null=True, blank=True)
     position = models.ManyToManyField("company.Position", related_name="advertisements", blank=True)
     
     class Meta:
