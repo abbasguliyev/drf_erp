@@ -60,6 +60,9 @@ def installment_update(self, request, *args, **kwargs):
 
     # BORCU BAĞLA ILE BAGLI EMELIYYATLAR
     if(close_the_debt_status == "BORCU BAĞLA"):
+        if contract.debt_finished == True:
+            return Response({"detail": "Borcunuz yoxdur"}, status=status.HTTP_400_BAD_REQUEST)
+
         unpaid_installments_qs = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN")
         unpaid_installments = list(unpaid_installments_qs)
 
@@ -120,7 +123,9 @@ def installment_update(self, request, *args, **kwargs):
         installment_san = datetime.datetime.timestamp(installment)
 
         the_date_wants_to_delay = request.data.get("date")
+
         the_date_wants_to_delay_date = datetime.datetime.strptime(the_date_wants_to_delay, "%d-%m-%Y")
+        
         the_date_wants_to_delay_san = datetime.datetime.timestamp(the_date_wants_to_delay_date)
 
         unpaid_installments_qs = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN")
@@ -166,15 +171,14 @@ def installment_update(self, request, *args, **kwargs):
             except:
                 return Response({"detail": "Qeyd etdiyiniz tarix növbəti ayın tarixindən böyükdür."}, status=status.HTTP_400_BAD_REQUEST)
 
-            try:
-                if(installment_san < the_date_wants_to_delay_san < next_month_date_san):
-                    current_installment.date = the_date_wants_to_delay
-                    current_installment.delay_status = "GECİKDİRMƏ"
-                    current_installment.save()
-                    pdf_create_when_contract_updated(contract, contract, True)
-                    return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
-            except:
-                return Response({"detail": "Yeni tarix hal-hazırki tarix ile növbəti ayın tarixi arasında olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
+            if(installment_date < the_date_wants_to_delay_date.date() < next_month_date_date):
+                current_installment.date = the_date_wants_to_delay_date.date()
+                current_installment.delay_status = "GECİKDİRMƏ"
+                current_installment.save()
+                pdf_create_when_contract_updated(contract, contract, True)
+                return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"detail": "Yeni tarix hal-hazırki tarix ile növbəti ayın tarixi arasında olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)    
     elif(current_installment.payment_status != "ÖDƏNMƏYƏN" and delay_status == "GECİKDİRMƏ"):
         return Response({"detail": "Gecikdirmə ancaq ödənməmiş ay üçündür"}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -348,7 +352,7 @@ def installment_update(self, request, *args, **kwargs):
     if(conditional_payment_status == "RAZILAŞDIRILMIŞ AZ ÖDƏMƏ"):
         amount_wants_to_pay = float(request.data.get("price"))
         if float(current_installment.price) <= float(amount_wants_to_pay):
-            return Response({"detail": "Razılaşdırılmış ödəmə statusunda ödənmək istənilən məbləğ əvvəlki məbləğdən az olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Razılaşdırılmış ödəmə statusunda ödənmək istənilən məbləğ cari məbləğdən az olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             current_installment = self.get_object()
             contract = current_installment.contract
@@ -400,7 +404,7 @@ def installment_update(self, request, *args, **kwargs):
         amount_wants_to_pay = request.data.get("price")
         
         if float(current_installment.price) >= float(amount_wants_to_pay):
-            return Response({"detail": "Artıq ödəmə statusunda ödənmək istənilən məbləğ əvvəlki məbləğdən çox olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Artıq ödəmə statusunda ödənmək istənilən məbləğ cari məbləğdən çox olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             if(overpayment_substatus == "ARTIQ BİR AY"):
                 current_installment = self.get_object()

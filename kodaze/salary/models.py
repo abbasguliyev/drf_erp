@@ -140,7 +140,7 @@ class AdvancePayment(AbstractSalaryMethod):
 
 
 class PaySalary(AbstractSalaryMethod):
-    installment = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
+    salary_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     
     class Meta:
         ordering = ("pk",)

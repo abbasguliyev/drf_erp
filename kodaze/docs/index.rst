@@ -80,6 +80,7 @@ Welcome to Kodaze CRM's documentation!
    :caption: Contract:
   
    modules/contract/contract.rst
+   modules/contract/installment.rst
 
 .. toctree::
    :maxdepth: 2
@@ -94,6 +95,7 @@ Welcome to Kodaze CRM's documentation!
    modules/salary/salary_deduction.rst
    modules/salary/salary_punishment.rst
    modules/salary/salary_view.rst
+   modules/salary/pay_salary.rst
 
    
 

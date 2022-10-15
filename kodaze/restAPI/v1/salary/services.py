@@ -27,136 +27,148 @@ from restAPI.v1.cashbox.utils import (
 )
 def salary_pay_create(self, request, *args, **kwargs):
     """
-    İşçilərə salary vermək funksiyası
+    İşçilərə maaş vermək funksiyası
     """
     serializer = self.get_serializer(data=request.data)
     user = self.request.user
     # employees = serializer.data.get("employee")
 
     if serializer.is_valid():
-        employees = serializer.validated_data.get("employee")
+        employee = serializer.validated_data.get("employee")
         note = serializer.validated_data.get("note")
-        installment = serializer.validated_data.get("installment")
-        if (serializer.validated_data.get("installment") == None):
-            installment = datetime.date.today()
-        if (serializer.validated_data.get("installment") == ""):
-            installment = datetime.date.today()
+        salary_date = serializer.validated_data.get("salary_date")
+        if (serializer.validated_data.get("salary_date") == None):
+            salary_date = datetime.date.today()
+        if (serializer.validated_data.get("salary_date") == ""):
+            salary_date = datetime.date.today()
 
         now = datetime.date.today()
         d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
         next_m = d + pd.offsets.MonthBegin(1)
 
         yekun_odenen_amount = 0
-        for employee in employees:
-            try:
-                salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
-            except:
-                return Response({"detail": f"{employee} işçinin maaş kartında xəta var"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
+        except:
+            return Response({"detail": f"{employee} işçinin maaş kartında xəta var"}, status=status.HTTP_404_NOT_FOUND)
 
-            amount = salary_view.final_salary
-            yekun_odenen_amount += float(amount)
-            salary_view.final_salary = 0
-            office = employee.office
-            company = employee.company
-            holding = Holding.objects.all()[0]
+        if salary_view.is_done == True:
+            return Response({"detail": "İşçinin maaşını artıq ödəmisiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
-            initial_balance = calculate_holding_total_balance()
+        amount = salary_view.final_salary
+        yekun_odenen_amount += float(amount)
+        salary_view.final_salary = 0
+        office = employee.office
+        company = employee.company
+        holding = Holding.objects.all()[0]
+
+        initial_balance = calculate_holding_total_balance()
+        try:
             office_initial_balance = calculate_office_balance(office=office)
+        except:
+            pass
+        try:
             company_initial_balance = calculate_company_balance(company=company)
+        except:
+            pass
+            
+        try:
             holding_initial_balance = calculate_holding_balance()
+        except:
+            pass
 
-            note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN maaş ödəndi"
+        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN maaş ödəndi"
 
-            if office is not None:
-                cashbox = OfficeCashbox.objects.get(office=office)
-                if float(cashbox.balance) < float(amount):
-                    return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
-                cashbox.balance = float(cashbox.balance) - float(amount)
-                cashbox.save()
-                cashbox_expense = OfficeCashboxExpense.objects.create(
-                    executor=user,
-                    cashbox=cashbox,
-                    amount=amount,
-                    date=installment,
-                    note=note
-                )
-                cashbox_expense.save()
+        if office is not None:
+            cashbox = OfficeCashbox.objects.get(office=office)
+            if float(cashbox.balance) < float(amount):
+                return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
+            cashbox.balance = float(cashbox.balance) - float(amount)
+            cashbox.save()
+            cashbox_expense = OfficeCashboxExpense.objects.create(
+                executor=user,
+                cashbox=cashbox,
+                amount=amount,
+                date=salary_date,
+                note=note
+            )
+            cashbox_expense.save()
 
-                subsequent_balance = calculate_holding_total_balance()
-                office_subsequent_balance = calculate_office_balance(office=office)
-                cashflow_create(
-                    office=office,
-                    company= office.company,
-                    description=note,
-                    initial_balance=initial_balance,
-                    subsequent_balance=subsequent_balance,
-                    office_initial_balance=office_initial_balance,
-                    office_subsequent_balance=office_subsequent_balance,
-                    executor=user,
-                    operation_style="MƏXARİC",
-                    quantity=float(amount)
-                )
-            elif office == None and company is not None:
-                cashbox = CompanyCashbox.objects.get(company=company)
-                if float(cashbox.balance) < float(amount):
-                    return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-                cashbox.balance = float(cashbox.balance) - float(amount)
-                cashbox.save()
-                cashbox_expense = CompanyCashboxExpense.objects.create(
-                    executor=user,
-                    cashbox=cashbox,
-                    amount=amount,
-                    date=installment,
-                    note=note
-                )
-                cashbox_expense.save()
+            subsequent_balance = calculate_holding_total_balance()
+            office_subsequent_balance = calculate_office_balance(office=office)
+            cashflow_create(
+                office=office,
+                company= office.company,
+                description=note,
+                initial_balance=initial_balance,
+                subsequent_balance=subsequent_balance,
+                office_initial_balance=office_initial_balance,
+                office_subsequent_balance=office_subsequent_balance,
+                executor=user,
+                operation_style="MƏXARİC",
+                quantity=float(amount)
+            )
+        elif office == None and company is not None:
+            cashbox = CompanyCashbox.objects.get(company=company)
+            if float(cashbox.balance) < float(amount):
+                return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
+            cashbox.balance = float(cashbox.balance) - float(amount)
+            cashbox.save()
+            cashbox_expense = CompanyCashboxExpense.objects.create(
+                executor=user,
+                cashbox=cashbox,
+                amount=amount,
+                date=salary_date,
+                note=note
+            )
+            cashbox_expense.save()
 
-                subsequent_balance = calculate_holding_total_balance()
-                company_subsequent_balance = calculate_company_balance(company=company)
-                cashflow_create(
-                    company=company,
-                    description=note,
-                    initial_balance=initial_balance,
-                    subsequent_balance=subsequent_balance,
-                    company_initial_balance=company_initial_balance,
-                    company_subsequent_balance=company_subsequent_balance,
-                    executor=user,
-                    operation_style="MƏXARİC",
-                    quantity=float(amount)
-                )
+            subsequent_balance = calculate_holding_total_balance()
+            company_subsequent_balance = calculate_company_balance(company=company)
+            cashflow_create(
+                company=company,
+                description=note,
+                initial_balance=initial_balance,
+                subsequent_balance=subsequent_balance,
+                company_initial_balance=company_initial_balance,
+                company_subsequent_balance=company_subsequent_balance,
+                executor=user,
+                operation_style="MƏXARİC",
+                quantity=float(amount)
+            )
 
-            elif office == None and company == None and holding is not None:
-                cashbox = HoldingCashbox.objects.get(holding=holding)
-                if float(cashbox.balance) < float(amount):
-                    return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-                cashbox.balance = float(cashbox.balance) - float(amount)
-                cashbox.save()
-                cashbox_expense = HoldingCashboxExpense.objects.create(
-                    executor=user,
-                    cashbox=cashbox,
-                    amount=amount,
-                    date=installment,
-                    note=note
-                )
-                cashbox_expense.save()
+        elif office == None and company == None and holding is not None:
+            cashbox = HoldingCashbox.objects.get(holding=holding)
+            if float(cashbox.balance) < float(amount):
+                return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
+            cashbox.balance = float(cashbox.balance) - float(amount)
+            cashbox.save()
+            cashbox_expense = HoldingCashboxExpense.objects.create(
+                executor=user,
+                cashbox=cashbox,
+                amount=amount,
+                date=salary_date,
+                note=note
+            )
+            cashbox_expense.save()
 
-                subsequent_balance = calculate_holding_total_balance()
-                holding_subsequent_balance = calculate_holding_balance()
-                cashflow_create(
-                    holding=holding,
-                    description=note,
-                    initial_balance=initial_balance,
-                    subsequent_balance=subsequent_balance,
-                    holding_initial_balance=holding_initial_balance,
-                    holding_subsequent_balance=holding_subsequent_balance,
-                    executor=user,
-                    operation_style="MƏXARİC",
-                    quantity=float(amount)
-                )
+            subsequent_balance = calculate_holding_total_balance()
+            holding_subsequent_balance = calculate_holding_balance()
+            cashflow_create(
+                holding=holding,
+                description=note,
+                initial_balance=initial_balance,
+                subsequent_balance=subsequent_balance,
+                holding_initial_balance=holding_initial_balance,
+                holding_subsequent_balance=holding_subsequent_balance,
+                executor=user,
+                operation_style="MƏXARİC",
+                quantity=float(amount)
+            )
 
-            salary_view.is_done = True
-            salary_view.save()
-        serializer.save(amount=yekun_odenen_amount, installment=installment)
+        salary_view.is_done = True
+        salary_view.save()
+        serializer.save(amount=yekun_odenen_amount, salary_date=salary_date)
         return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
 
 def bonus_create(self, request, *args, **kwargs):

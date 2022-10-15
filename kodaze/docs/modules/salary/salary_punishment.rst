@@ -4,7 +4,7 @@ SalaryPunishment (Cərimə)
 
 - "employee_id"
     - required
-    - (işmi id - User)
+    - (işçi id - User)
 - "note"
     - nullable.
     - (qeyd - String)

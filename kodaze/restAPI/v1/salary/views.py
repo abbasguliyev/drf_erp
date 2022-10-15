@@ -229,7 +229,7 @@ class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
         return salary_services.salary_pay_create(self, request, *args, **kwargs)
 
 
-class PaySalaryDetailAPIView(generics.RetrieveUpdateAPIView):
+class PaySalaryDetailAPIView(generics.RetrieveAPIView):
     queryset = PaySalary.objects.all()
     serializer_class = PaySalarySerializer
     permission_classes = [salary_permissions.PaySalaryPermissions]
