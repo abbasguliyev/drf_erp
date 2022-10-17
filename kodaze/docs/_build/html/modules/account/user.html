@@ -117,6 +117,14 @@
 </li>
 <li><dl class="simple">
 <dt>company</dt><dd><ul>
+<li><p>nullable, create prosesi zamanı göndərilmir. Avtomatik Alliance Holding seçilir.</p></li>
+<li><p>(Holdinq - Holdinq id)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>company</dt><dd><ul>
 <li><p>nullable</p></li>
 <li><p>(Şirkət - Company id)</p></li>
 </ul>
@@ -424,6 +432,20 @@
 <ul class="simple">
 <li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/1/">http://localhost:8000/api/v1/users/1/</a>”</p></li>
 </ul>
+</section>
+<section id="get-user-of-company">
+<h2>Get User of Company<a class="headerlink" href="#get-user-of-company" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/?company__name=Ocean">http://localhost:8000/api/v1/users/?company__name=Ocean</a>”</p></li>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/?company=1">http://localhost:8000/api/v1/users/?company=1</a>”</p></li>
+</ul>
+</section>
+<section id="get-user-of-holding">
+<h2>Get User of Holding<a class="headerlink" href="#get-user-of-holding" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/?holding__name=Alliance">http://localhost:8000/api/v1/users/?holding__name=Alliance</a>”</p></li>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/?holding=1">http://localhost:8000/api/v1/users/?holding=1</a>”</p></li>
+</ul>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Deactivate User</p></td>
@@ -457,9 +479,12 @@
 
 
 <h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<p class="caption" role="heading"><span class="caption-text">All about project:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../all-about-project.html">All about Project</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User:</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User (İşçi)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#login">Login</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#token-refresh">Token Refresh</a></li>
@@ -469,6 +494,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#update-users">Update Users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-all-users">Get All Users</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-user-by-id">Get User By ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-user-of-company">Get User of Company</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-user-of-holding">Get User of Holding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deactivate-user">Deactivate User</a></li>
 </ul>
 </li>
@@ -476,6 +503,9 @@
 <li class="toctree-l1"><a class="reference internal" href="region.html">Region (Bölgə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customer.html">Customer (Müştəri)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Company:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../company/holding.html">Holding (Holdinq)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../company/company.html">Company (Şirkət)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../company/department.html">Department (Departament)</a></li>
@@ -485,23 +515,42 @@
 <li class="toctree-l1"><a class="reference internal" href="../company/team.html">Team (Komanda)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../company/permission_for_position.html">Permission For Position (Vəzifəyə görə icazə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../company/logo.html">Logo (Logo)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CashBox:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../cashbox/holding_cashbox.html">Holding CashBox (Holdinq Kassa)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cashbox/company_cashbox.html">Company CashBox (Şirkət Kassa)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cashbox/office_cashbox.html">Office CashBox (Ofis Kassa)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cashbox/cashflow.html">CashFlow (Pul Axını)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Produc:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../product/product.html">Product (Məhsullar)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../product/category.html">Category (Kateqoriya)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../product/unit_of_measure.html">UnitOfMeasure (Ölçü vahidi)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Backup And Restore:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../backup_restore/backup.html">Backup</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Warehouse:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse.html">Warehouse (Anbar)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse_request.html">Warehouse Request (Anbar Sorğu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../warehouse/stock.html">Stock (Stok)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Manager:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../task_manager/task_manager.html">TaskManager (Tapşırıqlar)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../task_manager/task_requests.html">TaskRequest (Tarixçə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../task_manager/advertisement.html">Advertisement (Elan)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contract/contract.html">Contract (Müqavilə)</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contract:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contract/contract.html">Contract (Müqavilə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contract/installment.html">Installment (Kredit)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Salary:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../salary/office_leader_prim.html">OfficeLeaderPrim (Ofis Lider Komissiya)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../salary/group_leader_prim.html">GroupLeaderPrim (Qrup Lider Komissiya)</a></li>
@@ -512,6 +561,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../salary/salary_deduction.html">SalaryDeduction (Kəsinti)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../salary/salary_punishment.html">SalaryPunishment (Cərimə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../salary/salary_view.html">SalaryView (Maaş Görüntüləmə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../salary/pay_salary.html">PaySalary (Maaş ödə)</a></li>
 </ul>
 
 <div class="relations">
