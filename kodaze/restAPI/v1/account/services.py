@@ -4,6 +4,7 @@ import os
 from django.contrib.auth import get_user_model
 from account import MONTHLY
 from account.models import Customer, EmployeeStatus, Region
+from company.models import Holding
 from rest_framework.exceptions import ValidationError
 from core.settings import BASE_DIR
 
@@ -20,6 +21,7 @@ def create_user(
     back_photo_of_ID = None,
     driving_license_photo = None,
     department = None,
+    holding = None,
     company = None,
     office = None,
     section = None,
@@ -36,6 +38,8 @@ def create_user(
     groups = None,
     password: str,
 ) -> User:
+    alliance_holding = Holding.objects.filter(name="ALLIANCE").first()
+
     user = User.objects.create(
         email = email,
         fullname = fullname,
@@ -47,6 +51,7 @@ def create_user(
         back_photo_of_ID = back_photo_of_ID,
         driving_license_photo = driving_license_photo,
         department = department,
+        holding = alliance_holding,
         company = company,
         office = office,
         section = section,

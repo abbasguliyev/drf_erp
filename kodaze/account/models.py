@@ -46,6 +46,7 @@ class User(AbstractUser):
     back_photo_of_ID = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])], help_text=_('Şəxsiyyət vəsiqəsi 2'))
     driving_license_photo = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])], help_text=_('Sürücülük vəsiqəsi'))
     department = models.ForeignKey("company.Department", on_delete=models.SET_NULL, related_name="employees", null=True, blank=True, help_text=_('Departament'))
+    holding = models.ForeignKey("company.Holding", on_delete=models.SET_NULL, related_name="employees", null=True, blank=True, help_text=_('Holdinq'))
     company = models.ForeignKey("company.Company", on_delete=models.SET_NULL, related_name="employees", null=True, blank=True, help_text=_('Şirkət'))
     office = models.ForeignKey("company.Office", on_delete=models.SET_NULL, related_name="employees", null=True, blank=True, help_text=_('Ofis'))
     section = models.ForeignKey("company.Section", on_delete=models.SET_NULL, related_name="employees", null=True, blank=True, help_text=_('Şöbə'))

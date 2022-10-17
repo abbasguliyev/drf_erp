@@ -12,6 +12,7 @@ from account.models import (
 )
 from restAPI.v1.company.serializers import (
     CompanySerializer,
+    HoldingSerializer,
     OfficeSerializer,
     SectionSerializer,
     TeamSerializer,
@@ -21,6 +22,7 @@ from restAPI.v1.company.serializers import (
 
 from company.models import (
     Company,
+    Holding,
     Office,
     Team,
     Section,
@@ -113,6 +115,7 @@ class RegisterSerializer(DynamicFieldsCategorySerializer):
 
 
 class UserSerializer(DynamicFieldsCategorySerializer):
+    holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     department = DepartmentSerializer(read_only=True, fields=['id', 'name'])
     office = OfficeSerializer(read_only=True, fields=['id', 'name'])
@@ -124,6 +127,9 @@ class UserSerializer(DynamicFieldsCategorySerializer):
     groups = GroupSerializer(read_only=True, many=True, fields=['id', 'name'])
     dismissal_date = serializers.DateField(read_only=True)
 
+    holding_id = serializers.PrimaryKeyRelatedField(
+        queryset=Holding.objects.all(), source='holding', write_only=True, allow_null=True
+    )
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.select_related('holding').all(), source='company', write_only=True,
     )

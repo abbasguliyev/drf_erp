@@ -42,11 +42,18 @@ class UserFilter(django_filters.FilterSet):
             'position': ['exact'],
             'is_superuser': ['exact'],
 
+            'holding': ['exact'],
+            'holding__name': ['exact', 'icontains'],
+            'company': ['exact'],
             'company__name': ['exact', 'icontains'],
+            'office': ['exact'],
             'office__name': ['exact', 'icontains'],
+            'section': ['exact'],
             'section__name': ['exact', 'icontains'],
+            'department': ['exact'],
             'department__name': ['exact', 'icontains'],
             'is_active': ['exact'],
+            'employee_status': ['exact'],
             'employee_status__status_name': ['exact', 'icontains'],
         }
 

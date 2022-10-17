@@ -35,6 +35,9 @@ User (İşçi)
     - nullable 
     - (Sürücülük vəsiqəsi - File)
 - company
+    - nullable, create prosesi zamanı göndərilmir. Avtomatik Alliance Holding seçilir.
+    - (Holdinq - Holdinq id)
+- company
     - nullable 
     - (Şirkət - Company id)
 - department 
@@ -250,6 +253,18 @@ Get User By ID
 --------------
 
 - endpoint: "http://localhost:8000/api/v1/users/1/"
+
+Get User of Company
+-------------------
+
+- endpoint: "http://localhost:8000/api/v1/users/?company__name=Ocean"
+- endpoint: "http://localhost:8000/api/v1/users/?company=1"
+
+Get User of Holding
+-------------------
+
+- endpoint: "http://localhost:8000/api/v1/users/?holding__name=Alliance"
+- endpoint: "http://localhost:8000/api/v1/users/?holding=1"
 
 +----------------+
 |Deactivate User |
