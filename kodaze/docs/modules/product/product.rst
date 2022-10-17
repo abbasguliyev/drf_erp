@@ -6,6 +6,9 @@ Product (Məhsullar)
     - required. 
     - Mutleq gonderilmelidir
     - (Məhsulun adı - String)
+- "barcode"
+    - nullable. 
+    - (Məhsulun barkodu - Integer)
 - "price"
     - required. 
     - Mutleq gonderilmelidir
@@ -69,18 +72,19 @@ Product create
 .. code:: json
 
   {
-    "company_id": null,
-    "category_id": null,
-    "unit_of_measure_id": null,
+    "company_id": "",
+    "category_id": "",
+    "unit_of_measure_id": "",
     "product_name": "",
-    "price": null,
-    "volume": null,
-    "weight": null,
-    "width": null,
-    "length": null,
-    "height": null,
+    "barcode": "",
+    "price": "",
+    "volume": "",
+    "weight": "",
+    "width": "",
+    "length": "",
+    "height": "",
     "note": "",
-    "product_image": null,
+    "product_image": "",
     "is_gift": false
   }
 
@@ -97,18 +101,19 @@ Update Product
 .. code:: json
 
   {
-    "company_id": null,
-    "category_id": null,
-    "unit_of_measure_id": null,
+    "company_id": "",
+    "category_id": "",
+    "unit_of_measure_id": "",
     "product_name": "",
-    "price": null,
-    "volume": null,
-    "weight": null,
-    "width": null,
-    "length": null,
-    "height": null,
+    "barcode": "",
+    "price": "",
+    "volume": "",
+    "weight": "",
+    "width": "",
+    "length": "",
+    "height": "",
     "note": "",
-    "product_image": null,
+    "product_image": "",
     "is_gift": false
   }
   

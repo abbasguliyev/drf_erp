@@ -1,3 +1,4 @@
+from enum import unique
 from django.db import models
 from django.db.models import (
     F
@@ -45,6 +46,7 @@ class Product(models.Model):
     width = models.FloatField(null=True, blank=True)
     length = models.FloatField(null=True, blank=True)
     height = models.FloatField(null=True, blank=True)
+    barcode = models.PositiveIntegerField(null=True, blank=True, unique=True)
     note = models.TextField(null=True, blank=True)
     product_image = models.ImageField(upload_to="media/product/%Y/%m/%d/", null=True,
                                       blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])

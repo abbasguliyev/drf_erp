@@ -14,6 +14,7 @@ class StockFilter(django_filters.FilterSet):
             'product__id': ['exact'],
             'product__product_name': ['exact', 'icontains'],
             'product__price': ['exact', 'gte', 'lte'],
+            'product__barcode': ['exact', 'gte', 'lte'],
 
             'warehouse__company__name': ['exact', 'icontains'],
             'warehouse__office__name': ['exact', 'icontains'],
