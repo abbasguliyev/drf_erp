@@ -214,8 +214,6 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
                 'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
             ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = UserSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = UserFilter
     permission_classes = [account_permissions.UserPermissions]
 
     def update(self, request, *args, **kwargs):

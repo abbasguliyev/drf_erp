@@ -9,6 +9,7 @@ from account.models import (
 )
 
 from django.contrib.auth.models import Permission, Group
+from django.db.models import Q
 
 class PermissionFilter(django_filters.FilterSet):
     class Meta:
@@ -34,6 +35,11 @@ class UserFilter(django_filters.FilterSet):
     start_date_of_work__gte = django_filters.DateFilter(field_name='start_date_of_work', lookup_expr='gte', input_formats=["%d-%m-%Y"])
     start_date_of_work__lte = django_filters.DateFilter(field_name='start_date_of_work', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
+    user_of_companies = django_filters.BooleanFilter(method="user_of_company", label="user_of_companies")
+    user_of_departments = django_filters.BooleanFilter(method="user_of_department", label="user_of_departments")
+    user_of_offices = django_filters.BooleanFilter(method="user_of_office", label="user_of_offices")
+
+
     class Meta:
         model = User
         fields = {
@@ -56,6 +62,21 @@ class UserFilter(django_filters.FilterSet):
             'employee_status': ['exact'],
             'employee_status__status_name': ['exact', 'icontains'],
         }
+
+    def user_of_company(self, queryset, name, value):
+        qs = None
+        qs = queryset.filter(~Q(company=None))
+        return qs
+
+    def user_of_department(self, queryset, name, value):
+        qs = None
+        qs = queryset.filter(~Q(department=None))
+        return qs
+
+    def user_of_office(self, queryset, name, value):
+        qs = None
+        qs = queryset.filter(~Q(office=None))
+        return qs
 
 class EmployeeStatusFilter(django_filters.FilterSet):
     class Meta:
