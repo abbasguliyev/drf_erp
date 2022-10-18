@@ -131,10 +131,10 @@ class UserSerializer(DynamicFieldsCategorySerializer):
         queryset=Holding.objects.all(), source='holding', write_only=True, allow_null=True
     )
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True,
+        queryset=Company.objects.all(), source='company', write_only=True,
     )
     department_id = serializers.PrimaryKeyRelatedField(
-        queryset=Department.objects.select_related('holding').all(), source='department', write_only=True
+        queryset=Department.objects.all(), source='department', write_only=True
     )
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.select_related('company').all(), source='office', write_only=True
@@ -145,7 +145,7 @@ class UserSerializer(DynamicFieldsCategorySerializer):
     )
 
     position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.select_related('company').all(), source='position', write_only=True,
+        queryset=Position.objects.all(), source='position', write_only=True,
     )
 
     team_id = serializers.PrimaryKeyRelatedField(

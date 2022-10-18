@@ -5,7 +5,6 @@ Holding (Holdinq)
 - name
     - required. 
     - unique
-    - Mutleq gonderilmelidir
     - (Holding adı - String)
 - is_active
     - create zamanı göndərilmir. Update zamanı istəyə görə göndərilir. 
@@ -25,7 +24,6 @@ Holding create
 .. code:: json
 
   {
-    "is_active": false,
     "name": ""
   }
 

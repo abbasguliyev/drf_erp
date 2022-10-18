@@ -34,8 +34,6 @@ class Holding(AbstractCompany):
 
 class Company(AbstractCompany):
     name = models.CharField(max_length=200, unique=True)
-    holding = models.ForeignKey(
-        Holding, on_delete=models.CASCADE, blank=True, related_name="companies")
     address = models.CharField(max_length=350)
     phone = models.CharField(max_length=200)
     email = models.EmailField()
@@ -53,9 +51,6 @@ class Company(AbstractCompany):
 
 
 class Department(AbstractCompany):
-    holding = models.ForeignKey(
-        Holding, on_delete=models.CASCADE, related_name="departments")
-
     class Meta:
         ordering = ("pk",)
         default_permissions = []
@@ -68,8 +63,7 @@ class Department(AbstractCompany):
 
 
 class Office(AbstractCompany):
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="offices")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="offices")
     
     class Meta:
         ordering = ("pk",)
@@ -88,8 +82,7 @@ class Office(AbstractCompany):
 
 
 class Section(AbstractCompany):
-    office = models.ForeignKey(
-        Office, on_delete=models.CASCADE, null=True, related_name="sections")
+    office = models.ForeignKey(Office, on_delete=models.CASCADE, null=True, related_name="sections")
     
     class Meta:
         ordering = ("pk",)
@@ -103,9 +96,6 @@ class Section(AbstractCompany):
 
 
 class Position(AbstractCompany):
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="positions")
-    
     class Meta:
         ordering = ("pk",)
         default_permissions = []
@@ -131,10 +121,8 @@ class Team(AbstractCompany):
         )
 
 class PermissionForPosition(models.Model):
-    position = models.ForeignKey(
-        Position, on_delete=models.CASCADE, related_name="permission_for_positions")
-    permission_group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="permission_for_positions")
+    position = models.ForeignKey(Position, on_delete=models.CASCADE, related_name="permission_for_positions")
+    permission_group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="permission_for_positions")
 
     class Meta:
         ordering = ("pk",)

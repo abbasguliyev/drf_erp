@@ -317,13 +317,7 @@ class OfficeLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [salary_permissions.OfficeLeaderPrimPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = OfficeLeaderPrim.objects.all()
-        elif request.user.company is not None:
-            queryset = OfficeLeaderPrim.objects.filter(position__company=request.user.company)
-        else:
-            queryset = OfficeLeaderPrim.objects.all()
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -375,13 +369,7 @@ class GroupLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [salary_permissions.GroupLeaderPrimNewPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = GroupLeaderPrimNew.objects.all()
-        elif request.user.company is not None:
-            queryset = GroupLeaderPrimNew.objects.filter(position__company=request.user.company)
-        else:
-            queryset = GroupLeaderPrimNew.objects.all()
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -433,13 +421,7 @@ class Manager2PrimListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [salary_permissions.Manager2PrimPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = Manager2Prim.objects.all()
-        elif request.user.company is not None:
-            queryset = Manager2Prim.objects.filter(position__company=request.user.company)
-        else:
-            queryset = Manager2Prim.objects.all()
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -490,13 +472,7 @@ class Manager1PrimNewListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [salary_permissions.Manager1PrimNewPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = Manager1PrimNew.objects.all()
-        elif request.user.company is not None:
-            queryset = Manager1PrimNew.objects.filter(position__company=request.user.company)
-        else:
-            queryset = Manager1PrimNew.objects.all()
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:

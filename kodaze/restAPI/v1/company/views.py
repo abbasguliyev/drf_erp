@@ -44,7 +44,7 @@ from restAPI.v1.company.filters import (
 from restAPI.v1.company import permissions as company_permissions
 from django.contrib.auth.models import Group
 
-from .services import company_create, holding_create
+from .services import company_create, holding_create, department_create, office_create, position_create, section_create
 
 
 # ********************************** holding put delete post get **********************************
@@ -58,8 +58,7 @@ class HoldingListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         holding_create(**serializer.validated_data)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Holding əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"detail": "Holding əlavə olundu"}, status=status.HTTP_201_CREATED)
 
 
 class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
@@ -69,8 +68,7 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"detail": "Holding məlumatları yeniləndi"}, status=status.HTTP_200_OK)
@@ -80,7 +78,7 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
 # ********************************** company put delete post get **********************************
 
 class CompanyListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Company.objects.select_related('holding').all()
+    queryset = Company.objects.all()
     serializer_class = CompanySerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CompanyFilter
@@ -107,20 +105,18 @@ class CompanyListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             company_create(**serializer.validated_data)
-            headers = self.get_success_headers(serializer.data)
-            return Response({"detail": "Şirkət əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+            return Response({"detail": "Şirkət əlavə olundu"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Company.objects.select_related('holding').all()
+    queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [company_permissions.CompanyPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"detail": "Şirkət məlumatları yeniləndi"}, status=status.HTTP_200_OK)
@@ -132,6 +128,178 @@ class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.is_active = False
         instance.save()
         return Response({"detail": "Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
+
+# ********************************** department put delete post get **********************************
+
+class DepartmentListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DepartmentFilter
+    permission_classes = [company_permissions.DepartmentPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = self.queryset
+        elif request.user.department is not None:
+                queryset =self.queryset.filter(id=request.user.department.id)
+        else:
+            queryset = self.queryset
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            department_create(**serializer.validated_data)
+            return Response({"detail": "Departament əlavə olundu"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [company_permissions.DepartmentPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Departament məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({"detail": "Departament deaktiv edildi"}, status=status.HTTP_200_OK)
+
+# ********************************** officeler put delete post get **********************************
+
+class OfficeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Office.objects.select_related('company').all()
+    serializer_class = OfficeSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = OfficeFilter
+    permission_classes = [company_permissions.OfficePermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = self.queryset
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = self.queryset.filter(
+                    company=request.user.company, id=request.user.office.id)
+            queryset = self.queryset.filter(company=request.user.company)
+        else:
+            queryset = self.queryset
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            office_create(**serializer.validated_data)
+            return Response({"detail": "Ofis əlavə olundu"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Office.objects.select_related('company').all()
+    serializer_class = OfficeSerializer
+    permission_classes = [company_permissions.OfficePermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Ofis məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({"detail": "Ofis deaktiv edildi"}, status=status.HTTP_200_OK)
+
+# ********************************** section put delete post get **********************************
+
+class SectionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Section.objects.select_related('office').all()
+    serializer_class = SectionSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SectionFilter
+    permission_classes = [company_permissions.SectionPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = self.queryset
+        elif request.user.company is not None:
+            if request.user.office is not None:
+                queryset = self.queryset.filter(
+                    office__company=request.user.company, office=request.user.office)
+            queryset = self.queryset.filter(office__company=request.user.company)
+        else:
+            queryset = self.queryset
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            section_create(**serializer.validated_data)
+            return Response({"detail": "Şöbə əlavə olundu"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Section.objects.select_related('office').all()
+    serializer_class = SectionSerializer
+    permission_classes = [company_permissions.SectionPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Şöbə məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({"detail": "Şöbə deaktiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** team get post put delete **********************************
 
@@ -180,140 +348,18 @@ class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         team.save()
         return Response({"detail": "Komanda qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-
-# ********************************** department put delete post get **********************************
-
-
-class DepartmentListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Department.objects.select_related('holding').all()
-    serializer_class = DepartmentSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = DepartmentFilter
-    permission_classes = [company_permissions.DepartmentPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.department is not None:
-                queryset =self.queryset.filter(id=request.user.department.id)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Departament əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Department.objects.select_related('holding').all()
-    serializer_class = DepartmentSerializer
-    permission_classes = [company_permissions.DepartmentPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Departament məlumatları yeniləndi"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.is_active = False
-        instance.save()
-        return Response({"detail": "Departament deaktiv edildi"}, status=status.HTTP_200_OK)
-
-# ********************************** officeler put delete post get **********************************
-
-
-class OfficeListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Office.objects.select_related('company').all()
-    serializer_class = OfficeSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfficeFilter
-    permission_classes = [company_permissions.OfficePermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.company is not None:
-            if request.user.office is not None:
-                queryset = self.queryset.filter(
-                    company=request.user.company, id=request.user.office.id)
-            queryset = self.queryset.filter(company=request.user.company)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Office əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Office.objects.select_related('company').all()
-    serializer_class = OfficeSerializer
-    permission_classes = [company_permissions.OfficePermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Office məlumatları yeniləndi"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.is_active = False
-        instance.save()
-        return Response({"detail": "Office deaktiv edildi"}, status=status.HTTP_200_OK)
-
 # ********************************** position put delete post get **********************************
 
 
 class PositionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Position.objects.select_related('company').all()
+    queryset = Position.objects.all()
     serializer_class = PositionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = PositionFilter
     permission_classes = [company_permissions.PositionPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.company is not None:
-            queryset = self.queryset.filter(company=request.user.company)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -325,16 +371,11 @@ class PositionListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        name = serializer.validated_data.get("name")
-        company = serializer.validated_data.get("company")
-        position_db = Position.objects.filter(
-            name=name.upper(), company=company)
-        if len(position_db) > 0:
-            return Response({"detail": "Bu ad və şirkətə uyğun vəzifə artıq qeydiyyatdan keçirilib"}, status=status.HTTP_400_BAD_REQUEST)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Vəzifə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        if serializer.is_valid(raise_exception=True):
+            position_create(**serializer.validated_data)
+            return Response({"detail": "Vəzifə əlavə olundu"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -358,68 +399,7 @@ class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Vəzifə deaktiv edildi"}, status=status.HTTP_200_OK)
 
-
-# ********************************** section put delete post get **********************************
-
-
-class SectionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Section.objects.select_related('office').all()
-    serializer_class = SectionSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = SectionFilter
-    permission_classes = [company_permissions.SectionPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.company is not None:
-            if request.user.office is not None:
-                queryset = self.queryset.filter(
-                    office__company=request.user.company, office=request.user.office)
-            queryset = self.queryset.filter(office__company=request.user.company)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Şöbə əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Section.objects.select_related('office').all()
-    serializer_class = SectionSerializer
-    permission_classes = [company_permissions.SectionPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Şöbə məlumatları yeniləndi"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.is_active = False
-        instance.save()
-        return Response({"detail": "Şöbə deaktiv edildi"}, status=status.HTTP_200_OK)
-
 # ********************************** PermissionForPosition put delete post get **********************************
-
 
 class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
     queryset = PermissionForPosition.objects.select_related('position', 'permission_group').all()
@@ -429,14 +409,10 @@ class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
     filterset_class = PermissionForPositionFilter
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.company is not None:
-            queryset = self.queryset.filter(
-                position__company=request.user.company)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
+        return super().get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:

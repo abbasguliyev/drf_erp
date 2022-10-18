@@ -9,10 +9,6 @@ Department (Departament)
 - is_active
     - create zamanı göndərilmir. Update zamanı istəyə görə göndərilir. 
     - (Aktiv/Deaktiv - Boolean)
-- holding_id
-    - required. 
-    - Mutleq gonderilmelidir
-    - (Holdinq İD - Holding)
 
 =====
 
@@ -28,7 +24,6 @@ Department create
 .. code:: json
 
   {
-    "holding_id": null,
     "name": "",
     "is_active": false
   }
@@ -46,7 +41,6 @@ Update Department
 .. code:: json
 
   {
-    "holding_id": null,
     "name": "",
     "is_active": false
   }

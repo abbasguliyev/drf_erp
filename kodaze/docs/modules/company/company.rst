@@ -10,9 +10,6 @@ Company (Şirkət)
 - is_active
     - create zamanı göndərilmir. Update zamanı istəyə görə göndərilir. 
     - (Aktiv/Deaktiv - Boolean)
-- holding
-    - Göndərilmir, avtomatik Alliance Holding seçiləcək. 
-    - (Holdinq İD - Holding)
 - address
     - required. 
     - (Adres - String)

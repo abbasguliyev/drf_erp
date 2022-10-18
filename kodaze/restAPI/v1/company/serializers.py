@@ -61,22 +61,16 @@ class CompanySerializer(DynamicFieldsCategorySerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name).upper()
-        instance.holding = validated_data.get('holding', instance.holding)
-        instance.holding = validated_data.get('address', instance.address)
-        instance.holding = validated_data.get('phone', instance.phone)
-        instance.holding = validated_data.get('email', instance.email)
-        instance.holding = validated_data.get('web_site', instance.web_site)
+        instance.address = validated_data.get('address', instance.address)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.email = validated_data.get('email', instance.email)
+        instance.web_site = validated_data.get('web_site', instance.web_site)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
         return instance
 
 
 class DepartmentSerializer(DynamicFieldsCategorySerializer):
-    holding = HoldingSerializer(read_only=True)
-    holding_id = serializers.PrimaryKeyRelatedField(
-        queryset=Holding.objects.all(), source='holding', write_only=True
-    )
-
     class Meta:
         model = Department
         fields = "__all__"
@@ -88,63 +82,22 @@ class DepartmentSerializer(DynamicFieldsCategorySerializer):
 
         return representation
 
-    def create(self, validated_data):
-        name = validated_data.get('name')
-        validated_data['name'] = name.upper()
-        holding = validated_data['holding']
-        try:
-            departmentt = Department.objects.filter(
-                name=name.upper(), holding=holding)
-            if len(departmentt) > 0:
-                raise ValidationError
-            return super(DepartmentSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə departament artıq əlavə olunub'})
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get(
-            'name', instance.name).upper()
-        instance.holding = validated_data.get('holding', instance.holding)
-        instance.is_active = validated_data.get(
-            'is_active', instance.is_active)
-        instance.save()
-        return instance
-
-
 class OfficeSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True
+        queryset=Company.objects.all(), source='company', write_only=True
     )
 
     class Meta:
         model = Office
         fields = "__all__"
 
-    def create(self, validated_data):
-        name = validated_data.get('name')
-        validated_data['name'] = name.upper()
-        company = validated_data['company']
-        try:
-            offices = Office.objects.filter(
-                name=name.upper(), company=company)
-            if len(offices) > 0:
-                raise ValidationError
-            return super(OfficeSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə office artıq əlavə olunub'})
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        employees = User.objects.filter(office=instance, is_active=True).count()
+        representation['employee_count'] = employees
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get(
-            'name', instance.name).upper()
-        instance.company = validated_data.get('company', instance.company)
-        instance.is_active = validated_data.get(
-            'is_active', instance.is_active)
-        instance.save()
-        return instance
-
+        return representation
 
 class SectionSerializer(DynamicFieldsCategorySerializer):
     office = OfficeSerializer(read_only=True, fields=['id', 'name'])
@@ -155,27 +108,13 @@ class SectionSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Section
         fields = "__all__"
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        employees = User.objects.filter(section=instance, is_active=True).count()
+        representation['employee_count'] = employees
 
-    def create(self, validated_data):
-        name = validated_data.get('name')
-        validated_data['name'] = name.upper()
-        office = validated_data['office']
-        try:
-            section_qs = Section.objects.filter(
-                name=name.upper(), office=office)
-            if len(section_qs) > 0:
-                raise ValidationError
-            return super(SectionSerializer, self).create(validated_data)
-        except:
-            raise ValidationError(
-                {"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name).upper()
-        instance.office = validated_data.get('office', instance.office)
-        instance.is_active = validated_data.get('is_active', instance.is_active)
-        instance.save()
-        return instance
+        return representation
 
 class TeamSerializer(DynamicFieldsCategorySerializer):
     class Meta:
@@ -203,27 +142,16 @@ class TeamSerializer(DynamicFieldsCategorySerializer):
 
 
 class PositionSerializer(DynamicFieldsCategorySerializer):
-    company = CompanySerializer(read_only=True, fields=['id', 'name'])
-    company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), source='company', write_only=True
-    )
-
     class Meta:
         model = Position
         fields = "__all__"
 
-    def create(self, validated_data):
-        name = validated_data.get('name')
-        validated_data['name'] = name.upper()
-        return super(PositionSerializer, self).create(validated_data)
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        employees = User.objects.filter(position=instance, is_active=True).count()
+        representation['employee_count'] = employees
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name).upper()
-        instance.company = validated_data.get('company', instance.company)
-        instance.is_active = validated_data.get('is_active', instance.is_active)
-        instance.save()
-        return instance
-
+        return representation
 
 class PermissionForPositionSerializer(DynamicFieldsCategorySerializer):
     position = PositionSerializer(read_only=True, fields=['id', 'name'])

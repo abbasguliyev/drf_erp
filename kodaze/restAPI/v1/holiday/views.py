@@ -412,13 +412,7 @@ class PositionWorkingDayListCreateAPIView(generics.ListAPIView):
     permission_classes = [working_day_permissions.PositionWorkingDayPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = PositionWorkingDay.objects.all()
-        elif request.user.company is not None:
-            queryset = PositionWorkingDay.objects.filter(position__company=request.user.company)
-        else:
-            queryset = PositionWorkingDay.objects.all()
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -451,13 +445,7 @@ class PositionExceptionWorkerListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [working_day_permissions.PositionExceptionWorkerPermissions]
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = PositionExceptionWorker.objects.all()
-        elif request.user.company is not None:
-            queryset = PositionExceptionWorker.objects.filter(working_day__position__company=request.user.company)
-        else:
-            queryset = PositionExceptionWorker.objects.all()
-        queryset = self.filter_queryset(queryset)
+        queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:

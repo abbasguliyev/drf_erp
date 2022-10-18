@@ -9,10 +9,6 @@ Position (Vəzifə)
 - is_active
     - create zamanı göndərilmir. Update zamanı istəyə görə göndərilir. 
     - (Aktiv/Deaktiv - Boolean)
-- company_id
-    - required. 
-    - Mutleq gonderilmelidir
-    - (Şirkət İD - Company)
 
 =====
 
@@ -28,7 +24,6 @@ Position create
 .. code:: json
 
   {
-    "company_id": null,
     "name": "",
     "is_active": false
   }
@@ -46,7 +41,6 @@ Update Position
 .. code:: json
 
   {
-    "company_id": null,
     "name": "",
     "is_active": false
   }
