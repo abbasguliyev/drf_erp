@@ -65,17 +65,22 @@ class UserFilter(django_filters.FilterSet):
 
     def user_of_company(self, queryset, name, value):
         qs = None
-        qs = queryset.filter(~Q(company=None))
+        qs = queryset.filter(~Q(company=None), department=None)
         return qs
 
     def user_of_department(self, queryset, name, value):
         qs = None
-        qs = queryset.filter(~Q(department=None))
+        qs = queryset.filter(~Q(department=None), company=None)
         return qs
 
     def user_of_office(self, queryset, name, value):
         qs = None
         qs = queryset.filter(~Q(office=None))
+        return qs
+
+    def user_of_holding(self, queryset, name, value):
+        qs = None
+        qs = queryset.filter(Q(company=None))
         return qs
 
 class EmployeeStatusFilter(django_filters.FilterSet):
