@@ -35,7 +35,11 @@ class Holding(AbstractCompany):
 class Company(AbstractCompany):
     name = models.CharField(max_length=200, unique=True)
     holding = models.ForeignKey(
-        Holding, on_delete=models.CASCADE, related_name="companies")
+        Holding, on_delete=models.CASCADE, blank=True, related_name="companies")
+    address = models.CharField(max_length=350)
+    phone = models.CharField(max_length=200)
+    email = models.EmailField()
+    web_site = models.CharField(max_length=300, null=True, blank=True)
     
     class Meta:
         ordering = ("pk",)

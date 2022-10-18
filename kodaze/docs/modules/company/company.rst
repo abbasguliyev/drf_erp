@@ -11,9 +11,26 @@ Company (Şirkət)
     - create zamanı göndərilmir. Update zamanı istəyə görə göndərilir. 
     - (Aktiv/Deaktiv - Boolean)
 - holding
-    - required. 
-    - Mutleq gonderilmelidir
+    - Göndərilmir, avtomatik Alliance Holding seçiləcək. 
     - (Holdinq İD - Holding)
+- address
+    - required. 
+    - (Adres - String)
+- phone
+    - required. 
+    - (tel_no - String)
+- email
+    - required. 
+    - (Email - String)
+- web_site
+    - required. 
+    - (Web site - String)
+- office_count
+    - Get sorğusunda gəlir, şirkətə tabe ofislərin sayını bildirir
+    - (Ofis sayı - İnteger)
+- employee_count
+    - Get sorğusunda gəlir, şirkətə tabe işçilərin sayını bildirir
+    - (İşçi sayı - İnteger)
 
 =====
 
@@ -29,9 +46,11 @@ Company create
 .. code:: json
 
   {
-    "is_active": false,
-    "name": "",
-    "holding": null
+    "name": "Test",
+    "address": "Baku Nerimanov",
+    "phone": "65465656",
+    "email": "ocean@example.com",
+    "web_site": "ocean.az"
   }
 
 +---------------+
@@ -47,9 +66,12 @@ Update Company
 .. code:: json
 
   {
-    "is_active": false,
-    "name": "",
-    "holding": null
+    "name": "Test",
+    "address": "Baku Nerimanov",
+    "phone": "65465656",
+    "email": "ocean@example.com",
+    "web_site": "ocean.az",
+    "is_active": true
   }
 
 +----------------+

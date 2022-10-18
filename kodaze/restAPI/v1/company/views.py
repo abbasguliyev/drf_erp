@@ -44,10 +44,96 @@ from restAPI.v1.company.filters import (
 from restAPI.v1.company import permissions as company_permissions
 from django.contrib.auth.models import Group
 
-from core.settings import BASE_DIR
+from .services import company_create, holding_create
+
+
+# ********************************** holding put delete post get **********************************
+
+class HoldingListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Holding.objects.all()
+    serializer_class = HoldingSerializer
+    permission_classes = [company_permissions.HoldingPermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        holding_create(**serializer.validated_data)
+        headers = self.get_success_headers(serializer.data)
+        return Response({"detail": "Holding əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Holding.objects.all()
+    serializer_class = HoldingSerializer
+    permission_classes = [company_permissions.HoldingPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Holding məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+
+# ********************************** company put delete post get **********************************
+
+class CompanyListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Company.objects.select_related('holding').all()
+    serializer_class = CompanySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CompanyFilter
+    permission_classes = [company_permissions.CompanyPermissions]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            queryset = self.queryset
+        elif request.user.company is not None:
+            queryset = self.queryset.filter(id=request.user.company.id)
+        else:
+            queryset = self.queryset
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            company_create(**serializer.validated_data)
+            headers = self.get_success_headers(serializer.data)
+            return Response({"detail": "Şirkət əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Company.objects.select_related('holding').all()
+    serializer_class = CompanySerializer
+    permission_classes = [company_permissions.CompanyPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Şirkət məlumatları yeniləndi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response({"detail": "Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** team get post put delete **********************************
-
 
 class TeamListCreateAPIView(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -272,61 +358,6 @@ class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Vəzifə deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** company put delete post get **********************************
-
-
-class CompanyListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Company.objects.select_related('holding').all()
-    serializer_class = CompanySerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = CompanyFilter
-    permission_classes = [company_permissions.CompanyPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.company is not None:
-            queryset = self.queryset.filter(id=request.user.company.id)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Şirkət əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Company.objects.select_related('holding').all()
-    serializer_class = CompanySerializer
-    permission_classes = [company_permissions.CompanyPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Şirkət məlumatları yeniləndi"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.is_active = False
-        instance.save()
-        return Response({"detail": "Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
 
 # ********************************** section put delete post get **********************************
 
@@ -386,37 +417,6 @@ class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.is_active = False
         instance.save()
         return Response({"detail": "Şöbə deaktiv edildi"}, status=status.HTTP_200_OK)
-
-
-# ********************************** holding put delete post get **********************************
-
-class HoldingListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Holding.objects.all()
-    serializer_class = HoldingSerializer
-    permission_classes = [company_permissions.HoldingPermissions]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Holding əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
-    queryset = Holding.objects.all()
-    serializer_class = HoldingSerializer
-    permission_classes = [company_permissions.HoldingPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Holding məlumatları yeniləndi"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
 # ********************************** PermissionForPosition put delete post get **********************************
 
