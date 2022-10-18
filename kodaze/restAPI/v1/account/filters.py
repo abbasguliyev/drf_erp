@@ -38,7 +38,7 @@ class UserFilter(django_filters.FilterSet):
     user_of_companies = django_filters.BooleanFilter(method="user_of_company", label="user_of_companies")
     user_of_departments = django_filters.BooleanFilter(method="user_of_department", label="user_of_departments")
     user_of_offices = django_filters.BooleanFilter(method="user_of_office", label="user_of_offices")
-    user_of_holding = django_filters.BooleanFilter(method="user_of_holding", label="user_of_holding")
+    user_of_holdings = django_filters.BooleanFilter(method="user_of_holding", label="user_of_holdings")
 
 
     class Meta:
