@@ -4,14 +4,14 @@ from django.dispatch import receiver
 
 from .tasks import create_installment_task, demo_sale_count_task
 
-from restAPI.v1.utils.ocean_contract_pdf_create import (
+from api.v1.utils.ocean_contract_pdf_create import (
     ocean_create_contract_pdf,
     ocean_contract_pdf_canvas,
     ocean_installment_create_contract_pdf,
     ocean_installment_contract_pdf_canvas
 )
 
-from restAPI.v1.utils.magnus_contract_pdf_create import (
+from api.v1.utils.magnus_contract_pdf_create import (
     magnus_create_contract_pdf,
     magnus_contract_pdf_canvas,
     magnus_installment_create_contract_pdf,
