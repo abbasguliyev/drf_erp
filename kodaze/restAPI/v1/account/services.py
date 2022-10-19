@@ -38,6 +38,14 @@ def create_user(
     groups = None,
     password: str,
 ) -> User:
+    if company is not None:
+        if office == None:
+            raise ValidationError({"detail": "Şirkət işçisi qeydiyyatdan keçirildiyi zaman ofis mütləq daxil edilməlidir."})
+        if section == None:
+            raise ValidationError({"detail": "Şirkət işçisi qeydiyyatdan keçirildiyi zaman şöbə mütləq daxil edilməlidir."})
+        if position == None:
+            raise ValidationError({"detail": "Şirkət işçisi qeydiyyatdan keçirildiyi zaman vəzifə mütləq daxil edilməlidir."})
+    
     alliance_holding = Holding.objects.filter(name="ALLIANCE").first()
 
     user = User.objects.create(
@@ -65,6 +73,7 @@ def create_user(
         profile_image = profile_image,
         supervisor = supervisor,
     )
+    
     standart_status = EmployeeStatus.objects.filter(status_name="STANDART").first()
     if employee_status == None:
         user.employee_status = standart_status
@@ -77,6 +86,7 @@ def create_user(
         user.username = f"user-{last_user_id+1}"
     except:
         user.username = f"user-1"
+    
     user.set_password(password)
     user.full_clean()
     user.save()
