@@ -36,8 +36,6 @@ class UserFilter(django_filters.FilterSet):
     start_date_of_work__lte = django_filters.DateFilter(field_name='start_date_of_work', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     user_of_companies = django_filters.BooleanFilter(method="user_of_company", label="user_of_companies")
-    user_of_departments = django_filters.BooleanFilter(method="user_of_department", label="user_of_departments")
-    user_of_offices = django_filters.BooleanFilter(method="user_of_office", label="user_of_offices")
     user_of_holdings = django_filters.BooleanFilter(method="user_of_holding", label="user_of_holdings")
 
 
@@ -66,22 +64,12 @@ class UserFilter(django_filters.FilterSet):
 
     def user_of_company(self, queryset, name, value):
         qs = None
-        qs = queryset.filter(~Q(company=None), department=None)
-        return qs
-
-    def user_of_department(self, queryset, name, value):
-        qs = None
-        qs = queryset.filter(~Q(department=None), company=None)
-        return qs
-
-    def user_of_office(self, queryset, name, value):
-        qs = None
-        qs = queryset.filter(~Q(office=None))
+        qs = queryset.filter(~Q(company=None))
         return qs
 
     def user_of_holding(self, queryset, name, value):
         qs = None
-        qs = queryset.filter(Q(company=None, department=None))
+        qs = queryset.filter(Q(company=None, office=None))
         return qs
 
 class EmployeeStatusFilter(django_filters.FilterSet):
