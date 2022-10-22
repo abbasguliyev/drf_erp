@@ -2,6 +2,8 @@ import django
 from django.db import models
 import datetime
 from django.contrib.auth import get_user_model
+from . import SALARY_RANGE_STYLE_CHOICES
+
 
 USER = get_user_model()
 
@@ -122,6 +124,80 @@ class CreditorPrim(models.Model):
             ("delete_creditorprim", "Kreditor prim silə bilər")
         )
 
+# -----------------------------------------------------------------------------------------------------------------------------
+
+class MonthRange(models.Model):
+    title = models.CharField(max_length=150, null=True, blank=True)
+    start_month = models.PositiveIntegerField(default=0)
+    end_month = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_monthrange", "Mövcud ay aralıqlarına baxa bilər"),
+            ("add_monthrange", "Ay aralığı əlavə edə bilər"),
+            ("change_monthrange", "Ay aralığı məlumatlarını yeniləyə bilər"),
+            ("delete_monthrange", "Ay aralığı silə bilər")
+        )
+
+class SaleRange(models.Model):
+    title = models.CharField(max_length=150, null=True, blank=True)
+    start_count = models.PositiveIntegerField(default=0)
+    end_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_salerange", "Mövcud satış aralığı baxa bilər"),
+            ("add_salerange", "Satış Aralığı əlavə edə bilər"),
+            ("change_salerange", "Satış Aralığı məlumatlarını yeniləyə bilər"),
+            ("delete_salerange", "Satış Aralığı silə bilər")
+        )
+class CommissionInstallment(models.Model):
+    month_range = models.ForeignKey(MonthRange, on_delete=models.CASCADE, related_name="month_ranges")
+    amount = models.FloatField(default=0)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_commissioninstallment", "Mövcud komissiya kreditlərinə baxa bilər"),
+            ("add_commissioninstallment", "Komissya kredit əlavə edə bilər"),
+            ("change_commissioninstallment", "Komissya kredit məlumatlarını yeniləyə bilər"),
+            ("delete_commissioninstallment", "Komissya kredit silə bilər")
+        )
+class CommissionSaleRange(models.Model):
+    sale_range = models.ForeignKey(SaleRange, on_delete=models.CASCADE, related_name="sale_ranges")
+    amount = models.FloatField(default=0)
+    sale_type = models.CharField(max_length=50, choices=SALARY_RANGE_STYLE_CHOICES, default="fix")
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_commissionsalerange", "Mövcud komissiya satış aralığı baxa bilər"),
+            ("add_commissionsalerange", "Komissya satış aralığı əlavə edə bilər"),
+            ("change_commissionsalerange", "Komissya satış aralığı məlumatlarını yeniləyə bilər"),
+            ("delete_commissionsalerange", "Komissya satış aralığı silə bilər")
+        )
+class Commission(models.Model):
+    commission_name = models.CharField(max_length=200)
+    for_office = models.FloatField(default=0, blank=True)
+    cash = models.FloatField(default=0, blank=True)
+    for_team = models.FloatField(default=0, blank=True)
+    installment = models.ManyToManyField(CommissionInstallment, related_name="installments")
+    for_sale_range = models.ManyToManyField(CommissionSaleRange, related_name="for_sale_ranges")
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_commission", "Mövcud komissiyalara baxa bilər"),
+            ("add_commission", "Komissiya əlavə edə bilər"),
+            ("change_commission", "Komissiya məlumatlarını yeniləyə bilər"),
+            ("delete_commission", "Komissiya silə bilər")
+        )
 
 # -----------------------------------------------------------------------------------------------------------------------------
 

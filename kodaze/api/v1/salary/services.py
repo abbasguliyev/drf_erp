@@ -1,529 +1,321 @@
+from datetime import date
+from rest_framework.exceptions import ValidationError
+
+from api.v1.cashbox.utils import calculate_holding_total_balance
+from salary.models import (
+    AdvancePayment,
+    SalaryView,
+    SalaryPunishment,
+    SalaryDeduction,
+    Bonus,
+    PaySalary,
+    MonthRange,
+    SaleRange,
+    CommissionInstallment,
+    CommissionSaleRange, Commission
+)
 import pandas as pd
-from company.models import (
-    Holding,
-)
-from cashbox.models import (
-    HoldingCashbox, 
-    OfficeCashbox, 
-    CompanyCashbox, 
-)
-from income_expense.models import (
-    HoldingCashboxExpense, 
-    OfficeCashboxExpense, 
-    CompanyCashboxExpense
-)
-from salary.models import AdvancePayment, SalaryView
-from rest_framework import status
 
-from rest_framework.response import Response
-import datetime
-
-from api.v1.cashbox.utils import (
-    calculate_holding_total_balance, 
-    cashflow_create, 
-    calculate_office_balance, 
-    calculate_company_balance, 
-    calculate_holding_balance
-)
-def salary_pay_create(self, request, *args, **kwargs):
-    """
-    İşçilərə maaş vermək funksiyası
-    """
-    serializer = self.get_serializer(data=request.data)
-    user = self.request.user
-    # employees = serializer.data.get("employee")
-
-    if serializer.is_valid():
-        employee = serializer.validated_data.get("employee")
-        note = serializer.validated_data.get("note")
-        salary_date = serializer.validated_data.get("salary_date")
-        if (serializer.validated_data.get("salary_date") == None):
-            salary_date = datetime.date.today()
-        if (serializer.validated_data.get("salary_date") == ""):
-            salary_date = datetime.date.today()
-
-        now = datetime.date.today()
-        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-        next_m = d + pd.offsets.MonthBegin(1)
-
-        yekun_odenen_amount = 0
-        try:
-            salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
-        except:
-            return Response({"detail": f"{employee} işçinin maaş kartında xəta var"}, status=status.HTTP_404_NOT_FOUND)
-
-        if salary_view.is_done == True:
-            return Response({"detail": "İşçinin maaşını artıq ödəmisiniz"}, status=status.HTTP_400_BAD_REQUEST)
-
-        amount = salary_view.final_salary
-        yekun_odenen_amount += float(amount)
-        salary_view.final_salary = 0
-        office = employee.office
-        company = employee.company
-        holding = Holding.objects.all()[0]
-
-        initial_balance = calculate_holding_total_balance()
-        try:
-            office_initial_balance = calculate_office_balance(office=office)
-        except:
-            pass
-        try:
-            company_initial_balance = calculate_company_balance(company=company)
-        except:
-            pass
-            
-        try:
-            holding_initial_balance = calculate_holding_balance()
-        except:
-            pass
-
-        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN maaş ödəndi"
-
-        if office is not None:
-            cashbox = OfficeCashbox.objects.get(office=office)
-            if float(cashbox.balance) < float(amount):
-                return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
-            cashbox.balance = float(cashbox.balance) - float(amount)
-            cashbox.save()
-            cashbox_expense = OfficeCashboxExpense.objects.create(
-                executor=user,
-                cashbox=cashbox,
-                amount=amount,
-                date=salary_date,
-                note=note
-            )
-            cashbox_expense.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            office_subsequent_balance = calculate_office_balance(office=office)
-            cashflow_create(
-                office=office,
-                company= office.company,
-                description=note,
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                office_initial_balance=office_initial_balance,
-                office_subsequent_balance=office_subsequent_balance,
-                executor=user,
-                operation_style="MƏXARİC",
-                quantity=float(amount)
-            )
-        elif office == None and company is not None:
-            cashbox = CompanyCashbox.objects.get(company=company)
-            if float(cashbox.balance) < float(amount):
-                return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-            cashbox.balance = float(cashbox.balance) - float(amount)
-            cashbox.save()
-            cashbox_expense = CompanyCashboxExpense.objects.create(
-                executor=user,
-                cashbox=cashbox,
-                amount=amount,
-                date=salary_date,
-                note=note
-            )
-            cashbox_expense.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            company_subsequent_balance = calculate_company_balance(company=company)
-            cashflow_create(
-                company=company,
-                description=note,
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                company_initial_balance=company_initial_balance,
-                company_subsequent_balance=company_subsequent_balance,
-                executor=user,
-                operation_style="MƏXARİC",
-                quantity=float(amount)
-            )
-
-        elif office == None and company == None and holding is not None:
-            cashbox = HoldingCashbox.objects.get(holding=holding)
-            if float(cashbox.balance) < float(amount):
-                return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-            cashbox.balance = float(cashbox.balance) - float(amount)
-            cashbox.save()
-            cashbox_expense = HoldingCashboxExpense.objects.create(
-                executor=user,
-                cashbox=cashbox,
-                amount=amount,
-                date=salary_date,
-                note=note
-            )
-            cashbox_expense.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            holding_subsequent_balance = calculate_holding_balance()
-            cashflow_create(
-                holding=holding,
-                description=note,
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                holding_initial_balance=holding_initial_balance,
-                holding_subsequent_balance=holding_subsequent_balance,
-                executor=user,
-                operation_style="MƏXARİC",
-                quantity=float(amount)
-            )
-
-        salary_view.is_done = True
-        salary_view.save()
-        serializer.save(amount=yekun_odenen_amount, salary_date=salary_date)
-        return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
-
-def bonus_create(self, request, *args, **kwargs):
-    """
-    İşçilərə bonus vermək funksiyası
-    """
-    serializer = self.get_serializer(data=request.data)
-    user = self.request.user
-    if serializer.is_valid():
-        employee = serializer.validated_data.get("employee")
-        amount = serializer.validated_data.get("amount")
-        note = serializer.validated_data.get("note")
-        date = serializer.validated_data.get("date")
-        if (serializer.validated_data.get("date") == None):
-            return Response({"detail": "Tarixi daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-        if (serializer.validated_data.get("amount") == None):
-            return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-        now = datetime.date.today()
-        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-        next_m = d + pd.offsets.MonthBegin(1)
-
-        salary_view = SalaryView.objects.get(employee=employee, date=next_m)
-        salary_view.final_salary = salary_view.final_salary + float(amount)
-
-        office = employee.office
-
-        company = employee.company
-
-        holding = Holding.objects.all()[0]
-
-        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN bonus"
-
-        # if office is not None:
-        #     cashbox = OfficeCashbox.objects.get(office=office)
-        #     if float(cashbox.balance) < float(amount):
-        #         return Response({"detail": "Officein kassasında yetəri qədər məbləğ yoxdur"})
-        #     cashbox.balance = float(cashbox.balance) - float(amount)
-        #     cashbox.save()
-        #     cashbox_expense = OfficeCashboxExpense.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_expense.save()
-        # elif office == None and company is not None:
-        #     cashbox = CompanyCashbox.objects.get(company=company)
-        #     if float(cashbox.balance) < float(amount):
-        #         return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-        #     cashbox.balance = float(cashbox.balance) - float(amount)
-        #     cashbox.save()
-        #     cashbox_expense = CompanyCashboxExpense.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_expense.save()
-        # elif office == None and company == None and holding is not None:
-        #     cashbox = HoldingCashbox.objects.get(holding=holding)
-        #     if float(cashbox.balance) < float(amount):
-        #         return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-        #     cashbox.balance = float(cashbox.balance) - float(amount)
-        #     cashbox.save()
-        #     cashbox_expense = HoldingCashboxExpense.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_expense.save()
-
-        salary_view.save()
-        serializer.save(date=date)
-
-        return Response({"detail": "Bonus əlavə olundu"}, status=status.HTTP_201_CREATED)
-    else:
-        return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
-
-def salarydeduction_create(self, request, *args, **kwargs):
-    """
-    İşçinin maaşından kəsinti tutmaq funksiyası
-    """
-    serializer = self.get_serializer(data=request.data)
-    user = self.request.user
-    if serializer.is_valid():
-        employee = serializer.validated_data.get("employee")
-        amount = serializer.validated_data.get("amount")
-        note = serializer.validated_data.get("note")
-        date = serializer.validated_data.get("date")
-        if (serializer.validated_data.get("date") == None):
-            return Response({"detail": "Tarixi daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-        if (serializer.validated_data.get("amount") == None):
-            return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-        now = datetime.date.today()
-        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-        next_m = d + pd.offsets.MonthBegin(1)
-
-        salary_view = SalaryView.objects.get(employee=employee, date=next_m)
-        salary_view.final_salary = salary_view.final_salary - float(amount)
-        office = employee.office
-        company = employee.company
-        holding = Holding.objects.all()[0]
-        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçinin maaşından {amount} AZN kəsinti"
-
-        # if office is not None:
-        #     cashbox = OfficeCashbox.objects.get(office=office)
-        #     cashbox.balance = float(cashbox.balance) + float(amount)
-        #     cashbox.save()
-        #     cashbox_income = OfficeCashboxIncome.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_income.save()
-        # elif office == None and company is not None:
-        #     cashbox = CompanyCashbox.objects.get(company=company)
-        #     cashbox.balance = float(cashbox.balance) + float(amount)
-        #     cashbox.save()
-        #     cashbox_income = CompanyCashboxIncome.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_income.save()
-        # elif office == None and company == None and holding is not None:
-        #     cashbox = HoldingCashbox.objects.get(holding=holding)
-        #     cashbox.balance = float(cashbox.balance) + float(amount)
-        #     cashbox.save()
-        #     cashbox_income = HoldingCashboxIncome.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_income.save()
-
-        salary_view.save()
-        serializer.save(date=date)
-        return Response({"detail": "Kəsinti əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
-    else:
-        return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
-
-def salarypunishment_create(self, request, *args, **kwargs):
-    """
-    İşçinin maaşından cərimə tutmaq funksiyası
-    """
-    serializer = self.get_serializer(data=request.data)
-    user = self.request.user
-    if serializer.is_valid():
-        employee = serializer.validated_data.get("employee")
-        amount = serializer.validated_data.get("amount")
-        note = serializer.validated_data.get("note")
-        date = serializer.validated_data.get("date")
-        if (serializer.validated_data.get("date") == None):
-            return Response({"detail": "Tarixi daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-        if (serializer.validated_data.get("amount") == None):
-            return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
-        now = datetime.date.today()
-        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-        next_m = d + pd.offsets.MonthBegin(1)
-
-        salary_view = SalaryView.objects.get(employee=employee, date=next_m)
-        salary_view.final_salary = salary_view.final_salary - float(amount)
-        office = employee.office
-        company = employee.company
-        holding = Holding.objects.all()[0]
-        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçinin maaşından {amount} AZN cərimə"
-
-        # if office is not None:
-        #     cashbox = OfficeCashbox.objects.get(office=office)
-        #     cashbox.balance = float(cashbox.balance) + float(amount)
-        #     cashbox.save()
-        #     cashbox_income = OfficeCashboxIncome.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_income.save()
-        # elif office == None and company is not None:
-        #     cashbox = CompanyCashbox.objects.get(company=company)
-        #     cashbox.balance = float(cashbox.balance) + float(amount)
-        #     cashbox.save()
-        #     cashbox_income = CompanyCashboxIncome.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_income.save()
-        # elif office == None and company == None and holding is not None:
-        #     cashbox = HoldingCashbox.objects.get(holding=holding)
-        #     cashbox.balance = float(cashbox.balance) + float(amount)
-        #     cashbox.save()
-        #     cashbox_income = HoldingCashboxIncome.objects.create(
-        #         executor=user,
-        #         cashbox=cashbox,
-        #         amount=amount,
-        #         date=date,
-        #         note=note
-        #     )
-        #     cashbox_income.save()
-
-        salary_view.save()
-        serializer.save(date=date)
-        return Response({"detail": "Cərimə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
-    else:
-        return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
+from .decorators import cashbox_expense_and_cash_flow_create
 
 
-def advancepayment_create(self, request, *args, **kwargs):
+@cashbox_expense_and_cash_flow_create
+def advancepayment_create(
+        user,
+        employee,
+        amount: float = None,
+        note: str = None,
+        date: date = None
+) -> AdvancePayment:
     """
     İşçiyə avans vermə funksiyası
     """
-    serializer = self.get_serializer(data=request.data)
-    user = self.request.user
-    if serializer.is_valid():
-        employee = serializer.validated_data.get("employee")
-        note = serializer.validated_data.get("note")
-        date = serializer.validated_data.get("date")
-        if (serializer.validated_data.get("date") == None):
-            return Response({"detail": "Tarixi daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-        now = datetime.date.today()
-        d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-        next_m = d + pd.offsets.MonthBegin(1)
+    if (date == None):
+        raise ValidationError({"detail": "Tarixi daxil edin"})
 
-        user_advanced_payment = AdvancePayment.objects.filter(employee=employee, date=f"{date.year}-{date.month}-{1}").count()
-        if user_advanced_payment > 2:
-            return Response({"detail": "Bir işçiyə eyni ay ərzində maksimum 2 dəfə avans verilə bilər"}, status=status.HTTP_400_BAD_REQUEST)
+    now = date.today()
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
+    next_m = d + pd.offsets.MonthBegin(1)
 
-        salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
-        next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
+    user_advanced_payment = AdvancePayment.objects.filter(employee=employee,
+                                                          date=f"{date.year}-{date.month}-{1}").count()
+    if user_advanced_payment > 2:
+        raise ValidationError({"detail": "Bir işçiyə eyni ay ərzində maksimum 2 dəfə avans verilə bilər"})
 
-        amount = (float(next_month_salary_view.final_salary) * 15) / 100
-        amount_after_advancedpayment = next_month_salary_view.final_salary - float(amount)
-        initial_balance = calculate_holding_total_balance()
-        
-        salary_view.amount = amount
-        next_month_salary_view.final_salary = amount_after_advancedpayment
+    salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
+    next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
 
-        office = employee.office
-        company = employee.company
-        holding = Holding.objects.all()[0]
+    amount = (float(next_month_salary_view.final_salary) * 15) / 100
+    amount_after_advancedpayment = next_month_salary_view.final_salary - float(amount)
 
-        office_initial_balance = calculate_office_balance(office=office)
-        company_initial_balance = calculate_company_balance(company=company)
-        holding_initial_balance = calculate_holding_balance()
+    salary_view.amount = amount
+    next_month_salary_view.final_salary = amount_after_advancedpayment
 
-        note = f"{user.fullname} tərəfindən {employee.fullname} adlı işçiyə {amount} AZN avans verildi"
+    salary_view.save()
+    next_month_salary_view.save()
 
-        if office is not None:
-            cashbox = OfficeCashbox.objects.get(office=office)
-            if float(cashbox.balance) < float(amount):
-                return Response({"detail": "Ofisin kassasında yetəri qədər məbləğ yoxdur"})
-            cashbox.balance = float(cashbox.balance) - float(amount)
-            cashbox.save()
-            cashbox_expense = OfficeCashboxExpense.objects.create(
-                executor=user,
-                cashbox=cashbox,
-                amount=amount,
-                date=date,
-                note=note
-            )
-            cashbox_expense.save()
+    advance_payment = AdvancePayment.objects.create(
+        employee=employee,
+        amount=amount,
+        note=note,
+        date=date
+    )
+    advance_payment.full_clean()
+    advance_payment.save()
 
-            subsequent_balance = calculate_holding_total_balance()
-            office_subsequent_balance = calculate_office_balance(office=office)
-            cashflow_create(
-                office=office,
-                company=office.company,
-                description=note,
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                office_initial_balance=office_initial_balance,
-                office_subsequent_balance=office_subsequent_balance,
-                executor=user,
-                operation_style="MƏXARİC",
-                quantity=float(amount)
-            )
-        elif office == None and company is not None:
-            cashbox = CompanyCashbox.objects.get(company=company)
-            if float(cashbox.balance) < float(amount):
-                return Response({"detail": "Şirkətin kassasında yetəri qədər məbləğ yoxdur"})
-            cashbox.balance = float(cashbox.balance) - float(amount)
-            cashbox.save()
-            cashbox_expense = CompanyCashboxExpense.objects.create(
-                executor=user,
-                cashbox=cashbox,
-                amount=amount,
-                date=date,
-                note=note
-            )
-            cashbox_expense.save()
+    return advance_payment
 
-            subsequent_balance = calculate_holding_total_balance()
-            company_subsequent_balance = calculate_company_balance(company=company)
-            cashflow_create(
-                company=company,
-                description=note,
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                company_initial_balance=company_initial_balance,
-                company_subsequent_balance=company_subsequent_balance,
-                executor=user,
-                operation_style="MƏXARİC",
-                quantity=float(amount)
-            )
 
-        elif office == None and company == None and holding is not None:
-            cashbox = HoldingCashbox.objects.get(holding=holding)
-            if float(cashbox.balance) < float(amount):
-                return Response({"detail": "Holdingin kassasında yetəri qədər məbləğ yoxdur"})
-            cashbox.balance = float(cashbox.balance) - float(amount)
-            cashbox.save()
-            cashbox_expense = HoldingCashboxExpense.objects.create(
-                executor=user,
-                cashbox=cashbox,
-                amount=amount,
-                date=date,
-                note=note
-            )
-            cashbox_expense.save()
+def salarypunishment_create(
+        *, employee,
+        amount: float = None,
+        note: str = None,
+        date: date = None
+) -> SalaryPunishment:
+    """
+    İşçinin maaşından cərimə tutmaq funksiyası
+    """
 
-            subsequent_balance = calculate_holding_total_balance()
-            holding_subsequent_balance = calculate_holding_balance()
-            cashflow_create(
-                holding=holding,
-                description=note,
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                holding_initial_balance=holding_initial_balance,
-                holding_subsequent_balance=holding_subsequent_balance,
-                executor=user,
-                operation_style="MƏXARİC",
-                quantity=float(amount)
-            )
+    if (date == None):
+        raise ValidationError({"detail": "Tarixi daxil edin"})
 
-        salary_view.save()
-        next_month_salary_view.save()
-        serializer.save(amount=amount, date=date)
-        return Response({"detail": "Avans vermə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+    if (amount == None):
+        raise ValidationError({"detail": "Məbləği daxil edin"})
+
+    now = date.today()
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
+    next_m = d + pd.offsets.MonthBegin(1)
+
+    salary_view = SalaryView.objects.get(employee=employee, date=next_m)
+    salary_view.final_salary = salary_view.final_salary - float(amount)
+
+    salary_view.save()
+
+    salary_punishment = SalaryPunishment.objects.create(
+        employee=employee,
+        amount=amount,
+        note=note,
+        date=date
+    )
+
+    salary_punishment.full_clean()
+    salary_punishment.save()
+
+    return salary_punishment
+
+
+def salarydeduction_create(
+        *, employee,
+        amount: float = None,
+        note: str = None,
+        date: date = None
+) -> SalaryDeduction:
+    """
+    İşçinin maaşından kəsinti tutmaq funksiyası
+    """
+
+    if (date == None):
+        raise ValidationError({"detail": "Tarixi daxil edin"})
+
+    if (amount == None):
+        raise ValidationError({"detail": "Məbləği daxil edin"})
+
+    now = date.today()
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
+    next_m = d + pd.offsets.MonthBegin(1)
+
+    salary_view = SalaryView.objects.get(employee=employee, date=next_m)
+    salary_view.final_salary = salary_view.final_salary - float(amount)
+
+    salary_view.save()
+
+    salary_deduction = SalaryDeduction.objects.create(
+        employee=employee,
+        amount=amount,
+        note=note,
+        date=date
+    )
+
+    salary_deduction.full_clean()
+    salary_deduction.save()
+
+    return salary_deduction
+
+
+def bonus_create(
+        *, employee,
+        amount: float = None,
+        note: str = None,
+        date: date = None
+) -> Bonus:
+    """
+    İşçilərə bonus vermək funksiyası
+    """
+
+    if (date == None):
+        raise ValidationError({"detail": "Tarixi daxil edin"})
+
+    if (amount == None):
+        raise ValidationError({"detail": "Məbləği daxil edin"})
+
+    now = date.today()
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
+    next_m = d + pd.offsets.MonthBegin(1)
+
+    salary_view = SalaryView.objects.get(employee=employee, date=next_m)
+    salary_view.final_salary = salary_view.final_salary + float(amount)
+
+    salary_view.save()
+
+    bonus = Bonus.objects.create(
+        employee=employee,
+        amount=amount,
+        note=note,
+        date=date
+    )
+
+    bonus.full_clean()
+    bonus.save()
+
+    return bonus
+
+
+@cashbox_expense_and_cash_flow_create
+def salary_pay_create(
+        user,
+        employee,
+        amount: float = None,
+        note: str = None,
+        date: date = None,
+        salary_date: date = date.today()
+) -> PaySalary:
+    """
+    İşçilərə maaş vermək funksiyası
+    """
+
+    if (date == None):
+        raise ValidationError({"detail": "Tarixi daxil edin"})
+
+    now = date.today()
+    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
+    next_m = d + pd.offsets.MonthBegin(1)
+
+    total_payed_amount = 0
+
+    salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
+
+    if salary_view.is_done == True:
+        raise ValidationError({"detail": "İşçinin maaşını artıq ödəmisiniz"})
+
+    amount = salary_view.final_salary
+    total_payed_amount += float(amount)
+    salary_view.final_salary = 0
+    salary_view.is_done = True
+    salary_view.save()
+
+    salary_pay = PaySalary.objects.create(
+        employee=employee,
+        amount=amount,
+        note=note,
+        date=date,
+        salary_date=salary_date
+    )
+
+    salary_pay.full_clean()
+    salary_pay.save()
+
+    return salary_pay
+
+
+def month_range_create(start_month: int, end_month: int) -> MonthRange:
+    if int(start_month) > int(end_month):
+        raise ValidationError({'detail': 'Ay aralığını doğru daxil edin'})
+    title = f"{start_month}-{end_month}"
+
+    mr = MonthRange.objects.filter(title=title).count()
+    if mr > 0:
+        raise ValidationError({'detail': 'Bu aralıq artıq daxil edilib'})
+
+    obj = MonthRange.objects.create(title=title, start_month=start_month, end_month=end_month)
+    obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+def sale_range_create(start_count: int, end_count: int) -> SaleRange:
+    if int(start_count) > int(end_count):
+        raise ValidationError({'detail': 'Satış aralığını doğru daxil edin'})
+    title = f"{start_count}-{end_count}"
+
+    mr = SaleRange.objects.filter(title=title).count()
+    if mr > 0:
+        raise ValidationError({'detail': 'Bu aralıq artıq daxil edilib'})
+
+    obj = SaleRange.objects.create(title=title, start_count=start_count, end_count=end_count)
+    obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+def commission_installment_create(month_range, amount: float) -> CommissionInstallment:
+    obj = CommissionInstallment.object.create(month_range=month_range, amount=amount)
+    obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+def commission_sale_range_create(month_range, amount: float, sale_type: str) -> CommissionSaleRange:
+    obj = CommissionSaleRange.object.create(month_range=month_range, amount=amount, sale_type=sale_type)
+    obj.full_clean()
+    obj.save()
+
+    return obj
+
+
+def commission_create(
+        *, commission_name: str,
+        for_office: float = 0,
+        cash: float = 0,
+        for_team: float = 0,
+        month_ranges: str = None,
+        sale_ranges: str = None,
+) -> Commission:
+    commission = Commission.objects.create(
+        commission_name=commission_name,
+        for_office=for_office,
+        cash=cash,
+        for_team=for_team
+    )
+
+    month_ranges_str = month_ranges
+    if month_ranges_str is not None:
+        month_ranges_list = month_ranges_str.split(',')
     else:
-        return Response({"detail": "Xəta baş verdi"}, status=status.HTTP_400_BAD_REQUEST)
+        month_ranges_list = None
+
+    sale_ranges_str = sale_ranges
+    if sale_ranges_str is not None:
+        sale_ranges_list = sale_ranges_str.split(',')
+    else:
+        sale_ranges_list = None
+
+    if month_ranges_list is not None:
+        ci = CommissionInstallment.objects.bulk_create([
+            CommissionInstallment(month_range=mr[0], amount=mr[1]) for mr in month_ranges_list
+        ])
+        ci.save()
+
+    if sale_ranges_list is not None:
+        cs = CommissionSaleRange.objects.bulk_create([
+            CommissionSaleRange(sale_range=sr[0], amount=sr[1], sale_type=sr[2]) for sr in sale_ranges_list
+        ])
+        cs.save()
+
+    commission.full_clean()
+    commission.save()
+
+    return commission

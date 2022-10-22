@@ -66,3 +66,28 @@ class CreditorPrimPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="creditorprim", view=view)
         return perm_util.add_user_permission_to_list()
+
+class MonthRangePermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="monthrange", view=view)
+        return perm_util.add_user_permission_to_list()
+
+class SaleRangePermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="salerange", view=view)
+        return perm_util.add_user_permission_to_list()
+
+class CommissionInstallmentPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="commissioninstallment", view=view)
+        return perm_util.add_user_permission_to_list()
+
+class CommissionSaleRangePermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="commissionsalerange", view=view)
+        return perm_util.add_user_permission_to_list()
+
+class CommissionPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="commission", view=view)
+        return perm_util.add_user_permission_to_list()

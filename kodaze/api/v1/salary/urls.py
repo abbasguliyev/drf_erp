@@ -20,19 +20,37 @@ urlpatterns = [
     path('salary-punishment/', salary_views.SalaryPunishmentListCreateAPIView.as_view()),
     path('salary-punishment/<int:pk>/', salary_views.SalaryPunishmentDetailAPIView.as_view()),
 
-    path('office-leader-prim/',salary_views.OfficeLeaderPrimListCreateAPIView.as_view()),
-    path('office-leader-prim/<int:pk>/', salary_views.OfficeLeaderPrimDetailAPIView.as_view()),
+    path('month-range/',salary_views.MonthRangeListCreateAPIView.as_view()),
+    path('month-range/<int:pk>/', salary_views.MonthRangeDetailAPIView.as_view()),
 
-    path('group-leader-prim/', salary_views.GroupLeaderPrimNewListCreateAPIView.as_view()),
-    path('group-leader-prim/<int:pk>/', salary_views.GroupLeaderPrimNewDetailAPIView.as_view()),
+    path('sale-range/',salary_views.SaleRangeListCreateAPIView.as_view()),
+    path('sale-range/<int:pk>/', salary_views.SaleRangeDetailAPIView.as_view()),
 
-    path('manager2-prim/', salary_views.Manager2PrimListCreateAPIView.as_view()),
-    path('manager2-prim/<int:pk>/', salary_views.Manager2PrimDetailAPIView.as_view()),
+    path('commission-installment/',salary_views.CommissionInstallmentListCreateAPIView.as_view()),
+    path('commission-installment/<int:pk>/', salary_views.CommissionInstallmentDetailAPIView.as_view()),
 
-    path('manager1-prim/', salary_views.Manager1PrimNewListCreateAPIView.as_view()),
-    path('manager1-prim/<int:pk>/', salary_views.Manager1PrimNewDetailAPIView.as_view()),
+    path('commission-sale-range/',salary_views.CommissionSaleRangeListCreateAPIView.as_view()),
+    path('commission-sale-range/<int:pk>/', salary_views.CommissionSaleRangeDetailAPIView.as_view()),
 
-    path('creditor-prim/', salary_views.CreditorPrimListCreateAPIView.as_view()),
-    path('creditor-prim/<int:pk>/', salary_views.CreditorPrimDetailAPIView.as_view()),
+    path('commission/',salary_views.CommissionListCreateAPIView.as_view()),
+    path('commission/<int:pk>/', salary_views.CommissionDetailAPIView.as_view()),
+
+
+
+
+    # path('office-leader-prim/',salary_views.OfficeLeaderPrimListCreateAPIView.as_view()),
+    # path('office-leader-prim/<int:pk>/', salary_views.OfficeLeaderPrimDetailAPIView.as_view()),
+    #
+    # path('group-leader-prim/', salary_views.GroupLeaderPrimNewListCreateAPIView.as_view()),
+    # path('group-leader-prim/<int:pk>/', salary_views.GroupLeaderPrimNewDetailAPIView.as_view()),
+    #
+    # path('manager2-prim/', salary_views.Manager2PrimListCreateAPIView.as_view()),
+    # path('manager2-prim/<int:pk>/', salary_views.Manager2PrimDetailAPIView.as_view()),
+    #
+    # path('manager1-prim/', salary_views.Manager1PrimNewListCreateAPIView.as_view()),
+    # path('manager1-prim/<int:pk>/', salary_views.Manager1PrimNewDetailAPIView.as_view()),
+    #
+    # path('creditor-prim/', salary_views.CreditorPrimListCreateAPIView.as_view()),
+    # path('creditor-prim/<int:pk>/', salary_views.CreditorPrimDetailAPIView.as_view()),
 
 ]

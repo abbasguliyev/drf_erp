@@ -66,6 +66,3 @@ class ServiceProductForContract(models.Model):
             ("delete_serviceproductforcontract",
              "Müqaviləyə periodik servis üçün təyin olunmuş məhsulları silə bilər")
         )
-
-    def __str__(self) -> str:
-        return f"{self.service_period}"

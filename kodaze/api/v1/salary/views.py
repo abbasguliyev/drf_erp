@@ -6,13 +6,13 @@ from salary.models import (
     CreditorPrim,
     SalaryPunishment,
     SalaryView,
-    PaySalary, 
+    PaySalary,
     OfficeLeaderPrim,
     Manager2Prim,
-    GroupLeaderPrimNew
+    GroupLeaderPrimNew, MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange
 )
 from api.v1.salary.serializers import (
-    AdvancePaymentSerializer, 
+    AdvancePaymentSerializer,
     BonusSerializer,
     Manager1PrimNewSerializer,
     SalaryDeductionSerializer,
@@ -22,13 +22,21 @@ from api.v1.salary.serializers import (
     PaySalarySerializer,
     OfficeLeaderPrimSerializer,
     GroupLeaderPrimNewSerializer,
-    CreditorPrimSerializer,
+    CreditorPrimSerializer, MonthRangeSerializer, SaleRangeSerializer, CommissionSerializer,
+    CommissionInstallmentSerializer, CommissionSaleRangeSerializer,
 )
 from rest_framework import status, generics
 
 from rest_framework.response import Response
 
-from api.v1.salary import services as salary_services
+from api.v1.salary.services import (
+    salary_pay_create,
+    bonus_create,
+    salarypunishment_create,
+    advancepayment_create,
+    salarydeduction_create, month_range_create, sale_range_create, commission_create, commission_installment_create,
+    commission_sale_range_create
+)
 
 from api.v1.salary import permissions as salary_permissions
 
@@ -47,6 +55,7 @@ from api.v1.salary.filters import (
     GroupLeaderPrimNewFilter
 )
 
+
 # ********************************** AdvancePayment get post put delete **********************************
 class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
     queryset = AdvancePayment.objects.select_related('employee').all()
@@ -60,7 +69,8 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
             queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = self.queryset.filter(employee__company=request.user.company, employee__office=request.user.office)
+                queryset = self.queryset.filter(employee__company=request.user.company,
+                                                employee__office=request.user.office)
             queryset = self.queryset.filter(employee__company=request.user.company)
         else:
             queryset = self.queryset
@@ -75,14 +85,20 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_services.advancepayment_create(self, request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            user = request.user
+            advancepayment_create(user, **serializer.validated_data)
+            return Response({"detail": "Avans vermə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AdvancePaymentDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = AdvancePayment.objects.all()
     serializer_class = AdvancePaymentSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = AdvancePaymentFilter
     permission_classes = [salary_permissions.AdvancePaymentPermissions]
+
 
 # ********************************** SalaryDeduction get post put delete **********************************
 class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
@@ -97,7 +113,8 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
             queryset = SalaryDeduction.objects.all()
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = SalaryDeduction.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
+                queryset = SalaryDeduction.objects.filter(employee__company=request.user.company,
+                                                          employee__office=request.user.office)
             queryset = SalaryDeduction.objects.filter(employee__company=request.user.company)
         else:
             queryset = SalaryDeduction.objects.all()
@@ -112,15 +129,19 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_services.salarydeduction_create(self, request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            salarydeduction_create(**serializer.validated_data)
+            return Response({"detail": "Kəsinti əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SalaryDeductionDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = SalaryDeduction.objects.all()
     serializer_class = SalaryDeductionSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = SalaryDeductionFilter
     permission_classes = [salary_permissions.SalaryDeductionPermissions]
+
 
 # ********************************** SalaryPunishment get post put delete **********************************
 class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
@@ -135,7 +156,8 @@ class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
             queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = self.queryset.filter(employee__company=request.user.company, employee__office=request.user.office)
+                queryset = self.queryset.filter(employee__company=request.user.company,
+                                                employee__office=request.user.office)
             queryset = self.queryset.filter(employee__company=request.user.company)
         else:
             queryset = self.queryset
@@ -150,15 +172,19 @@ class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_services.salarypunishment_create(self, request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            salarypunishment_create(**serializer.validated_data)
+            return Response({"detail": "Cərimə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SalaryPunishmentDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = SalaryPunishment.objects.all()
     serializer_class = SalaryPunishmentSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = SalaryPunishmentFilter
     permission_classes = [salary_permissions.SalaryPunishmentPermissions]
+
 
 # ********************************** Bonus get post put delete **********************************
 class BonusListCreateAPIView(generics.ListCreateAPIView):
@@ -173,7 +199,8 @@ class BonusListCreateAPIView(generics.ListCreateAPIView):
             queryset = Bonus.objects.all()
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Bonus.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
+                queryset = Bonus.objects.filter(employee__company=request.user.company,
+                                                employee__office=request.user.office)
             queryset = Bonus.objects.filter(employee__company=request.user.company)
         else:
             queryset = Bonus.objects.all()
@@ -188,15 +215,19 @@ class BonusListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_services.bonus_create(self, request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            bonus_create(**serializer.validated_data)
+            return Response({"detail": "Bonus əlavə olundu"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BonusDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = Bonus.objects.all()
     serializer_class = BonusSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = BonusFilter
     permission_classes = [salary_permissions.BonusPermissions]
+
 
 # ********************************** Maas Ode get post put delete **********************************
 class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
@@ -211,7 +242,8 @@ class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
             queryset = PaySalary.objects.all()
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = PaySalary.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
+                queryset = PaySalary.objects.filter(employee__company=request.user.company,
+                                                    employee__office=request.user.office)
             queryset = PaySalary.objects.filter(employee__company=request.user.company)
         else:
             queryset = PaySalary.objects.all()
@@ -226,13 +258,20 @@ class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return salary_services.salary_pay_create(self, request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            user = request.user
+            salary_pay_create(user, **serializer.validated_data)
+            return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PaySalaryDetailAPIView(generics.RetrieveAPIView):
     queryset = PaySalary.objects.all()
     serializer_class = PaySalarySerializer
     permission_classes = [salary_permissions.PaySalaryPermissions]
+
 
 # ********************************** SalaryView get post put delete **********************************
 class SalaryViewListCreateAPIView(generics.ListAPIView):
@@ -247,12 +286,13 @@ class SalaryViewListCreateAPIView(generics.ListAPIView):
             queryset = SalaryView.objects.all()
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = SalaryView.objects.filter(employee__company=request.user.company, employee__office=request.user.office)
+                queryset = SalaryView.objects.filter(employee__company=request.user.company,
+                                                     employee__office=request.user.office)
             queryset = SalaryView.objects.filter(employee__company=request.user.company)
         else:
             queryset = SalaryView.objects.all()
         queryset = self.filter_queryset(queryset)
-    
+
         sale_quantity = 0
         total_advancepayment = 0
         total_bonus = 0
@@ -264,10 +304,10 @@ class SalaryViewListCreateAPIView(generics.ListAPIView):
 
             month = q.date.month
 
-            advancepayment = AdvancePayment.objects.filter(employee = q.employee, date__month=month)
-            bonus = Bonus.objects.filter(employee = q.employee, date__month=month)
-            salarydeduction = SalaryDeduction.objects.filter(employee = q.employee, date__month=month)
-            salarypunishment = SalaryPunishment.objects.filter(employee = q.employee, date__month=month)
+            advancepayment = AdvancePayment.objects.filter(employee=q.employee, date__month=month)
+            bonus = Bonus.objects.filter(employee=q.employee, date__month=month)
+            salarydeduction = SalaryDeduction.objects.filter(employee=q.employee, date__month=month)
+            salarypunishment = SalaryPunishment.objects.filter(employee=q.employee, date__month=month)
 
             for a in advancepayment:
                 total_advancepayment += a.amount
@@ -286,11 +326,11 @@ class SalaryViewListCreateAPIView(generics.ListAPIView):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(
                 {
-                    'total_advancepayment': total_advancepayment, 
-                    'total_bonus': total_bonus, 
+                    'total_advancepayment': total_advancepayment,
+                    'total_bonus': total_bonus,
                     'total_salarydeduction': total_salarydeduction,
                     'total_salarypunishment': total_salarypunishment,
-                    'data':serializer.data
+                    'data': serializer.data
                 }
             )
 
@@ -307,6 +347,7 @@ class SalaryViewDetailAPIView(generics.RetrieveDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
 
 # ********************************** Office Leader Prim get post put delete **********************************
 class OfficeLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
@@ -333,8 +374,9 @@ class OfficeLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             position = serializer.validated_data.get("position")
             prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, position=position)
-            if len(prim)>0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            if len(prim) > 0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
+                                status=status.HTTP_400_BAD_REQUEST)
             else:
                 serializer.save()
                 return Response({"detail": "Prim əlavə edildi"})
@@ -359,6 +401,7 @@ class OfficeLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
 
 # ********************************** GroupLeader Prim New get post put delete **********************************
 class GroupLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
@@ -385,8 +428,9 @@ class GroupLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             position = serializer.validated_data.get("position")
             prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, position=position)
-            if len(prim)>0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            if len(prim) > 0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
+                                status=status.HTTP_400_BAD_REQUEST)
             else:
                 serializer.save()
                 return Response({"detail": "Prim əlavə edildi"})
@@ -411,6 +455,7 @@ class GroupLeaderPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
 
 # ********************************** Manager2 Prim get post put delete **********************************
 class Manager2PrimListCreateAPIView(generics.ListCreateAPIView):
@@ -437,11 +482,13 @@ class Manager2PrimListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             position = serializer.validated_data.get("position")
             prim = Manager2Prim.objects.filter(prim_status=prim_status, position=position)
-            if len(prim)>0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            if len(prim) > 0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
+                                status=status.HTTP_400_BAD_REQUEST)
             else:
                 serializer.save()
                 return Response({"detail": "Prim əlavə edildi"})
+
 
 class Manager2PrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Manager2Prim.objects.all()
@@ -462,6 +509,7 @@ class Manager2PrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
 
 # ********************************** Manager1 Prim New get post put delete **********************************
 class Manager1PrimNewListCreateAPIView(generics.ListCreateAPIView):
@@ -488,11 +536,13 @@ class Manager1PrimNewListCreateAPIView(generics.ListCreateAPIView):
             prim_status = serializer.validated_data.get("prim_status")
             position = serializer.validated_data.get("position")
             prim = Manager1PrimNew.objects.filter(prim_status=prim_status, position=position)
-            if len(prim)>0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"}, status=status.HTTP_400_BAD_REQUEST)
+            if len(prim) > 0:
+                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
+                                status=status.HTTP_400_BAD_REQUEST)
             else:
                 serializer.save()
                 return Response({"detail": "Prim əlavə edildi"})
+
 
 class Manager1PrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Manager1PrimNew.objects.all()
@@ -514,6 +564,7 @@ class Manager1PrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
+
 # ********************************** Creditor Prim get post put delete **********************************
 class CreditorPrimListCreateAPIView(generics.ListCreateAPIView):
     queryset = CreditorPrim.objects.all()
@@ -526,6 +577,7 @@ class CreditorPrimListCreateAPIView(generics.ListCreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response({"detail": "Creditor prim əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class CreditorPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CreditorPrim.objects.all()
@@ -544,3 +596,98 @@ class CreditorPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
+
+
+# ********************************** Commission get post put delete **********************************
+class MonthRangeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = MonthRange.objects.all()
+    serializer_class = MonthRangeSerializer
+    permission_classes = [salary_permissions.MonthRangePermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            month_range_create(**serializer.validated_data)
+            return Response({"detail": "Ay aralığı əlavə edildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class MonthRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MonthRange.objects.all()
+    serializer_class = MonthRangeSerializer
+    permission_classes = [salary_permissions.MonthRangePermissions]
+
+
+class SaleRangeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = SaleRange.objects.all()
+    serializer_class = SaleRangeSerializer
+    permission_classes = [salary_permissions.SaleRangePermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            sale_range_create(**serializer.validated_data)
+            return Response({"detail": "Satış sayı aralığı əlavə edildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class SaleRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SaleRange.objects.all()
+    serializer_class = SaleRangeSerializer
+    permission_classes = [salary_permissions.SaleRangePermissions]
+
+
+class CommissionInstallmentListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CommissionInstallment.objects.all()
+    serializer_class = CommissionInstallmentSerializer
+    permission_classes = [salary_permissions.CommissionInstallmentPermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            commission_installment_create(**serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class CommissionInstallmentDetailAPIView(generics.ListCreateAPIView):
+    queryset = CommissionInstallment.objects.all()
+    serializer_class = CommissionInstallmentSerializer
+    permission_classes = [salary_permissions.CommissionInstallmentPermissions]
+
+class CommissionSaleRangeListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CommissionSaleRange.objects.all()
+    serializer_class = CommissionSaleRangeSerializer
+    permission_classes = [salary_permissions.CommissionSaleRangePermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            commission_sale_range_create(**serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class CommissionSaleRangeDetailAPIView(generics.ListCreateAPIView):
+    queryset = CommissionSaleRange.objects.all()
+    serializer_class = CommissionSaleRangeSerializer
+    permission_classes = [salary_permissions.CommissionSaleRangePermissions]
+
+
+class CommissionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Commission.objects.all()
+    serializer_class = CommissionSerializer
+    permission_classes = [salary_permissions.CommissionPermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            commission_create(**serializer.validated_data)
+            return Response({"detail": "Komissiya əlavə edildi"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class CommissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Commission.objects.all()
+    serializer_class = CommissionSerializer
+    permission_classes = [salary_permissions.CommissionPermissions]
