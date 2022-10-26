@@ -152,7 +152,7 @@ class CommissionSerializer(DynamicFieldsCategorySerializer):
     #     source="installment", write_only=True, many=True
     # )
 
-    for_sale_range = CommissionInstallmentSerializer(read_only=True, many=True)
+    for_sale_range = CommissionSaleRangeSerializer(read_only=True, many=True)
     # for_sale_range_id = serializers.PrimaryKeyRelatedField(
     #     queryset=CommissionSaleRange.objects.select_related('sale_range').all(),
     #     source="for_sale_range", write_only=True, many=True
