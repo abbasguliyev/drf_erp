@@ -43,6 +43,8 @@ urlpatterns = [
     # cashbox views *****************************************
     path('cashbox/', include("api.v1.cashbox.urls")),
 
+    # services_views *****************************************
+    path('cashbox/', include("api.v1.services.urls")),
 
     # working_day views *****************************************
     path('holding-working_day/', holiday_views.HoldingWorkingDayListCreateAPIView.as_view()),
@@ -150,9 +152,6 @@ urlpatterns = [
          name="cashbox_expense"),
     path('office-kassa-expense/<int:pk>', income_expense_views.OfficeCashboxExpenseDetailAPIView.as_view(),
          name="cashbox_expense_detail"),
-
-    # services_views *****************************************
-    
 
     # statistika views *****************************************
     path('statistika/sale-quantityi', statistika.SalaryViewStatistikaAPIView.as_view(),
