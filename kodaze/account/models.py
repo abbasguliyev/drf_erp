@@ -72,6 +72,7 @@ class User(AbstractUser):
     note = models.TextField(null=True, blank=True, help_text=_('Qeyd'))
     profile_image = models.ImageField(upload_to="media/profile/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])], help_text=_('Profil şəkli'))
     supervisor = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="employees", help_text=_('Supervizor'))
+    commission = models.ForeignKey('salary.Commission', on_delete=models.SET_NULL, null=True, blank=True, related_name="employees")
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

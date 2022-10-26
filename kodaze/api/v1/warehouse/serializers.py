@@ -31,7 +31,7 @@ class WarehouseSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     office = OfficeSerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True
+        queryset=Company.objects.all(), source='company', write_only=True
     )
     office_id = serializers.PrimaryKeyRelatedField(
         queryset=Office.objects.select_related('company').all(), source='office', write_only=True

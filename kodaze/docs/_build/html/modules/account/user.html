@@ -241,6 +241,14 @@
 </dl>
 </li>
 <li><dl class="simple">
+<dt>commission</dt><dd><ul>
+<li><p>nullable</p></li>
+<li><p>(Komissiya id - Commission id)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
 <dt>note</dt><dd><ul>
 <li><p>nullable</p></li>
 <li><p>(Qeyd - String)</p></li>
@@ -362,6 +370,7 @@
 <span class="w">  </span><span class="nt">&quot;salary_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;salary&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;supervisor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;commission&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -390,19 +399,20 @@
 <span class="w">  </span><span class="nt">&quot;photo_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;back_photo_of_ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;driving_license_photo&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;company&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;department&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;office&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;section&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;employee_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;user_permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;groups&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;department_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;office_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;section_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;position_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;employee_status_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;user_permissions_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;groups_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;profile_image&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;contract_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;salary_style&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;salary&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;supervisor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;commission_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;is_active&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -552,10 +562,9 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Salary:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../salary/office_leader_prim.html">OfficeLeaderPrim (Ofis Lider Komissiya)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../salary/group_leader_prim.html">GroupLeaderPrim (Qrup Lider Komissiya)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../salary/manager1_prim.html">Manager1Prim (Menecer 1 Komissiya)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../salary/manager2_prim.html">Manager2Prim (Menecer 2 Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../salary/commission.html">Commission (Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../salary/month_range.html">MonthRange (Ay Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../salary/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../salary/advancedpayment.html">AdvancedPayment (Avans)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../salary/bonus.html">Bonus (Bonus)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../salary/salary_deduction.html">SalaryDeduction (Kəsinti)</a></li>

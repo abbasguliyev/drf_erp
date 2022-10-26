@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-import django
 from api.core import DynamicFieldsCategorySerializer
 from account.models import (
     CustomerNote,
@@ -26,12 +24,13 @@ from company.models import (
     Office,
     Team,
     Section,
-    PermissionForPosition,
     Position,
     Department
 )
 
 from django.contrib.auth.models import Permission, Group
+
+from salary.models import Commission
 
 
 class PermissionSerializer(DynamicFieldsCategorySerializer):
@@ -108,13 +107,25 @@ class RegisterSerializer(DynamicFieldsCategorySerializer):
             'contract_type', 
             'salary_style', 
             'salary', 
-            'supervisor', 
+            'supervisor',
+            'commission'
             'note', 
             'password', 
         )
 
 
 class UserSerializer(DynamicFieldsCategorySerializer):
+    class CommissionSerializer(DynamicFieldsCategorySerializer):
+        """
+        Komissiya serializer-ın burada inline yazılmasına səbəb, bu formada yazmadıqda
+        circular error verməsidir.
+        """
+        class Meta:
+            model = Commission
+            fields = (
+                'commission_name',
+            )
+
     holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     department = DepartmentSerializer(read_only=True, fields=['id', 'name'])
@@ -126,6 +137,7 @@ class UserSerializer(DynamicFieldsCategorySerializer):
     user_permissions = PermissionSerializer(read_only=True, many=True, fields=['id', 'name'])
     groups = GroupSerializer(read_only=True, many=True, fields=['id', 'name'])
     dismissal_date = serializers.DateField(read_only=True)
+    commission = CommissionSerializer(read_only=True, fields=['id', 'commission_name'])
 
     holding_id = serializers.PrimaryKeyRelatedField(
         queryset=Holding.objects.all(), source='holding', write_only=True, allow_null=True
@@ -162,6 +174,10 @@ class UserSerializer(DynamicFieldsCategorySerializer):
 
     groups_id = serializers.PrimaryKeyRelatedField(
         queryset=Group.objects.all(), source='groups', write_only=True, many=True
+    )
+
+    commission_id = serializers.PrimaryKeyRelatedField(
+        queryset=Commission.objects.all(), source='commission', write_only=True, allow_null=True
     )
 
     class Meta:

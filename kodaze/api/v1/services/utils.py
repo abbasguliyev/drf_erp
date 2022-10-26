@@ -2,7 +2,7 @@ from rest_framework import status
 import datetime
 from rest_framework.response import Response
 from cashbox.models import OfficeCashbox
-from salary.models import CreditorPrim, SalaryView
+from salary.models import SalaryView
 
 from product.models import (
     Product,
@@ -247,11 +247,12 @@ def service_payment_update(self, request, *args, **kwargs):
             return Response({"detail":"Creditor təyin edilməyib"}, status=status.HTTP_400_BAD_REQUEST)
         creditor = creditor_contracts.creditor
 
-        creditor_prim_all = CreditorPrim.objects.all()
+        # creditor_prim_all = CreditorPrim.objects.all()
 
-        creditor_prim = creditor_prim_all[0]
+        # creditor_prim = creditor_prim_all[0]
 
-        prim_percent = creditor_prim.prim_percent
+        # prim_percent = creditor_prim.prim_percent
+        prim_percent = 0
 
         now = datetime.date.today()
 

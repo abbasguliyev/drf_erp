@@ -8,21 +8,22 @@ from account.models import (
 )
 from django.contrib.auth.models import Permission
 
+@admin.register(Region)
 class RegionAdmin(admin.ModelAdmin):
-    search_fields = (
-        "region_ad",
-    )
+    list_display = ("id", "region_name")
+    search_fields = ("region_name",)
 
-# Register your models here.
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ("id", "username", "fullname")
     list_display_links = ("id", "username")
 
-admin.site.register(Customer)
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ("id", "fullname", "is_active")
+    list_display_links = ("id", "fullname")
+
+
 admin.site.register(CustomerNote)
-
-admin.site.register(Region, RegionAdmin)
 admin.site.register(EmployeeStatus)
-
 admin.site.register(Permission)

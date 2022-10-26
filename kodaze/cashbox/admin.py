@@ -8,36 +8,18 @@ from cashbox.models import (
 # Register your models here.
 @admin.register(OfficeCashbox)
 class OfficeCashboxAdmin(admin.ModelAdmin):
-    list_display = (
-        'office', 
-        'balance'
-    )
-    list_filter = [
-        'office', 
-        'balance'
-    ]
+    list_display = ('office', 'balance')
+    list_filter = ['office', 'balance']
 
 @admin.register(CompanyCashbox)
 class CompanyCashboxAdmin(admin.ModelAdmin):
-    list_display = (
-        'company', 
-        'balance'
-    )
-    list_filter = [
-        'company', 
-        'balance'
-    ]
+    list_display = ('company', 'balance')
+    list_filter = ['company', 'balance']
 
 @admin.register(HoldingCashbox)
 class HoldingCashboxAdmin(admin.ModelAdmin):
-    list_display = (
-        'holding', 
-        'balance'
-    )
-    list_filter = [
-        'holding', 
-        'balance'
-    ]
+    list_display = ('holding', 'balance')
+    list_filter = ['holding', 'balance']
 
 @admin.register(CashFlow)
 class CashFlowAdmin(admin.ModelAdmin):

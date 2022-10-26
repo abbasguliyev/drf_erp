@@ -26,7 +26,7 @@ class UnitOfMeasureSerializer(DynamicFieldsCategorySerializer):
 class ProductSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only = True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset = Company.objects.select_related('holding').all(), source = "company", write_only= True
+        queryset = Company.objects.all(), source = "company", write_only= True
     )
     
     category = CategorySerializer(read_only = True, fields=['id', 'category_name'])

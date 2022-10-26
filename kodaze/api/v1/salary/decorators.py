@@ -15,9 +15,9 @@ from salary.models import SalaryView
 
 def cashbox_expense_and_cash_flow_create(func):
     """
-    Əməliyyat zamanı kassadan pull çıxan və pul axını səhifəsinə əməliyyat ilə bağlı məlumatlar əlavə
+    Əməliyyat zamanı kassadan pul məxaric edən və pul axını səhifəsinə əməliyyat ilə bağlı məlumatlar əlavə
     edilən funksiyalarda istifadə olunmalı olan dekorator funksiyası.
-    Kassadan pul çıxılmasını və pul axını səhifəsinə məlumarların əlavə edilməsini təmin edir.
+    Kassadan pul çıxılmasını və pul axını səhifəsinə məlumatların əlavə edilməsini təmin edir.
     """
     def wrapper(*args, **kwargs):
         employee = kwargs['employee']

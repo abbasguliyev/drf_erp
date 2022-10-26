@@ -5,13 +5,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.response import Response
 from account.models import Customer
+from api.v1.salary.utils import return_commission_after_cancel_contract
 from company.models import Company, Office, Position
 from cashbox.models import OfficeCashbox
 from salary.models import (
-    Manager1PrimNew, 
-    SalaryView, 
-    OfficeLeaderPrim, 
-    GroupLeaderPrimNew
+    SalaryView,
 )
 from contract.models import Contract, Installment
 from warehouse.models import (
@@ -37,9 +35,6 @@ from django.contrib.auth import get_user_model
 from api.v1.contract.utils.contract_utils import (
     add_product_to_stock,
     c_income,
-    calculate_holding_total_balance,
-    calculate_office_balance,
-    cashflow_create,
     expense,
     pdf_create_when_contract_updated,
     reduce_product_from_stock,   
@@ -727,117 +722,8 @@ def contract_update(self, request, *args, **kwargs):
                 service.delete()
 
             # -------------------- Kommisiyaların geri alınması --------------------
-            contract_payment_style = contract.payment_style
-            group_leader = contract.group_leader
-            contract_loan_term = contract.loan_term
-
-            try:
-                name = group_leader.position.name
-            except:
-                name = None
-
-            if name == "VANLEADER":
-                if group_leader is not None:
-                    group_leader_status = group_leader.employee_status
-                    if (group_leader_status is not None):
-                        group_leader_prim = GroupLeaderPrimNew.objects.get(
-                            prim_status=group_leader_status, position=group_leader.position)
-                        group_leader_salary_view_current_month = SalaryView.objects.get(
-                            employee=contract_group_leader, date=f"{now.year}-{now.month}-{1}")
-                        group_leader_salary_view_next_month = SalaryView.objects.get(
-                            employee=contract_group_leader, date=next_m)
-
-                        group_leader_salary_view_current_month.sale_quantity = float(
-                            group_leader_salary_view_current_month.sale_quantity) - float(product_quantity)
-                        group_leader_salary_view_current_month.sales_amount = float(
-                            group_leader_salary_view_current_month.sales_amount) - (float(contract.product.price) * float(contract.product_quantity))
-
-                        if contract_payment_style == CASH:
-                            group_leader_salary_view_next_month.final_salary = float(
-                                group_leader_salary_view_next_month.final_salary) - (float(group_leader_prim.cash) * float(contract.product_quantity))
-                        elif contract_payment_style == INSTALLMENT:
-                            if int(contract_loan_term) >= 0 and int(contract_loan_term) <= 3:
-                                group_leader_salary_view_next_month.final_salary = float(
-                                    group_leader_salary_view_next_month.final_salary) - (float(group_leader_prim.cash) * float(contract.product_quantity))
-                            elif int(contract_loan_term) >= 4 and int(contract_loan_term) <= 12:
-                                group_leader_salary_view_next_month.final_salary = float(group_leader_salary_view_next_month.final_salary) - (
-                                    float(group_leader_prim.installment_4_12) * float(contract.product_quantity))
-                            elif int(contract_loan_term) >= 13 and int(contract_loan_term) <= 18:
-                                group_leader_salary_view_next_month.final_salary = float(group_leader_salary_view_next_month.final_salary) - (
-                                    float(group_leader_prim.installment_13_18) * float(contract.product_quantity))
-                            elif int(contract_loan_term) >= 19 and int(contract_loan_term) <= 24:
-                                group_leader_salary_view_next_month.final_salary = float(group_leader_salary_view_next_month.final_salary) - (
-                                    float(group_leader_prim.installment_19_24) * float(contract.product_quantity))
-
-                        group_leader_salary_view_current_month.save()
-                        group_leader_salary_view_next_month.save()
-
-                manager1 = contract.manager1
-                if manager1 is not None:
-                    manager1_status = manager1.employee_status
-                    try:
-                        manager1_position = manager1.position.name
-                    except:
-                        manager1_position = None
-                    if (manager1_position == "DEALER"):
-                        manager1_prim = Manager1PrimNew.objects.get(
-                            prim_status=manager1_status, position=manager1.position)
-                        manager1_salary_view_current_month = SalaryView.objects.get(
-                            employee=contract_manager1, date=f"{now.year}-{now.month}-{1}")
-                        manager1_salary_view_next_month = SalaryView.objects.get(
-                            employee=contract_manager1, date=next_m)
-
-                        manager1_salary_view_current_month.sale_quantity = float(
-                            manager1_salary_view_current_month.sale_quantity) - float(product_quantity)
-                        manager1_salary_view_current_month.sales_amount = float(manager1_salary_view_current_month.sales_amount) - (
-                            float(contract.product.price) * float(contract.product_quantity))
-
-                        if contract_payment_style == CASH:
-                            manager1_salary_view_next_month.final_salary = float(
-                                manager1_salary_view_next_month.final_salary) - (float(manager1_prim.cash) * float(contract.product_quantity))
-                        elif contract_payment_style == INSTALLMENT:
-                            if int(contract_loan_term) >= 0 and int(contract_loan_term) <= 3:
-                                manager1_salary_view_next_month.final_salary = float(
-                                    manager1_salary_view_next_month.final_salary) - (float(manager1_prim.cash) * float(contract.product_quantity))
-                            elif int(contract_loan_term) >= 4 and int(contract_loan_term) <= 12:
-                                manager1_salary_view_next_month.final_salary = float(manager1_salary_view_next_month.final_salary) - (
-                                    float(manager1_prim.installment_4_12) * float(contract.product_quantity))
-                            elif int(contract_loan_term) >= 13 and int(contract_loan_term) <= 18:
-                                manager1_salary_view_next_month.final_salary = float(manager1_salary_view_next_month.final_salary) - (
-                                    float(manager1_prim.installment_13_18) * float(contract.product_quantity))
-                            elif int(contract_loan_term) >= 19 and int(contract_loan_term) <= 24:
-                                manager1_salary_view_next_month.final_salary = float(manager1_salary_view_next_month.final_salary) - (
-                                    float(manager1_prim.installment_19_24) * float(contract.product_quantity))
-
-                        manager1_salary_view_current_month.save()
-                        manager1_salary_view_next_month.save()
-
-                office = contract.office
-                if office is not None:
-                    officeLeaderPosition = Position.objects.get(
-                        name="OFFICE LEADER", company=contract.company)
-                    officeLeaders = User.objects.filter(
-                        office=office, position=officeLeaderPosition)
-                    for officeLeader in officeLeaders:
-                        officeLeader_status = officeLeader.employee_status
-                        officeleader_prim = OfficeLeaderPrim.objects.get(
-                            prim_status=officeLeader_status, position=officeLeader.position)
-
-                        officeLeader_salary_view_this_month = SalaryView.objects.get(
-                            employee=officeLeader, date=f"{now.year}-{now.month}-{1}")
-                        officeLeader_salary_view_next_month = SalaryView.objects.get(
-                            employee=officeLeader, date=next_m)
-
-                        officeLeader_salary_view_this_month.sale_quantity = float(
-                            officeLeader_salary_view_this_month.sale_quantity) - float(product_quantity)
-                        officeLeader_salary_view_this_month.sales_amount = float(officeLeader_salary_view_this_month.sales_amount) - (float(contract.product.price) * float(contract.product_quantity))
-                        officeLeader_salary_view_this_month.save()
-
-                        officeLeader_salary_view_next_month.final_salary = float(
-                            officeLeader_salary_view_next_month.final_salary) - (float(officeleader_prim.prim_for_office) * float(contract.product_quantity))
-                        officeLeader_salary_view_next_month.save()
-            
-            # -------------------- -------------------- --------------------
+            return_commission_after_cancel_contract(contract)
+            # -------------------- -------------------- ----------------------------
             contract.cancelled_date = datetime.date.today()
             contract.contract_status = CANCELLED
             contract.is_remove = True

@@ -103,7 +103,19 @@ class ContractAdmin(admin.ModelAdmin):
         'modified_product_status',
     )
 
-admin.site.register(ContractGift)
+@admin.register(ContractGift)
+class ContractGiftAdmin(admin.ModelAdmin):
+    list_display = ("id", "product", "contract", "quantity", "gift_date")
+    list_display_links = ("id",)
+
 admin.site.register(ContractChange)
-admin.site.register(DemoSales)
-admin.site.register(ContractCreditor)
+
+@admin.register(DemoSales)
+class DemoSalesAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "count", "created_date", "sale_count")
+    list_display_links = ("id",)
+
+@admin.register(ContractCreditor)
+class ContractCreditorAdmin(admin.ModelAdmin):
+    list_display = ("id", "creditor", "contract")
+    list_display_links = ("id",)

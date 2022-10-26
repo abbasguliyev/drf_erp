@@ -1,27 +1,19 @@
-from django.forms import ValidationError
 from rest_framework import serializers
 from api.core import DynamicFieldsCategorySerializer
 
-from account.models import EmployeeStatus, User
-from company.models import Position
-from api.v1.company.serializers import PositionSerializer
+from account.models import User
 
 from salary.models import (
     AdvancePayment,
-    Manager1PrimNew,
     SalaryDeduction,
     Bonus,
     SalaryPunishment,
     SalaryView,
     PaySalary,
-    OfficeLeaderPrim,
-    Manager2Prim,
-    CreditorPrim,
-    GroupLeaderPrimNew, MonthRange, SaleRange, CommissionInstallment, CommissionSaleRange, Commission
+    MonthRange, SaleRange, CommissionInstallment, CommissionSaleRange, Commission
 )
 
-from api.v1.account.serializers import EmployeeStatusSerializer, UserSerializer
-
+from api.v1.account.serializers import UserSerializer
 
 class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True, fields=["id", "fullname"])
@@ -74,121 +66,6 @@ class PaySalarySerializer(DynamicFieldsCategorySerializer):
         model = PaySalary
         fields = ('employee', 'amount', 'note', 'salary_date')
         read_only_fields = ('amount',)
-
-
-class OfficeLeaderPrimSerializer(DynamicFieldsCategorySerializer):
-    prim_status = EmployeeStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    position = PositionSerializer(read_only=True)
-    position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.all(), source="position", write_only=True
-    )
-
-    class Meta:
-        model = OfficeLeaderPrim
-        fields = "__all__"
-
-    def create(self, validated_data):
-        prim_status = validated_data.get('prim_status')
-        position = validated_data.get('position')
-        try:
-            prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                raise ValidationError
-            return super(OfficeLeaderPrimSerializer, self).create(validated_data)
-        except:
-            raise ValidationError({"detail": 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
-
-
-class GroupLeaderPrimNewSerializer(DynamicFieldsCategorySerializer):
-    prim_status = EmployeeStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    position = PositionSerializer(read_only=True)
-    position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.all(), source="position", write_only=True
-    )
-
-    class Meta:
-        model = GroupLeaderPrimNew
-        fields = "__all__"
-
-    def create(self, validated_data):
-        prim_status = validated_data.get('prim_status')
-        position = validated_data.get('position')
-        try:
-            prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                raise ValidationError
-            return super(GroupLeaderPrimNewSerializer, self).create(validated_data)
-        except:
-            raise ValidationError({"detail": 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
-
-
-class Manager1PrimNewSerializer(DynamicFieldsCategorySerializer):
-    prim_status = EmployeeStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    position = PositionSerializer(read_only=True)
-    position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.all(), source="position", write_only=True
-    )
-
-    class Meta:
-        model = Manager1PrimNew
-        fields = "__all__"
-
-    def create(self, validated_data):
-        prim_status = validated_data.get('prim_status')
-        position = validated_data.get('position')
-        try:
-            prim = Manager1PrimNew.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                raise ValidationError
-            return super(Manager1PrimNewSerializer, self).create(validated_data)
-        except:
-            raise ValidationError({"detail": 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
-
-
-class Manager2PrimSerializer(DynamicFieldsCategorySerializer):
-    prim_status = EmployeeStatusSerializer(read_only=True)
-    prim_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=EmployeeStatus.objects.all(), source="prim_status", write_only=True
-    )
-
-    position = PositionSerializer(read_only=True)
-    position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.all(), source="position", write_only=True
-    )
-
-    class Meta:
-        model = Manager2Prim
-        fields = "__all__"
-
-    def create(self, validated_data):
-        prim_status = validated_data.get('prim_status')
-        position = validated_data.get('position')
-        try:
-            prim = Manager2Prim.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                raise ValidationError
-            return super(Manager2PrimSerializer, self).create(validated_data)
-        except:
-            raise ValidationError({"detail": 'Bu status və vəzifəyə uyğun prim artıq əlavə olunub'})
-
-
-class CreditorPrimSerializer(DynamicFieldsCategorySerializer):
-    class Meta:
-        model = CreditorPrim
-        fields = "__all__"
-
 
 class SalaryViewSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True)
@@ -249,12 +126,20 @@ class SaleRangeSerializer(DynamicFieldsCategorySerializer):
 
 
 class CommissionInstallmentSerializer(DynamicFieldsCategorySerializer):
+    month_range = MonthRangeSerializer(read_only=True)
+    month_range_id = serializers.PrimaryKeyRelatedField(
+        queryset=MonthRange.objects.all(), source="month_range", write_only=True
+    )
     class Meta:
         model = CommissionInstallment
         fields = '__all__'
 
 
 class CommissionSaleRangeSerializer(DynamicFieldsCategorySerializer):
+    sale_range = SaleRangeSerializer(read_only=True)
+    sale_range_id = serializers.PrimaryKeyRelatedField(
+        queryset=SaleRange.objects.all(), source="sale_range", write_only=True
+    )
     class Meta:
         model = CommissionSaleRange
         fields = '__all__'
@@ -262,19 +147,19 @@ class CommissionSaleRangeSerializer(DynamicFieldsCategorySerializer):
 
 class CommissionSerializer(DynamicFieldsCategorySerializer):
     installment = CommissionInstallmentSerializer(read_only=True, many=True)
-    installment_id = serializers.PrimaryKeyRelatedField(
-        queryset=CommissionInstallment.objects.select_related('month_range').all(),
-        source="installment", write_only=True, many=True
-    )
+    # installment_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=CommissionInstallment.objects.select_related('month_range').all(),
+    #     source="installment", write_only=True, many=True
+    # )
 
     for_sale_range = CommissionInstallmentSerializer(read_only=True, many=True)
-    for_sale_range_id = serializers.PrimaryKeyRelatedField(
-        queryset=CommissionSaleRange.objects.select_related('sale_range').all(),
-        source="for_sale_range", write_only=True, many=True
-    )
+    # for_sale_range_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=CommissionSaleRange.objects.select_related('sale_range').all(),
+    #     source="for_sale_range", write_only=True, many=True
+    # )
 
-    month_ranges = serializers.CharField(write_only=True, required=False, allow_null=True)
-    sale_ranges = serializers.CharField(write_only=True, required=False, allow_null=True)
+    month_ranges = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    sale_ranges = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = Commission

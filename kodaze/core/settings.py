@@ -15,7 +15,6 @@ from pathlib import Path
 import os
 
 from django.conf import settings
-from celery.schedules import crontab
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -34,22 +33,21 @@ SECRET_KEY = os.environ['SECRET_KEY']
 __PRODUCTION__ = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if __PRODUCTION__ == True:
+if __PRODUCTION__:
     DEBUG = False
 else:
     DEBUG = True
 
-if __PRODUCTION__ == True:
+if __PRODUCTION__:
     ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"].split(',')
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-if __PRODUCTION__ == False:
+if not __PRODUCTION__:
     INTERNAL_IPS = [
         "127.0.0.1",
         "localhost"
     ]
-
 
 CSRF_TRUSTED_ORIGINS = [
     'https://dev.kodaze.com'
@@ -98,24 +96,26 @@ INSTALLED_APPS = [
     'task_manager.apps.TaskManagerConfig'
 ]
 
-
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 backup_adress = os.path.join(BASE_DIR, 'backup')
 DBBACKUP_STORAGE_OPTIONS = {'location': backup_adress}
 
 SIMPLE_JWT = {
-    # When set to True, if a refresh token is submitted to the TokenRefreshView, a new refresh token will be returned along with the new access token.
+    # When set to True, if a refresh token is submitted to the TokenRefreshView, a new refresh token will be returned
+    # along with the new access token.
     'ROTATE_REFRESH_TOKENS': True,
     # refresh tokens submitted to the TokenRefreshView to be added to the blacklist
     'BLACKLIST_AFTER_ROTATION': True,
 
-    'ALGORITHM': 'HS256',  # TWO types either HMAC  or RSA for HMAC 'HS256', 'HS384', 'HS512: SIGNING_KEY setting will be used as both the signing key and the verifying key.  asymmetric RSA RS256', 'RS384', 'RS512' SIGNING_KEY setting must be set to a string that contains an RSA private key. Likewise, the VERIFYING_KEY
+    'ALGORITHM': 'HS256',  # TWO types either HMAC  or RSA for HMAC 'HS256', 'HS384', 'HS512: SIGNING_KEY setting
+    # will be used as both the signing key and the verifying key.  asymmetric RSA RS256', 'RS384',
+    # 'RS512' SIGNING_KEY setting must be set to a string that contains an RSA private key. Likewise, the VERIFYING_KEY
     'SIGNING_KEY': settings.SECRET_KEY,  # content of generated tokens.
     # The verifying key which is used to verify the content of generated tokens
     'VERIFYING_KEY': None,
     # The audience claim to be included in generated tokens and/or validated in decoded tokens
     'AUDIENCE': None,
-    'ISSUER': None,  # ssuer claim to be included in generated tokens
+    'ISSUER': None,  # issuer claim to be included in generated tokens
 
     # Authorization: Bearer <token> ('Bearer', 'JWT')
     'AUTH_HEADER_TYPES': ('Bearer',),
@@ -135,7 +135,6 @@ SIMPLE_JWT = {
     # how long refresh tokens are valid.
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -171,11 +170,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if __PRODUCTION__ == True:
+if __PRODUCTION__:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -197,7 +195,6 @@ else:
             'PORT': '5432',
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -248,7 +245,7 @@ TIME_ZONE = 'Asia/Baku'
 
 USE_I18N = True
 
-DATE_FORMAT=['%d-%m-%Y']
+DATE_FORMAT = ['%d-%m-%Y']
 
 USE_L10N = False
 
@@ -268,7 +265,6 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -300,9 +296,9 @@ REST_FRAMEWORK = {
 
     ),
     'DATE_INPUT_FORMATS': ["%d-%m-%Y", ],
-    'DATETIME_FORMAT':  "%d-%m-%Y %H:%M:%S",
-    'DATE_FORMAT':  "%d-%m-%Y",
-    'DATETIME_INPUT_FORMATS':  ["%d-%m-%Y %H:%M:%S", ],
+    'DATETIME_FORMAT': "%d-%m-%Y %H:%M:%S",
+    'DATE_FORMAT': "%d-%m-%Y",
+    'DATETIME_INPUT_FORMATS': ["%d-%m-%Y %H:%M:%S", ],
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 

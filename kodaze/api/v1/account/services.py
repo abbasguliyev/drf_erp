@@ -35,6 +35,7 @@ def create_user(
         note: str = None,
         profile_image=None,
         supervisor=None,
+        commission=None,
         user_permissions=None,
         groups=None,
         password: str,
@@ -76,6 +77,7 @@ def create_user(
         note=note,
         profile_image=profile_image,
         supervisor=supervisor,
+        commission=commission
     )
 
     standart_status = EmployeeStatus.objects.filter(status_name="STANDART").first()

@@ -1,29 +1,6 @@
-import math
-from rest_framework import status
-from rest_framework.response import Response
-from account.models import User, Customer
-from api.v1.contract.serializers import ContractSerializer
-from company.models import Office, Section, Position
-from cashbox.models import OfficeCashbox
 from income_expense.models import OfficeCashboxIncome, OfficeCashboxExpense
-from salary.models import (
-    Manager1PrimNew, 
-    SalaryView, 
-    OfficeLeaderPrim, 
-    GroupLeaderPrimNew
-)
-from contract.models import Installment
-from warehouse.models import (
-    Warehouse,
-    Stock
-)
-from product.models import Product
-from services.models import Service, ServicePayment
-from rest_framework.generics import get_object_or_404
-import pandas as pd
+
 import datetime
-import traceback
-from services.signals import create_services
 
 from api.v1.utils.ocean_contract_pdf_create import (
     ocean_contract_pdf_canvas,
@@ -38,14 +15,6 @@ from api.v1.utils.magnus_contract_pdf_create import (
     magnus_installment_create_contract_pdf,
     magnus_installment_contract_pdf_canvas,
 )
-
-from api.v1.cashbox.utils import (
-    calculate_holding_total_balance, 
-    cashflow_create, 
-    calculate_office_balance, 
-)
-
-import django
 
 def create_and_add_pdf_when_contract_updated(sender, instance, created, **kwargs):
     if created:

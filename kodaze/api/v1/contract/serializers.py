@@ -76,7 +76,7 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
         queryset=Product.objects.select_related('category', 'company', 'unit_of_measure').all(), source='product', write_only=True, required=False, allow_null=True
     )
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.select_related('holding').all(), source='company', write_only=True, required=False, allow_null=True
+        queryset=Company.objects.all(), source='company', write_only=True, required=False, allow_null=True
     )
 
     office_id = serializers.PrimaryKeyRelatedField(

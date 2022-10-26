@@ -1,42 +1,39 @@
+from api.v1.salary.services.advancedpayment_service import advancepayment_create
+from api.v1.salary.services.bonus_service import bonus_create
+from api.v1.salary.services.commission_services import (
+    month_range_create,
+    sale_range_create,
+    commission_installment_create,
+    commission_sale_range_create,
+    commission_create,
+    commission_update
+)
+from api.v1.salary.services.salary_pay_service import salary_pay_create
+from api.v1.salary.services.salarydeduction_service import salarydeduction_create
+from api.v1.salary.services.salarypunishment_service import salarypunishment_create
+
 from salary.models import (
     AdvancePayment,
-    Manager1PrimNew,
     SalaryDeduction,
     Bonus,
-    CreditorPrim,
     SalaryPunishment,
     SalaryView,
     PaySalary,
-    OfficeLeaderPrim,
-    Manager2Prim,
-    GroupLeaderPrimNew, MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange
+    MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange
 )
 from api.v1.salary.serializers import (
     AdvancePaymentSerializer,
     BonusSerializer,
-    Manager1PrimNewSerializer,
     SalaryDeductionSerializer,
     SalaryPunishmentSerializer,
     SalaryViewSerializer,
-    Manager2PrimSerializer,
     PaySalarySerializer,
-    OfficeLeaderPrimSerializer,
-    GroupLeaderPrimNewSerializer,
-    CreditorPrimSerializer, MonthRangeSerializer, SaleRangeSerializer, CommissionSerializer,
+    MonthRangeSerializer, SaleRangeSerializer, CommissionSerializer,
     CommissionInstallmentSerializer, CommissionSaleRangeSerializer,
 )
 from rest_framework import status, generics
 
 from rest_framework.response import Response
-
-from api.v1.salary.services import (
-    salary_pay_create,
-    bonus_create,
-    salarypunishment_create,
-    advancepayment_create,
-    salarydeduction_create, month_range_create, sale_range_create, commission_create, commission_installment_create,
-    commission_sale_range_create
-)
 
 from api.v1.salary import permissions as salary_permissions
 
@@ -45,14 +42,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.v1.salary.filters import (
     AdvancePaymentFilter,
     BonusFilter,
-    Manager2PrimFilter,
-    Manager1PrimNewFilter,
     SalaryDeductionFilter,
     SalaryPunishmentFilter,
     SalaryViewFilter,
     PaySalaryFilter,
-    OfficeLeaderPrimFilter,
-    GroupLeaderPrimNewFilter
 )
 
 
@@ -130,7 +123,7 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if (serializer.is_valid()):
+        if serializer.is_valid():
             salarydeduction_create(**serializer.validated_data)
             return Response({"detail": "Kəsinti əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
         else:
@@ -349,255 +342,6 @@ class SalaryViewDetailAPIView(generics.RetrieveDestroyAPIView):
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
 
-# ********************************** Office Leader Prim get post put delete **********************************
-class OfficeLeaderPrimListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfficeLeaderPrim.objects.all()
-    serializer_class = OfficeLeaderPrimSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfficeLeaderPrimFilter
-    permission_classes = [salary_permissions.OfficeLeaderPrimPermissions]
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            prim_status = serializer.validated_data.get("prim_status")
-            position = serializer.validated_data.get("position")
-            prim = OfficeLeaderPrim.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
-                                status=status.HTTP_400_BAD_REQUEST)
-            else:
-                serializer.save()
-                return Response({"detail": "Prim əlavə edildi"})
-
-
-class OfficeLeaderPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = OfficeLeaderPrim.objects.all()
-    serializer_class = OfficeLeaderPrimSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OfficeLeaderPrimFilter
-    permission_classes = [salary_permissions.OfficeLeaderPrimPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Office Leader bonus yeniləndi"}, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
-
-# ********************************** GroupLeader Prim New get post put delete **********************************
-class GroupLeaderPrimNewListCreateAPIView(generics.ListCreateAPIView):
-    queryset = GroupLeaderPrimNew.objects.all()
-    serializer_class = GroupLeaderPrimNewSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = GroupLeaderPrimNewFilter
-    permission_classes = [salary_permissions.GroupLeaderPrimNewPermissions]
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            prim_status = serializer.validated_data.get("prim_status")
-            position = serializer.validated_data.get("position")
-            prim = GroupLeaderPrimNew.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
-                                status=status.HTTP_400_BAD_REQUEST)
-            else:
-                serializer.save()
-                return Response({"detail": "Prim əlavə edildi"})
-
-
-class GroupLeaderPrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = GroupLeaderPrimNew.objects.all()
-    serializer_class = GroupLeaderPrimNewSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = GroupLeaderPrimNewFilter
-    permission_classes = [salary_permissions.GroupLeaderPrimNewPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Van Leader bonus yeniləndi"}, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
-
-# ********************************** Manager2 Prim get post put delete **********************************
-class Manager2PrimListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Manager2Prim.objects.all()
-    serializer_class = Manager2PrimSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = Manager2PrimFilter
-    permission_classes = [salary_permissions.Manager2PrimPermissions]
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            prim_status = serializer.validated_data.get("prim_status")
-            position = serializer.validated_data.get("position")
-            prim = Manager2Prim.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
-                                status=status.HTTP_400_BAD_REQUEST)
-            else:
-                serializer.save()
-                return Response({"detail": "Prim əlavə edildi"})
-
-
-class Manager2PrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Manager2Prim.objects.all()
-    serializer_class = Manager2PrimSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = Manager2PrimFilter
-    permission_classes = [salary_permissions.Manager2PrimPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Manager2 bonus yeniləndi"}, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
-
-# ********************************** Manager1 Prim New get post put delete **********************************
-class Manager1PrimNewListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Manager1PrimNew.objects.all()
-    serializer_class = Manager1PrimNewSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = Manager1PrimNewFilter
-    permission_classes = [salary_permissions.Manager1PrimNewPermissions]
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            prim_status = serializer.validated_data.get("prim_status")
-            position = serializer.validated_data.get("position")
-            prim = Manager1PrimNew.objects.filter(prim_status=prim_status, position=position)
-            if len(prim) > 0:
-                return Response({"detail": "Bu status və vəzifəyə uyğun prim artıq əlavə olunub"},
-                                status=status.HTTP_400_BAD_REQUEST)
-            else:
-                serializer.save()
-                return Response({"detail": "Prim əlavə edildi"})
-
-
-class Manager1PrimNewDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Manager1PrimNew.objects.all()
-    serializer_class = Manager1PrimNewSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = Manager1PrimNewFilter
-    permission_classes = [salary_permissions.Manager1PrimNewPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Manager1 bonus yeniləndi"}, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
-
-# ********************************** Creditor Prim get post put delete **********************************
-class CreditorPrimListCreateAPIView(generics.ListCreateAPIView):
-    queryset = CreditorPrim.objects.all()
-    serializer_class = CreditorPrimSerializer
-    permission_classes = [salary_permissions.CreditorPrimPermissions]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response({"detail": "Creditor prim əlavə olundu"}, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class CreditorPrimDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CreditorPrim.objects.all()
-    serializer_class = CreditorPrimSerializer
-    permission_classes = [salary_permissions.CreditorPrimPermissions]
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Kredit bonus faizi yeniləndi"}, status=status.HTTP_200_OK)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
-
-
 # ********************************** Commission get post put delete **********************************
 class MonthRangeListCreateAPIView(generics.ListCreateAPIView):
     queryset = MonthRange.objects.all()
@@ -611,6 +355,7 @@ class MonthRangeListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": "Ay aralığı əlavə edildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class MonthRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MonthRange.objects.all()
@@ -631,6 +376,7 @@ class SaleRangeListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class SaleRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = SaleRange.objects.all()
     serializer_class = SaleRangeSerializer
@@ -640,7 +386,7 @@ class SaleRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class CommissionInstallmentListCreateAPIView(generics.ListCreateAPIView):
     queryset = CommissionInstallment.objects.all()
     serializer_class = CommissionInstallmentSerializer
-    permission_classes = [salary_permissions.CommissionInstallmentPermissions]
+    # permission_classes = [salary_permissions.CommissionInstallmentPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -650,15 +396,17 @@ class CommissionInstallmentListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CommissionInstallmentDetailAPIView(generics.ListCreateAPIView):
     queryset = CommissionInstallment.objects.all()
     serializer_class = CommissionInstallmentSerializer
-    permission_classes = [salary_permissions.CommissionInstallmentPermissions]
+    # permission_classes = [salary_permissions.CommissionInstallmentPermissions]
+
 
 class CommissionSaleRangeListCreateAPIView(generics.ListCreateAPIView):
     queryset = CommissionSaleRange.objects.all()
     serializer_class = CommissionSaleRangeSerializer
-    permission_classes = [salary_permissions.CommissionSaleRangePermissions]
+    # permission_classes = [salary_permissions.CommissionSaleRangePermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -668,10 +416,11 @@ class CommissionSaleRangeListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CommissionSaleRangeDetailAPIView(generics.ListCreateAPIView):
     queryset = CommissionSaleRange.objects.all()
     serializer_class = CommissionSaleRangeSerializer
-    permission_classes = [salary_permissions.CommissionSaleRangePermissions]
+    # permission_classes = [salary_permissions.CommissionSaleRangePermissions]
 
 
 class CommissionListCreateAPIView(generics.ListCreateAPIView):
@@ -687,7 +436,17 @@ class CommissionListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CommissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Commission.objects.all()
     serializer_class = CommissionSerializer
     permission_classes = [salary_permissions.CommissionPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            commission_update(instance.id, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

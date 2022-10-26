@@ -86,10 +86,9 @@ Welcome to Kodaze CRM's documentation!
    :maxdepth: 2
    :caption: Salary:
 
-   modules/salary/office_leader_prim.rst
-   modules/salary/group_leader_prim.rst
-   modules/salary/manager1_prim.rst
-   modules/salary/manager2_prim.rst
+   modules/salary/commission.rst
+   modules/salary/month_range.rst
+   modules/salary/sale_range.rst
    modules/salary/advancedpayment.rst
    modules/salary/bonus.rst
    modules/salary/salary_deduction.rst

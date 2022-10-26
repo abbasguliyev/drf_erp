@@ -84,6 +84,9 @@ User (İşçi)
 - supervizor 
     - nullable 
     - (Supervizor - User id)
+- commission
+    - nullable
+    - (Komissiya id - Commission id)
 - note 
     - nullable 
     - (Qeyd - String)
@@ -192,6 +195,7 @@ User Registration
     "salary_style": "",
     "salary": null,
     "supervisor": null,
+    "commission": null,
     "note": "",
     "password": ""
   }
@@ -218,19 +222,20 @@ Update Users
     "photo_ID": null,
     "back_photo_of_ID": null,
     "driving_license_photo": null,
-    "company": null,
-    "department": null,
-    "office": null,
-    "section": null,
-    "position": null,
-    "employee_status": null,
-    "user_permissions": [],
-    "groups": [],
+    "company_id": null,
+    "department_id": null,
+    "office_id": null,
+    "section_id": null,
+    "position_id": null,
+    "employee_status_id": null,
+    "user_permissions_id": [],
+    "groups_id": [],
     "profile_image": null,
     "contract_type": "",
     "salary_style": "",
     "salary": null,
     "supervisor": null,
+    "commission_id": null,
     "note": "",
     "is_active": "",
   }

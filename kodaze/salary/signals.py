@@ -4,6 +4,7 @@ from .tasks import create_prim_task
 from contract.models import Contract
 from django.db import transaction
 
+
 @receiver(post_save, sender=Contract)
 def create_prim(sender, instance, created, **kwargs):
     if created:
