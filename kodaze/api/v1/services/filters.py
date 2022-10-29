@@ -5,6 +5,7 @@ from services.models import (
     ServicePayment
 )
 
+
 class ServiceFilter(django_filters.FilterSet):
     contract__contract_date = django_filters.DateFilter(
         field_name='contract__contract_date', input_formats=["%d-%m-%Y"])
@@ -23,7 +24,7 @@ class ServiceFilter(django_filters.FilterSet):
     class Meta:
         model = Service
         fields = {
-            'contract' : ['exact'],
+            'contract': ['exact'],
             'contract__office__name': ['exact', 'icontains'],
             'contract__company__name': ['exact', 'icontains'],
 
@@ -53,6 +54,7 @@ class ServiceFilter(django_filters.FilterSet):
 
         }
 
+
 class ServicePaymentFilter(django_filters.FilterSet):
     service__contract__contract_date = django_filters.DateFilter(
         field_name='service__contract__contract_date', input_formats=["%d-%m-%Y"])
@@ -78,22 +80,21 @@ class ServicePaymentFilter(django_filters.FilterSet):
     class Meta:
         model = ServicePayment
         fields = {
-            'service' : ['exact'],
+            'service': ['exact'],
             'is_done': ['exact'],
 
-            'total_amount_to_be_paid' : ['exact'],
-            'amount_to_be_paid' : ['exact'],
+            'total_amount_to_be_paid': ['exact'],
+            'amount_to_be_paid': ['exact'],
 
-            'service__installment' : ['exact'],
-            'service__loan_term' : ['exact'],
-            'service__discount' : ['exact'],
-            'service__product' : ['exact'],
-            'service__price' : ['exact'],
+            'service__loan_term': ['exact'],
+            'service__discount': ['exact'],
+            'service__product': ['exact'],
+            'service__price': ['exact'],
 
-            'service__contract' : ['exact'],
+            'service__contract': ['exact'],
             'service__contract__office__name': ['exact', 'icontains'],
             'service__contract__company__name': ['exact', 'icontains'],
-            
+
             'service__contract__group_leader__fullname': ['exact', 'icontains'],
             'service__contract__group_leader__team__name': ['exact', 'icontains'],
             'service__contract__group_leader__employee_status__status_name': ['exact', 'icontains'],

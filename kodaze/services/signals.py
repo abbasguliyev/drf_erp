@@ -1,4 +1,5 @@
 from contract.models import Contract
+from . import CASH, INSTALLMENT
 from . models import Service, ServicePayment
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -20,10 +21,12 @@ def create_service_payment(sender, instance, created, **kwargs):
     if created:
         loan_term = instance.loan_term
         installment = instance.installment
+        pay_method = instance.pay_method
+
         if int(loan_term) == 0:
             loan_term = 1
         print(f"****************************{loan_term=}")
-        print(f"****************************{installment=}")
+        print(f"****************************{pay_method=}")
         discount = instance.discount
         if discount == None:
             discount = 0
@@ -53,14 +56,15 @@ def create_service_payment(sender, instance, created, **kwargs):
             service_date = service_date_str
         inc_month = pd.date_range(service_date, periods=loan_term+1, freq='M')
 
-        if installment == False:
+        if pay_method == CASH:
             service_payment = ServicePayment.objects.create(
                 service=instance,
                 total_amount_to_be_paid=total,
                 amount_to_be_paid=last_month,
                 payment_date=f"{service_date.year}-{service_date.month}-{service_date.day}"
-            ).save()
-        elif installment == True:
+            )
+            service_payment.save()
+        elif pay_method == INSTALLMENT:
             j = 1
             while(j <= int(loan_term)):
                 if(j == int(loan_term)):
@@ -70,7 +74,8 @@ def create_service_payment(sender, instance, created, **kwargs):
                             total_amount_to_be_paid=total,
                             amount_to_be_paid=last_month,
                             payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                        ).save()
+                        )
+                        service_payment.save()
                     elif(service_date.day == 31 or service_date.day == 30 or service_date.day == 29):
                         if(inc_month[j].day <= service_date.day):
                             service_payment = ServicePayment.objects.create(
@@ -78,14 +83,16 @@ def create_service_payment(sender, instance, created, **kwargs):
                                 total_amount_to_be_paid=total,
                                 amount_to_be_paid=last_month,
                                 payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{inc_month[j].day}"
-                            ).save()
+                            )
+                            service_payment.save()
                         elif(inc_month[j].day > service_date.day):
                             service_payment = ServicePayment.objects.create(
                                 service=instance,
                                 total_amount_to_be_paid=total,
                                 amount_to_be_paid=last_month,
                                 payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                            ).save()
+                            )
+                            service_payment.save()
                 else:
                     if(service_date.day < 29):
                         service_payment = ServicePayment.objects.create(
@@ -93,7 +100,8 @@ def create_service_payment(sender, instance, created, **kwargs):
                             total_amount_to_be_paid=total,
                             amount_to_be_paid=result1,
                             payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                        ).save()
+                        )
+                        service_payment.save()
                     elif(service_date.day == 31 or service_date.day == 30 or service_date.day == 29):
                         if(inc_month[j].day <= service_date.day):
                             service_payment = ServicePayment.objects.create(
@@ -101,12 +109,14 @@ def create_service_payment(sender, instance, created, **kwargs):
                                 total_amount_to_be_paid=total,
                                 amount_to_be_paid=result1,
                                 payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{inc_month[j].day}"
-                            ).save()
+                            )
+                            service_payment.save()
                         elif(inc_month[j].day > service_date.day):
                             service_payment = ServicePayment.objects.create(
                                 service=instance,
                                 total_amount_to_be_paid=total,
                                 amount_to_be_paid=result1,
                                 payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                            ).save()
+                            )
+                            service_payment.save()
                 j += 1

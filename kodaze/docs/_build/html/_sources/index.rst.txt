@@ -10,7 +10,8 @@ Welcome to Kodaze CRM's documentation!
    :maxdepth: 2
    :caption: All about project:
 
-   modules/all-about-project.rst
+   modules/installment.rst
+   modules/project_structure.rst
 
 .. toctree::
    :maxdepth: 2

@@ -47,7 +47,6 @@ def give_commission_after_contract(
         commission = user.commission
         if commission is not None:
             salary_view_this_month = SalaryView.objects.get(employee=user, date=this_month_date)
-            salary_view_next_month = SalaryView.objects.get(employee=user, date=next_month_date)
 
             cash = commission.cash * contract.product_quantity
             for_office = commission.for_office * contract.product_quantity
@@ -111,7 +110,7 @@ def send_sale_quantity_to_salary_view(user: User, quantity: float, amount: float
     return salary_view
 
 
-def get_back_amount_to_salary_view(user: User, amount: float, date) -> SalaryView:
+def get_back_amount_from_salary_view(user: User, amount: float, date) -> SalaryView:
     salary_view = SalaryView.objects.get(employee=user, date=date)
     salary_view.final_salary = salary_view.final_salary - amount
     salary_view.save()
@@ -119,7 +118,7 @@ def get_back_amount_to_salary_view(user: User, amount: float, date) -> SalaryVie
     return salary_view
 
 
-def get_back_sale_quantity_to_salary_view(user: User, quantity: float, amount: float, date) -> SalaryView:
+def get_back_sale_quantity_from_salary_view(user: User, quantity: float, amount: float, date) -> SalaryView:
     salary_view = SalaryView.objects.get(employee=user, date=date)
     salary_view.sales_quantity = salary_view.sale_quantity - quantity
     salary_view.sales_amount = salary_view.sales_amount - amount
@@ -203,5 +202,5 @@ def return_commission_after_cancel_contract(contract):
         user = gc.user
         amount = gc.amount
 
-        get_back_sale_quantity_to_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date)
-        get_back_amount_to_salary_view(user=user, amount=amount, date=next_month_date)
+        get_back_sale_quantity_from_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date)
+        get_back_amount_from_salary_view(user=user, amount=amount, date=next_month_date)

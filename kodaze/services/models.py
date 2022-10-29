@@ -1,11 +1,13 @@
 import django
 from django.db import models
 
+from services import PAY_METHOD_CHOICES, CASH
+
 
 class Service(models.Model):
-    installment = models.BooleanField(default=False, blank=True)
-    loan_term = models.IntegerField(default=0, blank=True)
-    discount = models.FloatField(default=0, blank=True)
+    pay_method = models.CharField(max_length=50, choices=PAY_METHOD_CHOICES, default=CASH)
+    loan_term = models.IntegerField(default=0, null=True, blank=True)
+    discount = models.FloatField(default=0, null=True, blank=True)
     contract = models.ForeignKey("contract.Contract", related_name="services", null=True, on_delete=models.CASCADE)
     product = models.ManyToManyField("product.Product", related_name="services")
     customer = models.ForeignKey("account.Customer", on_delete=models.CASCADE, null=True, blank=True, related_name="services")
@@ -15,7 +17,7 @@ class Service(models.Model):
     initial_payment = models.FloatField(default=0, blank=True)
     total_amount_to_be_paid = models.FloatField(default=0, blank=True)
     confirmation = models.BooleanField(default=False)
-    note = models.TextField(default = "", blank=True)
+    note = models.TextField(default="", null=True, blank=True)
     is_auto = models.BooleanField(default=False)
     create_date = models.DateField(default=django.utils.timezone.now, editable=False)
 
