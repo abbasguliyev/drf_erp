@@ -9,7 +9,6 @@ import pandas as pd
 def salary_pay_create(
         user,
         employee,
-        amount: float = None,
         note: str = None,
         date: date = None,
         salary_date: date = date.today()
@@ -33,7 +32,6 @@ def salary_pay_create(
         raise ValidationError({"detail": "İşçinin maaşını artıq ödəmisiniz"})
 
     amount = salary_view.final_salary
-    total_payed_amount += float(amount)
     salary_view.final_salary = 0
     salary_view.is_done = True
     salary_view.save()

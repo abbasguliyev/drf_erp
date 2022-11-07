@@ -2,6 +2,8 @@
 
 ## Install
 git clone https://github.com/abbasguliyev/kodazeERP.git
+## Configuration
+create .env file inside kodazeERP and kodaze folders, copy and paste the contents of the env file. 
 ## Run with Docker
 docker-compose build \
 docker-compose run --rm web python3 manage.py migrate

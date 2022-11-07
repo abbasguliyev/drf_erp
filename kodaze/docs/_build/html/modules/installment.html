@@ -38,6 +38,10 @@
   <section id="installment-and-run">
 <h1>Installment And Run<a class="headerlink" href="#installment-and-run" title="Permalink to this heading">¶</a></h1>
 <p>Proyekti development-də run etmək üçün settings.py file-da __PRODUCTION__ dəyişənini False etmək lazımdır.</p>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h2>
+<p>create .env file inside kodazeERP and kodaze folders, copy and paste the contents of the env file.</p>
+</section>
 <section id="dockersiz-run-etmk">
 <h2>Dockersiz run etmək<a class="headerlink" href="#dockersiz-run-etmk" title="Permalink to this heading">¶</a></h2>
 <p>cd kodaze</p>
@@ -77,6 +81,7 @@ celery -A core worker –beat –scheduler django –loglevel=info</p>
 <p class="caption" role="heading"><span class="caption-text">All about project:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installment And Run</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dockersiz-run-etmk">Dockersiz run etmək</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docker-il-run-etmk">Docker ilə run etmək</a></li>
 </ul>

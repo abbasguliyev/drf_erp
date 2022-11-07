@@ -12,6 +12,7 @@ class ProductFilter(django_filters.FilterSet):
         model = Product
         fields = {
             'product_name': ['exact', 'icontains'],
+            'purchase_price': ['exact', 'gte', 'lte'],
             'price': ['exact', 'gte', 'lte'],
             'company': ['exact'],
             'company__name': ['exact', 'icontains'],

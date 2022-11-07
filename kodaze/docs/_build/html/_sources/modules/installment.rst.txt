@@ -4,6 +4,10 @@ Installment And Run
 
 Proyekti development-də run etmək üçün settings.py file-da __PRODUCTION__ dəyişənini False etmək lazımdır.
 
+Configuration
+-------------
+create .env file inside kodazeERP and kodaze folders, copy and paste the contents of the env file.
+
 Dockersiz run etmək
 -------------------
 

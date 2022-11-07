@@ -15,13 +15,17 @@ from api.v1.cashbox.serializers import (
     HoldingCashboxSerializer,
     CompanyCashboxSerializer,
     OfficeCashboxSerializer,
+    HoldingCashboxOperationSerializer,
+    OfficeCashboxOperationSerializer
 )
 
 from cashbox.models import (
     HoldingCashbox,
     CompanyCashbox,
     OfficeCashbox,
-    CashFlow
+    CashFlow,
+    HoldingCashboxOperation,
+    OfficeCashboxOperation
 )
 
 from api.v1.cashbox.filters import (
@@ -29,10 +33,15 @@ from api.v1.cashbox.filters import (
     OfficeCashboxFilter,
     CashFlowFilter,
     CompanyCashboxFilter,
+    HoldingCashboxOperationFilter,
+    OfficeCashboxOperationFilter
 )
 
-from api.v1.cashbox import permissions as company_permissions
-from django.contrib.auth.models import Group
+from api.v1.cashbox import permissions as cashbox_permissions
+from api.v1.cashbox.services import (
+    cashbox_operation_services,
+)
+
 # ********************************** kassa put delete post get **********************************
 
 class HoldingCashboxListCreateAPIView(generics.ListCreateAPIView):
@@ -40,7 +49,7 @@ class HoldingCashboxListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = HoldingCashboxSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = HoldingCashboxFilter
-    permission_classes = [company_permissions.HoldingCashboxPermissions]
+    permission_classes = [cashbox_permissions.HoldingCashboxPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -75,7 +84,7 @@ class HoldingCashboxListCreateAPIView(generics.ListCreateAPIView):
 class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = HoldingCashbox.objects.all()
     serializer_class = HoldingCashboxSerializer
-    permission_classes = [company_permissions.HoldingCashboxPermissions]
+    permission_classes = [cashbox_permissions.HoldingCashboxPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -116,7 +125,7 @@ class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CompanyCashboxSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CompanyCashboxFilter
-    permission_classes = [company_permissions.CompanyCashboxPermissions]
+    permission_classes = [cashbox_permissions.CompanyCashboxPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
@@ -168,7 +177,7 @@ class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
 class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = CompanyCashbox.objects.select_related('company').all()
     serializer_class = CompanyCashboxSerializer
-    permission_classes = [company_permissions.CompanyCashboxPermissions]
+    permission_classes = [cashbox_permissions.CompanyCashboxPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -208,7 +217,7 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = OfficeCashboxSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OfficeCashboxFilter
-    permission_classes = [company_permissions.OfficeCashboxPermissions]
+    permission_classes = [cashbox_permissions.OfficeCashboxPermissions]
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
@@ -263,7 +272,7 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
 class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = OfficeCashbox.objects.select_related('office').all()
     serializer_class = OfficeCashboxSerializer
-    permission_classes = [company_permissions.OfficeCashboxPermissions]
+    permission_classes = [cashbox_permissions.OfficeCashboxPermissions]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -300,7 +309,7 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 class CashFlowListAPIView(generics.ListAPIView):
     queryset = CashFlow.objects.select_related('holding', 'company', 'office', 'executor').all()
     serializer_class = CashFlowSerializer
-    permission_classes = [company_permissions.CashFlowPermissions]
+    permission_classes = [cashbox_permissions.CashFlowPermissions]
     filter_backends = [DjangoFilterBackend]
     filterset_class = CashFlowFilter
 
@@ -327,4 +336,36 @@ class CashFlowListAPIView(generics.ListAPIView):
 class CashFlowDetailAPIView(generics.RetrieveAPIView):
     queryset = CashFlow.objects.select_related('holding', 'company', 'office', 'executor').all()
     serializer_class = CashFlowSerializer
-    permission_classes = [company_permissions.CashFlowPermissions]
+    permission_classes = [cashbox_permissions.CashFlowPermissions]
+
+
+class HoldingCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
+    queryset = HoldingCashboxOperation.objects.all()
+    serializer_class = HoldingCashboxOperationSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = HoldingCashboxOperationFilter
+    permission_classes = [cashbox_permissions.HoldingCashboxOperationPermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            cashbox_operation_services.holding_cashbox_operation_create(**serializer.validated_data)
+            return Response({"detail":"Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class OfficeCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
+    queryset = OfficeCashboxOperation.objects.all()
+    serializer_class = OfficeCashboxOperationSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = OfficeCashboxOperationFilter
+    permission_classes = [cashbox_permissions.OfficeCashboxOperationPermissions]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            cashbox_operation_services.office_cashbox_operation_create(**serializer.validated_data)
+            return Response({"detail":"Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+

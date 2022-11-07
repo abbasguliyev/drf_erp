@@ -10,7 +10,7 @@ from api.v1.cashbox.utils import calculate_holding_total_balance, cashflow_creat
 
 
 # *************** Holding Kassa income expense ***************
-def cashbox_income_create(self, request, *args, **kwargs):
+def holding_cashbox_income_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     amount = request.data.get("amount")
     user = request.user
@@ -62,7 +62,7 @@ def cashbox_income_create(self, request, *args, **kwargs):
     else:
         return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-def cashbox_expense_create(self, request, *args, **kwargs):
+def holding_cashbox_expense_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     amount = request.data.get("amount")
 
@@ -237,7 +237,7 @@ def cashbox_expense_create(self, request, *args, **kwargs):
 
 # *************** Office Kassa income expense ***************
 
-def cashbox_income_create(self, request, *args, **kwargs):
+def office_cashbox_income_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     amount = request.data.get("amount")
     user = request.user
@@ -281,7 +281,7 @@ def cashbox_income_create(self, request, *args, **kwargs):
     else:
         return Response({"detail": "Məbləği daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
 
-def cashbox_expense_create(self, request, *args, **kwargs):
+def office_cashbox_expense_create(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     amount = request.data.get("amount")
     note = request.data.get("note")

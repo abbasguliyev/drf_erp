@@ -227,11 +227,9 @@ def contract_create(self, request, *args, **kwargs):
                             initial_balance = calculate_holding_total_balance()
                             office_initial_balance = calculate_office_balance(office=office)
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, tarix - {initial_payment_date}, ödəniş üslubu - {payment_style}, tam ilkin ödəniş"
-                            c_income(cashbox, float(
-                                initial_payment), user, note)
+                            c_income(cashbox, float(initial_payment), user, note)
 
-                            remaining_debt = float(
-                                total_amount) - float(initial_payment)
+                            remaining_debt = float(total_amount) - float(initial_payment)
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
                                             initial_payment_status="BİTMİŞ", total_amount=total_amount, remaining_debt=remaining_debt,)

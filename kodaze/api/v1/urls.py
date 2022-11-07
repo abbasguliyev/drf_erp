@@ -43,8 +43,12 @@ urlpatterns = [
     # cashbox views *****************************************
     path('cashbox/', include("api.v1.cashbox.urls")),
 
-    # services_views *****************************************
-    path('cashbox/', include("api.v1.services.urls")),
+    # services views *****************************************
+    path('services/', include("api.v1.services.urls")),
+
+    # transfer views *****************************************
+    path('transfer/', include("api.v1.transfer.urls")),
+
 
     # working_day views *****************************************
     path('holding-working_day/', holiday_views.HoldingWorkingDayListCreateAPIView.as_view()),
@@ -100,58 +104,6 @@ urlpatterns = [
          holiday_views.EmployeeArrivalAndDepartureTimesListCreateAPIView.as_view()),
     path('employee-gelib-getme-vaxtlari/<int:pk>',
          holiday_views.EmployeeArrivalAndDepartureTimesDetailAPIView.as_view()),
-
-    # transfer_views ***************************************
-    path('company-holding-transfer/', transfer_views.TransferFromCompanyToHoldingListCreateAPIView.as_view(),
-         name="company_holding_transfer"),
-    path('company-holding-transfer/<int:pk>', transfer_views.TransferFromCompanyToHoldingDetailAPIView.as_view(),
-         name="company_holding_transfer_detail"),
-
-    path('holding-company-transfer/', transfer_views.TransferFromHoldingToCompanyListCreateAPIView.as_view(),
-         name="holding_company_transfer"),
-    path('holding-company-transfer/<int:pk>', transfer_views.TransferFromHoldingToCompanyDetailAPIView.as_view(),
-         name="holding_company_transfer_detail"),
-
-    path('company-office-transfer/', transfer_views.TransferFromCompanyToOfficesListCreateAPIView.as_view(),
-         name="offices_transfer"),
-    path('company-office-transfer/<int:pk>', transfer_views.TransferFromCompanyToOfficesDetailAPIView.as_view(),
-         name="offices_transfer_detail"),
-
-    path('office-company-transfer/', transfer_views.TransferFromOfficeToCompanyListCreateAPIView.as_view(),
-         name="office_company_transfer"),
-    path('office-company-transfer/<int:pk>', transfer_views.TransferFromOfficeToCompanyDetailAPIView.as_view(),
-         name="office_company_transfer_detail"),
-
-    # income_expense_views *********************************
-    path('holding-kassa-income/', income_expense_views.HoldingCashboxIncomeListCreateAPIView.as_view(),
-         name="cashbox_income"),
-    path('holding-kassa-income/<int:pk>', income_expense_views.HoldingCashboxIncomeDetailAPIView.as_view(),
-         name="cashbox_income_detail"),
-
-    path('holding-kassa-expense/', income_expense_views.HoldingCashboxExpenseListCreateAPIView.as_view(),
-         name="cashbox_expense"),
-    path('holding-kassa-expense/<int:pk>', income_expense_views.HoldingCashboxExpenseDetailAPIView.as_view(),
-         name="cashbox_expense_detail"),
-
-    path('company-kassa-income/', income_expense_views.CompanyCashboxIncomeListCreateAPIView.as_view(),
-         name="cashbox_income"),
-    path('company-kassa-income/<int:pk>', income_expense_views.CompanyCashboxIncomeDetailAPIView.as_view(),
-         name="cashbox_income_detail"),
-
-    path('company-kassa-expense/', income_expense_views.CompanyCashboxExpenseListCreateAPIView.as_view(),
-         name="cashbox_expense"),
-    path('company-kassa-expense/<int:pk>', income_expense_views.CompanyCashboxExpenseDetailAPIView.as_view(),
-         name="cashbox_expense_detail"),
-
-    path('office-kassa-income/', income_expense_views.OfficeCashboxIncomeListCreateAPIView.as_view(),
-         name="cashbox_income"),
-    path('office-kassa-income/<int:pk>', income_expense_views.OfficeCashboxIncomeDetailAPIView.as_view(),
-         name="cashbox_income_detail"),
-
-    path('office-kassa-expense/', income_expense_views.OfficeCashboxExpenseListCreateAPIView.as_view(),
-         name="cashbox_expense"),
-    path('office-kassa-expense/<int:pk>', income_expense_views.OfficeCashboxExpenseDetailAPIView.as_view(),
-         name="cashbox_expense_detail"),
 
     # statistika views *****************************************
     path('statistika/sale-quantityi', statistika.SalaryViewStatistikaAPIView.as_view(),

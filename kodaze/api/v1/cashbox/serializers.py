@@ -12,9 +12,12 @@ from cashbox.models import (
     HoldingCashbox,
     CompanyCashbox,
     OfficeCashbox,
-    CashFlow
+    CashFlow,
+    HoldingCashboxOperation,
+    OfficeCashboxOperation
 )
 from api.v1.company.serializers import HoldingSerializer, OfficeSerializer, CompanySerializer
+from api.v1.account.serializers import UserSerializer
 
 class HoldingCashboxSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
@@ -58,3 +61,35 @@ class CashFlowSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = CashFlow
         fields = '__all__'
+
+class HoldingCashboxOperationSerializer(DynamicFieldsCategorySerializer):
+    executor = UserSerializer(read_only=True, fields=["id", "fullname"])
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True
+    )
+
+    class Meta:
+        model = HoldingCashboxOperation
+        fields = "__all__"
+
+class OfficeCashboxOperationSerializer(DynamicFieldsCategorySerializer):
+    executor = UserSerializer(read_only=True, fields=["id", "fullname"])
+    executor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='executor', write_only=True
+    )
+    
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
+    )
+
+    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
+    office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.all(), source='office', write_only=True
+    )
+
+
+    class Meta:
+        model = OfficeCashboxOperation
+        fields = "__all__"
+

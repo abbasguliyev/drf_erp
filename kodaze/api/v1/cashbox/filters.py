@@ -4,8 +4,11 @@ from cashbox.models import (
     HoldingCashbox,
     CompanyCashbox,
     OfficeCashbox,
-    CashFlow
+    CashFlow,
+    HoldingCashboxOperation,
+    OfficeCashboxOperation
 )
+
 class HoldingCashboxFilter(django_filters.FilterSet):
     class Meta:
         model = HoldingCashbox
@@ -66,6 +69,33 @@ class CashFlowFilter(django_filters.FilterSet):
             'description': ['exact', 'icontains'],
 
             'operation_style': ['exact', 'icontains'],
-            
-            # 'date': ['exact', 'gte', 'lte'],
+        }
+
+class HoldingCashboxOperationFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
+    class Meta:
+        model = HoldingCashboxOperation
+        fields = {
+            'executor': ['exact'],
+            'amount': ['exact',],
+            'executor': ['exact',],
+        }
+
+class OfficeCashboxOperationFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+    
+    class Meta:
+        model = OfficeCashboxOperation
+        fields = {
+            'executor': ['exact'],
+            'amount': ['exact',],
+            'executor': ['exact',],
+            'office': ['exact'],
+            'office__id': ['exact'],
+            'office__name': ['exact', 'icontains'],
         }

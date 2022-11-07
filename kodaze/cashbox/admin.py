@@ -24,6 +24,7 @@ class HoldingCashboxAdmin(admin.ModelAdmin):
 @admin.register(CashFlow)
 class CashFlowAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'date', 
         'holding', 
         'company', 
@@ -42,6 +43,7 @@ class CashFlowAdmin(admin.ModelAdmin):
         'quantity'
     )
     list_filter = [
+        'id',
         'date', 
         'holding', 
         'company', 

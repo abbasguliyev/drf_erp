@@ -3,26 +3,30 @@ import django
 from django.db.models import F
 from . import (
     OPERATION_STYLE_CHOICE,
+    INCOME
 )
 from django.contrib.auth import get_user_model
 
 USER = get_user_model()
 
 class Cashbox(models.Model):
-    balance = models.DecimalField(
-        default=0, max_digits=12, decimal_places=2)
-
-    def increase_balance(self, amount: float):
-        self.balance = F('balance') + amount
-        self.save(update_fields=["balance"])
-
-    def decrease_balance(self, amount: float):
-        self.balance = F('balance') - amount
-        self.save(update_fields=["balance"])
+    balance = models.FloatField(default=0)
 
     class Meta:
         abstract = True
 
+class AbstractCashboxOperation(models.Model):
+    amount = models.FloatField(default=0)
+    note = models.TextField(null=True, blank=True)
+    date = models.DateField(auto_now_add=True)
+    operation = models.CharField(
+        max_length = 150,
+        choices = OPERATION_STYLE_CHOICE,
+        default = INCOME,
+    )
+
+    class Meta:
+        abstract = True
 
 class OfficeCashbox(Cashbox):
     office = models.ForeignKey("company.Office", on_delete=models.CASCADE, related_name="cashbox")
@@ -65,7 +69,6 @@ class HoldingCashbox(Cashbox):
             ("delete_holdingcashbox", "Holdinq kassa silə bilər")
         )
 
-# -----------------------------------------------------
 
 class CashFlow(models.Model):
     date = models.DateField(default=django.utils.timezone.now, blank=True)
@@ -97,4 +100,32 @@ class CashFlow(models.Model):
             ("add_cashflow", "Pul axını əlavə edə bilər"),
             ("change_cashflow", "Pul axını məlumatlarını yeniləyə bilər"),
             ("delete_cashflow", "Pul axını məlumatlarını silə bilər")
+        )
+
+class HoldingCashboxOperation(AbstractCashboxOperation):
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="holding_cashbox_operations")
+    
+    class Meta:
+        ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingcashboxoperation", "Mövcud holdinq kassa əməliyyatlarına baxa bilər"),
+            ("add_holdingcashboxoperation", "Holdinq kassa əməliyyatı əlavə edə bilər"),
+            ("change_holdingcashboxoperation", "Holdinq kassa əməliyyatı məlumatlarını yeniləyə bilər"),
+            ("delete_holdingcashboxoperation", "Holdinq kassa əməliyyatı məlumatlarını silə bilər")
+        )
+
+class OfficeCashboxOperation(AbstractCashboxOperation):
+    executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="company_cashbox_operations")
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="company_cashbox_operations")
+    office = models.ForeignKey('company.Office', on_delete=models.CASCADE, related_name="company_cashbox_operations")
+
+    class Meta:
+        ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_officecashboxoperation", "Mövcud ofis kassa əməliyyatlarına baxa bilər"),
+            ("add_officecashboxoperation", "Ofis kassa əməliyyatı əlavə edə bilər"),
+            ("change_officecashboxoperation", "Ofis kassa əməliyyatı məlumatlarını yeniləyə bilər"),
+            ("delete_officecashboxoperation", "Ofis kassa əməliyyatı məlumatlarını silə bilər")
         )

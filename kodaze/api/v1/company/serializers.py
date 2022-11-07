@@ -46,18 +46,20 @@ class HoldingSerializer(DynamicFieldsCategorySerializer):
         fields = "__all__"
 
 class CompanySerializer(DynamicFieldsCategorySerializer):
+    employee_count = serializers.SerializerMethodField('employee_count_fn')
+    office_count = serializers.SerializerMethodField('office_count_fn')
+
+    def employee_count_fn(self, instance):
+        employees = User.objects.filter(company=instance, is_active=True).count()
+        return employees
+
+    def office_count_fn(self, instance):
+        offices = Office.objects.filter(company=instance, is_active=True).count()
+        return offices
+
     class Meta:
         model = Company
-        fields = "__all__"
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        offices = Office.objects.filter(company=instance, is_active=True).count()
-        employees = User.objects.filter(company=instance, is_active=True).count()
-        representation['office_count'] = offices
-        representation['employee_count'] = employees
-
-        return representation
+        fields = ('id', 'name', 'address', 'phone', 'email', 'web_site', 'is_active', 'employee_count', 'office_count')
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name).upper()
@@ -71,16 +73,16 @@ class CompanySerializer(DynamicFieldsCategorySerializer):
 
 
 class DepartmentSerializer(DynamicFieldsCategorySerializer):
+    employee_count = serializers.SerializerMethodField('employee_count_fn')
+
+    def employee_count_fn(self, instance):
+        employees = User.objects.filter(department=instance, is_active=True).count()
+        return employees
+
     class Meta:
         model = Department
-        fields = "__all__"
+        fields = ('id', 'name', 'is_active', 'employee_count')
     
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        employees = User.objects.filter(department=instance, is_active=True).count()
-        representation['employee_count'] = employees
-
-        return representation
 
 class OfficeSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
@@ -88,33 +90,29 @@ class OfficeSerializer(DynamicFieldsCategorySerializer):
         queryset=Company.objects.all(), source='company', write_only=True
     )
 
+    employee_count = serializers.SerializerMethodField('employee_count_fn')
+
+    def employee_count_fn(self, instance):
+        employees = User.objects.filter(office=instance, is_active=True).count()
+        return employees
+
+
     class Meta:
         model = Office
-        fields = "__all__"
+        fields = ('id', 'name', 'company', 'company_id', 'is_active', 'employee_count')
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        employees = User.objects.filter(office=instance, is_active=True).count()
-        representation['employee_count'] = employees
-
-        return representation
 
 class SectionSerializer(DynamicFieldsCategorySerializer):
-    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
-    office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.select_related('company').all(), source='office', write_only=True
-    )
+    employee_count = serializers.SerializerMethodField('employee_count_fn')
 
+    def employee_count_fn(self, instance):
+        employees = User.objects.filter(section=instance, is_active=True).count()
+        return employees
+        
     class Meta:
         model = Section
-        fields = "__all__"
+        fields = ('id', 'name', 'is_active', 'employee_count')
     
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        employees = User.objects.filter(section=instance, is_active=True).count()
-        representation['employee_count'] = employees
-
-        return representation
 
 class TeamSerializer(DynamicFieldsCategorySerializer):
     class Meta:

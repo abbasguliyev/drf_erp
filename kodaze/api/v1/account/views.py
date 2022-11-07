@@ -166,7 +166,7 @@ class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
 
 class RegisterApi(generics.CreateAPIView):
     queryset = User.objects.select_related(
-                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
+                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'commission', 'department'
             ).prefetch_related('user_permissions', 'groups').all()
     serializer_class = RegisterSerializer
 

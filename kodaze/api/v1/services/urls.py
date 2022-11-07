@@ -7,5 +7,4 @@ urlpatterns = [
 
     path('service-odeme/', services_views.ServicePaymentListCreateAPIView.as_view()),
     path('service-odeme/<int:pk>', services_views.ServicePaymentDetailAPIView.as_view()),
-
 ]

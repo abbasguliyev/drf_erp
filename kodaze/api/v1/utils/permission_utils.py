@@ -6,7 +6,7 @@ class PermissionUtil:
     """
     Login olan userin permissionunun olub olmadigini mueyyen eden class
     """
-    __perm_list = list()
+    __perm_list = set()
 
     def __init__(self, user: User, request, object_name, view) -> None:
         self.user = user
@@ -22,30 +22,23 @@ class PermissionUtil:
             IsAdminUser, self.request, self.view)
 
         user = self.user
-        permission_groups = user.groups.all()
-        for permission_group in permission_groups:
-            all_permissions = permission_group.permissions.all()
-            for perm in all_permissions:
-                self.__perm_list.append(perm.codename)
 
-        user_permissions = user.user_permissions.all()
-        for user_permission in user_permissions:
-            if user_permission not in self.__perm_list:
-                self.__perm_list.append(user_permission.codename)
+        permission_groups = user.groups.prefetch_related('permissions').values_list('permissions__codename', flat=True)
+        user_permissions = user.user_permissions.values_list('codename', flat=True)
 
         if self.request.method == "POST":
-            return f'add_{self.object_name}' in self.__perm_list or is_admin
+            return (f'add_{self.object_name}' in permission_groups) or (f'add_{self.object_name}' in user_permissions) or is_admin
         elif self.request.method == "PUT":
-            return f'change_{self.object_name}' in self.__perm_list or is_admin
+            return (f'change_{self.object_name}' in permission_groups) or (f'change_{self.object_name}' in user_permissions) or is_admin
         elif self.request.method == "PATCH":
-            return f'change_{self.object_name}' in self.__perm_list or is_admin
+            return (f'change_{self.object_name}' in permission_groups)  or (f'change_{self.object_name}' in user_permissions) or is_admin
         elif self.request.method == "DELETE":
-            return f'delete_{self.object_name}' in self.__perm_list or is_admin
+            return (f'delete_{self.object_name}' in permission_groups)  or (f'delete_{self.object_name}' in user_permissions) or is_admin
         elif self.request.method in SAFE_METHODS:
-            return f'view_{self.object_name}' in self.__perm_list or is_admin
+            return (f'view_{self.object_name}' in permission_groups)  or (f'view_{self.object_name}' in user_permissions) or is_admin
         else:
             return False
-
+        
 
 class IsAdminUserOrReadOnly(IsAdminUser):
     def has_permission(self, request, view):

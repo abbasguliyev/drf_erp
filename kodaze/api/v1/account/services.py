@@ -89,7 +89,7 @@ def create_user(
         user.groups.set(groups)
     last_user_id = User.objects.all().values_list('id', flat=True).last()
     try:
-        user.username = f"user-{last_user_id + 1}"
+        user.username = f"user-{user.id}"
     except:
         user.username = f"user-1"
 

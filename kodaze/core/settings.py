@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'dbbackup',
-    "corsheaders",
+    'corsheaders',
     "debug_toolbar",
     "sphinx_view",
 

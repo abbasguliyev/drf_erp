@@ -246,7 +246,7 @@ class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 # ********************************** section put delete post get **********************************
 
 class SectionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Section.objects.select_related('office').all()
+    queryset = Section.objects.all()
     serializer_class = SectionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = SectionFilter
@@ -281,7 +281,7 @@ class SectionListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Section.objects.select_related('office').all()
+    queryset = Section.objects.all()
     serializer_class = SectionSerializer
     permission_classes = [company_permissions.SectionPermissions]
 

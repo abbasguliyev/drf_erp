@@ -3,7 +3,7 @@ from .models import Product, Category, UnitOfMeasure
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("id", "product_name", "price")
+    list_display = ("id", "product_name", "purchase_price", "price")
     list_display_links = ("id", "product_name")
 
 @admin.register(Category)

@@ -1,12 +1,21 @@
 from django.contrib import admin
 from .models import (
-    TransferFromHoldingToCompany,
-    TransferFromOfficeToCompany,
-    TransferFromCompanyToHolding,
-    TransferFromCompanyToOffices
+    HoldingTransfer,
+    CompanyTransfer,
+    OfficeTransfer
 )
-# Register your models here.
-admin.site.register(TransferFromHoldingToCompany)
-admin.site.register(TransferFromOfficeToCompany)
-admin.site.register(TransferFromCompanyToHolding)
-admin.site.register(TransferFromCompanyToOffices)
+
+@admin.register(HoldingTransfer)
+class HoldingTransferAdmin(admin.ModelAdmin):
+    list_display = ("id", "sending_company", "receiving_company", "executor", "transfer_date", "transfer_amount", "previous_balance", "subsequent_balance")
+    list_display_links = ("id",)
+
+@admin.register(CompanyTransfer)
+class CompanyTransferAdmin(admin.ModelAdmin):
+    list_display = ("id", "company", "sending_office", "receiving_office", "executor", "transfer_date", "transfer_amount", "previous_balance", "subsequent_balance")
+    list_display_links = ("id", "company")
+
+@admin.register(OfficeTransfer)
+class OfficeTransferAdmin(admin.ModelAdmin):
+    list_display = ("id", "company", "sending_office", "receiving_office", "executor", "transfer_date", "transfer_amount", "previous_balance", "subsequent_balance")
+    list_display_links = ("id", "company")

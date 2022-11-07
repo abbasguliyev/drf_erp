@@ -1,103 +1,84 @@
 from rest_framework import serializers
 from api.core import DynamicFieldsCategorySerializer
 
-from rest_framework.exceptions import ValidationError
-
 from account.models import (
     User
 )
-from cashbox.models import HoldingCashbox, OfficeCashbox, CompanyCashbox
-from api.v1.cashbox.serializers import HoldingCashboxSerializer, OfficeCashboxSerializer, CompanyCashboxSerializer
+
+from api.v1.account.serializers import UserSerializer
 
 from transfer.models import (
-    TransferFromHoldingToCompany,
-    TransferFromOfficeToCompany,
-    TransferFromCompanyToHolding,
-    TransferFromCompanyToOffices
+    HoldingTransfer,
+    CompanyTransfer,
+    OfficeTransfer,
 )
 
-from contract.models import Contract, ContractCreditor
-from django.contrib.auth.models import Group
+from company.models import Company, Office
+from api.v1.company.serializers import CompanySerializer, OfficeSerializer
 
-
-class TransferFromHoldingToCompanySerializer(DynamicFieldsCategorySerializer):
-    executor = serializers.StringRelatedField()
+class HoldingTransferSerializer(DynamicFieldsCategorySerializer):
+    executor = UserSerializer(read_only=True, fields = ['id', 'username','fullname'])
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    cashbox = HoldingCashboxSerializer(read_only=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingCashbox.objects.all(), source='cashbox', write_only=True
+    sending_company = CompanySerializer(read_only=True, fields = ['name'])
+    sending_company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='sending_company', write_only=True, allow_null=True
     )
 
-    cashbox = CompanyCashboxSerializer(read_only=True, many=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=CompanyCashbox.objects.all(), source='cashbox', many=True, write_only=True
+    receiving_company = CompanySerializer(read_only=True, fields = ['name'])
+    receiving_company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='receiving_company',  write_only=True, allow_null=True
     )
 
     class Meta:
-        model = TransferFromHoldingToCompany
+        model = HoldingTransfer
         fields = "__all__"
-        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
-
-class TransferFromCompanyToHoldingSerializer(DynamicFieldsCategorySerializer):
-    executor = serializers.StringRelatedField()
+class CompanyTransferSerializer(DynamicFieldsCategorySerializer):
+    executor = UserSerializer(read_only=True, fields = ['id', 'username','fullname'])
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    cashbox = CompanyCashboxSerializer(read_only=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
+    company = CompanySerializer(read_only=True, fields = ['name'])
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
     )
 
-    cashbox = HoldingCashboxSerializer(read_only=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=HoldingCashbox.objects.all(), source='cashbox', write_only=True
+    sending_office = OfficeSerializer(read_only=True, fields = ['name'])
+    sending_office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.select_related('company').all(), source='sending_office', write_only=True, allow_null=True
+    )
+
+    receiving_office = OfficeSerializer(read_only=True, fields = ['name'])
+    receiving_office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.select_related('company').all(), source='receiving_office',  write_only=True, allow_null=True
     )
 
     class Meta:
-        model = TransferFromCompanyToHolding
+        model = CompanyTransfer
         fields = "__all__"
-        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
 
-
-class TransferFromOfficeToCompanySerializer(DynamicFieldsCategorySerializer):
-    executor = serializers.StringRelatedField()
+class OfficeTransferSerializer(DynamicFieldsCategorySerializer):
+    executor = UserSerializer(read_only=True, fields = ['id', 'username','fullname'])
     executor_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
     )
-    cashbox = OfficeCashboxSerializer(read_only=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfficeCashbox.objects.all(), source='cashbox', write_only=True
-    )
-    cashbox = CompanyCashboxSerializer(read_only=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
+    company = CompanySerializer(read_only=True, fields = ['name'])
+    company_id = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects.all(), source='company', write_only=True
     )
 
-    class Meta:
-        model = TransferFromOfficeToCompany
-        fields = "__all__"
-        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
-
-class TransferFromCompanyToOfficesSerializer(DynamicFieldsCategorySerializer):
-    executor = serializers.StringRelatedField()
-    executor_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='executor', write_only=True, required=False, allow_null=True
-    )
-    cashbox = CompanyCashboxSerializer(read_only=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=CompanyCashbox.objects.all(), source='cashbox', write_only=True
+    sending_office = OfficeSerializer(read_only=True, fields = ['name'])
+    sending_office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.select_related('company').all(), source='sending_office', write_only=True
     )
 
-    cashbox = OfficeCashboxSerializer(read_only=True, many=True)
-    cashbox_id = serializers.PrimaryKeyRelatedField(
-        queryset=OfficeCashbox.objects.all(), source='cashbox', many=True,  write_only=True
+    receiving_office = OfficeSerializer(read_only=True, fields = ['name'])
+    receiving_office_id = serializers.PrimaryKeyRelatedField(
+        queryset=Office.objects.select_related('company').all(), source='receiving_office',  write_only=True
     )
 
     class Meta:
-        model = TransferFromCompanyToOffices
+        model = OfficeTransfer
         fields = "__all__"
-        read_only_fields = ('qalan_amount', 'previous_balance', 'subsequent_balance')
-

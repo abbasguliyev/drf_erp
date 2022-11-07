@@ -72,9 +72,6 @@ class SectionFilter(django_filters.FilterSet):
         model = Section
         fields = {
             'name': ['exact', 'icontains'],
-            'office': ['exact'],
-            'office__id': ['exact'],
-            'office__name': ['exact', 'icontains'],
             'is_active': ['exact']
         }
 

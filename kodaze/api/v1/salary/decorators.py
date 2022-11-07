@@ -20,12 +20,17 @@ def cashbox_expense_and_cash_flow_create(func):
     Kassadan pul çıxılmasını və pul axını səhifəsinə məlumatların əlavə edilməsini təmin edir.
     """
     def wrapper(*args, **kwargs):
+        print(args)
+        print(kwargs)
         employee = kwargs['employee']
         date = kwargs['date']
         note = kwargs['note']
         if func.__name__ == "advancepayment_create":
             next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
             amount = (float(next_month_salary_view.final_salary) * 15) / 100
+        elif func.__name__ == "salary_pay_create":
+            salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
+            amount = float(salary_view.final_salary)
         else:
             amount = kwargs['amount']
         user = args[0]
@@ -36,9 +41,12 @@ def cashbox_expense_and_cash_flow_create(func):
         company = employee.company
         holding = Holding.objects.all()[0]
 
-        office_initial_balance = calculate_office_balance(office=office)
-        company_initial_balance = calculate_company_balance(company=company)
-        holding_initial_balance = calculate_holding_balance()
+        if office is not None:
+            office_initial_balance = calculate_office_balance(office=office)
+        if company is not None:
+            company_initial_balance = calculate_company_balance(company=company)
+        if holding is not None:
+            holding_initial_balance = calculate_holding_balance()
 
         if office is not None:
             cashbox = OfficeCashbox.objects.get(office=office)
@@ -130,3 +138,4 @@ def cashbox_expense_and_cash_flow_create(func):
         func(*args, **kwargs)
 
     return wrapper
+

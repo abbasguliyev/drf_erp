@@ -108,7 +108,7 @@ class RegisterSerializer(DynamicFieldsCategorySerializer):
             'salary_style', 
             'salary', 
             'supervisor',
-            'commission'
+            'commission',
             'note', 
             'password', 
         )
@@ -152,7 +152,7 @@ class UserSerializer(DynamicFieldsCategorySerializer):
         queryset=Office.objects.select_related('company').all(), source='office', write_only=True
     )
     section_id = serializers.PrimaryKeyRelatedField(
-        queryset=Section.objects.select_related('office').all(), source='section',
+        queryset=Section.objects.all(), source='section',
         write_only=True, required=False, allow_null=True
     )
 

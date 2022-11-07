@@ -64,7 +64,7 @@ class BonusSerializer(DynamicFieldsCategorySerializer):
 class PaySalarySerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = PaySalary
-        fields = ('employee', 'amount', 'note', 'salary_date')
+        fields = ('employee', 'amount', 'note', 'date', 'salary_date')
         read_only_fields = ('amount',)
 
 class SalaryViewSerializer(DynamicFieldsCategorySerializer):

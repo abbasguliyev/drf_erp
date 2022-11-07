@@ -16,6 +16,7 @@ from api.v1.utils.magnus_contract_pdf_create import (
     magnus_installment_contract_pdf_canvas,
 )
 
+
 def create_and_add_pdf_when_contract_updated(sender, instance, created, **kwargs):
     if created:
         okean = "OCEAN"
@@ -35,6 +36,7 @@ def create_and_add_pdf_when_contract_updated(sender, instance, created, **kwargs
                 contract_pdf_canvas_list, instance)
         instance.pdf = contract_pdf
         instance.save()
+
 
 def create_and_add_pdf_when_contract_installment_updated(sender, instance, created, **kwargs):
     if created:
@@ -56,18 +58,21 @@ def create_and_add_pdf_when_contract_installment_updated(sender, instance, creat
         instance.pdf_elave = contract_pdf
         instance.save()
 
+
 def pdf_create_when_contract_updated(sender, instance, created):
     create_and_add_pdf_when_contract_updated(
         sender=sender, instance=instance, created=created)
     create_and_add_pdf_when_contract_installment_updated(
         sender=sender, instance=instance, created=created)
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 def reduce_product_from_stock(stock, product_quantity):
     # stock.quantity = stock.quantity - int(product_quantity)
     stock.decrease_stock(int(product_quantity))
     stock.save()
-    if (stock.quantity == 0):
+    if stock.quantity == 0:
         stock.delete()
     return stock.quantity
 

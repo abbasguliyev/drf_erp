@@ -82,8 +82,6 @@ class Office(AbstractCompany):
 
 
 class Section(AbstractCompany):
-    office = models.ForeignKey(Office, on_delete=models.CASCADE, null=True, related_name="sections")
-    
     class Meta:
         ordering = ("pk",)
         default_permissions = []

@@ -44,7 +44,7 @@ class HoldingCashboxIncomeListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [company_permissions.HoldingCashboxIncomePermissions]
 
     def create(self, request, *args, **kwargs):
-        return income_expense_utils.cashbox_income_create(self, request, *args, **kwargs)
+        return income_expense_utils.holding_cashbox_income_create(self, request, *args, **kwargs)
 
 
 class HoldingCashboxIncomeDetailAPIView(generics.RetrieveAPIView):
@@ -66,7 +66,7 @@ class HoldingCashboxExpenseListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [company_permissions.HoldingCashboxExpensePermissions]
 
     def create(self, request, *args, **kwargs):
-        return income_expense_utils.cashbox_expense_create(self, request, *args, **kwargs)
+        return income_expense_utils.holding_cashbox_expense_create(self, request, *args, **kwargs)
 
 
 class HoldingCashboxExpenseDetailAPIView(generics.RetrieveAPIView):
@@ -186,7 +186,7 @@ class OfficeCashboxIncomeListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return income_expense_utils.cashbox_income_create(self, request, *args, **kwargs)
+        return income_expense_utils.office_cashbox_income_create(self, request, *args, **kwargs)
 
 
 class OfficeCashboxIncomeDetailAPIView(generics.RetrieveAPIView):
@@ -227,7 +227,7 @@ class OfficeCashboxExpenseListCreateAPIView(generics.ListCreateAPIView):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return income_expense_utils.cashbox_expense_create(self, request, *args, **kwargs)
+        return income_expense_utils.office_cashbox_expense_create(self, request, *args, **kwargs)
 
 
 class OfficeCashboxExpenseDetailAPIView(generics.RetrieveAPIView):
