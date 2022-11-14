@@ -1,6 +1,6 @@
 from cashbox.models import (
     HoldingCashboxOperation, 
-    OfficeCashboxOperation, 
+    CompanyCashboxOperation, 
     HoldingCashbox, 
     CompanyCashbox, 
     OfficeCashbox
@@ -89,33 +89,47 @@ def holding_cashbox_operation_create(
 
     return obj
 
-def office_cashbox_operation_create(
+def company_cashbox_operation_create(
     *, executor,
     company,
-    office,
+    office = None,
     amount: float, 
     note: str = None,
     operation: str = INCOME
-) -> HoldingCashboxOperation:
+) -> CompanyCashboxOperation:
     if company is None:
         raise ValidationError({"detail": "Şirkət daxil edilməyib"})
 
-    if office is None:
-        raise ValidationError({"detail": "Ofis daxil edilməyib"})
-
-    office_cashbox = OfficeCashbox.objects.filter(office=office).last()
-    if office_cashbox is None:
-        raise ValidationError({"detail": "Ofis kassa tapılmadı"})
-
     initial_balance = calculate_holding_total_balance()
-    office_initial_balance = calculate_office_balance(office=office)
+    office_initial_balance = 0
+    company_initial_balance = 0
+    cashbox = None
+
+    if office is not None:
+        cashbox = OfficeCashbox.objects.filter(office=office).last()
+        if cashbox is None:
+            raise ValidationError({"detail": "Ofis kassa tapılmadı"})
+        office_initial_balance = calculate_office_balance(office=office)
+    else:
+        cashbox = CompanyCashbox.objects.filter(company=company).last()
+        if cashbox is None:
+            raise ValidationError({"detail": "Şirkət kassa tapılmadı"})
+        company_initial_balance = calculate_company_balance(company=company)
 
     if operation == INCOME:            
-        office_cashbox.balance = office_cashbox.balance + amount
-        office_cashbox.save()
+        cashbox.balance = cashbox.balance + amount
+        cashbox.save()
         
         subsequent_balance = calculate_holding_total_balance()
-        office_subsequent_balance = calculate_office_balance(office=office)
+        if office is not None:
+            office_subsequent_balance = calculate_office_balance(office=office)
+        else:
+            office_subsequent_balance = 0
+        
+        if company is not None:
+            company_subsequent_balance = calculate_company_balance(company=company)
+        else:
+            company_subsequent_balance = 0
 
         cashflow_create(
             office=office,
@@ -124,6 +138,8 @@ def office_cashbox_operation_create(
             description=f"{office.name} ofis kassasına {float(amount)} AZN əlavə edildi",
             initial_balance=initial_balance,
             subsequent_balance=subsequent_balance,
+            company_initial_balance = company_initial_balance, 
+            company_subsequent_balance = company_subsequent_balance,
             office_initial_balance=office_initial_balance,
             office_subsequent_balance=office_subsequent_balance,
             executor=executor,
@@ -132,14 +148,23 @@ def office_cashbox_operation_create(
         )
     
     if operation == EXPENSE:            
-        if amount > office_cashbox.balance:
+        if amount > cashbox.balance:
             raise ValidationError({"detail": "Məxaric məbləği kassanın balansıdan böyük ola bilməz"})
         
-        office_cashbox.balance = office_cashbox.balance - amount
-        office_cashbox.save()
+        cashbox.balance = cashbox.balance - amount
+        cashbox.save()
 
         subsequent_balance = calculate_holding_total_balance()
-        office_subsequent_balance = calculate_office_balance(office=office)
+        if office is not None:
+            office_subsequent_balance = calculate_office_balance(office=office)
+        else:
+            office_subsequent_balance = 0
+        
+        if company is not None:
+            company_subsequent_balance = calculate_company_balance(company=company)
+        else:
+            company_subsequent_balance = 0
+            
         cashflow_create(
             office=office,
             company=office.company,
@@ -147,6 +172,8 @@ def office_cashbox_operation_create(
             description=f"{office.name} ofis kassasından {float(amount)} AZN məxaric edildi",
             initial_balance=initial_balance,
             subsequent_balance=subsequent_balance,
+            company_initial_balance = company_initial_balance, 
+            company_subsequent_balance = company_subsequent_balance,
             office_initial_balance=office_initial_balance,
             office_subsequent_balance=office_subsequent_balance,
             executor=executor,
@@ -154,7 +181,7 @@ def office_cashbox_operation_create(
             quantity=float(amount)
         )
     
-    obj = OfficeCashboxOperation.objects.create(
+    obj = CompanyCashboxOperation.objects.create(
         executor = executor,
         amount = amount,
         note = note,

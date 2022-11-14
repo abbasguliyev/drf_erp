@@ -25,6 +25,8 @@ def salarydeduction_create(
     next_m = d + pd.offsets.MonthBegin(1)
 
     salary_view = SalaryView.objects.get(employee=employee, date=next_m)
+    if amount > salary_view.final_salary:
+        raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
     salary_view.final_salary = salary_view.final_salary - float(amount)
 
     salary_view.save()

@@ -57,6 +57,7 @@ def give_commission_after_contract(
             for_sale_ranges = commission.for_sale_range.all()
 
             final_salary = for_office + for_team + creditor_per_cent
+            commission_amount = 0
 
             contract_loan_term = contract.loan_term
             contract_payment_style = contract.payment_style
@@ -68,9 +69,11 @@ def give_commission_after_contract(
                             if int(contract_loan_term) >= inst.month_range.start_month and int(
                                     contract_loan_term) <= inst.month_range.end_month:
                                 final_salary = final_salary + (inst.amount * contract.product_quantity)
+                                commission_amount = inst.amount * contract.product_quantity
                         elif inst.month_range.title.endswith("+"):
                             if int(contract_loan_term) >= inst.month_range.start_month:
                                 final_salary = final_salary + (inst.amount * contract.product_quantity)
+                                commission_amount = inst.amount * contract.product_quantity
             elif contract_payment_style == CASH:
                 final_salary = final_salary + cash
 
@@ -83,14 +86,16 @@ def give_commission_after_contract(
                             if int(sales_quantity) >= srm.sale_range.start_count and int(
                                     sales_quantity) <= srm.sale_range.end_count:
                                 final_salary = final_salary + (srm.amount * contract.product_quantity)
+                                commission_amount = srm.amount * contract.product_quantity
                         elif srm.sale_range.title.endswith("+"):
                             if int(sales_quantity) >= srm.sale_range.start_count:
                                 final_salary = final_salary + (srm.amount * contract.product_quantity)
+                                commission_amount = srm.amount * contract.product_quantity
 
             given_commission_after_sign_contract_create(user=user, contract=contract, amount=final_salary)
 
             send_sale_quantity_to_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date)
-            send_amount_to_salary_view(user=user, amount=final_salary, date=next_month_date)
+            send_amount_to_salary_view(user=user, amount=final_salary, commission_amount=commission_amount, date=next_month_date)
 
 
 def send_amount_to_salary_view(user: User, amount: float, date) -> SalaryView:
@@ -101,10 +106,11 @@ def send_amount_to_salary_view(user: User, amount: float, date) -> SalaryView:
     return salary_view
 
 
-def send_sale_quantity_to_salary_view(user: User, quantity: float, amount: float, date) -> SalaryView:
+def send_sale_quantity_to_salary_view(user: User, quantity: float, amount: float, commission_amount: float, date) -> SalaryView:
     salary_view = SalaryView.objects.get(employee=user, date=date)
     salary_view.sales_quantity = salary_view.sale_quantity + quantity
     salary_view.sales_amount = salary_view.sales_amount + amount
+    salary_view.commission_amount = commission_amount
     salary_view.save()
 
     return salary_view

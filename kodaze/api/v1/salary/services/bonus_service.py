@@ -22,7 +22,7 @@ def bonus_create(
     now = date.today()
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
     next_m = d + pd.offsets.MonthBegin(1)
-
+    
     salary_view = SalaryView.objects.get(employee=employee, date=next_m)
     salary_view.final_salary = salary_view.final_salary + float(amount)
 

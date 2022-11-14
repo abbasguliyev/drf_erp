@@ -10,7 +10,7 @@ from salary.models import AdvancePayment, SalaryView
 def advancepayment_create(
         user,
         employee,
-        amount: float = None,
+        amount: float,
         note: str = None,
         date: date = None
 ) -> AdvancePayment:
@@ -20,6 +20,9 @@ def advancepayment_create(
 
     if (date == None):
         raise ValidationError({"detail": "Tarixi daxil edin"})
+    
+    if (amount == None):
+        raise ValidationError({"detail": "Məbləği daxil edin"})
 
     now = date.today()
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
@@ -33,7 +36,9 @@ def advancepayment_create(
     salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
     next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
 
-    amount = (float(next_month_salary_view.final_salary) * 15) / 100
+    # amount = (float(next_month_salary_view.final_salary) * 15) / 100
+    if amount > salary_view.final_salary:
+        raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
     amount_after_advancedpayment = next_month_salary_view.final_salary - float(amount)
 
     salary_view.amount = amount
@@ -46,7 +51,7 @@ def advancepayment_create(
         employee=employee,
         amount=amount,
         note=note,
-        date=date
+        date=date,
     )
     advance_payment.full_clean()
     advance_payment.save()

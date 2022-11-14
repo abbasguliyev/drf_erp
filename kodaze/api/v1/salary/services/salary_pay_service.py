@@ -34,6 +34,7 @@ def salary_pay_create(
     amount = salary_view.final_salary
     salary_view.final_salary = 0
     salary_view.is_done = True
+    salary_view.pay_date = now
     salary_view.save()
 
     salary_pay = PaySalary.objects.create(

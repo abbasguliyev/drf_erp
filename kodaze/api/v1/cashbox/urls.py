@@ -16,5 +16,5 @@ urlpatterns = [
     path('office-cashbox/<int:pk>', cashbox_views.OfficeCashboxDetailAPIView.as_view()),
 
     path('holding-cashbox-operation/', cashbox_views.HoldingCashboxOperationListCreateAPIView.as_view()),
-    path('holding-cashbox-operation/', cashbox_views.OfficeCashboxOperationListCreateAPIView.as_view()),
+    path('company-cashbox-operation/', cashbox_views.CompanyCashboxOperationListCreateAPIView.as_view()),
 ]

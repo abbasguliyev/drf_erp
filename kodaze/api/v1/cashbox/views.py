@@ -16,7 +16,7 @@ from api.v1.cashbox.serializers import (
     CompanyCashboxSerializer,
     OfficeCashboxSerializer,
     HoldingCashboxOperationSerializer,
-    OfficeCashboxOperationSerializer
+    CompanyCashboxOperationSerializer
 )
 
 from cashbox.models import (
@@ -25,7 +25,7 @@ from cashbox.models import (
     OfficeCashbox,
     CashFlow,
     HoldingCashboxOperation,
-    OfficeCashboxOperation
+    CompanyCashboxOperation
 )
 
 from api.v1.cashbox.filters import (
@@ -34,7 +34,7 @@ from api.v1.cashbox.filters import (
     CashFlowFilter,
     CompanyCashboxFilter,
     HoldingCashboxOperationFilter,
-    OfficeCashboxOperationFilter
+    CompanyCashboxOperationFilter
 )
 
 from api.v1.cashbox import permissions as cashbox_permissions
@@ -354,17 +354,17 @@ class HoldingCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-class OfficeCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
-    queryset = OfficeCashboxOperation.objects.all()
-    serializer_class = OfficeCashboxOperationSerializer
+class CompanyCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
+    queryset = CompanyCashboxOperation.objects.all()
+    serializer_class = CompanyCashboxOperationSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = OfficeCashboxOperationFilter
-    permission_classes = [cashbox_permissions.OfficeCashboxOperationPermissions]
+    filterset_class = CompanyCashboxOperationFilter
+    permission_classes = [cashbox_permissions.CompanyCashboxOperationPermissions]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            cashbox_operation_services.office_cashbox_operation_create(**serializer.validated_data)
+            cashbox_operation_services.company_cashbox_operation_create(**serializer.validated_data)
             return Response({"detail":"Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

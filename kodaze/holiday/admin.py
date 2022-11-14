@@ -18,7 +18,6 @@ from holiday.models import (
 
 # Register your models here.
 admin.site.register(HoldingWorkingDay)
-admin.site.register(EmployeeWorkingDay)
 admin.site.register(TeamWorkingDay)
 admin.site.register(OfficeWorkingDay)
 admin.site.register(CompanyWorkingDay)
@@ -31,4 +30,23 @@ admin.site.register(SectionExceptionWorker)
 admin.site.register(OfficeExceptionWorker)
 admin.site.register(PositionExceptionWorker)
 
+
+@admin.register(EmployeeWorkingDay)
+class EmployeeWorkingDayAdmin(admin.ModelAdmin):
+    list_filter = [
+        "employee__id",
+        "date"
+    ]
+    list_display = (
+        "id",
+        "employee",
+        "date",
+        "working_days_count",
+        "non_working_days_count",
+        "holidays",
+        "paid_leave_days",
+        "unpaid_leave_days",
+        "is_paid",
+        "payment_amount",
+    )
 

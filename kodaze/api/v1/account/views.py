@@ -55,7 +55,12 @@ import json
 import os
 from core.settings import BASE_DIR
 
-from api.v1.account.services import all_region_create, create_customer, create_employee_status, create_user, region_create
+from api.v1.account.services import all_region_create, create_customer, create_employee_status, create_user, update_user, region_create
+
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 
 # ********************************** Password change **********************************
 class ChangePasswordView(generics.UpdateAPIView):
@@ -188,6 +193,8 @@ class UserList(generics.ListAPIView):
     filterset_class = UserFilter
     permission_classes = [account_permissions.UserPermissions]
     
+    # @method_decorator(vary_on_cookie)
+    # @method_decorator(cache_page(60*60, key_prefix="users"))
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             queryset = self.queryset
@@ -221,7 +228,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         
         if serializer.is_valid():
-            serializer.save()
+            update_user(instance.id, **serializer.validated_data)
             return Response({"detail" : "İşçi məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail" : "Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)

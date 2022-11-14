@@ -11,7 +11,44 @@ from rest_framework.exceptions import ValidationError
 
 from income_expense.models import OfficeCashboxExpense, CompanyCashboxExpense, HoldingCashboxExpense
 from salary.models import SalaryView
+import datetime
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def change_final_salary_when_update_user_const_salary(func):
+    """
+    İşçinin sabit əməkhaqqısı dəyişildiyi zaman həmin ayın maaş cədvəlindədə düzəliş edən dekorator
+    """
+    def wrapper(*args, **kwargs):
+        id = args[0]
+        
+        try:
+            salary = kwargs["salary"]
+        except:
+            salary = None
+
+        if salary is not None:
+            user = User.objects.get(pk=id)
+
+            difference = 0
+            old_salary = user.salary
+
+            now = datetime.date.today()
+            this_month = f"{now.year}-{now.month}-{1}"
+            salary_view = SalaryView.objects.get(employee=user, date=this_month)
+
+            if salary > old_salary:
+                difference = salary - old_salary
+                salary_view.final_salary = salary_view.final_salary + difference
+                salary_view.save()
+            elif salary < old_salary:
+                difference = old_salary - salary
+                salary_view.final_salary = salary_view.final_salary - difference
+                salary_view.save()
+        func(*args, **kwargs)
+    return wrapper
 
 def cashbox_expense_and_cash_flow_create(func):
     """
@@ -25,10 +62,10 @@ def cashbox_expense_and_cash_flow_create(func):
         employee = kwargs['employee']
         date = kwargs['date']
         note = kwargs['note']
-        if func.__name__ == "advancepayment_create":
-            next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
-            amount = (float(next_month_salary_view.final_salary) * 15) / 100
-        elif func.__name__ == "salary_pay_create":
+        # if func.__name__ == "advancepayment_create":
+        #     next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
+        #     amount = (float(next_month_salary_view.final_salary) * 15) / 100
+        if func.__name__ == "salary_pay_create":
             salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
             amount = float(salary_view.final_salary)
         else:

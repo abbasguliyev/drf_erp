@@ -115,17 +115,17 @@ class HoldingCashboxOperation(AbstractCashboxOperation):
             ("delete_holdingcashboxoperation", "Holdinq kassa əməliyyatı məlumatlarını silə bilər")
         )
 
-class OfficeCashboxOperation(AbstractCashboxOperation):
+class CompanyCashboxOperation(AbstractCashboxOperation):
     executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="company_cashbox_operations")
     company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="company_cashbox_operations")
-    office = models.ForeignKey('company.Office', on_delete=models.CASCADE, related_name="company_cashbox_operations")
+    office = models.ForeignKey('company.Office', on_delete=models.CASCADE, null=True, blank=True, related_name="company_cashbox_operations")
 
     class Meta:
         ordering = ("-pk",)
         default_permissions = []
         permissions = (
-            ("view_officecashboxoperation", "Mövcud ofis kassa əməliyyatlarına baxa bilər"),
-            ("add_officecashboxoperation", "Ofis kassa əməliyyatı əlavə edə bilər"),
-            ("change_officecashboxoperation", "Ofis kassa əməliyyatı məlumatlarını yeniləyə bilər"),
-            ("delete_officecashboxoperation", "Ofis kassa əməliyyatı məlumatlarını silə bilər")
+            ("view_companycashboxoperation", "Mövcud şirkət kassa əməliyyatlarına baxa bilər"),
+            ("add_companycashboxoperation", "Şirkət kassa əməliyyatı əlavə edə bilər"),
+            ("change_companycashboxoperation", "Şirkət kassa əməliyyatı məlumatlarını yeniləyə bilər"),
+            ("delete_companycashboxoperation", "Şirkət kassa əməliyyatı məlumatlarını silə bilər")
         )

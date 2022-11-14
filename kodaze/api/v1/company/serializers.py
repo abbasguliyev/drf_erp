@@ -140,16 +140,15 @@ class TeamSerializer(DynamicFieldsCategorySerializer):
 
 
 class PositionSerializer(DynamicFieldsCategorySerializer):
+    employees_count = serializers.SerializerMethodField("employees_count_fn")
+
+    def employees_count_fn(self, instance):
+        employees = User.objects.filter(position=instance, is_active=True).count()
+        return employees
+
     class Meta:
         model = Position
-        fields = "__all__"
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        employees = User.objects.filter(position=instance, is_active=True).count()
-        representation['employee_count'] = employees
-
-        return representation
+        fields = ('id', 'name', 'employees_count', 'is_active')
 
 class PermissionForPositionSerializer(DynamicFieldsCategorySerializer):
     position = PositionSerializer(read_only=True, fields=['id', 'name'])

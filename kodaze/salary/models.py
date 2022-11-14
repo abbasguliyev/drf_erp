@@ -10,8 +10,9 @@ USER = get_user_model()
 class AbstractSalaryMethod(models.Model):
     employee = models.ForeignKey(USER, on_delete=models.CASCADE)
     amount = models.FloatField(default=0, blank=True)
-    note = models.TextField(default="", blank=True)
+    note = models.TextField(default="", null=True, blank=True)
     date = models.DateField(default=django.utils.timezone.now, blank=True)
+    is_done = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
@@ -175,6 +176,8 @@ class SalaryView(AbstractSalaryMethod):
     final_salary = models.FloatField(default=0, blank=True)
     date = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)
+    pay_date = models.DateField(null=True, blank=True)
+    commission_amount = models.FloatField(default=0, blank=True)
 
     class Meta:
         ordering = ("pk",)

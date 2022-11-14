@@ -7,11 +7,19 @@ from celery import shared_task
 import pandas as pd
 from salary.models import SalaryView
 from company.models import PermissionForPosition
+from api.v1.salary.services import salary_view_service
 
 
 @shared_task(name='salary_view_create_task')
 def salary_view_create_task():
-    users = User.objects.all()
+    """
+    Periodik olaraq işçilərin maaş cədvəllərini create edən task. İşçi əlavə ediləndə aşağıdakı 
+    create_employee_salary_view_task taskı işçi üçün maaş cədvəli create edir. Bu task isə
+    növbəti aylarda periodik olaraq create etmək üçündür.
+    """
+    users = User.objects.select_related(
+                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'commission', 'department'
+            ).prefetch_related('user_permissions', 'groups').all()
     now = datetime.date.today()
     
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
@@ -19,37 +27,43 @@ def salary_view_create_task():
     next_m = d + pd.offsets.MonthBegin(1)
 
     for user in users:
-        employee_salary = SalaryView.objects.select_related('employee').filter(
+        employee_salary_next_month = SalaryView.objects.select_related('employee').filter(
             employee=user, 
             date__year = next_m.year,
             date__month = next_m.month
-        )
-        if len(employee_salary) != 0:
+        ).count()
+        if employee_salary_next_month != 0:
             continue
         else:
-            SalaryView.objects.create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary).save()
+            salary_view_service.salary_view_create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary)
             
     for user in users:
-        employee_salary = SalaryView.objects.select_related('employee').filter(
+        employee_salary_this_month = SalaryView.objects.select_related('employee').filter(
             employee=user, 
             date__year = now.year,
             date__month = now.month
-        )
-        if len(employee_salary) != 0:
+        ).count()
+        if employee_salary_this_month != 0:
             continue
         else:
-            SalaryView.objects.create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary).save()
+            salary_view_service.salary_view_create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary)
 
 @shared_task(name='employee_fix_prim_auto_add')
 def employee_fix_prim_auto_add():
+    """
+    İşçiyə fix komissiyaları verən task
+    """
     create_fix_commission()
 
 
 @shared_task(name='create_employee_salary_view_task')
 def create_employee_salary_view_task(id):
+    """
+    İşçi register edildiyi zaman maaş cədvəlini create edən task
+    """
     instance = User.objects.select_related(
-                'company', 'office', 'section', 'position', 'team', 'employee_status'
-            ).get(id=id)
+                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'commission', 'department'
+            ).prefetch_related('user_permissions', 'groups').get(id=id)
     user = instance
     now = datetime.date.today()
     
@@ -60,26 +74,27 @@ def create_employee_salary_view_task(id):
         employee=user,
         date__year=now.year,
         date__month=now.month
-    )
-    if len(employee_salary_this_month) == 0:
-        SalaryView.objects.create(
-            employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary).save()
+    ).count()
+    if employee_salary_this_month == 0:
+        salary_view_service.salary_view_create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary)
 
-    employee_salary_novbeti_ay = SalaryView.objects.select_related('employee').filter(
+    employee_salary_next_month = SalaryView.objects.select_related('employee').filter(
         employee=user,
         date__year=next_m.year,
         date__month=next_m.month
-    )
-    if len(employee_salary_novbeti_ay) == 0:
-        SalaryView.objects.create(
-            employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary).save()
+    ).count()
+    if employee_salary_next_month == 0:
+        salary_view_service.salary_view_create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary)
 
 
 @shared_task(name='create_employee_working_day_task')
 def create_employee_working_day_task(id):
+    """
+    İşçi register edildiyi zaman iş gününü create edən task
+    """
     instance = User.objects.select_related(
-            'company', 'office', 'section', 'position', 'team', 'employee_status'
-        ).get(id=id)
+                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'commission', 'department'
+            ).prefetch_related('user_permissions', 'groups').get(id=id)
     user = instance
     now = datetime.date.today()
 
@@ -97,9 +112,9 @@ def create_employee_working_day_task(id):
         employee=user,
         date__year=now.year,
         date__month=now.month
-    )
+    ).count()
     
-    if len(employee_working_day_this_month) == 0:
+    if employee_working_day_this_month == 0:
         employee_working_day = EmployeeWorkingDay.objects.create(
             employee=user,
             working_days_count=days_in_this_month,
@@ -107,12 +122,12 @@ def create_employee_working_day_task(id):
         )
         employee_working_day.save()
 
-    employee_working_day = EmployeeWorkingDay.objects.select_related('employee').filter(
+    employee_working_day_next_month = EmployeeWorkingDay.objects.select_related('employee').filter(
         employee=user,
         date__year=next_m.year,
         date__month=next_m.month
-    )
-    if len(employee_working_day) == 0:
+    ).count()
+    if employee_working_day_next_month == 0:
         employee_working_day = EmployeeWorkingDay.objects.create(
             employee=user,
             working_days_count=days_in_next_month,
@@ -122,9 +137,13 @@ def create_employee_working_day_task(id):
 
 @shared_task(name='create_user_permission_for_position_task')
 def create_user_permission_for_position_task(id):
+    """
+    İşçi register edildiyi zaman ona verilmiş vəzifənin permissionları varsa, həmin permissionları 
+    user-ə də əlavə edən task
+    """
     instance = User.objects.select_related(
-            'company', 'office', 'section', 'position', 'team', 'employee_status'
-        ).get(id=id)
+                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'commission', 'department'
+            ).prefetch_related('user_permissions', 'groups').get(id=id)
     user = instance
     user_position = instance.position
     positions = PermissionForPosition.objects.select_related('position', 'permission_group').filter(position=user_position)

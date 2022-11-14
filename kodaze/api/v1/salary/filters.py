@@ -1,4 +1,7 @@
 import django_filters
+import datetime
+from django.db.models import Count, Q, Sum
+
 
 from salary.models import (
     AdvancePayment,
@@ -93,19 +96,11 @@ class BonusFilter(django_filters.FilterSet):
 
 
 class SalaryViewFilter(django_filters.FilterSet):
-    date = django_filters.DateFilter(
-        field_name='date', input_formats=["%d-%m-%Y"])
-    date__gte = django_filters.DateFilter(
-        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    date__lte = django_filters.DateFilter(
-        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-
+    
     class Meta:
         model = SalaryView
         fields = {
             'employee__fullname': ['exact', 'icontains'],
-
-            'employee__is_superuser': ['exact'],
 
             'employee__office': ['exact'],
             'employee__office__id': ['exact'],
@@ -119,11 +114,8 @@ class SalaryViewFilter(django_filters.FilterSet):
             'employee__position__id': ['exact'],
             'employee__position__name': ['exact', 'icontains'],
 
+            'employee__employee_status': ['exact'],
             'employee__employee_status__status_name': ['exact', 'icontains'],
-
-            'employee__team': ['exact'],
-            'employee__team_id': ['exact'],
-            'employee__team__name': ['exact', 'icontains'],
 
             'is_done': ['exact'],
 

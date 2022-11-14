@@ -7,6 +7,7 @@ from account.models import Customer, EmployeeStatus, Region
 from company.models import Holding
 from rest_framework.exceptions import ValidationError
 from core.settings import BASE_DIR
+from api.v1.salary.decorators import change_final_salary_when_update_user_const_salary
 
 User = get_user_model()
 
@@ -98,6 +99,11 @@ def create_user(
     user.save()
 
     return user
+
+@change_final_salary_when_update_user_const_salary
+def update_user(id, **data) -> User:
+    obj = User.objects.filter(pk=id).update(**data)
+    return obj
 
 
 def create_customer(

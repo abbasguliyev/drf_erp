@@ -58,7 +58,10 @@ class CommissionSaleRangeAdmin(admin.ModelAdmin):
 class CommissionInstallmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'month_range', 'amount')
 
+@admin.register(Bonus)
+class BonusAdmin(admin.ModelAdmin):
+    list_display = ('id', 'employee', 'amount', 'date')
+    
 admin.site.register(AdvancePayment)
-admin.site.register(Bonus)
 admin.site.register(SalaryDeduction)
 admin.site.register(PaySalary)
