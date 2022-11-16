@@ -1,4 +1,4 @@
-from api.v1.salary.decorators import cashbox_expense_and_cash_flow_create
+from api.v1.cashbox.decorators import cashbox_expense_and_cash_flow_create
 from datetime import date
 from rest_framework.exceptions import ValidationError
 import pandas as pd
@@ -10,7 +10,7 @@ from salary.models import AdvancePayment, SalaryView
 def advancepayment_create(
         user,
         employee,
-        amount: float,
+        amount: float = None,
         note: str = None,
         date: date = None
 ) -> AdvancePayment:
@@ -36,7 +36,9 @@ def advancepayment_create(
     salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
     next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
 
-    # amount = (float(next_month_salary_view.final_salary) * 15) / 100
+    if amount is None:
+        amount = (float(next_month_salary_view.final_salary) * 15) / 100
+        
     if amount > salary_view.final_salary:
         raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
     amount_after_advancedpayment = next_month_salary_view.final_salary - float(amount)

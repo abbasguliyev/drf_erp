@@ -9,8 +9,8 @@ class AbstractTransfer(models.Model):
     transfer_amount = models.FloatField(default=0)
     transfer_date = models.DateField(auto_now=True)
     transfer_note = models.TextField(null=True, blank=True)
-    previous_balance = models.FloatField(default=0, blank=True)
-    subsequent_balance = models.FloatField(default=0, blank=True)
+    recipient_subsequent_balance = models.FloatField(default=0, blank=True)
+    sender_subsequent_balance = models.FloatField(default=0, blank=True)
 
     class Meta:
         abstract = True

@@ -24,6 +24,9 @@ class HoldingTransferFilter(django_filters.FilterSet):
             'sending_company__name': ['exact', 'icontains'],
             'receiving_company__name': ['exact', 'icontains'],
 
+            'recipient_subsequent_balance': ['exact'],
+            'sender_subsequent_balance': ['exact'],
+
             'transfer_amount': ['exact', 'gte', 'lte'],
             'transfer_note': ['exact', 'icontains'],
         }
@@ -48,6 +51,9 @@ class CompanyTransferFilter(django_filters.FilterSet):
             'sending_office__name': ['exact', 'icontains'],
             'receiving_office__name': ['exact', 'icontains'],
 
+            'recipient_subsequent_balance': ['exact'],
+            'sender_subsequent_balance': ['exact'],
+
             'transfer_amount': ['exact', 'gte', 'lte'],
             'transfer_note': ['exact', 'icontains'],
         }
@@ -71,6 +77,9 @@ class OfficeTransferFilter(django_filters.FilterSet):
             'company__name': ['exact', 'icontains'],
             'sending_office__name': ['exact', 'icontains'],
             'receiving_office__name': ['exact', 'icontains'],
+
+            'recipient_subsequent_balance': ['exact'],
+            'sender_subsequent_balance': ['exact'],
 
             'transfer_amount': ['exact', 'gte', 'lte'],
             'transfer_note': ['exact', 'icontains'],

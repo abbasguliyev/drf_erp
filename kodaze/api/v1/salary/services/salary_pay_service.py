@@ -1,6 +1,6 @@
 from datetime import date
 
-from api.v1.salary.decorators import cashbox_expense_and_cash_flow_create
+from api.v1.cashbox.decorators import cashbox_expense_and_cash_flow_create
 from salary.models import SalaryView, PaySalary
 from rest_framework.exceptions import ValidationError
 import pandas as pd

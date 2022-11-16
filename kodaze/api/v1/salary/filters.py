@@ -96,6 +96,12 @@ class BonusFilter(django_filters.FilterSet):
 
 
 class SalaryViewFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
     
     class Meta:
         model = SalaryView

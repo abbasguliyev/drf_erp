@@ -75,6 +75,8 @@ class CashFlow(models.Model):
     holding = models.ForeignKey('company.Holding', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     company = models.ForeignKey('company.Company', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     office = models.ForeignKey('company.Office', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
+    customer = models.ForeignKey('account.Customer', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
+    
     description = models.TextField(null=True, blank=True)
     initial_balance = models.FloatField(default=0)
     subsequent_balance = models.FloatField(default=0)

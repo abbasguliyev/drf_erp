@@ -20,24 +20,31 @@ def holding_transfer_create(
         raise ValidationError({"detail": "Holdinq kassa tapılmadı"})
     
     previous_balance = holding_cashbox.balance
-    subsequent_balance = 0
+    recipient_subsequent_balance = 0
+    sender_subsequent_balance = 0
     
     if sending_company is not None:
         sending_company_cashbox = CompanyCashbox.objects.select_related('company').filter(company=sending_company).last()
         if transfer_amount > sending_company_cashbox.balance:
             raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
-        sending_company_cashbox.balance = sending_company_cashbox.balance - transfer_amount
+        sender_subsequent_balance = sending_company_cashbox.balance - transfer_amount
+        sending_company_cashbox.balance = sender_subsequent_balance
         sending_company_cashbox.save()
-        subsequent_balance = previous_balance + transfer_amount
-        holding_cashbox.balance = subsequent_balance
+
+        recipient_subsequent_balance = previous_balance + transfer_amount
+        holding_cashbox.balance = recipient_subsequent_balance
         holding_cashbox.save()
 
     if receiving_company is not None:
         receiving_company_cashbox = CompanyCashbox.objects.select_related('company').filter(company=receiving_company).last()
-        receiving_company_cashbox.balance = receiving_company_cashbox.balance + transfer_amount
+        if transfer_amount > previous_balance:
+            raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
+        recipient_subsequent_balance = receiving_company_cashbox.balance + transfer_amount
+        receiving_company_cashbox.balance = recipient_subsequent_balance
         receiving_company_cashbox.save()
-        subsequent_balance = previous_balance - transfer_amount
-        holding_cashbox.balance = subsequent_balance
+        
+        sender_subsequent_balance = previous_balance - transfer_amount
+        holding_cashbox.balance = sender_subsequent_balance
         holding_cashbox.save()
         
     obj = HoldingTransfer.objects.create(
@@ -46,8 +53,8 @@ def holding_transfer_create(
         receiving_company = receiving_company,
         transfer_amount = transfer_amount,
         transfer_note = transfer_note,
-        previous_balance = previous_balance,
-        subsequent_balance = subsequent_balance
+        recipient_subsequent_balance = recipient_subsequent_balance,
+        sender_subsequent_balance = sender_subsequent_balance
     )
 
     obj.full_clean()

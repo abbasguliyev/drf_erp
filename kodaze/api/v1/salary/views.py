@@ -11,6 +11,7 @@ from api.v1.salary.services.commission_services import (
 from api.v1.salary.services.salary_pay_service import salary_pay_create
 from api.v1.salary.services.salarydeduction_service import salarydeduction_create
 from api.v1.salary.services.salarypunishment_service import salarypunishment_create
+from api.v1.salary.utils import salary_operation_delete
 
 from salary.models import (
     AdvancePayment,
@@ -30,7 +31,6 @@ from api.v1.salary.serializers import (
     SalaryDeductionSerializer,
     SalaryPunishmentSerializer,
     SalaryViewSerializer,
-    SalaryOprSerializer,
     PaySalarySerializer,
     MonthRangeSerializer, SaleRangeSerializer, CommissionSerializer,
     CommissionInstallmentSerializer, CommissionSaleRangeSerializer,
@@ -54,13 +54,6 @@ from api.v1.salary.filters import (
     SalaryViewFilter,
     PaySalaryFilter,
 )
-
-import datetime
-from django.db.models import Count, Q, Sum, Value
-from itertools import groupby
-from api.core import DynamicFieldsCategorySerializer
-from rest_framework import serializers
-
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -111,10 +104,15 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvancePaymentDetailAPIView(generics.RetrieveUpdateAPIView):
+class AdvancePaymentDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = AdvancePayment.objects.all()
     serializer_class = AdvancePaymentSerializer
     permission_classes = [salary_permissions.AdvancePaymentPermissions]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        salary_operation_delete(instance=instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # ********************************** SalaryDeduction get post put delete **********************************
@@ -155,11 +153,15 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryDeductionDetailAPIView(generics.RetrieveUpdateAPIView):
+class SalaryDeductionDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = SalaryDeduction.objects.all()
     serializer_class = SalaryDeductionSerializer
     permission_classes = [salary_permissions.SalaryDeductionPermissions]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        salary_operation_delete(instance=instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** SalaryPunishment get post put delete **********************************
 class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
@@ -199,11 +201,15 @@ class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryPunishmentDetailAPIView(generics.RetrieveUpdateAPIView):
+class SalaryPunishmentDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = SalaryPunishment.objects.all()
     serializer_class = SalaryPunishmentSerializer
     permission_classes = [salary_permissions.SalaryPunishmentPermissions]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        salary_operation_delete(instance=instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** Bonus get post put delete **********************************
 class BonusListCreateAPIView(generics.ListCreateAPIView):
@@ -243,11 +249,15 @@ class BonusListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BonusDetailAPIView(generics.RetrieveUpdateAPIView):
+class BonusDetailAPIView(generics.RetrieveDestroyAPIView):
     queryset = Bonus.objects.all()
     serializer_class = BonusSerializer
     permission_classes = [salary_permissions.BonusPermissions]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        salary_operation_delete(instance=instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** Maas Ode get post put delete **********************************
 class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
@@ -296,19 +306,6 @@ class PaySalaryDetailAPIView(generics.RetrieveAPIView):
 
 # ********************************** SalaryView get post put delete **********************************
 class SalaryViewListCreateAPIView(generics.ListAPIView):
-    class OutputSerializer(serializers.Serializer):
-        id = serializers.IntegerField(read_only=True)
-        employee = UserSerializer(read_only=True, fields=['id', 'fullname', 'company', 'office', 'position', 'salary'])
-        sale_quantity = serializers.IntegerField(read_only=True)
-        commission_amount = serializers.FloatField(read_only=True)
-        final_salary = serializers.FloatField(read_only=True)
-        pay_date = serializers.DateField(read_only=True)
-        is_done = serializers.BooleanField(read_only=True)
-        salary_opr = SalaryOprSerializer(read_only=True)
-        employee_working_day = serializers.IntegerField(read_only=True)
-        date = serializers.DateField(read_only=True)
-        
-
     queryset = SalaryView.objects.select_related('employee').all()
     serializer_class = SalaryViewSerializer
     filter_backends = [DjangoFilterBackend]
@@ -328,106 +325,6 @@ class SalaryViewListCreateAPIView(generics.ListAPIView):
             queryset = self.queryset
 
         queryset = self.filter_queryset(queryset)
-
-        start_date_qs = self.request.GET.get('start_date')
-        end_date_qs = self.request.GET.get('end_date')
-
-        if start_date_qs != "" and start_date_qs is not None:
-            start_date = datetime.datetime.strptime(start_date_qs, "%d-%m-%Y")
-            if end_date_qs != "" and end_date_qs is not None:
-                end_date = datetime.datetime.strptime(end_date_qs, "%d-%m-%Y")
-            else:
-                end_date = datetime.date.today()
-            
-            new_queryset = queryset.filter(Q(date__month__gte=start_date.month), Q(date__year__gte=start_date.year), Q(
-                date__month__lte=end_date.month), Q(date__year__lte=end_date.year)).order_by('employee__pk')
-            new_qs_list = list()
-            for qs in groupby(new_queryset.values('employee__pk')):
-                new_qs_dict = dict()
-
-                # print(f"{qs=}")
-                employee_id = qs[0].get('employee__pk')
-                employee = User.objects.get(pk=employee_id)
-                date = qs[0].get('date')
-                
-                obj_opr = SalaryView.objects.filter(employee=employee, date__month__gte=start_date.month, date__year__gte=start_date.year, date__month__lte=end_date.month, date__year__lte=end_date.year).aggregate(
-                    total_sale_quantity = Sum('sale_quantity'),
-                    total_commission_amount = Sum('commission_amount'),
-                    total_final_salary = Sum('final_salary')
-                )
-
-                salary_opr = User.objects.select_related(
-                                            'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
-                                        ).filter(pk=employee.pk).values('pk').aggregate(
-                                            total_advancepayment = Sum('advancepayment__amount', filter=(Q(advancepayment__date__month__gte=start_date.month, advancepayment__date__year__gte=start_date.year, advancepayment__date__month__lte=end_date.month, advancepayment__date__year__lte=end_date.year))),
-                                            total_bonus = Sum('bonus__amount', filter=(Q(bonus__date__month__gte=start_date.month, bonus__date__year__gte=start_date.year, bonus__date__month__lte=end_date.month, bonus__date__year__lte=end_date.year))), 
-                                            total_salarydeduction = Sum('salarydeduction__amount', filter=(Q(salarydeduction__date__month__gte=start_date.month, salarydeduction__date__year__gte=start_date.year, salarydeduction__date__month__lte=end_date.month, salarydeduction__date__year__lte=end_date.year))),
-                                            total_salarypunishment = Sum('salarypunishment__amount', filter=(Q(salarypunishment__date__month__gte=start_date.month, salarypunishment__date__year__gte=start_date.year, salarypunishment__date__month__lte=end_date.month, salarypunishment__date__year__lte=end_date.year))),
-                                        )
-                working_day = User.objects.select_related(
-                                            'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
-                                        ).filter(pk=employee.pk).values('pk').aggregate(
-                                            total_working_day=Sum('working_days__working_days_count', filter=(Q(working_days__date__month__gte=start_date.month, working_days__date__year__gte=start_date.year, working_days__date__month__lte=end_date.month, working_days__date__year__lte=end_date.year))),
-                                        )
-                if obj_opr.get('total_sale_quantity') is None:
-                    obj_opr['total_sale_quantity'] = 0
-                else:
-                    obj_opr['total_sale_quantity'] = int(obj_opr['total_sale_quantity'])
-                
-                if obj_opr.get('total_commission_amount') is None:
-                    obj_opr['total_commission_amount'] = 0
-                else:
-                    obj_opr['total_commission_amount'] = int(obj_opr['total_commission_amount'])
-
-                if obj_opr.get('total_final_salary') is None:
-                    obj_opr['total_final_salary'] = 0
-                else:
-                    obj_opr['total_final_salary'] = int(obj_opr['total_final_salary'])
-                     
-                if working_day.get('total_working_day') is None:
-                    working_day['total_working_day'] = 0
-                else:
-                    working_day['total_working_day'] = int(working_day['total_working_day'])
-                                        
-                if salary_opr.get("total_advancepayment") is None:
-                    salary_opr['total_advancepayment'] = 0
-                else:
-                    salary_opr['total_advancepayment'] = int(salary_opr['total_advancepayment'])
-                
-                if salary_opr.get("total_bonus") is None:
-                    salary_opr['total_bonus'] = 0
-                else:
-                    salary_opr['total_bonus'] = int(salary_opr['total_bonus'])
-                
-                if salary_opr.get("total_salarydeduction") is None:
-                    salary_opr['total_salarydeduction'] = 0
-                else:
-                    salary_opr['total_salarydeduction'] = int(salary_opr['total_salarydeduction'])
-                
-                if salary_opr.get("total_salarypunishment") is None:
-                    salary_opr['total_salarypunishment'] = 0
-                else:
-                    salary_opr['total_salarypunishment'] = int(salary_opr['total_salarypunishment'])            
-
-                print(f"user_id=>{qs[0].get('employee__pk')} -> bonus=>{salary_opr.get('total_bonus')}, avans=>{salary_opr.get('total_advancepayment')}, kəsinti=>{salary_opr.get('total_salarydeduction')}, cərimə=>{salary_opr.get('total_salarypunishment')}, iş günü=>{salary_opr.get('total_working_day')}")
-                new_qs_dict['id'] = qs[0].get('employee__pk')
-                new_qs_dict['employee'] = employee
-                new_qs_dict['salary_opr'] = salary_opr
-                new_qs_dict['date'] = date
-                new_qs_dict['employee_working_day'] = working_day['total_working_day']
-                new_qs_dict['sale_quantity'] = obj_opr['total_sale_quantity']
-                new_qs_dict['commission_amount'] = obj_opr['total_commission_amount']
-                new_qs_dict['final_salary'] = obj_opr['total_final_salary']
-                new_qs_dict['is_done'] = False
-                new_qs_dict['pay_date'] = None
-                new_qs_dict['date'] = None
-                
-                new_qs_list.append(new_qs_dict)
-            page = self.paginate_queryset(new_qs_list)
-            if page is not None:
-                new_serializer = self.OutputSerializer
-                serializer = new_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -558,3 +455,65 @@ class CommissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+# import xlwt
+
+# from django.http import HttpResponse
+# from django.http import FileResponse
+# from rest_framework.views import APIView
+
+
+# class ExportData(APIView):
+    
+#     def post(self, request, format=None):
+#         response = HttpResponse(content_type='application/ms-excel')
+#         response['Content-Disposition'] = 'attachment; filename="users.xls"'
+
+#         wb = xlwt.Workbook(encoding='utf-8')
+#         ws = wb.add_sheet('Users')
+
+#         # Sheet header, first row
+#         row_num = 0
+
+#         font_style = xlwt.XFStyle()
+#         font_style.font.bold = True
+
+#         columns = ['Fullname', 'Company', 'Office', 'Position']
+
+#         for col_num in range(len(columns)):
+#             ws.write(row_num, col_num, columns[col_num], font_style)
+
+#         # Sheet body, remaining rows
+#         font_style = xlwt.XFStyle()
+#         print(f"{request=}")
+#         print(f"{request.data=}")
+#         rows = request.data
+#         for row in rows:
+#             row_num += 1
+#             row_list = list()
+#             try:
+#                 fullname = row.get('employee').get('fullname')
+#             except:
+#                 fullname = None
+#             try:
+#                 company = row.get('company').get('name')
+#             except:
+#                 company = None
+#             try:
+#                 office = row.get('office').get('name')
+#             except:
+#                 office = None
+#             try:
+#                 position = row.get('position').get('name')
+#             except:
+#                 position = None
+#             row_list.append(fullname)
+#             row_list.append(company)
+#             row_list.append(office)
+#             row_list.append(position)
+#             for col_num in range(len(row_list)):
+#                 ws.write(row_num, col_num, row_list[col_num], font_style)
+
+#         wb.save(response)
+#         path = "/home/abbas/Workspace/kodazeERP"
+#         return FileResponse(filename=f"{path}/{wb}", as_attachment=True)

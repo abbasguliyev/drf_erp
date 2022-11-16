@@ -19,6 +19,7 @@ from holiday.models import EmployeeWorkingDay
 
 from api.v1.account.serializers import UserSerializer
 
+
 class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True, fields=["id", "fullname"])
     employee_id = serializers.PrimaryKeyRelatedField(
@@ -27,13 +28,9 @@ class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
         ).prefetch_related('user_permissions', 'groups').all(), source='employee', write_only=True
     )
 
-    is_removed = serializers.BooleanField(write_only=True, default=False)
-    confirm_remove = serializers.BooleanField(write_only=True, default=False)
-
-
     class Meta:
         model = AdvancePayment
-        fields = ('id', 'employee', 'employee_id', 'amount', 'note', 'date', 'is_done', 'is_removed', 'confirm_remove')
+        fields = ('id', 'employee', 'employee_id', 'amount', 'note', 'date', 'is_done',)
 
 
 class SalaryDeductionSerializer(DynamicFieldsCategorySerializer):
@@ -77,27 +74,18 @@ class PaySalarySerializer(DynamicFieldsCategorySerializer):
 
 class SalaryViewSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True, fields=['id', 'fullname', 'company', 'office', 'position', 'salary'])
-    salary_opr = serializers.SerializerMethodField('salary_opr_fn')
-    employee_working_day = serializers.SerializerMethodField('employee_working_day_fn')
+    extra_data = serializers.SerializerMethodField('extra_data_fn')
 
-    def employee_working_day_fn(self, instance) -> int:
-        try:
-            working_day = EmployeeWorkingDay.objects.values_list('id', 'working_days_count', flat=True).get(employee=instance.employee, date=instance.date)
-            count = working_day.working_days_count
-        except:
-            count = 0
-        return count
-
-    def salary_opr_fn(self, instance) -> float:
+    def extra_data_fn(self, instance) -> float:
         month = instance.date.month
         year = instance.date.year
-        qs = User.objects.select_related(
-                'holding', 'company', 'office', 'section', 'position', 'team', 'employee_status', 'department'
-            ).filter(pk=instance.employee.pk).aggregate(
-            total_advancepayment = Sum('advancepayment__amount', filter=Q(advancepayment__date__month=month, advancepayment__date__year=year)),
-            total_bonus = Sum('bonus__amount', filter=Q(bonus__date__month=month, bonus__date__year=year)),
-            total_salarydeduction = Sum('salarydeduction__amount', filter=Q(salarydeduction__date__month=month, salarydeduction__date__year=year)),
-            total_salarypunishment = Sum('salarypunishment__amount', filter=Q(salarypunishment__date__month=month, salarypunishment__date__year=year)),
+       
+        qs = SalaryView.objects.select_related('employee').filter(employee=instance.employee, date=instance.date).aggregate(
+            total_advancepayment = Sum('employee__advancepayment__amount', filter=Q(employee__advancepayment__date__month=month, employee__advancepayment__date__year=year)),
+            total_bonus = Sum('employee__bonus__amount', filter=Q(employee__bonus__date__month=month, employee__bonus__date__year=year)),
+            total_salarydeduction = Sum('employee__salarydeduction__amount', filter=Q(employee__salarydeduction__date__month=month, employee__salarydeduction__date__year=year)),
+            total_salarypunishment = Sum('employee__salarypunishment__amount', filter=Q(employee__salarypunishment__date__month=month, employee__salarypunishment__date__year=year)),
+            total_working_day = Sum('employee__working_days__working_days_count', filter=Q(employee__working_days__date=instance.date)),
         )
         if qs.get("total_advancepayment") is None:
             qs['total_advancepayment'] = 0
@@ -107,6 +95,8 @@ class SalaryViewSerializer(DynamicFieldsCategorySerializer):
             qs['total_salarydeduction'] = 0
         if qs.get("total_salarypunishment") is None:
             qs['total_salarypunishment'] = 0
+        if qs.get("total_working_day") is None:
+            qs['total_working_day'] = 0
         return qs
 
     class Meta:
@@ -119,18 +109,9 @@ class SalaryViewSerializer(DynamicFieldsCategorySerializer):
             'final_salary',
             'pay_date',
             'is_done', 
-            'salary_opr',   
-            'employee_working_day',
+            'extra_data',   
             'date'
         )
-
-class SalaryOprSerializer(serializers.Serializer):
-    total_bonus = serializers.FloatField(read_only=True)
-    total_advancepayment = serializers.FloatField(read_only=True)
-    total_salarydeduction = serializers.FloatField(read_only=True)
-    total_salarypunishment = serializers.FloatField(read_only=True)
-    total_working_day = serializers.IntegerField(read_only=True)
-
 
 class MonthRangeSerializer(DynamicFieldsCategorySerializer):
     class Meta:

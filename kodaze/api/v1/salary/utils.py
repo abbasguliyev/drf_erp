@@ -8,6 +8,8 @@ from salary.models import (
     GivenCommissionAfterSignContract
 )
 import pandas as pd
+from rest_framework.exceptions import ValidationError
+
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -210,3 +212,12 @@ def return_commission_after_cancel_contract(contract):
 
         get_back_sale_quantity_from_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date)
         get_back_amount_from_salary_view(user=user, amount=amount, date=next_month_date)
+
+
+def salary_operation_delete(instance):
+    """
+    Avans, bonus, kəsinti, cərimə delete funksiyası
+    """
+    if instance.is_paid == True:
+        raise ValidationError({"detail": "Ödənilmiş məbləği silə bilmərsiniz"})
+    instance.delete()
