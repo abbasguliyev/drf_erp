@@ -1,13 +1,6 @@
 from rest_framework import status, generics
 from django_filters.rest_framework import DjangoFilterBackend
 
-from api.v1.cashbox.utils import (
-    calculate_holding_total_balance, 
-    cashflow_create, 
-    calculate_office_balance, 
-    calculate_company_balance, 
-    calculate_holding_balance
-)
 from rest_framework.response import Response
 
 from api.v1.cashbox.serializers import (
@@ -40,45 +33,17 @@ from api.v1.cashbox.filters import (
 from api.v1.cashbox import permissions as cashbox_permissions
 from api.v1.cashbox.services import (
     cashbox_operation_services,
+    cashbox_services
 )
 
 # ********************************** kassa put delete post get **********************************
 
-class HoldingCashboxListCreateAPIView(generics.ListCreateAPIView):
+class HoldingCashboxListCreateAPIView(generics.ListAPIView):
     queryset = HoldingCashbox.objects.all()
     serializer_class = HoldingCashboxSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = HoldingCashboxFilter
     permission_classes = [cashbox_permissions.HoldingCashboxPermissions]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        user = request.user
-        if serializer.is_valid():
-            holding = serializer.validated_data.get("holding")
-            balance = serializer.validated_data.get("balance")
-
-            initial_balance = calculate_holding_total_balance()
-            holding_initial_balance = calculate_holding_balance()
-
-            serializer.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            holding_subsequent_balance = calculate_holding_balance()
-            cashflow_create(
-                holding=holding,
-                description=f"{holding.name} holdinq kassasına {float(balance)} AZN əlavə edildi",
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                holding_initial_balance=holding_initial_balance,
-                holding_subsequent_balance=holding_subsequent_balance,
-                executor=user,
-                quantity=float(balance)
-            )
-            return Response({"detail":"Holding kassa əlavə olundu"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
@@ -89,38 +54,16 @@ class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-        user = request.user
         if serializer.is_valid():
-            holding = instance.holding
-
-            initial_balance = calculate_holding_total_balance()
-            holding_initial_balance = calculate_holding_balance()
-
-            balance = serializer.validated_data.get("balance")
-
-            serializer.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            holding_subsequent_balance = calculate_holding_balance()
-            cashflow_create(
-                holding=holding,
-                description=f"{holding.name} holdinq kassasına {float(balance)} AZN əlavə edildi",
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                holding_initial_balance=holding_initial_balance,
-                holding_subsequent_balance=holding_subsequent_balance,
-                executor=user,
-                quantity=float(balance)
-            )
+            cashbox_services.update_cashbox_service(instance=instance, data=serializer.validated_data)
             return Response({"detail":"Holding kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # **********************************
 
-class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
+class CompanyCashboxListCreateAPIView(generics.ListAPIView):
     queryset = CompanyCashbox.objects.select_related('company').all()
     serializer_class = CompanyCashboxSerializer
     filter_backends = [DjangoFilterBackend]
@@ -144,36 +87,6 @@ class CompanyCashboxListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        user = request.user
-        if serializer.is_valid():
-            company = serializer.validated_data.get("company")
-            balance = serializer.validated_data.get("balance")
-
-            initial_balance = calculate_holding_total_balance()
-            company_initial_balance = calculate_company_balance(company=company)
-
-            serializer.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            company_subsequent_balance = calculate_company_balance(company=company)
-            cashflow_create(
-                company=company,
-                description=f"{company.name} şirkət kassasına {float(balance)} AZN əlavə edildi",
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                company_initial_balance=company_initial_balance,
-                company_subsequent_balance=company_subsequent_balance,
-                executor=user,
-                quantity=float(balance)
-            )
-            return Response({"detail":"Şirkət kassa əlavə olundu"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = CompanyCashbox.objects.select_related('company').all()
     serializer_class = CompanyCashboxSerializer
@@ -182,28 +95,8 @@ class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-        user = request.user
         if serializer.is_valid():
-            company = instance.company
-
-            balance = serializer.validated_data.get("balance")
-            initial_balance = calculate_holding_total_balance()
-            company_initial_balance = calculate_company_balance(company=company)
-
-            serializer.save()
-            
-            subsequent_balance = calculate_holding_total_balance()
-            company_subsequent_balance = calculate_company_balance(company=company)
-            cashflow_create(
-                company=company,
-                description=f"{company.name} şirkət kassasına {float(balance)} AZN əlavə edildi",
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                company_initial_balance=company_initial_balance,
-                company_subsequent_balance=company_subsequent_balance,
-                executor=user,
-                quantity=float(balance)
-            )
+            cashbox_services.update_cashbox_service(instance=instance, data=serializer.validated_data)
             return Response({"detail":"Şirkət kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -212,7 +105,7 @@ class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 
 # **********************************
 
-class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
+class OfficeCashboxListCreateAPIView(generics.ListAPIView):
     queryset = OfficeCashbox.objects.select_related('office').all()
     serializer_class = OfficeCashboxSerializer
     filter_backends = [DjangoFilterBackend]
@@ -238,37 +131,6 @@ class OfficeCashboxListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        user = request.user
-        if serializer.is_valid():
-            office = serializer.validated_data.get("office")
-            balance = serializer.validated_data.get("balance")
-
-            initial_balance = calculate_holding_total_balance()
-            office_initial_balance = calculate_office_balance(office=office)
-
-            serializer.save()
-
-            subsequent_balance = calculate_holding_total_balance()
-            office_subsequent_balance = calculate_office_balance(office=office)
-            cashflow_create(
-                office=office,
-                company=office.company,
-                description=f"{office.name} ofis kassasına {float(balance)} AZN əlavə edildi",
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                office_initial_balance=office_initial_balance,
-                office_subsequent_balance=office_subsequent_balance,
-                executor=user,
-                quantity=float(balance)
-            )
-            return Response({"detail":"Ofis kassa əlavə olundu"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = OfficeCashbox.objects.select_related('office').all()
     serializer_class = OfficeCashboxSerializer
@@ -277,29 +139,8 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-        user = request.user
         if serializer.is_valid():
-            office = instance.office
-            balance = serializer.validated_data.get("balance")
-            
-            initial_balance = calculate_holding_total_balance()
-            office_initial_balance = calculate_office_balance(office=office)
-
-            serializer.save()
-            
-            subsequent_balance = calculate_holding_total_balance()
-            office_subsequent_balance = calculate_office_balance(office=office)
-            cashflow_create(
-                office=office,
-                company=office.company,
-                description=f"{office.name} office kassasına {float(balance)} AZN əlavə edildi",
-                initial_balance=initial_balance,
-                subsequent_balance=subsequent_balance,
-                office_initial_balance=office_initial_balance,
-                office_subsequent_balance=office_subsequent_balance,
-                executor=user,
-                quantity=float(balance)
-            )
+            cashbox_services.update_cashbox_service(instance=instance, data=serializer.validated_data)
             return Response({"detail":"Office kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -316,21 +157,21 @@ class CashFlowListAPIView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         
-        umumi_quantity = 0
+        total_quantity = 0
 
         for q in queryset:
-            umumi_quantity += q.quantity
+            total_quantity += q.quantity
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([
-                {'umumi_quantity': umumi_quantity, 'data':serializer.data}
+                {'total_quantity': total_quantity, 'data':serializer.data}
             ])
 
         serializer = self.get_serializer(queryset, many=True)
         return Response([
-                {'umumi_quantity': umumi_quantity, 'data':serializer.data}
+                {'total_quantity': total_quantity, 'data':serializer.data}
             ])
 
 class CashFlowDetailAPIView(generics.RetrieveAPIView):
@@ -348,8 +189,9 @@ class HoldingCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        user = request.user
         if serializer.is_valid():
-            cashbox_operation_services.holding_cashbox_operation_create(**serializer.validated_data)
+            cashbox_operation_services.holding_cashbox_operation_create(executor=user, **serializer.validated_data)
             return Response({"detail":"Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -363,8 +205,9 @@ class CompanyCashboxOperationListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        user = request.user
         if serializer.is_valid():
-            cashbox_operation_services.company_cashbox_operation_create(**serializer.validated_data)
+            cashbox_operation_services.company_cashbox_operation_create(executor=user, **serializer.validated_data)
             return Response({"detail":"Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

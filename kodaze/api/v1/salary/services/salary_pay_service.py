@@ -1,42 +1,46 @@
-from datetime import date
-
-from api.v1.cashbox.decorators import cashbox_expense_and_cash_flow_create
+import datetime
+import pandas as pd
+from api.v1.cashbox.decorators import cashbox_operation_decorator
 from salary.models import SalaryView, PaySalary
 from rest_framework.exceptions import ValidationError
-import pandas as pd
+from api.v1.salary.decorators import add_amount_to_salary_view_decorator
+from enum import Enum
+from cashbox import INCOME, EXPENSE
+    
 
-@cashbox_expense_and_cash_flow_create
+@cashbox_operation_decorator
+@add_amount_to_salary_view_decorator
 def salary_pay_create(
-        user,
+        executor,
         employee,
         note: str = None,
-        date: date = None,
-        salary_date: date = date.today()
+        date: datetime.date = None,
+        salary_date: datetime.date = datetime.date.today(),
+        operation = EXPENSE,
+        func_name = None
 ) -> PaySalary:
     """
     İşçilərə maaş vermək funksiyası
     """
 
-    if (date == None):
+    if date is None:
         raise ValidationError({"detail": "Tarixi daxil edin"})
 
-    now = date.today()
+    now = datetime.date.today()
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-    next_m = d + pd.offsets.MonthBegin(1)
+    previous_month = d - pd.offsets.MonthBegin(1)
+    
+    previous_month_salary_view = SalaryView.objects.filter(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}").last()
+    if previous_month_salary_view is not None and previous_month_salary_view.is_paid == False:
+        salary_view = previous_month_salary_view
+    else:
+        salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
 
-    total_payed_amount = 0
-
-    salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
-
-    if salary_view.is_done == True:
+    if salary_view.is_paid == True:
         raise ValidationError({"detail": "İşçinin maaşını artıq ödəmisiniz"})
 
     amount = salary_view.final_salary
-    salary_view.final_salary = 0
-    salary_view.is_done = True
-    salary_view.pay_date = now
-    salary_view.save()
-
+    
     salary_pay = PaySalary.objects.create(
         employee=employee,
         amount=amount,

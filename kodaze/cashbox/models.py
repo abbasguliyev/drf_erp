@@ -10,7 +10,9 @@ from django.contrib.auth import get_user_model
 USER = get_user_model()
 
 class Cashbox(models.Model):
+    title = models.CharField(max_length=150)
     balance = models.FloatField(default=0)
+    note = models.CharField(max_length=250, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -76,6 +78,7 @@ class CashFlow(models.Model):
     company = models.ForeignKey('company.Company', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     office = models.ForeignKey('company.Office', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     customer = models.ForeignKey('account.Customer', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
+    personal = models.ForeignKey(USER, on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flow_personals")
     
     description = models.TextField(null=True, blank=True)
     initial_balance = models.FloatField(default=0)
@@ -106,6 +109,7 @@ class CashFlow(models.Model):
 
 class HoldingCashboxOperation(AbstractCashboxOperation):
     executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="holding_cashbox_operations")
+    personal = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="holding_cashbox_operations_personals")
     
     class Meta:
         ordering = ("-pk",)
@@ -121,6 +125,7 @@ class CompanyCashboxOperation(AbstractCashboxOperation):
     executor = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="company_cashbox_operations")
     company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="company_cashbox_operations")
     office = models.ForeignKey('company.Office', on_delete=models.CASCADE, null=True, blank=True, related_name="company_cashbox_operations")
+    personal = models.ForeignKey(USER, on_delete=models.SET_NULL, null=True, blank=True, related_name="company_cashbox_operations_personals")
 
     class Meta:
         ordering = ("-pk",)

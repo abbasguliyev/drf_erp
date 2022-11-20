@@ -1,18 +1,15 @@
-from api.v1.cashbox.decorators import cashbox_expense_and_cash_flow_create
-from datetime import date
+import datetime
 from rest_framework.exceptions import ValidationError
-import pandas as pd
+from salary.models import AdvancePayment
+from api.v1.salary.decorators import add_amount_to_salary_view_decorator
 
-from salary.models import AdvancePayment, SalaryView
-
-
-@cashbox_expense_and_cash_flow_create
+@add_amount_to_salary_view_decorator
 def advancepayment_create(
-        user,
+        executor,
         employee,
         amount: float = None,
         note: str = None,
-        date: date = None
+        date: datetime.date = None
 ) -> AdvancePayment:
     """
     İşçiyə avans vermə funksiyası
@@ -24,36 +21,16 @@ def advancepayment_create(
     if (amount == None):
         raise ValidationError({"detail": "Məbləği daxil edin"})
 
-    now = date.today()
-    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-    next_m = d + pd.offsets.MonthBegin(1)
-
-    user_advanced_payment = AdvancePayment.objects.filter(employee=employee,
-                                                          date=f"{date.year}-{date.month}-{1}").count()
+    user_advanced_payment = AdvancePayment.objects.filter(employee=employee, date__year=f"{date.year}", date__month=f"{date.month}").count()
     if user_advanced_payment > 2:
         raise ValidationError({"detail": "Bir işçiyə eyni ay ərzində maksimum 2 dəfə avans verilə bilər"})
-
-    salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
-    next_month_salary_view = SalaryView.objects.get(employee=employee, date=f"{date.year}-{date.month}-{1}")
-
-    if amount is None:
-        amount = (float(next_month_salary_view.final_salary) * 15) / 100
-        
-    if amount > salary_view.final_salary:
-        raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
-    amount_after_advancedpayment = next_month_salary_view.final_salary - float(amount)
-
-    salary_view.amount = amount
-    next_month_salary_view.final_salary = amount_after_advancedpayment
-
-    salary_view.save()
-    next_month_salary_view.save()
 
     advance_payment = AdvancePayment.objects.create(
         employee=employee,
         amount=amount,
         note=note,
         date=date,
+        is_paid=True
     )
     advance_payment.full_clean()
     advance_payment.save()

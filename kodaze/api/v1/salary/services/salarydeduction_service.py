@@ -1,14 +1,15 @@
-from datetime import date
+import datetime
 from salary.models import SalaryView, SalaryDeduction
 from rest_framework.exceptions import ValidationError
 import pandas as pd
+from api.v1.salary.decorators import add_amount_to_salary_view_decorator
 
-
+@add_amount_to_salary_view_decorator
 def salarydeduction_create(
         *, employee,
         amount: float = None,
         note: str = None,
-        date: date = None
+        date: datetime.date = None
 ) -> SalaryDeduction:
     """
     İşçinin maaşından kəsinti tutmaq funksiyası
@@ -19,17 +20,6 @@ def salarydeduction_create(
 
     if (amount == None):
         raise ValidationError({"detail": "Məbləği daxil edin"})
-
-    now = date.today()
-    d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-    next_m = d + pd.offsets.MonthBegin(1)
-
-    salary_view = SalaryView.objects.get(employee=employee, date=next_m)
-    if amount > salary_view.final_salary:
-        raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
-    salary_view.final_salary = salary_view.final_salary - float(amount)
-
-    salary_view.save()
 
     salary_deduction = SalaryDeduction.objects.create(
         employee=employee,

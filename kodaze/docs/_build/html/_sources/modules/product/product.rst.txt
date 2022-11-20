@@ -9,10 +9,14 @@ Product (Məhsullar)
 - "barcode"
     - nullable. 
     - (Məhsulun barkodu - Integer)
+- "purchase_price"
+    - required.
+    - Məhsulun alış qiymətini bildirir
+    - (Məhsulun alış qiyməti - Float)
 - "price"
     - required. 
-    - Mutleq gonderilmelidir
-    - (Məhsulun qiyməti - Float)
+    - Məhsulun satış qiymətini bildirir
+    - (Məhsulun satış qiyməti - Float)
 - "company_id"
     - required. 
     - Mutleq gonderilmelidir

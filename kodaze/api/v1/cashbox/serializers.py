@@ -17,7 +17,7 @@ from cashbox.models import (
     CompanyCashboxOperation
 )
 from api.v1.company.serializers import HoldingSerializer, OfficeSerializer, CompanySerializer
-from api.v1.account.serializers import UserSerializer
+from api.v1.account.serializers import UserSerializer, CustomerSerializer
 
 class HoldingCashboxSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
@@ -56,7 +56,9 @@ class CashFlowSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     office = OfficeSerializer(read_only=True, fields=['id', 'name'])
-    executor = serializers.StringRelatedField()
+    executor = UserSerializer(read_only=True, fields=["id", "fullname"])
+    personal = UserSerializer(read_only=True, fields=["id", "fullname"])
+    customer = CustomerSerializer(read_only=True, fields=["id", "fullname"])
     
     class Meta:
         model = CashFlow

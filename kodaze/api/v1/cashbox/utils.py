@@ -2,7 +2,7 @@ import datetime
 from cashbox.models import HoldingCashbox, OfficeCashbox, CashFlow, CompanyCashbox
 
 def calculate_holding_total_balance():
-    umumi_balance = 0
+    total_balance = 0
 
     cashbox = HoldingCashbox.objects.all()
     holding_balance = 0
@@ -19,26 +19,20 @@ def calculate_holding_total_balance():
     for ok in cashbox:
         office_balance += float(ok.balance)
 
-    umumi_balance = holding_balance + company_balance + office_balance
-    return umumi_balance
+    total_balance = holding_balance + company_balance + office_balance
+    return total_balance
 
 def calculate_holding_balance():
-    holding_balance = 0
     cashbox = HoldingCashbox.objects.all()[0]
-    holding_balance += float(cashbox.balance)
-    return holding_balance
+    return cashbox.balance
 
 def calculate_company_balance(company):
-    company_balance = 0
     cashbox = CompanyCashbox.objects.get(company=company)
-    company_balance += float(cashbox.balance)
-    return company_balance
+    return cashbox.balance
 
 def calculate_office_balance(office):
-    office_balance = 0
     cashbox = OfficeCashbox.objects.get(office=office)
-    office_balance += float(cashbox.balance)
-    return office_balance
+    return cashbox.balance
 
 def cashflow_create(
     holding=None, 
@@ -51,6 +45,8 @@ def cashflow_create(
     subsequent_balance=0, 
     quantity=0, 
     executor=None,
+    customer=None,
+    personal=None,
     holding_initial_balance=0,
     holding_subsequent_balance=0,
     company_initial_balance=0,
@@ -72,6 +68,8 @@ def cashflow_create(
         initial_balance=initial_balance,
         subsequent_balance=subsequent_balance,
         executor=executor,
+        personal=personal,
+        customer=customer,
         holding_initial_balance=holding_initial_balance,
         holding_subsequent_balance=holding_subsequent_balance,
         company_initial_balance=company_initial_balance,

@@ -13,8 +13,6 @@ from warehouse.models import (
 from api.v1.contract.utils.contract_utils import (
     reduce_product_from_stock, 
     add_product_to_stock, 
-    c_income, 
-    expense
 )
 from rest_framework.generics import get_object_or_404
 
@@ -53,12 +51,12 @@ def gifts_create(self, request, *args, **kwargs):
                     return Response({"detail": "Ofis Kassa tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
                 amount_to_be_added = float(product.price)*int(quantity)
                 note = f"{contract} müqviləsinə {user.fullname} tərəfindən {quantity} ədəd {product} hədiyyə verildiyi üçün, {cashbox} ofis kassasına {amount_to_be_added} AZN mədaxil edildi"
-                c_income(
-                    company_cashbox=cashbox,
-                    the_amount_to_enter=amount_to_be_added,
-                    responsible_employee_1=user,
-                    note=note
-                )
+                # c_income(
+                #     company_cashbox=cashbox,
+                #     the_amount_to_enter=amount_to_be_added,
+                #     responsible_employee_1=user,
+                #     note=note
+                # )
 
             gift = ContractGift.objects.create(product=product, contract=contract, quantity=quantity)
             gift.save()
@@ -87,12 +85,12 @@ def gifts_destroy(self, request, *args, **kwargs):
                 return Response({"detail": "Kassanın balansında yetəri qədər məbləğ yoxdur"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 note = f"{contract} müqviləsindən {user.fullname} tərəfindən {quantity} ədəd {product} hədiyyəsi geri alındığı üçün, {cashbox} office kassasından {amount_to_be_added} AZN məxaric edildi"
-                expense(
-                    cashbox=cashbox,
-                    the_amount_to_enter=amount_to_be_added,
-                    responsible_employee_1=user,
-                    note=note
-                )
+                # expense(
+                #     cashbox=cashbox,
+                #     the_amount_to_enter=amount_to_be_added,
+                #     responsible_employee_1=user,
+                #     note=note
+                # )
         try:
             stok = get_object_or_404(Stock, warehouse=warehouse, product=product)
             add_product_to_stock(stok, quantity)

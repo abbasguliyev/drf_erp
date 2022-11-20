@@ -6,7 +6,6 @@ from api.v1.salary import views as salary_views
 from api.v1.transfer import views as transfer_views
 from api.v1.warehouse import views as warehouse_views
 from api.v1.product import views as product_views
-from api.v1.income_expense import views as income_expense_views
 from api.v1.statistika import statistika
 
 from rest_framework_simplejwt.views import token_refresh
@@ -99,11 +98,6 @@ urlpatterns = [
 
     path('employee-working_day/', holiday_views.EmployeeWorkingDayListCreateAPIView.as_view()),
     path('employee-working_day/<int:pk>', holiday_views.EmployeeWorkingDayDetailAPIView.as_view()),
-
-    path('employee-gelib-getme-vaxtlari/',
-         holiday_views.EmployeeArrivalAndDepartureTimesListCreateAPIView.as_view()),
-    path('employee-gelib-getme-vaxtlari/<int:pk>',
-         holiday_views.EmployeeArrivalAndDepartureTimesDetailAPIView.as_view()),
 
     # statistika views *****************************************
     path('statistika/sale-quantityi', statistika.SalaryViewStatistikaAPIView.as_view(),

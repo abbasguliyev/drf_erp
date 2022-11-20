@@ -2,7 +2,7 @@ from django.urls import path
 from api.v1.salary import views as salary_views
 
 urlpatterns = [
-    path('salary-views/', salary_views.SalaryViewListCreateAPIView.as_view()),
+    path('salary-views/', salary_views.SalaryViewListAPIView.as_view()),
     path('salary-views/<int:pk>/', salary_views.SalaryViewDetailAPIView.as_view()),
 
     path('bonus/', salary_views.BonusListCreateAPIView.as_view()),
@@ -35,6 +35,6 @@ urlpatterns = [
     path('commission/',salary_views.CommissionListCreateAPIView.as_view()),
     path('commission/<int:pk>/', salary_views.CommissionDetailAPIView.as_view()),
 
-    # path('export-data/', salary_views.ExportData.as_view(), name='export_users_xls'),
+    path('export-data/', salary_views.ExportData.as_view(), name='export_users_xls'),
 
 ]

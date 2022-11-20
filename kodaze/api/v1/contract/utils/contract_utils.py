@@ -1,5 +1,3 @@
-from income_expense.models import OfficeCashboxIncome, OfficeCashboxExpense
-
 import datetime
 
 from api.v1.utils.ocean_contract_pdf_create import (
@@ -82,37 +80,3 @@ def add_product_to_stock(stock, product_quantity):
     stock.increase_stock(int(product_quantity))
     stock.save()
     return stock.quantity
-
-
-def c_income(company_cashbox, the_amount_to_enter, responsible_employee_1, note):
-    total_balance = float(the_amount_to_enter) + float(company_cashbox.balance)
-    company_cashbox.balance = total_balance
-    company_cashbox.save()
-    date = datetime.date.today()
-
-    income = OfficeCashboxIncome.objects.create(
-        executor=responsible_employee_1,
-        cashbox=company_cashbox,
-        amount=the_amount_to_enter,
-        date=date,
-        note=note
-    )
-    income.save()
-    return income
-
-
-def expense(company_cashbox, the_amount_to_enter, responsible_employee_1, note):
-    total_balance = float(company_cashbox.balance) - float(the_amount_to_enter)
-    company_cashbox.balance = total_balance
-    company_cashbox.save()
-    date = datetime.date.today()
-
-    expense = OfficeCashboxExpense.objects.create(
-        executor=responsible_employee_1,
-        cashbox=company_cashbox,
-        amount=the_amount_to_enter,
-        date=date,
-        note=note
-    )
-    expense.save()
-    return expense

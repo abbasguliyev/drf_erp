@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 3rd party libraries
-    'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
     'django_celery_beat',
@@ -84,7 +83,6 @@ INSTALLED_APPS = [
     'company.apps.CompanyConfig',
     'cashbox.apps.CashboxConfig',
     'transfer.apps.TransferConfig',
-    'income_expense.apps.IncomeExpenseConfig',
     'holiday.apps.HolidayConfig',
     'salary.apps.SalaryConfig',
     'warehouse.apps.WarehouseConfig',

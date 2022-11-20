@@ -34,8 +34,6 @@ from django.contrib.auth import get_user_model
 
 from api.v1.contract.utils.contract_utils import (
     add_product_to_stock,
-    c_income,
-    expense,
     pdf_create_when_contract_updated,
     reduce_product_from_stock,   
 )
@@ -227,7 +225,7 @@ def contract_create(self, request, *args, **kwargs):
                             initial_balance = calculate_holding_total_balance()
                             office_initial_balance = calculate_office_balance(office=office)
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, tarix - {initial_payment_date}, ödəniş üslubu - {payment_style}, tam ilkin ödəniş"
-                            c_income(cashbox, float(initial_payment), user, note)
+                            # c_income(cashbox, float(initial_payment), user, note)
 
                             remaining_debt = float(total_amount) - float(initial_payment)
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
@@ -293,8 +291,7 @@ def contract_create(self, request, *args, **kwargs):
                             office_initial_balance = calculate_office_balance(office=office)
 
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, tarix - {initial_payment_date}, ödəniş üslubu - {payment_style}, 2-dəfəyə ilkin ödənişin birincisi."
-                            c_income(cashbox, float(
-                                initial_payment), user, note)
+                            # c_income(cashbox, float(initial_payment), user, note)
 
                             remaining_debt = float(total_amount) - float(initial_payment)
 
@@ -396,7 +393,7 @@ def contract_create(self, request, *args, **kwargs):
                 office_initial_balance = calculate_office_balance(office=office)
 
                 note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {now_date_date}, ödəniş üslubu - {payment_style}"
-                c_income(cashbox, float(total_amount), user, note)
+                # c_income(cashbox, float(total_amount), user, note)
 
                 serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company, office=office,
                                 contract_status="BİTMİŞ", total_amount=total_amount)
@@ -633,8 +630,7 @@ def contract_update(self, request, *args, **kwargs):
                 customer = contract.customer
 
                 note = f"GroupLeader - {contract_group_leader.fullname}, müştəri - {customer.fullname}, date - {now_date_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {compensation_income}"
-                c_income(cashbox, float(compensation_income),
-                          contract_group_leader, note)
+                # c_income(cashbox, float(compensation_income), contract_group_leader, note)
 
                 contract.contract_status = CANCELLED
                 contract.compensation_income = request.data.get("compensation_income")
@@ -667,8 +663,7 @@ def contract_update(self, request, *args, **kwargs):
                 customer = contract.customer
 
                 note = f"GroupLeader - {contract_group_leader.fullname}, müştəri - {customer.fullname}, tarix - {now_date_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {compensation_expense}"
-                expense(cashbox, float(compensation_expense),
-                          contract_group_leader, note)
+                # expense(cashbox, float(compensation_expense), contract_group_leader, note)
 
                 contract.contract_status = CANCELLED
                 contract.compensation_expense = request.data.get("compensation_expense")

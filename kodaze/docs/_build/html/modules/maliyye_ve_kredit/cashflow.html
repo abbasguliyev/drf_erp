@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Kassa Hərəkətləri &#8212; Kodaze CRM 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="kassa-hrktlri">
+<h1>Kassa Hərəkətləri<a class="headerlink" href="#kassa-hrktlri" title="Permalink to this heading">¶</a></h1>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Kassa Hərəkətləri</p></td>
+</tr>
+</tbody>
+</table>
+<section id="id1">
+<h2>Kassa Hərəkətləri<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="../../_images/ss33.png"><img alt="melumat" class="align-center" src="../../_images/ss33.png" style="width: 1000px; height: 200px;" /></a>
+<a class="reference internal image-reference" href="../../_images/ss34.png"><img alt="melumat" class="align-center" src="../../_images/ss34.png" style="width: 1000px; height: 200px;" /></a>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Jsonda gələn data:</dt><dd><ul>
+<li><p>date - (Tarix - Date)</p></li>
+<li><p>description - nullable, (Açıqlama - String)</p></li>
+<li><p>operation_style - (Əməliyyat növü - Enum&lt;String&gt;[“MƏDAXİL”, “MƏXARİC”])</p></li>
+<li><p>quantity - (miqdar - Float)</p></li>
+<li><p>customer - nullable, (Müştəri - Customer)</p></li>
+<li><p>personal - (Personal - User)</p></li>
+<li><p>company - nullable, (Company - Şirkət)</p></li>
+<li><p>office - nullable, (Office - Ofis)</p></li>
+<li><p>initial_balance - (İlkin balans - Float)</p></li>
+<li><p>subsequent_balance - (Sonrakı balans - Float)</p></li>
+<li><p>holding_initial_balance - (Holdinq İlkin balans - Float)</p></li>
+<li><p>holding_subsequent_balance - (Holdinq Sonrakı balans - Float)</p></li>
+<li><p>company_initial_balance - (Şirkət İlkin balans - Float)</p></li>
+<li><p>company_subsequent_balance - (Şirkət Sonrakı balans - Float)</p></li>
+<li><p>office_initial_balance - (Ofis İlkin balans - Float)</p></li>
+<li><p>office_subsequent_balance - (Ofis Sonrakı balans - Float)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<a class="reference internal image-reference" href="../../_images/ss35.png"><img alt="melumat" class="align-center" src="../../_images/ss35.png" style="width: 1000px; height: 200px;" /></a>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Bütün Kassa Hərəkətləri</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/cashflow/">http://localhost:8000/api/v1/cashbox/cashflow/</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Filter</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/cashflow/?executor=&amp;executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;holding__name=&amp;holding__name__icontains=&amp;holding=&amp;office__name=&amp;office__name__icontains=&amp;office=&amp;company__name=&amp;company__name__icontains=&amp;company=&amp;initial_balance=&amp;initial_balance__gte=&amp;initial_balance__lte=&amp;subsequent_balance=&amp;subsequent_balance__gte=&amp;subsequent_balance__lte=&amp;description=&amp;description__icontains=&amp;operation_style=&amp;operation_style__icontains=&amp;date=&amp;date__gte=&amp;date__lte=">http://localhost:8000/api/v1/cashbox/cashflow/?executor=&amp;executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;holding__name=&amp;holding__name__icontains=&amp;holding=&amp;office__name=&amp;office__name__icontains=&amp;office=&amp;company__name=&amp;company__name__icontains=&amp;company=&amp;initial_balance=&amp;initial_balance__gte=&amp;initial_balance__lte=&amp;subsequent_balance=&amp;subsequent_balance__gte=&amp;subsequent_balance__lte=&amp;description=&amp;description__icontains=&amp;operation_style=&amp;operation_style__icontains=&amp;date=&amp;date__gte=&amp;date__lte=</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>İd-ə görə Kassa Hərəkətləri</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/cashflow/1/">http://localhost:8000/api/v1/cashbox/cashflow/1/</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Şirkət Əməliyyat</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sirkt-mliyyat">
+<h2>Şirkət Əməliyyat<a class="headerlink" href="#sirkt-mliyyat" title="Permalink to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="../../_images/ss36.png"><img alt="melumat" class="align-center" src="../../_images/ss36.png" style="width: 1000px; height: 200px;" /></a>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Şirkət Əməliyyatı etmək</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/company-cashbox-operation/">http://localhost:8000/api/v1/cashbox/company-cashbox-operation/</a>”</p></li>
+<li><dl class="simple">
+<dt>Json-da göndərilməli olan datalar:</dt><dd><ul>
+<li><dl class="simple">
+<dt>“sending_company_id” -&gt; nullable, Göndərən şirkət - Company id</dt><dd><ul>
+<li><p>Göndərən fieldinə şirkət id-si qeyd edilərsə həmin şirkətdən holdingə transfer əməliyyatı edilir.</p></li>
+<li><p>Şirkətlərin id-ləri üçün endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/company/?is_active=true">http://localhost:8000/api/v1/company/?is_active=true</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“receiving_company_id” -&gt; nullable, Qəbul edən şirkət - Company id</dt><dd><ul>
+<li><p>Qəbul edən fieldinə şirkət id-si qeyd edilərsə holdingdən həmin şirkətə transfer əməliyyatı edilir.</p></li>
+<li><p>Şirkətlərin id-ləri üçün endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/company/?is_active=true">http://localhost:8000/api/v1/company/?is_active=true</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>“transfer_amount” -&gt; required,transfer məbləği - float</p></li>
+<li><p>“transfer_note” -&gt; nullable, transfer qeydi - str</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>sending_company_id və receiving_company_id-dən yalnız 1 göndərilməlidir, 2-si bir yerdə göndərilə bilməz.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;sending_company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;receiving_company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;transfer_amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;transfer_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test company to holding transfer&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Bütün Şirkət Əməliyyatlarına bax</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/company-cashbox-operation/">http://localhost:8000/api/v1/cashbox/company-cashbox-operation/</a>”</p></li>
+<li><dl class="simple">
+<dt>Json-da gələn data:</dt><dd><ul>
+<li><p>“executor” -&gt; icra edən işçi - User</p></li>
+<li><p>“sending_company” -&gt; Göndərən şirkət - Company</p></li>
+<li><p>“receiving_company” -&gt; Qəbul edən şirkət - Company</p></li>
+<li><p>“transfer_amount” -&gt; transfer məbləği - float</p></li>
+<li><p>“transfer_date” -&gt; Transfer tarixi - Date</p></li>
+<li><p>“transfer_note” -&gt; Transfer qeydi - String</p></li>
+<li><p>“recipient_subsequent_balance” -&gt; Qəbul edən son balansı - float</p></li>
+<li><p>“sender_subsequent_balance” -&gt; Göndərən son balansı - float</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<a class="reference internal image-reference" href="../../_images/ss25.png"><img alt="../../_images/ss25.png" class="align-center" src="../../_images/ss25.png" style="width: 300px; height: 200px;" /></a>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Filter:</dt><dd><ul>
+<li><p>“<a class="reference external" href="http://localhost:8000/api/v1/cashbox/company-cashbox-operation/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;sending_company__name=&amp;sending_company__name__icontains=&amp;receiving_company__name=&amp;receiving_company__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=">http://localhost:8000/api/v1/cashbox/company-cashbox-operation/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;sending_company__name=&amp;sending_company__name__icontains=&amp;receiving_company__name=&amp;receiving_company__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Kodaze CRM</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">All about project:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installment.html">Installment And Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project_structure.html">Project Structure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">İnsan Resursları:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/user.html">User (İşçi)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/employee_status.html">Employee Status (İşçi Statusu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/region.html">Region (Bölgə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/customer.html">Customer (Müştəri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/commission.html">Commission (Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/month_range.html">MonthRange (Ay Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maliyyə və Kredit:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="salary_view.html">Əməkhaqqı</a></li>
+<li class="toctree-l1"><a class="reference internal" href="balance.html">Balans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Company:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../company/holding.html">Holding (Holdinq)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/company.html">Company (Şirkət)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/department.html">Department (Departament)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/office.html">Office (Ofis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/section.html">Section (Şöbə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/position.html">Position (Vəzifə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/team.html">Team (Komanda)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/permission_for_position.html">Permission For Position (Vəzifəyə görə icazə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/logo.html">Logo (Logo)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Produc:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../product/product.html">Product (Məhsullar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product/category.html">Category (Kateqoriya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product/unit_of_measure.html">UnitOfMeasure (Ölçü vahidi)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Backup And Restore:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../backup_restore/backup.html">Backup</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Warehouse:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse.html">Warehouse (Anbar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse_request.html">Warehouse Request (Anbar Sorğu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/stock.html">Stock (Stok)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Manager:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/task_manager.html">TaskManager (Tapşırıqlar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/task_requests.html">TaskRequest (Tarixçə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/advertisement.html">Advertisement (Elan)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contract:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contract/contract.html">Contract (Müqavilə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contract/installment.html">Installment (Kredit)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Abbas Guliyev.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.2.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/modules/maliyye_ve_kredit/cashflow.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -7,15 +7,12 @@ def office_transfer_create(
     transfer_amount: float = 0,
     transfer_note: str = None,
     company,
-    sending_office = None,
-    receiving_office = None
+    sending_office,
+    receiving_office
 ) -> OfficeTransfer:
-    if sending_office is None or receiving_office is None:
+    if sending_office is None and receiving_office is None:
         raise ValidationError({"detail": "Göndərən ofis və qəbul edən ofis mütləq daxil edilməlidir"})
     
-    if sending_office is not None and receiving_office is not None:
-        raise ValidationError({"detail": "Göndərən ofis və qəbul edən ofis hər ikisi eyni anda qeyd edilə bilməz"})
-
     if company is None:
         raise ValidationError({"detail": "Şirkət daxil edilməyib"})
     

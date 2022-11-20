@@ -5,7 +5,6 @@ from cashbox.models import (
     CompanyCashbox, 
     OfficeCashbox
 )
-from cashbox import INCOME, EXPENSE
 from rest_framework.exceptions import ValidationError
 import datetime
 from api.v1.cashbox.utils import (
@@ -15,14 +14,18 @@ from api.v1.cashbox.utils import (
     calculate_company_balance, 
     calculate_holding_balance
 )
+from cashbox import INCOME, EXPENSE
+from company.models import Holding
+from django.contrib.auth import get_user_model
 
-from company.models import Holding, Company, Office
+User = get_user_model()
 
 def holding_cashbox_operation_create(
     *, executor,
+    personal = None,
     amount: float, 
     note: str = None,
-    operation: str = INCOME
+    operation = INCOME
 ) -> HoldingCashboxOperation:
     holding = Holding.objects.filter().last()
     if holding is None:
@@ -51,6 +54,7 @@ def holding_cashbox_operation_create(
             holding_initial_balance=holding_initial_balance,
             holding_subsequent_balance=holding_subsequent_balance,
             executor=executor,
+            personal=personal,
             date=datetime.date.today(),
             quantity=float(amount)
         )
@@ -74,14 +78,17 @@ def holding_cashbox_operation_create(
             holding_initial_balance=holding_initial_balance,
             holding_subsequent_balance=holding_subsequent_balance,
             executor=executor,
+            personal=personal,
             date=datetime.date.today(),
             quantity=float(amount)
         )
     
     obj = HoldingCashboxOperation.objects.create(
         executor = executor,
+        personal = personal,
         amount = amount,
-        note = note
+        note = note,
+        operation=operation
     )
 
     obj.full_clean()
@@ -91,11 +98,12 @@ def holding_cashbox_operation_create(
 
 def company_cashbox_operation_create(
     *, executor,
+    personal = None,
     company,
     office = None,
     amount: float, 
     note: str = None,
-    operation: str = INCOME
+    operation = INCOME
 ) -> CompanyCashboxOperation:
     if company is None:
         raise ValidationError({"detail": "Şirkət daxil edilməyib"})
@@ -110,11 +118,15 @@ def company_cashbox_operation_create(
         if cashbox is None:
             raise ValidationError({"detail": "Ofis kassa tapılmadı"})
         office_initial_balance = calculate_office_balance(office=office)
+        description_income=f"{office.name} ofis kassasına {float(amount)} AZN əlavə edildi"
+        description_expense=f"{office.name} ofis kassasından {float(amount)} AZN məxaric edildi"
     else:
         cashbox = CompanyCashbox.objects.filter(company=company).last()
         if cashbox is None:
             raise ValidationError({"detail": "Şirkət kassa tapılmadı"})
         company_initial_balance = calculate_company_balance(company=company)
+        description_income=f"{company.name} şirkət kassasına {float(amount)} AZN əlavə edildi"
+        description_expense=f"{company.name} şirkət kassasından {float(amount)} AZN məxaric edildi"
 
     if operation == INCOME:            
         cashbox.balance = cashbox.balance + amount
@@ -135,7 +147,7 @@ def company_cashbox_operation_create(
             office=office,
             company=office.company,
             operation_style="MƏDAXİL",
-            description=f"{office.name} ofis kassasına {float(amount)} AZN əlavə edildi",
+            description=description_income,
             initial_balance=initial_balance,
             subsequent_balance=subsequent_balance,
             company_initial_balance = company_initial_balance, 
@@ -143,6 +155,7 @@ def company_cashbox_operation_create(
             office_initial_balance=office_initial_balance,
             office_subsequent_balance=office_subsequent_balance,
             executor=executor,
+            personal=personal,
             date=datetime.date.today(),
             quantity=float(amount)
         )
@@ -169,7 +182,7 @@ def company_cashbox_operation_create(
             office=office,
             company=office.company,
             operation_style="MƏXARİC",
-            description=f"{office.name} ofis kassasından {float(amount)} AZN məxaric edildi",
+            description=description_expense,
             initial_balance=initial_balance,
             subsequent_balance=subsequent_balance,
             company_initial_balance = company_initial_balance, 
@@ -177,16 +190,19 @@ def company_cashbox_operation_create(
             office_initial_balance=office_initial_balance,
             office_subsequent_balance=office_subsequent_balance,
             executor=executor,
+            personal=personal,
             date=datetime.date.today(),
             quantity=float(amount)
         )
     
     obj = CompanyCashboxOperation.objects.create(
         executor = executor,
+        personal = personal,
         amount = amount,
         note = note,
         company = company,
-        office = office
+        office = office,
+        operation=operation
     )
 
     obj.full_clean()

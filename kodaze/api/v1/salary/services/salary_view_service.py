@@ -1,5 +1,5 @@
 from salary.models import SalaryView
-from datetime import date
+import datetime
 
 
 def salary_view_create(
@@ -9,7 +9,7 @@ def salary_view_create(
     amount: float = 0,
     note: str = None,
     final_salary: float = 0,
-    date: date = date.today(),
+    date: datetime.date = datetime.date.today(),
     commission_amount: float = 0
 ) -> SalaryView:
     obj = SalaryView.objects.create(

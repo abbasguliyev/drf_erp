@@ -11,7 +11,7 @@ class AbstractSalaryMethod(models.Model):
     employee = models.ForeignKey(USER, on_delete=models.CASCADE)
     amount = models.FloatField(default=0, blank=True)
     note = models.TextField(default="", null=True, blank=True)
-    date = models.DateField(default=django.utils.timezone.now, blank=True)
+    date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
 
     class Meta:
@@ -195,5 +195,6 @@ class GivenCommissionAfterSignContract(models.Model):
     contract = models.ForeignKey("contract.Contract", on_delete=models.CASCADE, related_name="given_commissions")
     amount = models.FloatField(default=0)
 
-# class SalaryViewExport(models.Model):
-#     file = models.FileField(upload_to="media/salary/%Y/%m/%d/")
+class SalaryViewExport(models.Model):
+    file_data = models.FileField(upload_to="media/salary/%Y/%m/%d/")
+    export_date =models.DateField(auto_now_add=True)

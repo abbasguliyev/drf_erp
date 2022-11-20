@@ -141,27 +141,9 @@ def commission_create(
     return commission
 
 
-def commission_update(id, **data) -> Commission:
-    commission = Commission.objects.get(pk=id)
-    print(commission)
-
-    if data.get("commission_name") is not None:
-        commission.commission_name = data.get("commission_name")
-
-    if data.get("for_office") is not None:
-        commission.for_office = data.get("for_office")
-
-    if data.get("cash") is not None:
-        commission.cash = data.get("cash")
-
-    if data.get("for_team") is not None:
-        commission.for_team = data.get("for_team")
-
-    if data.get("creditor_per_cent") is not None:
-        commission.creditor_per_cent = data.get("creditor_per_cent")
-
+def commission_update(instance, **data) -> Commission:
     if data.get("month_ranges") is not None:
-        month_ranges_str = data.get("month_ranges")
+        month_ranges_str = data.pop("month_ranges")
         if month_ranges_str is not None:
             month_ranges_list = month_ranges_str.split(',')
         else:
@@ -174,17 +156,16 @@ def commission_update(id, **data) -> Commission:
                 m_list.append(splited_list)
             for mr in m_list:
                 try:
-                    ci = CommissionInstallment.objects.get(month_range=MonthRange.objects.get(id=mr[0]), commissions=commission)
+                    ci = CommissionInstallment.objects.get(month_range=MonthRange.objects.get(id=mr[0]), commissions=instance)
                     ci.amount=mr[1]
                     ci.save()
                 except:
-                    new_ci = CommissionInstallment.objects.create(month_range=MonthRange.objects.get(id=mr[0]),
-                                                                  amount=mr[1])
+                    new_ci = CommissionInstallment.objects.create(month_range=MonthRange.objects.get(id=mr[0]), amount=mr[1])
                     new_ci.save()
-                    commission.installment.add(new_ci)
+                    instance.installment.add(new_ci)
 
     if data.get("sale_ranges") is not None:
-        sale_ranges_str = data.get("sale_ranges")
+        sale_ranges_str = data.pop("sale_ranges")
         if sale_ranges_str is not None:
             sale_ranges_list = sale_ranges_str.split(',')
         else:
@@ -198,13 +179,14 @@ def commission_update(id, **data) -> Commission:
 
             for sr in s_list:
                 try:
-                    cs = CommissionSaleRange.objects.get(sale_range=SaleRange.objects.get(id=sr[0]), commissions=commission)
+                    cs = CommissionSaleRange.objects.get(sale_range=SaleRange.objects.get(id=sr[0]), commissions=instance)
                     cs.amount = sr[1]
                     cs.sale_type = sr[2]
                     cs.save()
                 except:
-                    new_cs = CommissionSaleRange.objects.create(sale_range=SaleRange.objects.get(id=sr[0]),
-                                                                amount=sr[1], sale_type=sr[2])
+                    new_cs = CommissionSaleRange.objects.create(sale_range=SaleRange.objects.get(id=sr[0]), amount=sr[1], sale_type=sr[2])
                     new_cs.save()
-                    commission.for_sale_range.add(new_cs)
-    commission.save()
+                    instance.for_sale_range.add(new_cs)
+                    
+    obj = instance.update(**data)
+    return obj

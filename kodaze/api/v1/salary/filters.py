@@ -12,8 +12,7 @@ from salary.models import (
     PaySalary,
 )
 
-
-class AdvancePaymentFilter(django_filters.FilterSet):
+class DateYearMonthFilter(django_filters.FilterSet):
     date = django_filters.DateFilter(
         field_name='date', input_formats=["%d-%m-%Y"])
     date__gte = django_filters.DateFilter(
@@ -21,91 +20,64 @@ class AdvancePaymentFilter(django_filters.FilterSet):
     date__lte = django_filters.DateFilter(
         field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
+    year = django_filters.CharFilter(method="year_filter", label="year")
+    month = django_filters.CharFilter(method="month_filter", label="month")
+    
+    def year_filter(self, queryset, name, value):
+        qs = self.queryset.filter(Q(date__year=value))
+        return qs
+    def month_filter(self, queryset, name, value):
+        qs = self.queryset.filter(Q(date__month=value))
+        return qs
+
+
+class AdvancePaymentFilter(DateYearMonthFilter):
     class Meta:
         model = AdvancePayment
         fields = {
+            'employee': ['exact'],
             'employee__fullname': ['exact', 'icontains'],
-            'employee__position__name': ['exact', 'icontains'],
-            'employee__employee_status__status_name': ['exact', 'icontains'],
+            'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
         }
 
 
-class SalaryDeductionFilter(django_filters.FilterSet):
-    date = django_filters.DateFilter(
-        field_name='date', input_formats=["%d-%m-%Y"])
-    date__gte = django_filters.DateFilter(
-        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    date__lte = django_filters.DateFilter(
-        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-
+class SalaryDeductionFilter(DateYearMonthFilter):
     class Meta:
         model = SalaryDeduction
         fields = {
+            'employee': ['exact'],
             'employee__fullname': ['exact', 'icontains'],
-            'employee__position__name': ['exact', 'icontains'],
-            'employee__employee_status__status_name': ['exact', 'icontains'],
-
-            'amount': ['exact', 'gte', 'lte'],
-
+            'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
         }
 
-
-class SalaryPunishmentFilter(django_filters.FilterSet):
-    date = django_filters.DateFilter(
-        field_name='date', input_formats=["%d-%m-%Y"])
-    date__gte = django_filters.DateFilter(
-        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    date__lte = django_filters.DateFilter(
-        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-
+class SalaryPunishmentFilter(DateYearMonthFilter):
     class Meta:
         model = SalaryPunishment
         fields = {
+            'employee': ['exact'],
             'employee__fullname': ['exact', 'icontains'],
-            'employee__position__name': ['exact', 'icontains'],
-            'employee__employee_status__status_name': ['exact', 'icontains'],
-
-            'amount': ['exact', 'gte', 'lte'],
-
+            'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
         }
 
 
-class BonusFilter(django_filters.FilterSet):
-    date = django_filters.DateFilter(
-        field_name='date', input_formats=["%d-%m-%Y"])
-    date__gte = django_filters.DateFilter(
-        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    date__lte = django_filters.DateFilter(
-        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-
+class BonusFilter(DateYearMonthFilter):
     class Meta:
         model = Bonus
         fields = {
+            'employee': ['exact'],
             'employee__fullname': ['exact', 'icontains'],
-            'employee__position__name': ['exact', 'icontains'],
-            'employee__employee_status__status_name': ['exact', 'icontains'],
-
-            'amount': ['exact', 'gte', 'lte'],
-
+            'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
-            # 'date': ['exact', 'gte', 'lte'],
         }
 
-
-class SalaryViewFilter(django_filters.FilterSet):
-    date = django_filters.DateFilter(
-        field_name='date', input_formats=["%d-%m-%Y"])
-    date__gte = django_filters.DateFilter(
-        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    date__lte = django_filters.DateFilter(
-        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-    
+class SalaryViewFilter(DateYearMonthFilter):
     class Meta:
         model = SalaryView
         fields = {
+            'employee': ['exact'],
             'employee__fullname': ['exact', 'icontains'],
 
             'employee__office': ['exact'],
@@ -131,14 +103,7 @@ class SalaryViewFilter(django_filters.FilterSet):
         }
 
 
-class PaySalaryFilter(django_filters.FilterSet):
-    installment = django_filters.DateFilter(
-        field_name='installment', input_formats=["%d-%m-%Y"])
-    installment__gte = django_filters.DateFilter(
-        field_name='installment', lookup_expr='gte', input_formats=["%d-%m-%Y"])
-    installment__lte = django_filters.DateFilter(
-        field_name='installment', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-
+class PaySalaryFilter(DateYearMonthFilter):
     class Meta:
         model = PaySalary
         fields = {
@@ -146,8 +111,6 @@ class PaySalaryFilter(django_filters.FilterSet):
             'employee__id': ['exact', 'icontains'],
             'employee__position__name': ['exact', 'icontains'],
             'employee__employee_status__status_name': ['exact', 'icontains'],
-
             'amount': ['exact', 'gte', 'lte'],
-
             'note': ['exact', 'icontains'],
         }

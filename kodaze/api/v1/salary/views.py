@@ -20,7 +20,8 @@ from salary.models import (
     SalaryPunishment,
     SalaryView,
     PaySalary,
-    MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange
+    MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange,
+    SalaryViewExport
 )
 
 from holiday.models import EmployeeWorkingDay
@@ -38,7 +39,7 @@ from api.v1.salary.serializers import (
 
 from api.v1.account.serializers import UserSerializer
 
-from rest_framework import status, generics
+from rest_framework import status, generics, serializers
 
 from rest_framework.response import Response
 
@@ -54,6 +55,8 @@ from api.v1.salary.filters import (
     SalaryViewFilter,
     PaySalaryFilter,
 )
+
+from api.v1.salary.export_excell import export_salary_view
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -98,7 +101,7 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
             user = request.user
-            advancepayment_create(user, **serializer.validated_data)
+            advancepayment_create(executor=user, **serializer.validated_data)
             return Response({"detail": "Avans vermə əməliyyatı yerinə yetirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -292,7 +295,7 @@ class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
             user = request.user
-            salary_pay_create(user, **serializer.validated_data)
+            salary_pay_create(executor=user, **serializer.validated_data, func_name="salary_pay_create")
             return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -305,10 +308,9 @@ class PaySalaryDetailAPIView(generics.RetrieveAPIView):
 
 
 # ********************************** SalaryView get post put delete **********************************
-class SalaryViewListCreateAPIView(generics.ListAPIView):
+class SalaryViewListAPIView(generics.ListAPIView):
     queryset = SalaryView.objects.select_related('employee').all()
     serializer_class = SalaryViewSerializer
-    filter_backends = [DjangoFilterBackend]
     filterset_class = SalaryViewFilter
     permission_classes = [salary_permissions.SalaryViewPermissions]
 
@@ -329,7 +331,6 @@ class SalaryViewListCreateAPIView(generics.ListAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-
             return self.get_paginated_response(serializer.data)
 
         return Response(serializer.data)
@@ -345,6 +346,21 @@ class SalaryViewDetailAPIView(generics.RetrieveDestroyAPIView):
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
+
+class ExportData(generics.CreateAPIView):
+    class InputSerializer(serializers.Serializer):
+        data = serializers.JSONField()
+
+    queryset = SalaryViewExport.objects.all()
+    serializer_class = InputSerializer
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if (serializer.is_valid()):
+            result = export_salary_view(**serializer.validated_data)
+            data = result.path
+            return Response({'file': f"{data}"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 # ********************************** Commission get post put delete **********************************
 class MonthRangeListCreateAPIView(generics.ListCreateAPIView):
@@ -448,72 +464,9 @@ class CommissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            commission_update(instance.id, **serializer.validated_data)
+            commission_update(instance, **serializer.validated_data)
             return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-# import xlwt
-
-# from django.http import HttpResponse
-# from django.http import FileResponse
-# from rest_framework.views import APIView
-
-
-# class ExportData(APIView):
-    
-#     def post(self, request, format=None):
-#         response = HttpResponse(content_type='application/ms-excel')
-#         response['Content-Disposition'] = 'attachment; filename="users.xls"'
-
-#         wb = xlwt.Workbook(encoding='utf-8')
-#         ws = wb.add_sheet('Users')
-
-#         # Sheet header, first row
-#         row_num = 0
-
-#         font_style = xlwt.XFStyle()
-#         font_style.font.bold = True
-
-#         columns = ['Fullname', 'Company', 'Office', 'Position']
-
-#         for col_num in range(len(columns)):
-#             ws.write(row_num, col_num, columns[col_num], font_style)
-
-#         # Sheet body, remaining rows
-#         font_style = xlwt.XFStyle()
-#         print(f"{request=}")
-#         print(f"{request.data=}")
-#         rows = request.data
-#         for row in rows:
-#             row_num += 1
-#             row_list = list()
-#             try:
-#                 fullname = row.get('employee').get('fullname')
-#             except:
-#                 fullname = None
-#             try:
-#                 company = row.get('company').get('name')
-#             except:
-#                 company = None
-#             try:
-#                 office = row.get('office').get('name')
-#             except:
-#                 office = None
-#             try:
-#                 position = row.get('position').get('name')
-#             except:
-#                 position = None
-#             row_list.append(fullname)
-#             row_list.append(company)
-#             row_list.append(office)
-#             row_list.append(position)
-#             for col_num in range(len(row_list)):
-#                 ws.write(row_num, col_num, row_list[col_num], font_style)
-
-#         wb.save(response)
-#         path = "/home/abbas/Workspace/kodazeERP"
-#         return FileResponse(filename=f"{path}/{wb}", as_attachment=True)

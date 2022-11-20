@@ -1,13 +1,13 @@
-from datetime import date
 import json
 import os
-from django.contrib.auth import get_user_model
 from account import MONTHLY
 from account.models import Customer, EmployeeStatus, Region
 from company.models import Holding
 from rest_framework.exceptions import ValidationError
 from core.settings import BASE_DIR
-from api.v1.salary.decorators import change_final_salary_when_update_user_const_salary
+from salary.models import SalaryView
+import datetime
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -15,8 +15,8 @@ User = get_user_model()
 def create_user(
         *, email=None,
         fullname: str,
-        start_date_of_work: date = date.today(),
-        dismissal_date: date = None,
+        start_date_of_work: datetime.date = datetime.date.today(),
+        dismissal_date: datetime.date = None,
         phone_number_1: str,
         phone_number_2: str = None,
         photo_ID,
@@ -100,8 +100,29 @@ def create_user(
 
     return user
 
-@change_final_salary_when_update_user_const_salary
 def update_user(id, **data) -> User:
+    """
+    User update funksiyası. Əgər sabit əməkhaqqı dəyişilərsə aşağıdakı if şərti işə düşəcək və
+    işçinin maaş kartında yekun əməkhaqqı dəyişikliyə uyğun olaraq yenilənəcək
+    """
+    if data['salary'] is not None:
+        salary = data['salary']
+        user = User.objects.get(pk=id)
+        difference = 0
+        old_salary = user.salary
+
+        now = datetime.date.today()
+        this_month = f"{now.year}-{now.month}-{1}"
+        salary_view = SalaryView.objects.get(employee=user, date=this_month)
+
+        if salary > old_salary:
+            difference = salary - old_salary
+            salary_view.final_salary = salary_view.final_salary + difference
+            salary_view.save()
+        elif salary < old_salary:
+            difference = old_salary - salary
+            salary_view.final_salary = salary_view.final_salary - difference
+            salary_view.save()
     obj = User.objects.filter(pk=id).update(**data)
     return obj
 

@@ -15,13 +15,26 @@ Welcome to Kodaze CRM's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: User:
+   :caption: İnsan Resursları:
 
-   modules/account/user.rst
-   modules/account/employee_status.rst
-   modules/account/region.rst
-   modules/account/customer.rst
-   modules/account/customer-note.rst
+   modules/insan_resurslari/user.rst
+   modules/insan_resurslari/employee_status.rst
+   modules/insan_resurslari/region.rst
+   modules/insan_resurslari/customer.rst
+   modules/insan_resurslari/customer-note.rst
+   modules/insan_resurslari/commission.rst
+   modules/insan_resurslari/month_range.rst
+   modules/insan_resurslari/sale_range.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Maliyyə və Kredit:
+   
+   modules/maliyye_ve_kredit/salary_view.rst
+   modules/maliyye_ve_kredit/balance.rst
+   modules/maliyye_ve_kredit/transfer.rst
+   modules/maliyye_ve_kredit/cashflow.rst
+
 
 .. toctree::
    :maxdepth: 2
@@ -36,15 +49,6 @@ Welcome to Kodaze CRM's documentation!
    modules/company/team.rst
    modules/company/permission_for_position.rst
    modules/company/logo.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: CashBox:
-  
-   modules/cashbox/holding_cashbox.rst
-   modules/cashbox/company_cashbox.rst
-   modules/cashbox/office_cashbox.rst
-   modules/cashbox/cashflow.rst
 
 .. toctree::
    :maxdepth: 2
@@ -82,20 +86,6 @@ Welcome to Kodaze CRM's documentation!
   
    modules/contract/contract.rst
    modules/contract/installment.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Salary:
-
-   modules/salary/commission.rst
-   modules/salary/month_range.rst
-   modules/salary/sale_range.rst
-   modules/salary/advancedpayment.rst
-   modules/salary/bonus.rst
-   modules/salary/salary_deduction.rst
-   modules/salary/salary_punishment.rst
-   modules/salary/salary_view.rst
-   modules/salary/pay_salary.rst
 
    
 

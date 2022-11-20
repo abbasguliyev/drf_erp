@@ -9,7 +9,8 @@ from .models import (
     MonthRange,
     CommissionSaleRange,
     CommissionInstallment,
-    Commission
+    Commission,
+    SalaryViewExport
 )
 # Register your models here.
 
@@ -61,6 +62,10 @@ class CommissionInstallmentAdmin(admin.ModelAdmin):
 @admin.register(Bonus)
 class BonusAdmin(admin.ModelAdmin):
     list_display = ('id', 'employee', 'amount', 'date')
+
+@admin.register(SalaryViewExport)
+class SalaryViewExportAdmin(admin.ModelAdmin):
+    list_display = ('id', 'file_data', 'export_date')
     
 admin.site.register(AdvancePayment)
 admin.site.register(SalaryDeduction)

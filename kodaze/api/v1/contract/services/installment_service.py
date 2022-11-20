@@ -16,8 +16,6 @@ from api.v1.cashbox.utils import (
 )
 
 from api.v1.contract.utils.contract_utils import (
-    c_income, 
-    expense,
     pdf_create_when_contract_updated
 )
 
@@ -86,7 +84,7 @@ def installment_update(self, request, *args, **kwargs):
         office_initial_balance = calculate_office_balance(office=office)
 
         note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}. Borcu tam bağlandı"
-        c_income(cashbox, float(amount_for_month), group_leader, note)
+        # c_income(cashbox, float(amount_for_month), group_leader, note)
 
         subsequent_balance = calculate_holding_total_balance()
         office_subsequent_balance = calculate_office_balance(office=office)
@@ -207,7 +205,7 @@ def installment_update(self, request, *args, **kwargs):
         office_initial_balance = calculate_office_balance(office=office)
 
         note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}, şərtli ödəmə - {current_installment.conditional_payment_status}"
-        c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
+        # c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
         remaining_debt = contract.remaining_debt
         remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
         contract.remaining_debt = remaining_debt
@@ -456,7 +454,7 @@ def installment_update(self, request, *args, **kwargs):
                     office_initial_balance = calculate_office_balance(office=office)
                     
                     note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}. kredit ödəməsi"
-                    c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
+                    # c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
 
                     current_installment.payment_status = "ÖDƏNƏN"
                     current_installment.save()
@@ -592,7 +590,7 @@ def installment_update(self, request, *args, **kwargs):
             office_initial_balance = calculate_office_balance(office=office)
             
             note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}. kredit ödəməsi"
-            c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
+            # c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
 
             subsequent_balance = calculate_holding_total_balance()
             office_subsequent_balance = calculate_office_balance(office=office)

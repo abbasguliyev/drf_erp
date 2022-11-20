@@ -27,7 +27,6 @@ import pandas as pd
 
 from rest_framework.generics import get_object_or_404
 
-from api.v1.contract.utils.contract_utils import c_income
 from api.v1.cashbox.utils import (
     calculate_holding_total_balance, 
     cashflow_create,
@@ -215,7 +214,7 @@ def service_update(self, request, *args, **kwargs):
                 office_initial_balance = calculate_office_balance(office=office)
 
                 note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
-                c_income(cashbox, s.amount_to_be_paid, user, note)
+                # c_income(cashbox, s.amount_to_be_paid, user, note)
                 subsequent_balance = calculate_holding_total_balance()
                 office_subsequent_balance = calculate_office_balance(office=office)
                 cashflow_create(
@@ -281,7 +280,7 @@ def service_payment_update(self, request, *args, **kwargs):
                     office_initial_balance = calculate_office_balance(office=contract.office)
                     
                     note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
-                    c_income(cashbox, service_payment.amount_to_be_paid, user, note)
+                    # c_income(cashbox, service_payment.amount_to_be_paid, user, note)
                     creditorun_serviceden_alacagi_amount = (float(service_payment.amount_to_be_paid) * int(prim_percent)) / 100
 
                     subsequent_balance = calculate_holding_total_balance()
