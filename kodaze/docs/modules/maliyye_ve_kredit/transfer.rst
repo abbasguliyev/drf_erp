@@ -3,12 +3,12 @@ Transfer
 ########
 
 .. image:: _static/ss20.png
-   :width: 1000px
-   :height: 200px
+   :width: 300px
+   :height: 100px
    :align: center
 
 .. image:: _static/ss22.png
-   :width: 1500px
+   :width: 800px
    :height: 300px
    :align: center
 
@@ -20,8 +20,8 @@ Holdinq Şirkət arası Transfer
 -----------------------------
 
 .. image:: _static/ss23.png
-   :width: 1500px
-   :height: 300px
+   :width: 2000px
+   :height: 500px
    :align: center
 
 .. image:: _static/ss24.png
@@ -38,7 +38,7 @@ Holdinq Şirkət arası Transfer
         - "receiving_company_id" -> nullable, Qəbul edən şirkət - Company id
             - Qəbul edən fieldinə şirkət id-si qeyd edilərsə holdingdən həmin şirkətə transfer əməliyyatı edilir.
             - Şirkətlərin id-ləri üçün endpoint: "http://localhost:8000/api/v1/company/?is_active=true"
-        - "transfer_amount" -> required,transfer məbləği - float
+        - "transfer_amount" -> required, transfer məbləği - float
         - "transfer_note" -> nullable, transfer qeydi - str
     - sending_company_id və receiving_company_id-dən yalnız 1 göndərilməlidir, 2-si bir yerdə göndərilə bilməz.
 
@@ -79,8 +79,8 @@ Holdinq Şirkət arası Transfer
 --------------------------
 
 .. image:: _static/ss26.png
-   :width: 1500px
-   :height: 300px
+   :width: 2000px
+   :height: 100px
    :align: center
 
 .. image:: _static/ss27.png

@@ -81,40 +81,18 @@ class SalaryViewSerializer(DynamicFieldsCategorySerializer):
     def get_extra_data(self, instance):
         month = instance.date.month
         year = instance.date.year
-        # qs = SalaryView.objects.filter(employee=instance.employee, date__month=month, date__year=year).aggregate(
-        #     total_advancepayment=Sum('employee__advancepayment__amount', filter=Q(
-        #         employee__advancepayment__employee=instance.employee, employee__advancepayment__date__month=month, employee__advancepayment__date__year=year)),
-        #     total_bonus=Sum('employee__bonus__amount', filter=Q(employee__bonus__employee=instance.employee,
-        #                     employee__bonus__date__month=month, employee__bonus__date__year=year)),
-        #     total_salarydeduction=Sum('employee__salarydeduction__amount', filter=Q(
-        #         employee__salarydeduction__employee=instance.employee, employee__salarydeduction__date__month=month, employee__salarydeduction__date__year=year)),
-        #     total_salarypunishment=Sum('employee__salarypunishment__amount', filter=Q(
-        #         employee__salarypunishment__employee=instance.employee, employee__salarypunishment__date__month=month, employee__salarypunishment__date__year=year)),
-        #     total_working_day=Sum('employee__working_days__working_days_count', filter=Q(
-        #         employee__working_days__employee=instance.employee, employee__working_days__date=instance.date)),
-        # )
-        # if qs.get("total_advancepayment") is None:
-        #     qs['total_advancepayment'] = 0
-        # if qs.get("total_bonus") is None:
-        #     qs['total_bonus'] = 0
-        # if qs.get("total_salarydeduction") is None:
-        #     qs['total_salarydeduction'] = 0
-        # if qs.get("total_salarypunishment") is None:
-        #     qs['total_salarypunishment'] = 0
-        # if qs.get("total_working_day") is None:
-        #     qs['total_working_day'] = 0
 
         qs = dict()
         qss = SalaryView.objects.filter(
             employee=instance.employee, date__month=month, date__year=year)
         total_advancepayment = qss.aggregate(total_advancepayment=Sum('employee__advancepayment__amount', filter=Q(
-            employee__advancepayment__employee=instance.employee, employee__advancepayment__date__month=month, employee__advancepayment__date__year=year)))
+            employee__advancepayment__employee=instance.employee, employee__advancepayment__salary_date__month=month, employee__advancepayment__salary_date__year=year)))
         total_bonus = qss.aggregate(total_bonus=Sum('employee__bonus__amount', filter=Q(
-            employee__bonus__employee=instance.employee, employee__bonus__date__month=month, employee__bonus__date__year=year)))
+            employee__bonus__employee=instance.employee, employee__bonus__salary_date__month=month, employee__bonus__salary_date__year=year)))
         total_salarydeduction = qss.aggregate(total_salarydeduction=Sum('employee__salarydeduction__amount', filter=Q(
-            employee__salarydeduction__employee=instance.employee, employee__salarydeduction__date__month=month, employee__salarydeduction__date__year=year)))
+            employee__salarydeduction__employee=instance.employee, employee__salarydeduction__salary_date__month=month, employee__salarydeduction__salary_date__year=year)))
         total_salarypunishment = qss.aggregate(total_salarypunishment=Sum('employee__salarypunishment__amount', filter=Q(
-            employee__salarypunishment__employee=instance.employee, employee__salarypunishment__date__month=month, employee__salarypunishment__date__year=year)))
+            employee__salarypunishment__employee=instance.employee, employee__salarypunishment__salary_date__month=month, employee__salarypunishment__salary_date__year=year)))
         total_working_day = qss.aggregate(total_working_day=Sum('employee__working_days__working_days_count', filter=Q(
             employee__working_days__employee=instance.employee, employee__working_days__date=instance.date)))
 

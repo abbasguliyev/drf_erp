@@ -79,20 +79,8 @@ class CashFlow(models.Model):
     office = models.ForeignKey('company.Office', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     customer = models.ForeignKey('account.Customer', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     personal = models.ForeignKey(USER, on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flow_personals")
-    
     description = models.TextField(null=True, blank=True)
-    initial_balance = models.FloatField(default=0)
-    subsequent_balance = models.FloatField(default=0)
-
-    holding_initial_balance = models.FloatField(default=0)
-    holding_subsequent_balance = models.FloatField(default=0)
-    
-    company_initial_balance = models.FloatField(default=0)
-    company_subsequent_balance = models.FloatField(default=0)
-    
-    office_initial_balance = models.FloatField(default=0)
-    office_subsequent_balance = models.FloatField(default=0)
-    
+    balance = models.FloatField(default=0)
     executor = models.ForeignKey(USER, related_name="cash_flows", on_delete=models.CASCADE, null=True, blank=True)
     operation_style = models.CharField(max_length=100, choices=OPERATION_STYLE_CHOICE, default=None, null=True, blank=True)
     quantity = models.FloatField(default=0)

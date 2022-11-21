@@ -13,6 +13,7 @@ class AbstractSalaryMethod(models.Model):
     note = models.TextField(default="", null=True, blank=True)
     date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
+    salary_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -120,8 +121,6 @@ class AdvancePayment(AbstractSalaryMethod):
 
 
 class PaySalary(AbstractSalaryMethod):
-    salary_date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
-
     class Meta:
         ordering = ("pk",)
         default_permissions = []
@@ -170,6 +169,8 @@ class Bonus(AbstractSalaryMethod):
 
 
 class SalaryView(AbstractSalaryMethod):
+    salary_date = None
+    
     employee = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="employee_salary_views")
     sale_quantity = models.PositiveBigIntegerField(default=0, blank=True)
     sales_amount = models.FloatField(default=0, blank=True)

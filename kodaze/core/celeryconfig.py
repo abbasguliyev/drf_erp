@@ -62,16 +62,7 @@ app.conf.beat_schedule = {
         "task": "work_day_creater_office_task",
         "schedule": crontab(0, 0, '*', day_of_month="15"),
     },
-
-    "work_day_creater_department_task_1": {
-        "task": "work_day_creater_department_task",
-        "schedule": crontab(0, 0, '*', day_of_month="1"),
-    },
-    "work_day_creater_department_task_15": {
-        "task": "work_day_creater_department_task",
-        "schedule": crontab(0, 0, '*', day_of_month="15"),
-    },
-
+    
     "work_day_creater_team_task_1": {
         "task": "work_day_creater_team_task",
         "schedule": crontab(0, 0, '*', day_of_month="1"),

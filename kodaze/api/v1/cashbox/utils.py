@@ -41,18 +41,11 @@ def cashflow_create(
     date=datetime.date.today(), 
     operation_style=None, 
     description=None, 
-    initial_balance=0, 
-    subsequent_balance=0, 
     quantity=0, 
     executor=None,
     customer=None,
     personal=None,
-    holding_initial_balance=0,
-    holding_subsequent_balance=0,
-    company_initial_balance=0,
-    company_subsequent_balance=0,
-    office_initial_balance=0,
-    office_subsequent_balance=0,
+    balance=0
 ):
     """
     Pul axinlarini create eden funksiya
@@ -65,17 +58,10 @@ def cashflow_create(
         date=date,
         operation_style=operation_style,
         description=description,
-        initial_balance=initial_balance,
-        subsequent_balance=subsequent_balance,
         executor=executor,
         personal=personal,
         customer=customer,
-        holding_initial_balance=holding_initial_balance,
-        holding_subsequent_balance=holding_subsequent_balance,
-        company_initial_balance=company_initial_balance,
-        company_subsequent_balance=company_subsequent_balance,
-        office_initial_balance=office_initial_balance,
-        office_subsequent_balance=office_subsequent_balance,
-        quantity=quantity
+        quantity=quantity,
+        balance=balance
     )
     return cashflow.save()

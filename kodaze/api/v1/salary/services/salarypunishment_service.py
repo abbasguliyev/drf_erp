@@ -9,7 +9,8 @@ def salarypunishment_create(
         *, employee,
         amount: float = None,
         note: str = None,
-        date: datetime.date = None
+        date: datetime.date = None,
+        salary_date: datetime.date = None
 ) -> SalaryPunishment:
     """
     İşçinin maaşından cərimə tutmaq funksiyası
@@ -25,7 +26,8 @@ def salarypunishment_create(
         employee=employee,
         amount=amount,
         note=note,
-        date=date
+        date=date,
+        salary_date=salary_date
     )
 
     salary_punishment.full_clean()

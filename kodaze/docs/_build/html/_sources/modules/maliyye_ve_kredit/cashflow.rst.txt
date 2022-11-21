@@ -11,13 +11,13 @@ Kassa Hərəkətləri
 
 .. image:: _static/ss33.png
    :width: 1000px
-   :height: 200px
+   :height: 250px
    :alt: melumat
    :align: center
 
 .. image:: _static/ss34.png
    :width: 1000px
-   :height: 200px
+   :height: 250px
    :alt: melumat
    :align: center
 
@@ -40,8 +40,8 @@ Kassa Hərəkətləri
     - office_subsequent_balance - (Ofis Sonrakı balans - Float)
 
 .. image:: _static/ss35.png
-   :width: 1000px
-   :height: 200px
+   :width: 1500px
+   :height: 250px
    :alt: melumat
    :align: center
 
@@ -71,41 +71,55 @@ Kassa Hərəkətləri
 - Şirkət Əməliyyatı etmək
     - endpoint: "http://localhost:8000/api/v1/cashbox/company-cashbox-operation/"
     - Json-da göndərilməli olan datalar:
-        - "sending_company_id" -> nullable, Göndərən şirkət - Company id
-            - Göndərən fieldinə şirkət id-si qeyd edilərsə həmin şirkətdən holdingə transfer əməliyyatı edilir.
-            - Şirkətlərin id-ləri üçün endpoint: "http://localhost:8000/api/v1/company/?is_active=true"
-        - "receiving_company_id" -> nullable, Qəbul edən şirkət - Company id
-            - Qəbul edən fieldinə şirkət id-si qeyd edilərsə holdingdən həmin şirkətə transfer əməliyyatı edilir.
-            - Şirkətlərin id-ləri üçün endpoint: "http://localhost:8000/api/v1/company/?is_active=true"
-        - "transfer_amount" -> required,transfer məbləği - float
-        - "transfer_note" -> nullable, transfer qeydi - str
-    - sending_company_id və receiving_company_id-dən yalnız 1 göndərilməlidir, 2-si bir yerdə göndərilə bilməz.
+        - "company_id" -> required, Şirkət id - Company İD
+            - şirkət endpointi: "http://localhost:8000/api/v1/company/?is_active=true"
+        - "office_id" -> nullable, Ofis id - Office İD
+            - əgər daxil edilməzsə əməliyyat şirkət kassasına ediləcək, daxil edilərsə isə ofis kassasına ediləcək
+            - ofis endpointi: "http://localhost:8000/api/v1/company/offices/?company=&company__id=&company__name=&company__name__icontains=&is_active=true"
+        - "amount" -> required, məbləğ - float
+        - "note" -> nullable, qeyd - string
+        - "operation" -> required, əməliyyat növü (MƏDAXİL, MƏXARİC)
+        - "personal_id" -> nullable, İşçi - User id, mühasibin əməliyyat apardığı işçidir.
+            - işçilərin enpointi: "http://localhost:8000/api/v1/users/?is_superuser=false&is_active=true"
 
 .. code:: json
 
   {
-    "sending_company_id": 4,
-    "receiving_company_id": null,
-    "transfer_amount": 100,
-    "transfer_note": "test company to holding transfer"
+    "company_id": 4,
+    "office_id": 2,
+    "amount": 150,
+    "note": null,
+    "operation": "MƏDAXİL",
+    "personal_id": null
   }
 
-- Bütün Şirkət Əməliyyatlarına bax
-    - endpoint: "http://localhost:8000/api/v1/cashbox/company-cashbox-operation/"
-    - Json-da gələn data:
-        - "executor" -> icra edən işçi - User
-        - "sending_company" -> Göndərən şirkət - Company
-        - "receiving_company" -> Qəbul edən şirkət - Company
-        - "transfer_amount" -> transfer məbləği - float
-        - "transfer_date" -> Transfer tarixi - Date
-        - "transfer_note" -> Transfer qeydi - String
-        - "recipient_subsequent_balance" -> Qəbul edən son balansı - float
-        - "sender_subsequent_balance" -> Göndərən son balansı - float
++-----------------+
+|Holdinq Əməliyyat|
++-----------------+
 
-.. image:: _static/ss25.png
-   :width: 300px
-   :height: 200px
+Holdinq Əməliyyat
+-----------------
+
+.. image:: _static/ss38.png
+   :width: 1500px
+   :height: 350px
+   :alt: melumat
    :align: center
 
-- Filter:
-    - "http://localhost:8000/api/v1/cashbox/company-cashbox-operation/?executor__fullname=&executor__fullname__icontains=&executor__position__name=&executor__position__name__icontains=&executor__employee_status__status_name=&executor__employee_status__status_name__icontains=&sending_company__name=&sending_company__name__icontains=&receiving_company__name=&receiving_company__name__icontains=&recipient_subsequent_balance=&sender_subsequent_balance=&transfer_amount=&transfer_amount__gte=&transfer_amount__lte=&transfer_note=&transfer_note__icontains=&transfer_date=&transfer_date__gte=&transfer_date__lte="
+- Holdinq Əməliyyatı etmək
+    - endpoint: "http://localhost:8000/api/v1/cashbox/holding-cashbox-operation/"
+    - Json-da göndərilməli olan datalar:
+        - "amount" -> required, məbləğ - float
+        - "note" -> nullable, qeyd - string
+        - "operation" -> required, əməliyyat növü (MƏDAXİL, MƏXARİC)
+        - "personal_id" -> nullable, İşçi - User id, mühasibin əməliyyat apardığı işçidir.
+            - işçilərin enpointi: "http://localhost:8000/api/v1/users/?is_superuser=false&is_active=true"
+
+.. code:: json
+
+  {
+    "personal_id": null,
+    "amount": 1000,
+    "note": "test",
+    "operation": "MƏDAXİL"
+  }

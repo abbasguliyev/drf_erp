@@ -52,7 +52,7 @@ Welcome to Kodaze CRM's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Produc:
+   :caption: Product:
   
    modules/product/product.rst
    modules/product/category.rst

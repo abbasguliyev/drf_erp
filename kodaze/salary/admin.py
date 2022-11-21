@@ -3,6 +3,7 @@ from .models import (
     AdvancePayment, 
     Bonus, 
     SalaryDeduction,
+    SalaryPunishment,
     SalaryView,
     PaySalary,
     SaleRange,
@@ -37,6 +38,43 @@ class SalaryViewAdmin(admin.ModelAdmin):
         "note",
     )
 
+class SalaryOprAdmin(admin.ModelAdmin):
+    list_display = ('id', 'employee', 'amount', 'date', 'salary_date', 'is_paid')
+    list_filter = [
+        "employee",
+        "date", 
+        'salary_date',
+        'is_paid'
+    ]
+
+    class Meta:
+        abstract = True
+
+@admin.register(SalaryViewExport)
+class SalaryViewExportAdmin(admin.ModelAdmin):
+    list_display = ('id', 'file_data', 'export_date')
+    
+@admin.register(AdvancePayment)
+class AdvancePaymentAdmin(SalaryOprAdmin):
+    pass
+
+@admin.register(SalaryDeduction)
+class SalaryDeductionAdmin(SalaryOprAdmin):
+    pass
+
+@admin.register(SalaryPunishment)
+class SalaryPunishmentAdmin(SalaryOprAdmin):
+    pass
+
+@admin.register(Bonus)
+class BonusAdmin(SalaryOprAdmin):
+    pass
+
+@admin.register(PaySalary)
+class PaySalaryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'employee', 'amount', 'date', 'salary_date')
+
+
 @admin.register(Commission)
 class CommissionAdmin(admin.ModelAdmin):
     list_display = ('id', 'commission_name', 'for_office', 'cash', 'for_team')
@@ -58,15 +96,3 @@ class CommissionSaleRangeAdmin(admin.ModelAdmin):
 @admin.register(CommissionInstallment)
 class CommissionInstallmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'month_range', 'amount')
-
-@admin.register(Bonus)
-class BonusAdmin(admin.ModelAdmin):
-    list_display = ('id', 'employee', 'amount', 'date')
-
-@admin.register(SalaryViewExport)
-class SalaryViewExportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'file_data', 'export_date')
-    
-admin.site.register(AdvancePayment)
-admin.site.register(SalaryDeduction)
-admin.site.register(PaySalary)

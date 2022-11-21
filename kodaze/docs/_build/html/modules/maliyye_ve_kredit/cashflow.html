@@ -17,6 +17,8 @@
     <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Holding (Holdinq)" href="../company/holding.html" />
+    <link rel="prev" title="Transfer" href="transfer.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -43,8 +45,8 @@
 </table>
 <section id="id1">
 <h2>Kassa Hərəkətləri<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss33.png"><img alt="melumat" class="align-center" src="../../_images/ss33.png" style="width: 1000px; height: 200px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss34.png"><img alt="melumat" class="align-center" src="../../_images/ss34.png" style="width: 1000px; height: 200px;" /></a>
+<a class="reference internal image-reference" href="../../_images/ss33.png"><img alt="melumat" class="align-center" src="../../_images/ss33.png" style="width: 1000px; height: 250px;" /></a>
+<a class="reference internal image-reference" href="../../_images/ss34.png"><img alt="melumat" class="align-center" src="../../_images/ss34.png" style="width: 1000px; height: 250px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Jsonda gələn data:</dt><dd><ul>
@@ -69,7 +71,7 @@
 </dl>
 </li>
 </ul>
-<a class="reference internal image-reference" href="../../_images/ss35.png"><img alt="melumat" class="align-center" src="../../_images/ss35.png" style="width: 1000px; height: 200px;" /></a>
+<a class="reference internal image-reference" href="../../_images/ss35.png"><img alt="melumat" class="align-center" src="../../_images/ss35.png" style="width: 1500px; height: 250px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Bütün Kassa Hərəkətləri</dt><dd><ul>
@@ -110,74 +112,92 @@
 <li><dl class="simple">
 <dt>Json-da göndərilməli olan datalar:</dt><dd><ul>
 <li><dl class="simple">
-<dt>“sending_company_id” -&gt; nullable, Göndərən şirkət - Company id</dt><dd><ul>
-<li><p>Göndərən fieldinə şirkət id-si qeyd edilərsə həmin şirkətdən holdingə transfer əməliyyatı edilir.</p></li>
-<li><p>Şirkətlərin id-ləri üçün endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/company/?is_active=true">http://localhost:8000/api/v1/company/?is_active=true</a>”</p></li>
+<dt>“company_id” -&gt; required, Şirkət id - Company İD</dt><dd><ul>
+<li><p>şirkət endpointi: “<a class="reference external" href="http://localhost:8000/api/v1/company/?is_active=true">http://localhost:8000/api/v1/company/?is_active=true</a>”</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>“receiving_company_id” -&gt; nullable, Qəbul edən şirkət - Company id</dt><dd><ul>
-<li><p>Qəbul edən fieldinə şirkət id-si qeyd edilərsə holdingdən həmin şirkətə transfer əməliyyatı edilir.</p></li>
-<li><p>Şirkətlərin id-ləri üçün endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/company/?is_active=true">http://localhost:8000/api/v1/company/?is_active=true</a>”</p></li>
+<dt>“office_id” -&gt; nullable, Ofis id - Office İD</dt><dd><ul>
+<li><p>əgər daxil edilməzsə əməliyyat şirkət kassasına ediləcək, daxil edilərsə isə ofis kassasına ediləcək</p></li>
+<li><p>ofis endpointi: “<a class="reference external" href="http://localhost:8000/api/v1/company/offices/?company=&amp;company__id=&amp;company__name=&amp;company__name__icontains=&amp;is_active=true">http://localhost:8000/api/v1/company/offices/?company=&amp;company__id=&amp;company__name=&amp;company__name__icontains=&amp;is_active=true</a>”</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p>“transfer_amount” -&gt; required,transfer məbləği - float</p></li>
-<li><p>“transfer_note” -&gt; nullable, transfer qeydi - str</p></li>
+<li><p>“amount” -&gt; required, məbləğ - float</p></li>
+<li><p>“note” -&gt; nullable, qeyd - string</p></li>
+<li><p>“operation” -&gt; required, əməliyyat növü (MƏDAXİL, MƏXARİC)</p></li>
+<li><dl class="simple">
+<dt>“personal_id” -&gt; nullable, İşçi - User id, mühasibin əməliyyat apardığı işçidir.</dt><dd><ul>
+<li><p>işçilərin enpointi: “<a class="reference external" href="http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true">http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true</a>”</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p>sending_company_id və receiving_company_id-dən yalnız 1 göndərilməlidir, 2-si bir yerdə göndərilə bilməz.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;sending_company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;receiving_company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;transfer_amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;transfer_note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test company to holding transfer&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;office_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">150</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;operation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MƏDAXİL&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;personal_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Holdinq Əməliyyat</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="holdinq-mliyyat">
+<h2>Holdinq Əməliyyat<a class="headerlink" href="#holdinq-mliyyat" title="Permalink to this heading">¶</a></h2>
+<a class="reference internal image-reference" href="../../_images/ss38.png"><img alt="melumat" class="align-center" src="../../_images/ss38.png" style="width: 1500px; height: 350px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
-<dt>Bütün Şirkət Əməliyyatlarına bax</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/company-cashbox-operation/">http://localhost:8000/api/v1/cashbox/company-cashbox-operation/</a>”</p></li>
+<dt>Holdinq Əməliyyatı etmək</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/holding-cashbox-operation/">http://localhost:8000/api/v1/cashbox/holding-cashbox-operation/</a>”</p></li>
 <li><dl class="simple">
-<dt>Json-da gələn data:</dt><dd><ul>
-<li><p>“executor” -&gt; icra edən işçi - User</p></li>
-<li><p>“sending_company” -&gt; Göndərən şirkət - Company</p></li>
-<li><p>“receiving_company” -&gt; Qəbul edən şirkət - Company</p></li>
-<li><p>“transfer_amount” -&gt; transfer məbləği - float</p></li>
-<li><p>“transfer_date” -&gt; Transfer tarixi - Date</p></li>
-<li><p>“transfer_note” -&gt; Transfer qeydi - String</p></li>
-<li><p>“recipient_subsequent_balance” -&gt; Qəbul edən son balansı - float</p></li>
-<li><p>“sender_subsequent_balance” -&gt; Göndərən son balansı - float</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss25.png"><img alt="../../_images/ss25.png" class="align-center" src="../../_images/ss25.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
+<dt>Json-da göndərilməli olan datalar:</dt><dd><ul>
+<li><p>“amount” -&gt; required, məbləğ - float</p></li>
+<li><p>“note” -&gt; nullable, qeyd - string</p></li>
+<li><p>“operation” -&gt; required, əməliyyat növü (MƏDAXİL, MƏXARİC)</p></li>
 <li><dl class="simple">
-<dt>Filter:</dt><dd><ul>
-<li><p>“<a class="reference external" href="http://localhost:8000/api/v1/cashbox/company-cashbox-operation/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;sending_company__name=&amp;sending_company__name__icontains=&amp;receiving_company__name=&amp;receiving_company__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=">http://localhost:8000/api/v1/cashbox/company-cashbox-operation/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;sending_company__name=&amp;sending_company__name__icontains=&amp;receiving_company__name=&amp;receiving_company__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=</a>”</p></li>
+<dt>“personal_id” -&gt; nullable, İşçi - User id, mühasibin əməliyyat apardığı işçidir.</dt><dd><ul>
+<li><p>işçilərin enpointi: “<a class="reference external" href="http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true">http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true</a>”</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;personal_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;operation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MƏDAXİL&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -215,10 +235,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maliyyə və Kredit:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="salary_view.html">Əməkhaqqı</a></li>
 <li class="toctree-l1"><a class="reference internal" href="balance.html">Balans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Kassa Hərəkətləri</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Kassa Hərəkətləri</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sirkt-mliyyat">Şirkət Əməliyyat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#holdinq-mliyyat">Holdinq Əməliyyat</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Company:</span></p>
 <ul>
@@ -232,7 +258,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../company/permission_for_position.html">Permission For Position (Vəzifəyə görə icazə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../company/logo.html">Logo (Logo)</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Produc:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Product:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../product/product.html">Product (Məhsullar)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../product/category.html">Category (Kateqoriya)</a></li>
@@ -264,6 +290,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="transfer.html" title="previous chapter">Transfer</a></li>
+      <li>Next: <a href="../company/holding.html" title="next chapter">Holding (Holdinq)</a></li>
   </ul></li>
 </ul>
 </div>

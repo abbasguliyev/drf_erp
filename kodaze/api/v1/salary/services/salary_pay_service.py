@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from api.v1.salary.decorators import add_amount_to_salary_view_decorator
 from enum import Enum
 from cashbox import INCOME, EXPENSE
-    
+
 
 @cashbox_operation_decorator
 @add_amount_to_salary_view_decorator
@@ -15,7 +15,7 @@ def salary_pay_create(
         employee,
         note: str = None,
         date: datetime.date = None,
-        salary_date: datetime.date = datetime.date.today(),
+        salary_date: datetime.date = None,
         operation = EXPENSE,
         func_name = None
 ) -> PaySalary:

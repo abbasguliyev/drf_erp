@@ -67,7 +67,12 @@ class CashFlowSerializer(DynamicFieldsCategorySerializer):
 class HoldingCashboxOperationSerializer(DynamicFieldsCategorySerializer):
     executor = UserSerializer(read_only=True, fields=["id", "fullname"])
     executor_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='executor', write_only=True
+        queryset=User.objects.all(), source='executor', write_only=True, required=False
+    )
+
+    personal = UserSerializer(read_only=True, fields=["id", "fullname"])
+    personal_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='personal', write_only=True, required=False, allow_null=True
     )
 
     class Meta:
@@ -77,9 +82,14 @@ class HoldingCashboxOperationSerializer(DynamicFieldsCategorySerializer):
 class CompanyCashboxOperationSerializer(DynamicFieldsCategorySerializer):
     executor = UserSerializer(read_only=True, fields=["id", "fullname"])
     executor_id = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), source='executor', write_only=True
+        queryset=User.objects.all(), source='executor', write_only=True, required=False
     )
     
+    personal = UserSerializer(read_only=True, fields=["id", "fullname"])
+    personal_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='personal', write_only=True, required=False, allow_null=True
+    )
+
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True

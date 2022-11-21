@@ -140,6 +140,7 @@ Avans
         - "date" -> required, tarix - Date
         - "amount" -> nullable, "məbləğ" - float
             - Avans 2 formada verilir, əgər məbləğ daxil edilərsə məbləğə görə verilir, daxil edilməzsə yekun balansdan 15 faiz çıxılır. Hər işçi ay ərzində 2 dəfə avans ala bilir. Məbləğ daxil edilmədikdə toplam 30% avans ala bilir.
+        - Avans əməliyyatı zamanı kassadan pul çıxılır.
 
 .. code:: json
 
@@ -372,15 +373,14 @@ Kəsinti
         - "employee" -> required. işçi id - User
         - "note" -> nullable. qeyd - String
         - "date" -> required. tarix - Date. hansı tarixin maaşı ödənilməsi istənilirsə həmin tarix. Yəni əgər bu ay ödənəcəksə prosesin edildiyi tarix göndərilə bilər, backend üçün lazım olan ordakı il və aydır. Günün neçə daxil edilməsi önəmli deyil.
-        - "salary_date" -> nullable. maaşın ödənilmə tarixi - Date. Göndərilməsə avtomatik prosesin icra edildiyi tarix götürüləcək
+    - Əməkhaqqı ödəmək əməliyyatı zamanı kassadan pul çıxılır və həmin tarixdə verilmiş bonus, kəsinti və cərimələr ödəndi statusuna keçir.
 
 .. code:: json
 
   {
     "employee": 21,
     "note": "maas odemek",
-    "date": "01-10-2022",
-    "salary_date": "15-10-2022"
+    "date": "01-10-2022"
   }
 
 - Bütün əməkhaqqı ödəmə əməliyyatlarına bax

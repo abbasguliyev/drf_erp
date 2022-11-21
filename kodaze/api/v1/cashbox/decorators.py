@@ -12,8 +12,6 @@ def cashbox_operation_decorator(func):
     Kassadan pul məxaric(mədaxil) edilməsini və pul axını səhifəsinə məlumatların əlavə edilməsini təmin edir.
     """
     def wrapper(*args, **kwargs):
-        print(f"{args=}")
-        print(f"{kwargs=}")
         employee = kwargs['employee']
         date = kwargs['date']
         note = kwargs['note']
@@ -28,6 +26,8 @@ def cashbox_operation_decorator(func):
             func_name = kwargs['func_name']
         except:
             func_name = None
+
+        print(f"{func_name=}")
 
         now = datetime.date.today()
         

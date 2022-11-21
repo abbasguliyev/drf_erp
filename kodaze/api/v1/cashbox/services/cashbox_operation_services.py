@@ -34,29 +34,24 @@ def holding_cashbox_operation_create(
     holding_cashbox = HoldingCashbox.objects.filter().last()
     if holding_cashbox is None:
         raise ValidationError({"detail": "Holdinq kassa tapılmadı"})
-
-    initial_balance = calculate_holding_total_balance()
-    holding_initial_balance = calculate_holding_balance()
+    
+    balance = 0
 
     if operation == INCOME:            
         holding_cashbox.balance = holding_cashbox.balance + amount
         holding_cashbox.save()
         
-        subsequent_balance = calculate_holding_total_balance()
-        holding_subsequent_balance = calculate_holding_balance()
-        
+        balance = holding_cashbox.balance
+
         cashflow_create(
             holding=holding,
             operation_style="MƏDAXİL",
             description=f"{holding.name} holdinq kassasına {float(amount)} AZN mədaxil edildi",
-            initial_balance=initial_balance,
-            subsequent_balance=subsequent_balance,
-            holding_initial_balance=holding_initial_balance,
-            holding_subsequent_balance=holding_subsequent_balance,
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount)
+            quantity=float(amount),
+            balance=balance
         )
     
     if operation == EXPENSE:            
@@ -66,21 +61,17 @@ def holding_cashbox_operation_create(
         holding_cashbox.balance = holding_cashbox.balance - amount
         holding_cashbox.save()
 
-        subsequent_balance = calculate_holding_total_balance()
-        holding_subsequent_balance = calculate_holding_balance()
+        balance = holding_cashbox.balance
 
         cashflow_create(
             holding=holding,
             operation_style="MƏXARİC",
             description=f"{holding.name} holdinq kassasından {float(amount)} AZN məxaric edildi",
-            initial_balance=initial_balance,
-            subsequent_balance=subsequent_balance,
-            holding_initial_balance=holding_initial_balance,
-            holding_subsequent_balance=holding_subsequent_balance,
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount)
+            quantity=float(amount),
+            balance=balance
         )
     
     obj = HoldingCashboxOperation.objects.create(
@@ -108,56 +99,46 @@ def company_cashbox_operation_create(
     if company is None:
         raise ValidationError({"detail": "Şirkət daxil edilməyib"})
 
-    initial_balance = calculate_holding_total_balance()
-    office_initial_balance = 0
-    company_initial_balance = 0
+    balance = 0
     cashbox = None
 
     if office is not None:
         cashbox = OfficeCashbox.objects.filter(office=office).last()
         if cashbox is None:
             raise ValidationError({"detail": "Ofis kassa tapılmadı"})
-        office_initial_balance = calculate_office_balance(office=office)
-        description_income=f"{office.name} ofis kassasına {float(amount)} AZN əlavə edildi"
-        description_expense=f"{office.name} ofis kassasından {float(amount)} AZN məxaric edildi"
+        if note is None:
+            description_income=f"{office.name} ofis kassasına {float(amount)} AZN mədaxil edildi"
+            description_expense=f"{office.name} ofis kassasından {float(amount)} AZN məxaric edildi"
+        else:
+            description_income=note
+            description_expense=note
     else:
         cashbox = CompanyCashbox.objects.filter(company=company).last()
         if cashbox is None:
             raise ValidationError({"detail": "Şirkət kassa tapılmadı"})
-        company_initial_balance = calculate_company_balance(company=company)
-        description_income=f"{company.name} şirkət kassasına {float(amount)} AZN əlavə edildi"
-        description_expense=f"{company.name} şirkət kassasından {float(amount)} AZN məxaric edildi"
+        if note is None:
+            description_income=f"{company.name} şirkət kassasına {float(amount)} AZN mədaxil edildi"
+            description_expense=f"{company.name} şirkət kassasından {float(amount)} AZN məxaric edildi"
+        else:
+            description_income=note
+            description_expense=note
 
     if operation == INCOME:            
         cashbox.balance = cashbox.balance + amount
         cashbox.save()
-        
-        subsequent_balance = calculate_holding_total_balance()
-        if office is not None:
-            office_subsequent_balance = calculate_office_balance(office=office)
-        else:
-            office_subsequent_balance = 0
-        
-        if company is not None:
-            company_subsequent_balance = calculate_company_balance(company=company)
-        else:
-            company_subsequent_balance = 0
 
+        balance = cashbox.balance
+        
         cashflow_create(
             office=office,
             company=office.company,
             operation_style="MƏDAXİL",
             description=description_income,
-            initial_balance=initial_balance,
-            subsequent_balance=subsequent_balance,
-            company_initial_balance = company_initial_balance, 
-            company_subsequent_balance = company_subsequent_balance,
-            office_initial_balance=office_initial_balance,
-            office_subsequent_balance=office_subsequent_balance,
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount)
+            quantity=float(amount),
+            balance=balance
         )
     
     if operation == EXPENSE:            
@@ -167,32 +148,18 @@ def company_cashbox_operation_create(
         cashbox.balance = cashbox.balance - amount
         cashbox.save()
 
-        subsequent_balance = calculate_holding_total_balance()
-        if office is not None:
-            office_subsequent_balance = calculate_office_balance(office=office)
-        else:
-            office_subsequent_balance = 0
-        
-        if company is not None:
-            company_subsequent_balance = calculate_company_balance(company=company)
-        else:
-            company_subsequent_balance = 0
+        balance = cashbox.balance
             
         cashflow_create(
             office=office,
             company=office.company,
             operation_style="MƏXARİC",
             description=description_expense,
-            initial_balance=initial_balance,
-            subsequent_balance=subsequent_balance,
-            company_initial_balance = company_initial_balance, 
-            company_subsequent_balance = company_subsequent_balance,
-            office_initial_balance=office_initial_balance,
-            office_subsequent_balance=office_subsequent_balance,
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount)
+            quantity=float(amount),
+            balance=balance
         )
     
     obj = CompanyCashboxOperation.objects.create(

@@ -1,4 +1,4 @@
-from salary.models import SalaryView
+from salary.models import SalaryView, AdvancePayment, Bonus, SalaryDeduction, SalaryPunishment
 import datetime
 import pandas as pd
 from rest_framework.exceptions import ValidationError
@@ -28,18 +28,22 @@ def add_amount_to_salary_view_decorator(func):
         next_m = d + pd.offsets.MonthBegin(1)
         previous_month = d - pd.offsets.MonthBegin(1)
 
-        previous_month_salary_view = SalaryView.objects.filter(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}").values('id', 'is_paid').last()
+        previous_month_salary_view = SalaryView.objects.filter(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}").last()
         
         try:
             if commission == True:
-                salary_view = SalaryView.objects.get(employee=employee, date=f"{next_m.year}-{next_m.month}-{1}")
+                salary_view = SalaryView.objects.filter(employee=employee, date=f"{next_m.year}-{next_m.month}-{1}").last()
             else:
                 if previous_month_salary_view is not None and previous_month_salary_view.is_paid == False:
-                    salary_view = SalaryView.objects.get(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}")
+                    salary_view = previous_month_salary_view
                 else:
-                    salary_view = SalaryView.objects.get(employee=employee, date=f"{now.year}-{now.month}-{1}")
-        except:
-            raise ValidationError({'detail': 'Ə/H cədvəli tapılmadı'})
+                    current_salary_view = SalaryView.objects.filter(employee=employee, date=f"{now.year}-{now.month}-{1}").last()
+                    if current_salary_view.is_paid == False:
+                        salary_view = current_salary_view
+                    else:
+                        raise ValidationError({'detail': 'Ə/H artıq ödənilib'})
+        except ValidationError as err:
+            raise err
 
         if func.__name__ == "advancepayment_create":
             if kwargs['amount'] is None:
@@ -51,7 +55,7 @@ def add_amount_to_salary_view_decorator(func):
         else:
             amount = kwargs['amount']
 
-        func(*args, **kwargs)
+        func(*args, **kwargs, salary_date=salary_view.date)
 
         if bonus == False:
             if float(amount) > salary_view.final_salary:
@@ -64,6 +68,20 @@ def add_amount_to_salary_view_decorator(func):
                 salary_view.is_paid = True
                 salary_view.pay_date = now
                 salary_view.save()
+
+                all_bonus = Bonus.objects.filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year)
+                all_sd = SalaryDeduction.objects.filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year)
+                all_sp = SalaryPunishment.objects.filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year)
+
+                for b in all_bonus:
+                    b.is_paid = True
+                    b.save()
+                for sd in all_sd:
+                    sd.is_paid = True
+                    sd.save()
+                for sp in all_sp:
+                    sp.is_paid = True
+                    sp.save()
             else:
                 salary_view.final_salary = salary_view.final_salary - float(amount)
         else:

@@ -10,8 +10,8 @@ Balans
 ------
 
 .. image:: _static/ss15.png
-   :width: 1000px
-   :height: 200px
+   :width: 1500px
+   :height: 300px
    :alt: melumat
    :align: center
 
