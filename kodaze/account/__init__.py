@@ -3,15 +3,15 @@ DAILY = "günlük"
 WEEKLY = "həftəlik"
 FIX = "fix"
 
-XIDMETI_MUQAVILE = "xidməti müqavilə"
-EMEK_MUQAVILE = "əmək müqaviləsi"
+HOLDING = "Holding"
+COMPANY = "Şirkət"
 
 VIP = "VIP"
 STANDART = "Standart"
 
 CONTRACT_TYPE_CHOICES = [
-    (XIDMETI_MUQAVILE, "xidməti müqavilə"),
-    (EMEK_MUQAVILE, "əmək müqaviləsi"),
+    (HOLDING, "Holding"),
+    (COMPANY, "Şirkət"),
 ]
 
 SALARY_STYLE_CHOICES = [
@@ -20,7 +20,6 @@ SALARY_STYLE_CHOICES = [
     (WEEKLY, "həftəlik"),
     (FIX, "fix"),
 ]
-
 
 CUSTOMER_TYPE_CHOICES = [
     (VIP, "VIP"),
