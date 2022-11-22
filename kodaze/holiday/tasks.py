@@ -13,6 +13,7 @@ from .models import (
     SectionWorkingDay,
     PositionWorkingDay
 )
+from account.api.selectors import user_list
 
 # Isci working_day ---------------------------------------------------
 @shared_task(name='work_day_creater_task')
@@ -27,7 +28,7 @@ def work_day_creater_task():
 
     days_in_month = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
 
-    users = User.objects.all()
+    users = user_list()
 
     for user in users:
         employee_working_day = EmployeeWorkingDay.objects.select_related("employee").filter(

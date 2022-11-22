@@ -40,6 +40,6 @@ def create_user_permission_for_position(sender, instance, created, **kwargs):
 # def object_post_save_handler(sender, **kwargs):
 #     cache.delete_many(keys=cache.keys('*.users.*'))
 
-@receiver(post_save, sender=User)
-def object_post_save_handler(sender, **kwargs):
-    cache.delete_many(keys=cache.keys('*.users.*'))
+# @receiver(post_save, sender=User)
+# def object_post_save_handler(sender, **kwargs):
+#     cache.delete_many(keys=cache.keys('*.users.*'))

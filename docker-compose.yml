@@ -28,7 +28,7 @@ services:
       - redis
       - db
     env_file:
-      - .env
+      - ./kodaze/.env
     environment:
       - STATIC_ROOT=/app/static
       #- DATABASE_URL=postgres://alliance:vEoe1l3oYBFfTJK@postgres:5432/crm
@@ -50,7 +50,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - .env
+      - ./kodaze/.env
     environment:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -66,7 +66,7 @@ services:
     expose:
       - "6379"
     env_file:
-      - .env
+      - ./kodaze/.env
     environment:
      - REDIS_HOST=${REDIS_HOST}
     networks:
@@ -83,7 +83,7 @@ services:
     restart: unless-stopped
     command: celery -A core worker --beat --scheduler django --loglevel=info --concurrency=8 -O fair -P prefork -n core
     env_file:
-      - .env
+      - ./kodaze/.env
     environment:
      - CELERY_BROKER=${CELERY_BROKER}
      - RESULT_BACKEND=${CELERY_BACKEND}
@@ -106,7 +106,7 @@ services:
     volumes:
       - ./kodaze:/app/
     env_file:
-      - .env
+      - ./kodaze/.env
     environment:
       - DEBUG=0
       - SECRET_KEY=${SECRET_KEY}

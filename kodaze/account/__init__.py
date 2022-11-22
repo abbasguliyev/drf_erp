@@ -1,7 +1,6 @@
-MONTHLY = 'aylıq'
-DAILY = "günlük"
-WEEKLY = "həftəlik"
-FIX = "fix"
+FIX_COMISSION = 'Fix+Kommissiya'
+COMISSION = "Kommissiya"
+FIX = "Fix"
 
 HOLDING = "Holding"
 COMPANY = "Şirkət"
@@ -9,16 +8,15 @@ COMPANY = "Şirkət"
 VIP = "VIP"
 STANDART = "Standart"
 
-CONTRACT_TYPE_CHOICES = [
+REGISTER_TYPE_CHOICES = [
     (HOLDING, "Holding"),
     (COMPANY, "Şirkət"),
 ]
 
 SALARY_STYLE_CHOICES = [
-    (MONTHLY, "aylıq"),
-    (DAILY, "günlük"),
-    (WEEKLY, "həftəlik"),
-    (FIX, "fix"),
+    (FIX_COMISSION, "Fix+Kommissiya"),
+    (COMISSION, "Kommissiya"),
+    (FIX, "Fix"),
 ]
 
 CUSTOMER_TYPE_CHOICES = [

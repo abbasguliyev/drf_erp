@@ -1,6 +1,5 @@
 from django.contrib import admin
 from account.models import (
-    CustomerNote, 
     User, 
     Customer, 
     Region,
@@ -23,7 +22,9 @@ class CustomerAdmin(admin.ModelAdmin):
     list_display = ("id", "fullname", "is_active")
     list_display_links = ("id", "fullname")
 
-
-admin.site.register(CustomerNote)
-admin.site.register(EmployeeStatus)
+@admin.register(EmployeeStatus)
+class EmployeeStatusAdmin(admin.ModelAdmin):
+    list_display = ("id", "status_name")
+    list_display_links = ("id", "status_name")
+    
 admin.site.register(Permission)

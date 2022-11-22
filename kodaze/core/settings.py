@@ -30,7 +30,7 @@ load_dotenv(find_dotenv())
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-__PRODUCTION__ = False
+__PRODUCTION__ = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if __PRODUCTION__:
@@ -197,41 +197,20 @@ else:
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'core.password_validator.UppercaseValidator',
-#     },
-#     {
-#         'NAME': 'core.password_validator.NumberValidator',
-#     },
-#     {
-#         'NAME': 'core.password_validator.CustomUserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'core.password_validator.CustomCommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'core.password_validator.SymbolValidator',
-#     },
-#     {
-#         'NAME': 'core.password_validator.MinimumLengthValidator',
-#     }
-# ]
-
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#     },
-# ]
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 
 # Internationalization
@@ -304,13 +283,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-# CELERY_CACHE_BACKEND = 'default'
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-#         'LOCATION': 'alliance_cache_table',
-#     }
-# }
 CACHE_TTL = 60 * 15
 CACHES = {
     "default": {

@@ -72,7 +72,7 @@ User (İşçi)
 - profile_image 
     - nullable 
     - (Profil şəkli - File)
-- contract_type 
+- register_type 
     - required 
     - (Müqavilə növü - Enum[String]("xidməti müqavilə", "əmək müqaviləsi"))
 - salary_style
@@ -191,7 +191,7 @@ User Registration
     "user_permissions": [],
     "groups": [],
     "profile_image": null,
-    "contract_type": "",
+    "register_type": "",
     "salary_style": "",
     "salary": null,
     "supervisor": null,
@@ -231,7 +231,7 @@ Update Users
     "user_permissions_id": [],
     "groups_id": [],
     "profile_image": null,
-    "contract_type": "",
+    "register_type": "",
     "salary_style": "",
     "salary": null,
     "supervisor": null,

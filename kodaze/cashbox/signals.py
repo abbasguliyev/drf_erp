@@ -1,5 +1,5 @@
 from company.models import Holding, Office, Company
-from api.v1.cashbox.services.cashbox_services import (
+from cashbox.api.services.cashbox_services import (
     create_holding_cashbox_service,
     create_company_cashbox_service,
     create_office_cashbox_service

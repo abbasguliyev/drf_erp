@@ -4,6 +4,7 @@ from celery import shared_task
 import pandas as pd
 from django.contrib.auth import get_user_model
 from .models import DemoSales, Contract, Installment
+from account.api.selectors import user_list
 from . import (
     INSTALLMENT
 )
@@ -13,7 +14,7 @@ User = get_user_model()
 
 @shared_task(name='demo_create_task')
 def demo_create_task():
-    users = User.objects.all()
+    users = user_list()
 
     now = datetime.date.today()
 
