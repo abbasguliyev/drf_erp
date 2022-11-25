@@ -52,7 +52,7 @@ class CompanySerializer(DynamicFieldsCategorySerializer):
     office_count = serializers.SerializerMethodField('office_count_fn')
 
     def employee_count_fn(self, instance):
-        employees = user_list(filters={'company': instance, 'is_active': True}).count()
+        employees = user_list().filter(company=instance, is_active=True).count()
         return employees
 
     def office_count_fn(self, instance):
@@ -78,7 +78,7 @@ class DepartmentSerializer(DynamicFieldsCategorySerializer):
     employee_count = serializers.SerializerMethodField('employee_count_fn')
 
     def employee_count_fn(self, instance):
-        employees = user_list(filters={'department': instance, 'is_active': True}).count()
+        employees = user_list().filter(department= instance, is_active= True).count()
         return employees
 
     class Meta:
@@ -95,7 +95,7 @@ class OfficeSerializer(DynamicFieldsCategorySerializer):
     employee_count = serializers.SerializerMethodField('employee_count_fn')
 
     def employee_count_fn(self, instance):
-        employees = user_list(filters={'office': instance, 'is_active': True}).count()
+        employees = user_list().filter(office= instance, is_active= True).count()
         return employees
 
 
@@ -140,7 +140,7 @@ class PositionSerializer(DynamicFieldsCategorySerializer):
     employees_count = serializers.SerializerMethodField("employees_count_fn")
 
     def employees_count_fn(self, instance):
-        employees = user_list(filters={'position': instance, 'is_active': True}).count()
+        employees = user_list().filter(position= instance, is_active= True).count()
         return employees
 
     class Meta:

@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+
+from django.db.models import Sum, Q
+from django.db.models import CharField, FloatField, DateField, IntegerField, Value
+
 from core.utils.base_serializer import DynamicFieldsCategorySerializer
 from account.models import (
     User,
@@ -9,26 +13,26 @@ from account.models import (
 )
 from company.api.serializers import (
     CompanySerializer,
-    HoldingSerializer,
     OfficeSerializer,
-    SectionSerializer,
-    TeamSerializer,
     PositionSerializer,
     DepartmentSerializer
 )
 
 from company.models import (
     Company,
-    Holding,
     Office,
-    Team,
-    Section,
     Position,
     Department
 )
 
+from contract.models import DemoSales
+
+from salary.models import SalaryView
+from salary.api.selectors import salary_view_list
+from account.api.selectors import user_list
+
 from django.contrib.auth.models import Permission, Group
-from account.api.selectors import customer_list, employee_status_list, region_list
+from account.api.selectors import employee_status_list, region_list
 from salary.models import Commission
 
 

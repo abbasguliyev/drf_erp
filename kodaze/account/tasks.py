@@ -10,6 +10,9 @@ from company.models import PermissionForPosition
 from salary.api.services import salary_view_service
 from account.api.selectors import user_list
 
+from salary.api.services.employee_activity_service import employee_activity_history_create
+from salary.api.selectors import employee_activity_history_list
+
 from salary.api.selectors import salary_view_list
 
 @shared_task(name='salary_view_create_task')
@@ -27,19 +30,48 @@ def salary_view_create_task():
     next_m = d + pd.offsets.MonthBegin(1)
 
     for user in users:
-        employee_salary_next_month = salary_view_list(filters={'employee':user, 'date__year': next_m.year, 'date__month': next_m.month}).count()
+        employee_salary_next_month = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month).count()
         if employee_salary_next_month != 0:
+            emp_st_next_m = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month)
+            emp_ah_next_m = employee_activity_history_list().filter(salary_view=emp_st_next_m, activity_date__month=emp_st_next_m.date.month, activity_date__year=emp_st_next_m.date.year).count()
+            if emp_ah_next_m != 0:
+                continue
+            else:
+                employee_activity_history_create(
+                    salary_view = emp_st_next_m,
+                    func_name = None,
+                    amount = 0
+                )
             continue
         else:
-            salary_view_service.salary_view_create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary)
-            
+            sw = salary_view_service.salary_view_create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary)
+            employee_activity_history_create(
+                salary_view = sw,
+                func_name = None,
+                amount = 0
+            )
+
     for user in users:
-        
-        employee_salary_this_month = salary_view_list(filters={'employee':user, 'date__year': now.year, 'date__month': now.month}).count()
+        employee_salary_this_month = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month)
         if employee_salary_this_month != 0:
+            emp_st_current = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month).count()
+            emp_ah_current = employee_activity_history_list().filter(salary_view=emp_st_current, activity_date__month=emp_st_current.date.month, activity_date__year=emp_st_current.date.year).count()
+            if emp_ah_current != 0:
+                continue
+            else:
+                employee_activity_history_create(
+                    salary_view = emp_st_current,
+                    func_name = None,
+                    amount = 0
+                )
             continue
         else:
-            salary_view_service.salary_view_create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary)
+            sw = salary_view_service.salary_view_create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary)
+            employee_activity_history_create(
+                salary_view = sw,
+                func_name = None,
+                amount = 0
+            )
 
 @shared_task(name='employee_fix_prim_auto_add')
 def employee_fix_prim_auto_add():
@@ -54,7 +86,7 @@ def create_employee_salary_view_task(id):
     """
     İşçi register edildiyi zaman maaş cədvəlini create edən task
     """
-    instance = user_list(filters={'id':id}).last()
+    instance = user_list().filter(id=id).last()
     print(f"{instance=}")
     user = instance
     now = datetime.date.today()
@@ -62,21 +94,47 @@ def create_employee_salary_view_task(id):
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
     next_m = d + pd.offsets.MonthBegin(1)
     
-    employee_salary_this_month = salary_view_list(filters={'employee':user, 'date__year': now.year, 'date__month': now.month}).count()
+    employee_salary_this_month = salary_view_list().filter(employee=user, date__year=now.year, date__month=now.month).count()
     if employee_salary_this_month == 0:
-        salary_view_service.salary_view_create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary)
-
-    employee_salary_next_month = salary_view_list(filters={'employee':user, 'date__year': next_m.year, 'date__month': next_m.month}).count()
+        sw = salary_view_service.salary_view_create(employee=user, date=f"{now.year}-{now.month}-{1}", final_salary=user.salary)
+        employee_activity_history_create(
+            salary_view = sw,
+            func_name = None,
+            amount = 0
+        )
+    else:
+        emp_st_current = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month).count()
+        emp_ah_current = employee_activity_history_list().filter(salary_view=emp_st_current, activity_date__month=emp_st_current.date.month, activity_date__year=emp_st_current.date.year).count()
+        if emp_ah_current == 0:
+            employee_activity_history_create(
+                salary_view = emp_st_current,
+                func_name = None,
+                amount = 0
+            )
+    employee_salary_next_month = salary_view_list().filter(employee=user, date__year=next_m.year, date__month=next_m.month).count()
     if employee_salary_next_month == 0:
-        salary_view_service.salary_view_create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary)
-
+        sw = salary_view_service.salary_view_create(employee=user, date=f"{next_m.year}-{next_m.month}-{1}", final_salary=user.salary)
+        employee_activity_history_create(
+            salary_view = sw,
+            func_name = None,
+            amount = 0
+        )
+    else:
+        emp_st_next_m = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month)
+        emp_ah_next_m = employee_activity_history_list().filter(salary_view=emp_st_next_m, activity_date__month=emp_st_next_m.date.month, activity_date__year=emp_st_next_m.date.year).count()
+        if emp_ah_next_m == 0:
+            employee_activity_history_create(
+                salary_view = emp_st_next_m,
+                func_name = None,
+                amount = 0
+            )
 
 @shared_task(name='create_employee_working_day_task')
 def create_employee_working_day_task(id):
     """
     İşçi register edildiyi zaman iş gününü create edən task
     """
-    instance = user_list(filters={'id':id}).last()
+    instance = user_list().filter(id=id).last()
     user = instance
     now = datetime.date.today()
 
@@ -123,7 +181,7 @@ def create_user_permission_for_position_task(id):
     İşçi register edildiyi zaman ona verilmiş vəzifənin permissionları varsa, həmin permissionları 
     user-ə də əlavə edən task
     """
-    instance = user_list(filters={'id':id}).last()
+    instance = user_list().filter(id=id).last()
     user = instance
     user_position = instance.position
     positions = PermissionForPosition.objects.select_related('position', 'permission_group').filter(position=user_position)

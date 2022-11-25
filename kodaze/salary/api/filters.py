@@ -1,6 +1,5 @@
 import django_filters
-import datetime
-from django.db.models import Count, Q, Sum
+from django.db.models import Q
 
 
 from salary.models import (
@@ -10,6 +9,7 @@ from salary.models import (
     SalaryPunishment,
     SalaryView,
     PaySalary,
+    EmployeeActivityHistory
 )
 
 class DateYearMonthFilter(django_filters.FilterSet):
@@ -113,4 +113,22 @@ class PaySalaryFilter(DateYearMonthFilter):
             'employee__employee_status__status_name': ['exact', 'icontains'],
             'amount': ['exact', 'gte', 'lte'],
             'note': ['exact', 'icontains'],
+        }
+
+class EmployeeActivityHistoryFilter(django_filters.FilterSet):
+    start_date = django_filters.DateFilter(
+        field_name='activity_date', lookup_expr='gte', input_formats=["%d-%m-%Y"], label='start_date')
+    end_date = django_filters.DateFilter(
+        field_name='activity_date', lookup_expr='lte', input_formats=["%d-%m-%Y"], label='end_date')
+
+    class Meta:
+        model = EmployeeActivityHistory
+        fields = {
+            'salary_view__employee__id': ['exact'],
+            'salary_view__final_salary': ['exact'],
+            'salary_view__sale_quantity': ['exact'],
+            'bonus': ['exact'],
+            'advance_payment': ['exact'],
+            'salary_deduction': ['exact'],
+            'salary_punishment': ['exact'],
         }

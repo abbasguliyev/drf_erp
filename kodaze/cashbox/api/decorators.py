@@ -42,7 +42,7 @@ def cashbox_operation_decorator(func):
             raise ValidationError({"detail": "Tarixi doğru daxil edin. Gələcək tarix daxil edilə bilməz"})
         
         if func_name == "salary_pay_create":
-            salary_view = salary_view_list(filters={'employee': employee, 'date': f"{date.year}-{date.month}-{1}"}).last()
+            salary_view = salary_view_list().filter(employee=employee, date=f"{date.year}-{date.month}-{1}").last()
             amount = float(salary_view.final_salary)
         else:
             amount = kwargs['amount']

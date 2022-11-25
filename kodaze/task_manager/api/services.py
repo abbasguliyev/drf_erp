@@ -37,7 +37,7 @@ def task_manager_create(
     if position_list is not None:
         for p_id in position_list:
             pst = Position.objects.get(pk=p_id)
-            users = user_list(filters={'position': pst})
+            users = user_list().filter(position= pst)
             for user in users:
                 task_manager = TaskManager.objects.create(
                     creator=creator,
@@ -51,7 +51,7 @@ def task_manager_create(
                 task_manager.save()
     if emp_list is not None:
         for user_id in emp_list:
-            user = user_list(filters={'pk': user_id}).last()
+            user = user_list().filter(pk= user_id).last()
             task_manager = TaskManager.objects.create(
                 creator=creator,
                 title=title,

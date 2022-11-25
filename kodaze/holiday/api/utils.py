@@ -72,15 +72,15 @@ def company_employee_tetil_hesablama(company, company_name, date, holidays, work
             k.holidays = holidays
             k.save()
     elif(company=="company"):
-        employeeler = list(user_list(filters={'company': company_name}))
+        employeeler = list(user_list().filter(company= company_name))
     elif(company=="section"):
-        employeeler = list(user_list(filters={'section': company_name}))
+        employeeler = list(user_list().filter(section= company_name))
     elif(company=="office"):
-        employeeler = list(user_list(filters={'office': company_name}))
+        employeeler = list(user_list().filter(office= company_name))
     elif(company=="team"):
-        employeeler = list(user_list(filters={'team': company_name}))
+        employeeler = list(user_list().filter(team= company_name))
     elif(company=="position"):
-        employeeler = list(user_list(filters={'position': company_name}))
+        employeeler = list(user_list().filter(position= company_name))
 
     z = 1
     for employee in employeeler:
@@ -343,7 +343,7 @@ def employee_holidays_calc(serializer, obj):
 
     if is_paid == True:
         try:
-            salary_goruntulenme = salary_view_list(filters={'employee': employee, 'date': d}).last()
+            salary_goruntulenme = salary_view_list().filter(employee=employee, date=d).last()
             salary_goruntulenme.final_salary = float(salary_goruntulenme.final_salary) - float(payment_amount)
             salary_goruntulenme.save()
             salarydeduction = SalaryDeduction.objects.create(employee=employee, amount=payment_amount, note="ödənişli icazə ilə əlaqədar", date=now)

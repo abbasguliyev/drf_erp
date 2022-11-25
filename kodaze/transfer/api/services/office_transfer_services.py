@@ -32,7 +32,7 @@ def office_transfer_create(
     recipient_subsequent_balance = 0
     sender_subsequent_balance = 0
     
-    sending_office_cashbox = office_cashbox_list(filters={'office': sending_office}).last()
+    sending_office_cashbox = office_cashbox_list().filter(office=sending_office).last()
     if transfer_amount > sending_office_cashbox.balance:
         raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
 
@@ -40,7 +40,7 @@ def office_transfer_create(
     sending_office_cashbox.balance = sender_subsequent_balance
     sending_office_cashbox.save()
 
-    receiving_office_cashbox = office_cashbox_list(filters={'office': receiving_office}).last()
+    receiving_office_cashbox = office_cashbox_list().filter(office=receiving_office).last()
     recipient_subsequent_balance = receiving_office_cashbox.balance + transfer_amount
     receiving_office_cashbox.balance = recipient_subsequent_balance
     receiving_office_cashbox.save()

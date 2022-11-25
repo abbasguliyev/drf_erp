@@ -46,7 +46,7 @@ def gifts_create(self, request, *args, **kwargs):
             
             if product.price > 0:
                 try:
-                    cashbox = office_cashbox_list(filters={'office': office})[0]
+                    cashbox = office_cashbox_list().filter(office=office)[0]
                 except:
                     return Response({"detail": "Ofis Kassa tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
                 amount_to_be_added = float(product.price)*int(quantity)
@@ -77,7 +77,7 @@ def gifts_destroy(self, request, *args, **kwargs):
     if product is not None:
         if product.price > 0:
             try:
-                cashbox = office_cashbox_list(filters={'office': office})[0]
+                cashbox = office_cashbox_list().filter(office=office)[0]
             except:
                 return Response({"detail": "Office Kassa tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
             amount_to_be_added = float(product.price)*int(quantity)

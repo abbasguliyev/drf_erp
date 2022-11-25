@@ -35,11 +35,11 @@ def calculate_holding_balance():
     return cashbox.balance
 
 def calculate_company_balance(company):
-    cashbox = company_cashbox_list(filters={'company': company}).last()
+    cashbox = company_cashbox_list().filter(company= company).last()
     return cashbox.balance
 
 def calculate_office_balance(office):
-    cashbox = office_cashbox_list(filters={'office': office}).last()
+    cashbox = office_cashbox_list().filter(office=office).last()
     return cashbox.balance
 
 def cashflow_create(

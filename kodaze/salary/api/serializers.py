@@ -1,9 +1,6 @@
-import datetime
-
 from rest_framework import serializers
 from core.utils.base_serializer import DynamicFieldsCategorySerializer
-from django.db.models import Sum, Q, Window, F
-from account.models import User
+from django.db.models import Sum, Q
 
 from salary.models import (
     AdvancePayment,
@@ -12,13 +9,13 @@ from salary.models import (
     SalaryPunishment,
     SalaryView,
     PaySalary,
-    MonthRange, SaleRange, CommissionInstallment, CommissionSaleRange, Commission
+    MonthRange, SaleRange, CommissionInstallment, CommissionSaleRange, Commission,
+    EmployeeActivityHistory
 )
-from holiday.models import EmployeeWorkingDay
 
 from account.api.serializers import UserSerializer
 from account.api.selectors import user_list
-from salary.api.selectors import salary_view_list
+from salary.api.selectors import employee_activity_history_list
 
 class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
     employee = UserSerializer(read_only=True, fields=["id", "fullname"])
@@ -82,35 +79,28 @@ class SalaryViewSerializer(DynamicFieldsCategorySerializer):
         year = instance.date.year
 
         qs = dict()
-        qss = salary_view_list(filters={'employee': instance.employee, 'date__month': month, 'date__year': year})
-        total_advancepayment = qss.aggregate(total_advancepayment=Sum('employee__advancepayment__amount', filter=Q(
-            employee__advancepayment__employee=instance.employee, employee__advancepayment__salary_date__month=month, employee__advancepayment__salary_date__year=year)))
-        total_bonus = qss.aggregate(total_bonus=Sum('employee__bonus__amount', filter=Q(
-            employee__bonus__employee=instance.employee, employee__bonus__salary_date__month=month, employee__bonus__salary_date__year=year)))
-        total_salarydeduction = qss.aggregate(total_salarydeduction=Sum('employee__salarydeduction__amount', filter=Q(
-            employee__salarydeduction__employee=instance.employee, employee__salarydeduction__salary_date__month=month, employee__salarydeduction__salary_date__year=year)))
-        total_salarypunishment = qss.aggregate(total_salarypunishment=Sum('employee__salarypunishment__amount', filter=Q(
-            employee__salarypunishment__employee=instance.employee, employee__salarypunishment__salary_date__month=month, employee__salarypunishment__salary_date__year=year)))
-        total_working_day = qss.aggregate(total_working_day=Sum('employee__working_days__working_days_count', filter=Q(
-            employee__working_days__employee=instance.employee, employee__working_days__date=instance.date)))
+        qss = employee_activity_history_list().filter(salary_view=instance, activity_date__month = month, activity_date__year = year).last()
+        total_working_day = user_list().filter(pk= instance.employee.id).aggregate(total_working_day=Sum('working_days__working_days_count', filter=Q(
+            working_days__employee=instance.employee, working_days__date=instance.date)))
 
-        if total_advancepayment.get("total_advancepayment") is None:
+        try:
+            total_advancepayment = qss.advance_payment
+        except:
             total_advancepayment = 0
-        else:
-            total_advancepayment = total_advancepayment.get('total_advancepayment')
-        if total_bonus.get("total_bonus") is None:
+        try:
+            total_bonus = qss.bonus
+        except:
             total_bonus = 0
-        else:
-            total_bonus = total_bonus.get('total_bonus')
-        if total_salarydeduction.get("total_salarydeduction") is None:
+        try:
+            total_salarydeduction = qss.salary_deduction
+        except:
             total_salarydeduction = 0
-        else:
-            total_salarydeduction = total_salarydeduction.get('total_salarydeduction')
-
-        if total_salarypunishment.get("total_salarypunishment") is None:
+        try:
+            total_salarypunishment = qss.salary_punishment
+        except:
             total_salarypunishment = 0
-        else:
-            total_salarypunishment = total_salarypunishment.get('total_salarypunishment')
+
+
         if total_working_day.get("total_working_day") is None:
             total_working_day = 0
         else:
@@ -121,6 +111,7 @@ class SalaryViewSerializer(DynamicFieldsCategorySerializer):
         qs['total_salarydeduction'] = total_salarydeduction
         qs['total_salarypunishment'] = total_salarypunishment
         qs['total_working_day'] = total_working_day
+
         return qs
 
     class Meta:
@@ -192,4 +183,11 @@ class CommissionSerializer(DynamicFieldsCategorySerializer):
             'for_sale_range',
             'month_ranges',
             'sale_ranges',
+            'creditor_per_cent'
         )
+
+class EmployeeActivityHistorySerializer(serializers.ModelSerializer):
+    salary_view = SalaryViewSerializer(read_only=True, fields=['id', 'employee', 'sale_quantity', 'commission_amount', 'final_salary', 'date'])
+    class Meta:
+        model = EmployeeActivityHistory
+        fields = '__all__'

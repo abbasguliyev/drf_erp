@@ -31,11 +31,11 @@ def salary_pay_create(
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
     previous_month = d - pd.offsets.MonthBegin(1)
     
-    previous_month_salary_view = salary_view_list(filters={'employee': employee, 'date': f"{previous_month.year}-{previous_month.month}-{1}"}).last()
+    previous_month_salary_view = salary_view_list().filter(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}").last()
     if previous_month_salary_view is not None and previous_month_salary_view.is_paid == False:
         salary_view = previous_month_salary_view
     else:
-        salary_view = salary_view_list(filters={'employee': employee, 'date': f"{now.year}-{now.month}-{1}"}).last()
+        salary_view = salary_view_list().filter(employee=employee, date=f"{now.year}-{now.month}-{1}").last()
 
     if salary_view.is_paid == True:
         raise ValidationError({"detail": "İşçinin maaşını artıq ödəmisiniz"})

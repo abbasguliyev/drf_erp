@@ -199,3 +199,12 @@ class GivenCommissionAfterSignContract(models.Model):
 class SalaryViewExport(models.Model):
     file_data = models.FileField(upload_to="media/salary/%Y/%m/%d/")
     export_date =models.DateField(auto_now_add=True)
+
+
+class EmployeeActivityHistory(models.Model):
+    salary_view = models.ForeignKey(SalaryView, on_delete=models.CASCADE, related_name="activity_histories")
+    bonus = models.FloatField(default=0)
+    advance_payment = models.FloatField(default=0)
+    salary_deduction = models.FloatField(default=0)
+    salary_punishment = models.FloatField(default=0)
+    activity_date = models.DateField()

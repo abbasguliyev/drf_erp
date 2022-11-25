@@ -29,13 +29,13 @@ def company_transfer_create(
         else:
             raise ValidationError({"detail": "Şirkət daxil edilməyib"})
     
-    company_cashbox = company_cashbox_list(filters={'company': company}).last()
+    company_cashbox = company_cashbox_list().filter(company= company).last()
     previous_balance = company_cashbox.balance
     recipient_subsequent_balance = 0
     sender_subsequent_balance = 0
     
     if sending_office is not None:
-        sending_office_cashbox = office_cashbox_list(filters={'office': sending_office}).last()
+        sending_office_cashbox = office_cashbox_list().filter(office=sending_office).last()
         if transfer_amount > sending_office_cashbox.balance:
             raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
         sender_subsequent_balance = sending_office_cashbox.balance - transfer_amount
@@ -47,7 +47,7 @@ def company_transfer_create(
         company_cashbox.save()
 
     if receiving_office is not None:
-        receiving_office_cashbox = office_cashbox_list(filters={'office': receiving_office}).last()
+        receiving_office_cashbox = office_cashbox_list().filter(office=receiving_office).last()
         if transfer_amount > previous_balance:
             raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
         recipient_subsequent_balance = receiving_office_cashbox.balance + transfer_amount

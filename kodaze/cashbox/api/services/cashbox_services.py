@@ -10,7 +10,7 @@ from cashbox.api.selectors import (
 )
 
 def update_cashbox_service(instance, **data) -> Cashbox:
-    obj = instance.update(**data)
+    obj = Cashbox.objects.filter(id=instance.id).update(**data)
     return obj
 
 def create_office_cashbox_service(
@@ -19,7 +19,7 @@ def create_office_cashbox_service(
     note: str = None,
     office: Office
 ) -> OfficeCashbox:
-    office_cashbox = office_cashbox_list(filters={'office': office}).count()
+    office_cashbox = office_cashbox_list().filter(office=office).count()
     if office_cashbox == 0:
         balance = 0
         if title is None:
@@ -36,7 +36,7 @@ def create_company_cashbox_service(
     note: str = None,
     company: Company
 ) -> CompanyCashbox:
-    company_cashbox = company_cashbox_list(filters={'company': company}).count()
+    company_cashbox = company_cashbox_list().filter(company= company).count()
     if company_cashbox == 0:
         balance = 0
         if title is None:
@@ -53,7 +53,7 @@ def create_holding_cashbox_service(
     note: str = None,
     holding: Holding
 ) -> HoldingCashbox:
-    holding_cashbox = holding_cashbox_list(filters={'holding': holding}).count()
+    holding_cashbox = holding_cashbox_list().filter(holding=holding).count()
     if holding_cashbox == 0:
         balance = 0
         if title is None:

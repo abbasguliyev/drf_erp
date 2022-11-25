@@ -8,7 +8,6 @@ from account.models import (
 )
 
 from django.contrib.auth.models import Permission, Group
-from django.db.models import Q
 
 class PermissionFilter(django_filters.FilterSet):
     class Meta:

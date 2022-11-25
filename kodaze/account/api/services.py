@@ -93,7 +93,7 @@ def create_user(
         profile_image=profile_image,
     )
 
-    standart_status = employee_status_list(filters={'status_name': "STANDART"}).first()
+    standart_status = employee_status_list().filter(status_name= "STANDART").first()
     if employee_status == None:
         user.employee_status = standart_status
     if user_permissions is not None:
@@ -124,13 +124,13 @@ def update_user(id, **data) -> User:
 
     if salary_data is not None:
         salary = data['salary']
-        user = user_list(filters={'id':id}).last()
+        user = user_list().filter(id=id).last()
         difference = 0
         old_salary = user.salary
 
         now = datetime.date.today()
         this_month = f"{now.year}-{now.month}-{1}"
-        salary_view = salary_view_list(filters={'employee': user, 'date': this_month}).last()
+        salary_view = salary_view_list().filter(employee=user, date=this_month).last()
 
         if salary > old_salary:
             difference = salary - old_salary
@@ -140,7 +140,7 @@ def update_user(id, **data) -> User:
             difference = old_salary - salary
             salary_view.final_salary = salary_view.final_salary - difference
             salary_view.save()
-    obj = user_list(filters={'id':id}).update(**data)
+    obj = user_list.filter(id=id).update(**data)
     return obj
 
 
@@ -177,7 +177,7 @@ def create_customer(
 
 
 def create_employee_status(*, status_name: str) -> EmployeeStatus:
-    statuses = employee_status_list(filters={'status_name': status_name.upper()}).count()
+    statuses = employee_status_list().filter(status_name= status_name.upper()).count()
     if statuses > 0:
         raise ValidationError({"detail": "Eyni adlı statusu 2 dəfə əlavə etmək olmaz!"})
     employee_status = EmployeeStatus.objects.create(status_name=status_name.upper())
@@ -190,7 +190,7 @@ def all_region_create() -> None:
     with open(filename) as fp:
         cities = json.load(fp)
     for city in cities:
-        regions = region_list(filters={'region_name': city['name']}).count()
+        regions = region_list().filter(region_name= city['name']).count()
         if regions > 0:
             continue
         region = Region.objects.create(region_name=city['name'])
@@ -198,7 +198,7 @@ def all_region_create() -> None:
 
 
 def region_create(region_name: str) -> Region:
-    regions = region_list(filters={'region_name': region_name}).count()
+    regions = region_list().filter(region_name= region_name).count()
     if regions > 0:
         raise ValidationError({"detail": "Eyni adlı bölgəni 2 dəfə əlavə etmək olmaz!"})
     region = Region.objects.create(region_name=region_name)

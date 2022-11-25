@@ -14,17 +14,9 @@ from salary.api.services.salarypunishment_service import salarypunishment_create
 from salary.api.utils import salary_operation_delete
 
 from salary.models import (
-    AdvancePayment,
-    SalaryDeduction,
-    Bonus,
-    SalaryPunishment,
-    SalaryView,
-    PaySalary,
     MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange,
     SalaryViewExport
 )
-
-from holiday.models import EmployeeWorkingDay
 
 from salary.api.serializers import (
     AdvancePaymentSerializer,
@@ -35,9 +27,8 @@ from salary.api.serializers import (
     PaySalarySerializer,
     MonthRangeSerializer, SaleRangeSerializer, CommissionSerializer,
     CommissionInstallmentSerializer, CommissionSaleRangeSerializer,
+    EmployeeActivityHistorySerializer
 )
-
-from account.api.serializers import UserSerializer
 
 from rest_framework import status, generics, serializers
 
@@ -54,6 +45,7 @@ from salary.api.filters import (
     SalaryPunishmentFilter,
     SalaryViewFilter,
     PaySalaryFilter,
+    EmployeeActivityHistoryFilter
 )
 
 from salary.api.selectors import (
@@ -62,7 +54,8 @@ from salary.api.selectors import (
     salary_punishment_list,
     bonus_list,
     pay_salary_list,
-    salary_view_list
+    salary_view_list,
+    employee_activity_history_list
 )
 
 from salary.api.export_excell import export_salary_view
@@ -476,3 +469,8 @@ class CommissionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class EmployeeActivityListAPIView(generics.ListAPIView):
+    queryset = employee_activity_history_list()
+    serializer_class = EmployeeActivityHistorySerializer
+    filterset_class = EmployeeActivityHistoryFilter

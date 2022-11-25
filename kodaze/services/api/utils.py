@@ -258,7 +258,7 @@ def service_payment_update(self, request, *args, **kwargs):
 
         this_month = f"{now.year}-{now.month}-{1}"
 
-        salary_goruntulenme_creditor = salary_view_list(filters={'employee': creditor, 'date': this_month}).last()
+        salary_goruntulenme_creditor = salary_view_list().filter(employee=creditor, date=this_month).last()
 
         user = self.request.user
 

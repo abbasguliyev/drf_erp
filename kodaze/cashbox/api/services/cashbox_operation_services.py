@@ -111,7 +111,7 @@ def company_cashbox_operation_create(
     cashbox = None
 
     if office is not None:
-        cashbox = office_cashbox_list(filters={'office': office}).last()
+        cashbox = office_cashbox_list().filter(office=office).last()
         if cashbox is None:
             raise ValidationError({"detail": "Ofis kassa tapılmadı"})
         if note is None:

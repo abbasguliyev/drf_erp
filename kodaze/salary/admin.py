@@ -11,7 +11,8 @@ from .models import (
     CommissionSaleRange,
     CommissionInstallment,
     Commission,
-    SalaryViewExport
+    SalaryViewExport,
+    EmployeeActivityHistory
 )
 # Register your models here.
 
@@ -96,3 +97,9 @@ class CommissionSaleRangeAdmin(admin.ModelAdmin):
 @admin.register(CommissionInstallment)
 class CommissionInstallmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'month_range', 'amount')
+
+@admin.register(EmployeeActivityHistory)
+class EmployeeActivityHistoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'salary_view', 'bonus', 'advance_payment', 'salary_deduction', 'salary_punishment', 'activity_date')
+    list_filter = ('salary_view',)
+    list_display_links = ('id', 'salary_view')

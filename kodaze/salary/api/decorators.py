@@ -12,6 +12,8 @@ from salary.api.selectors import (
     salary_view_list
 )
 
+from salary.api.services.employee_activity_service import employee_activity_history_create
+
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -38,16 +40,16 @@ def add_amount_to_salary_view_decorator(func):
         next_m = d + pd.offsets.MonthBegin(1)
         previous_month = d - pd.offsets.MonthBegin(1)
 
-        previous_month_salary_view = salary_view_list(filters={'employee': employee, 'date': f"{previous_month.year}-{previous_month.month}-{1}"}).last()
+        previous_month_salary_view = salary_view_list().filter(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}").last()
         
         try:
             if commission == True:
-                salary_view = salary_view_list(filters={'employee': employee, 'date': f"{next_m.year}-{next_m.month}-{1}"}).last()
+                salary_view = salary_view_list().filter(employee=employee, date=f"{next_m.year}-{next_m.month}-{1}").last()
             else:
                 if previous_month_salary_view is not None and previous_month_salary_view.is_paid == False:
                     salary_view = previous_month_salary_view
                 else:
-                    current_salary_view = salary_view_list(filters={'employee': employee, 'date': f"{now.year}-{now.month}-{1}"}).last()
+                    current_salary_view = salary_view_list().filter(employee=employee, date=f"{now.year}-{now.month}-{1}").last()
                     if current_salary_view.is_paid == False:
                         salary_view = current_salary_view
                     else:
@@ -79,9 +81,9 @@ def add_amount_to_salary_view_decorator(func):
                 salary_view.pay_date = now
                 salary_view.save()
 
-                all_bonus = bonus_list(filters={'employee': employee, 'salary_date__month': salary_view.date.month, 'salary_date__year': salary_view.date.year}) 
-                all_sd = salary_deduction_list(filters={'employee': employee, 'salary_date__month': salary_view.date.month, 'salary_date__year': salary_view.date.year}).filter()
-                all_sp = salary_punishment_list(filters={'employee': employee, 'salary_date__month': salary_view.date.month, 'salary_date__year': salary_view.date.year})
+                all_bonus = bonus_list().filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year) 
+                all_sd = salary_deduction_list().filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year).filter()
+                all_sp = salary_punishment_list().filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year)
 
                 for b in all_bonus:
                     b.is_paid = True
@@ -98,5 +100,11 @@ def add_amount_to_salary_view_decorator(func):
             salary_view.final_salary = salary_view.final_salary + float(amount)
 
         salary_view.save()
+
+        employee_activity_history_create(
+            salary_view = salary_view,
+            func_name = func.__name__,
+            amount = amount
+        )
 
     return wrapper

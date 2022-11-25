@@ -428,7 +428,7 @@ class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
         position = Position.objects.get(pk=position_id)
         permission_group_id = request.data.get("permission_group_id")
         permission_group = Group.objects.get(pk=permission_group_id)
-        users = user_list(filters={'position': position})
+        users = user_list().filter(position= position)
         if permission_group is not None or permission_group == list():
             for user in users:
                 user.groups.add(permission_group)
@@ -451,7 +451,7 @@ class PermissionForPositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             instance, data=request.data, partial=True)
         if serializer.is_valid():
             position = instance.position
-            users = user_list(filters={'position': position})
+            users = user_list().filter(position= position)
             permission_group = instance.permission_group
             request_permission_group = serializer.validated_data.get(
                 "permission_group")
@@ -468,7 +468,7 @@ class PermissionForPositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         permission_group = instance.permission_group
         position = instance.position
-        users = user_list(filters={'position': position})
+        users = user_list().filter(position= position)
 
         for user in users:
             user.groups.remove(permission_group)

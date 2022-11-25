@@ -1,9 +1,7 @@
 import datetime
-import django
 from django.contrib.auth import user_logged_in
 from rest_framework import status, generics
 from rest_framework.response import Response
-from rest_framework import generics
 from rest_framework.views import APIView
 
 from account.api.serializers import (
@@ -15,16 +13,10 @@ from account.api.serializers import (
     EmployeeStatusSerializer,
     PermissionSerializer,
     GroupSerializer,
-    ChangePasswordSerializer
+    ChangePasswordSerializer,
 )
 
-from account.models import (
-    Region,
-    User, 
-    Customer,
-    EmployeeStatus
-)
-
+from account.models import User
 from django.contrib.auth.models import Permission, Group
 
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -44,14 +36,7 @@ from account.api.filters import (
     GroupFilter
 )
 
-import traceback
-
-from company.models import PermissionForPosition
 from rest_framework.permissions import IsAuthenticated  
-import json
-import os
-from core.settings import BASE_DIR
-
 from account.api.services import all_region_create, create_customer, create_employee_status, create_user, update_user, region_create
 from account.api.selectors import user_list, customer_list, employee_status_list, region_list
 
@@ -59,12 +44,12 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie
 
+
 # ********************************** Password change **********************************
 class ChangePasswordView(generics.UpdateAPIView):
     """
     An endpoint for changing password.
     """
-    # class Meta:
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (IsAuthenticated,)
@@ -109,7 +94,7 @@ class ResetPasswordView(generics.UpdateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             username = serializer.data.get("username")
-            user = user_list(filters={'username': username}).first()
+            user = user_list().filter(username= username).first()
             # Check old password
             if not user:
                 return Response({"detail": "Bu username-ə uyğun istifadəçi tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
@@ -240,10 +225,10 @@ class Login(TokenObtainPairView):
 
         acces_token = utils.jwt_decode_handler(data.get("access"))
 
-        if not user_list(filters={'id':acces_token.get("user_id")}).last():
+        if not user_list().filter(id=acces_token.get("user_id")).last():
             return Response({"error": True, "detail": "No such a user"}, status=status.HTTP_404_NOT_FOUND)
 
-        user = user_list(filters={'id':acces_token.get("user_id")}).last()
+        user = user_list().filter(id=acces_token.get("user_id")).last()
         user_logged_in.send(sender=type(user), request=request, user=user)
 
         user_details = UserSerializer(user)

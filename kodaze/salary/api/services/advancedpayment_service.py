@@ -28,7 +28,7 @@ def advancepayment_create(
     if (amount == None):
         raise ValidationError({"detail": "Məbləği daxil edin"})
 
-    user_advanced_payment = advance_payment_list(filters={'employee': employee, 'salary_date__year': f"{salary_date.year}", 'salary_date__month': f"{salary_date.month}"}).count()
+    user_advanced_payment = advance_payment_list().filter(employee=employee, salary_date__year=f"{salary_date.year}", salary_date__month=f"{salary_date.month}").count()
     if user_advanced_payment >= 2:
         raise ValidationError({"detail": "Bir işçiyə eyni ay ərzində maksimum 2 dəfə avans verilə bilər"})
 

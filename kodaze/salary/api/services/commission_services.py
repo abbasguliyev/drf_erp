@@ -187,6 +187,5 @@ def commission_update(instance, **data) -> Commission:
                     new_cs = CommissionSaleRange.objects.create(sale_range=SaleRange.objects.get(id=sr[0]), amount=sr[1], sale_type=sr[2])
                     new_cs.save()
                     instance.for_sale_range.add(new_cs)
-                    
-    obj = instance.update(**data)
+    obj = Commission.objects.filter(id=instance.id).update(**data)
     return obj

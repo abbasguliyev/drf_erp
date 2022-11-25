@@ -152,21 +152,21 @@ class UserStatistikaList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             queryset = user_list()
-            deactive_user = user_list(filters={'is_active':False})
-            active_user = user_list(filters={'is_active':True})
+            deactive_user = user_list().filter(is_active=False)
+            active_user = user_list().filter(is_active=True)
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = user_list(filters={'company':request.user.company, 'office': request.user.office})
-                deactive_user = user_list(filters={'is_active':False, 'company': request.user.company, 'office': request.user.office})
-                active_user = user_list(filters={'is_active':True, 'company': request.user.company, 'office': request.user.office})
-            queryset = user_list(filters={'company':request.user.company})
-            deactive_user = user_list(filters={'is_active':False, 'company': request.user.company})
-            active_user = user_list(filters={'is_active':True, 'company': request.user.company})
+                queryset = user_list().filter(company=request.user.company, office= request.user.office)
+                deactive_user = user_list().filter(is_active=False, company= request.user.company, office= request.user.office)
+                active_user = user_list().filter(is_active=True, company= request.user.company, office= request.user.office)
+            queryset = user_list().filter(company=request.user.company)
+            deactive_user = user_list().filter(is_active=False, company= request.user.company)
+            active_user = user_list().filter(is_active=True, company= request.user.company)
 
         else:
             queryset = user_list()
-            deactive_user = user_list(filters={'is_active':False})
-            active_user = user_list(filters={'is_active':True})
+            deactive_user = user_list().filter(is_active=False)
+            active_user = user_list().filter(is_active=True)
         
         d_queryset = self.filter_queryset(deactive_user)
         a_queryset = self.filter_queryset(active_user)

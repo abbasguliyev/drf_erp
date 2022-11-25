@@ -35,6 +35,8 @@ urlpatterns = [
     path('commission/',salary_views.CommissionListCreateAPIView.as_view()),
     path('commission/<int:pk>/', salary_views.CommissionDetailAPIView.as_view()),
 
+    path('employee-activity/', salary_views.EmployeeActivityListAPIView.as_view()),
+
     path('export-data/', salary_views.ExportData.as_view(), name='export_users_xls'),
 
 ]

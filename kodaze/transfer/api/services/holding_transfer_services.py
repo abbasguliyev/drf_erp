@@ -32,7 +32,7 @@ def holding_transfer_create(
     sender_subsequent_balance = 0
     
     if sending_company is not None:
-        sending_company_cashbox = company_cashbox_list(filters={'company': sending_company}).last()
+        sending_company_cashbox = company_cashbox_list().filter(company=sending_company).last()
         if transfer_amount > sending_company_cashbox.balance:
             raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
         sender_subsequent_balance = sending_company_cashbox.balance - transfer_amount
@@ -44,7 +44,7 @@ def holding_transfer_create(
         holding_cashbox.save()
 
     if receiving_company is not None:
-        receiving_company_cashbox = company_cashbox_list(filters={'company': receiving_company}).last()
+        receiving_company_cashbox = company_cashbox_list().filter(company=receiving_company).last()
         if transfer_amount > previous_balance:
             raise ValidationError({"detail": "Transfer məbləği kassanın balansıdan böyük ola bilməz"})
         recipient_subsequent_balance = receiving_company_cashbox.balance + transfer_amount
