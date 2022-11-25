@@ -79,6 +79,7 @@ class SalaryViewFilter(DateYearMonthFilter):
         fields = {
             'employee': ['exact'],
             'employee__fullname': ['exact', 'icontains'],
+            'employee__is_superuser': ['exact'],
 
             'employee__office': ['exact'],
             'employee__office__id': ['exact'],
