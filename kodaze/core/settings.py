@@ -247,10 +247,7 @@ CORS_ALLOW_HEADERS = [
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-if __PRODUCTION__:
-    STATIC_ROOT = '/static/'
-else:
-    STATIC_ROOT = 'kodaze/static/'
+STATIC_ROOT = '/static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 

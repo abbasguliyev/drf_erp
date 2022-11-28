@@ -3,7 +3,8 @@ import pandas as pd
 from rest_framework.exceptions import ValidationError
 
 from salary.api.selectors import (
-    salary_view_list
+    salary_view_list,
+    employee_activity_history_list
 )
 
 from salary.api.services.employee_activity_service import employee_activity_history_create
@@ -65,6 +66,7 @@ def add_amount_to_salary_view_decorator(func):
 
         salary_view.save()
         
+
         func(*args, **kwargs, salary_date=salary_view.date)
 
         employee_activity_history_create(
@@ -72,5 +74,37 @@ def add_amount_to_salary_view_decorator(func):
             func_name = func.__name__,
             amount = amount
         )
+
+    return wrapper
+
+def delete_emp_activity_history(func):
+    def wrapper(*args, **kwargs): 
+        func_name = kwargs['func_name']
+        instance = kwargs['instance']
+        employee = instance.employee
+        date = instance.salary_date
+        amount = instance.amount
+
+        if instance.is_paid == True:
+            raise ValidationError({"detail": "Ödənilmiş məbləği silə bilmərsiniz"})
+
+        salary_view = salary_view_list().filter(employee=employee, date=f"{date.year}-{date.month}-{1}").last()
+        print(f"{salary_view=}")
+        history = employee_activity_history_list().filter(salary_view=salary_view).last()
+        print(f"{history=}")
+
+        if func_name == 'advance_payment_delete':
+            history.advance_payment = history.advance_payment - float(amount)
+            history.save()
+        if func_name == 'bonus_delete':
+            history.bonus = history.bonus - float(amount)
+            history.save()
+        if func_name == 'salary_deduction_delete':
+            history.salary_deduction = history.salary_deduction - float(amount)
+            history.save()
+        if func_name == 'salary_punishment_delete':
+            history.salary_punishment = history.salary_punishment - float(amount)
+            history.save()
+        func(*args, **kwargs)
 
     return wrapper

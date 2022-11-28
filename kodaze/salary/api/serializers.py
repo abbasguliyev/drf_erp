@@ -26,7 +26,7 @@ class AdvancePaymentSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = AdvancePayment
         fields = ('id', 'employee', 'employee_id',
-                  'amount', 'note', 'date', 'is_paid',)
+                  'amount', 'note', 'date', 'salary_date', 'is_paid',)
 
 
 class SalaryDeductionSerializer(DynamicFieldsCategorySerializer):

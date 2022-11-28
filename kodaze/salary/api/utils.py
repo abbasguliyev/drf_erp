@@ -11,6 +11,7 @@ import pandas as pd
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from salary.api.selectors import salary_view_list
+from salary.api.decorators import delete_emp_activity_history
 
 User = get_user_model()
 
@@ -222,8 +223,8 @@ def return_commission_after_cancel_contract(contract):
         get_back_sale_quantity_from_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date)
         get_back_amount_from_salary_view(user=user, amount=amount, date=next_month_date)
 
-
-def salary_operation_delete(instance):
+@delete_emp_activity_history
+def salary_operation_delete(instance, func_name=None):
     """
     Avans, bonus, kəsinti, cərimə delete funksiyası
     """

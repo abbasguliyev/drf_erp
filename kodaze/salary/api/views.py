@@ -108,14 +108,14 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvancePaymentDetailAPIView(generics.RetrieveDestroyAPIView):
+class AdvancePaymentDetailAPIView(generics.RetrieveAPIView):
     queryset = advance_payment_list()
     serializer_class = AdvancePaymentSerializer
     permission_classes = [salary_permissions.AdvancePaymentPermissions]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        salary_operation_delete(instance=instance)
+        salary_operation_delete(instance=instance, func_name='advance_payment_delete')
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -164,7 +164,7 @@ class SalaryDeductionDetailAPIView(generics.RetrieveDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        salary_operation_delete(instance=instance)
+        salary_operation_delete(instance=instance, func_name='salary_deduction_delete')
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** SalaryPunishment get post put delete **********************************
@@ -212,7 +212,7 @@ class SalaryPunishmentDetailAPIView(generics.RetrieveDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        salary_operation_delete(instance=instance)
+        salary_operation_delete(instance=instance, func_name='salary_punishment_delete')
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** Bonus get post put delete **********************************
@@ -260,7 +260,7 @@ class BonusDetailAPIView(generics.RetrieveDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        salary_operation_delete(instance=instance)
+        salary_operation_delete(instance=instance, func_name='bonus_delete')
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** Maas Ode get post put delete **********************************
