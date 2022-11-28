@@ -54,7 +54,6 @@ def add_amount_to_salary_view_decorator(func):
         else:
             amount = kwargs['amount']
 
-        func(*args, **kwargs, salary_date=salary_view.date)
 
         if bonus == False:
             if float(amount) > salary_view.final_salary:
@@ -65,6 +64,8 @@ def add_amount_to_salary_view_decorator(func):
             salary_view.final_salary = salary_view.final_salary + float(amount)
 
         salary_view.save()
+        
+        func(*args, **kwargs, salary_date=salary_view.date)
 
         employee_activity_history_create(
             salary_view = salary_view,

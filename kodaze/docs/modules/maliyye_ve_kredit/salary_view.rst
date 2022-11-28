@@ -216,7 +216,8 @@ Bonus
     - Json-da gələn data:
         - "employee" -> işçi - User
         - "note" -> qeyd - String
-        - "date" -> tarix - Date
+        - "date" -> əməliyyatın icrası zamanı daxil edilən tarix - Date
+        - "salary_date" -> əməliyyatın aparıldığı ə/h cədvəlinin tarixi - Date
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
 
@@ -277,7 +278,8 @@ Cərimə
     - Json-da gələn data:
         - "employee" -> işçi - User
         - "note" -> qeyd - String
-        - "date" -> tarix - Date
+        - "date" -> əməliyyatın icrası zamanı daxil edilən tarix - Date
+        - "salary_date" -> əməliyyatın aparıldığı ə/h cədvəlinin tarixi - Date
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
 
@@ -338,7 +340,8 @@ Kəsinti
     - Json-da gələn data:
         - "employee" -> işçi - User
         - "note" -> qeyd - String
-        - "date" -> tarix - Date
+        - "date" -> əməliyyatın icrası zamanı daxil edilən tarix - Date
+        - "salary_date" -> əməliyyatın aparıldığı ə/h cədvəlinin tarixi - Date
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
 

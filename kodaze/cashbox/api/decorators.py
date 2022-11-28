@@ -38,15 +38,15 @@ def cashbox_operation_decorator(func):
         print(f"{func_name=}")
 
         now = datetime.date.today()
-        
-        if date is None:
-            raise ValidationError({"detail": "Tarixi daxil edin"})
+        if func_name != "salary_pay_create":
+            if date is None:
+                raise ValidationError({"detail": "Tarixi daxil edin"})
 
-        if date is not None and date.year <= now.year and date.month < now.month:
-            raise ValidationError({"detail": "Tarixi doğru daxil edin. Keçmiş tarix daxil edilə bilməz"})
+            if date is not None and date.year <= now.year and date.month < now.month:
+                raise ValidationError({"detail": "Tarixi doğru daxil edin. Keçmiş tarix daxil edilə bilməz"})
 
-        if date is not None and date.year >= now.year and date.month > now.month:
-            raise ValidationError({"detail": "Tarixi doğru daxil edin. Gələcək tarix daxil edilə bilməz"})
+            if date is not None and date.year >= now.year and date.month > now.month:
+                raise ValidationError({"detail": "Tarixi doğru daxil edin. Gələcək tarix daxil edilə bilməz"})
         
         if func_name == "salary_pay_create":
             salary_view = kwargs['salary_view']
