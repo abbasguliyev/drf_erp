@@ -4,11 +4,9 @@ import pandas as pd
 from rest_framework.exceptions import ValidationError
 
 from salary.api.selectors import (
-    advance_payment_list,
     salary_deduction_list,
     salary_punishment_list,
     bonus_list,
-    pay_salary_list,
     salary_view_list
 )
 
@@ -21,10 +19,6 @@ User = get_user_model()
 def add_amount_to_salary_view_decorator(func):
     def wrapper(*args, **kwargs):
         employee = kwargs['employee']
-        try:
-            commission = kwargs['comission']
-        except:
-            commission = False
 
         if func.__name__ == "bonus_create":
             bonus = True
@@ -43,17 +37,14 @@ def add_amount_to_salary_view_decorator(func):
         previous_month_salary_view = salary_view_list().filter(employee=employee, date=f"{previous_month.year}-{previous_month.month}-{1}").last()
         
         try:
-            if commission == True:
-                salary_view = salary_view_list().filter(employee=employee, date=f"{next_m.year}-{next_m.month}-{1}").last()
+            if previous_month_salary_view is not None and previous_month_salary_view.is_paid == False:
+                salary_view = previous_month_salary_view
             else:
-                if previous_month_salary_view is not None and previous_month_salary_view.is_paid == False:
-                    salary_view = previous_month_salary_view
+                current_salary_view = salary_view_list().filter(employee=employee, date=f"{now.year}-{now.month}-{1}").last()
+                if current_salary_view.is_paid == False:
+                    salary_view = current_salary_view
                 else:
-                    current_salary_view = salary_view_list().filter(employee=employee, date=f"{now.year}-{now.month}-{1}").last()
-                    if current_salary_view.is_paid == False:
-                        salary_view = current_salary_view
-                    else:
-                        raise ValidationError({'detail': 'Ə/H artıq ödənilib'})
+                    raise ValidationError({'detail': 'Ə/H artıq ödənilib'})
         except ValidationError as err:
             raise err
 

@@ -12,8 +12,10 @@ from account.api.selectors import user_list
 
 from salary.api.services.employee_activity_service import employee_activity_history_create
 from salary.api.selectors import employee_activity_history_list
-
 from salary.api.selectors import salary_view_list
+
+from holiday.api.selectors import employee_working_day_list
+from holiday.api.services.holiday_services import employee_working_day_create
 
 @shared_task(name='salary_view_create_task')
 def salary_view_create_task():
@@ -139,41 +141,18 @@ def create_employee_working_day_task(id):
     now = datetime.date.today()
 
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
-
     next_m = d + pd.offsets.MonthBegin(1)
 
-    days_in_this_month = pd.Period(
-        f"{now.year}-{now.month}-{1}").days_in_month
+    days_in_this_month = pd.Period(f"{now.year}-{now.month}-{1}").days_in_month
+    days_in_next_month = pd.Period(f"{next_m.year}-{next_m.month}-{1}").days_in_month
 
-    days_in_next_month = pd.Period(
-        f"{next_m.year}-{next_m.month}-{1}").days_in_month
-
-    employee_working_day_this_month = EmployeeWorkingDay.objects.select_related('employee').filter(
-        employee=user,
-        date__year=now.year,
-        date__month=now.month
-    ).count()
-    
+    employee_working_day_this_month = employee_working_day_list().filter(employee=user, date__month=now.month, date__year=now.year).count()
     if employee_working_day_this_month == 0:
-        employee_working_day = EmployeeWorkingDay.objects.create(
-            employee=user,
-            working_days_count=days_in_this_month,
-            date=f"{now.year}-{now.month}-{1}"
-        )
-        employee_working_day.save()
+        employee_working_day_create(employee=user, working_days_count=days_in_this_month, date=f"{now.year}-{now.month}-{1}")
 
-    employee_working_day_next_month = EmployeeWorkingDay.objects.select_related('employee').filter(
-        employee=user,
-        date__year=next_m.year,
-        date__month=next_m.month
-    ).count()
+    employee_working_day_next_month = employee_working_day_list().filter(employee=user, date__month=next_m.month, date__year=next_m.year).count()
     if employee_working_day_next_month == 0:
-        employee_working_day = EmployeeWorkingDay.objects.create(
-            employee=user,
-            working_days_count=days_in_next_month,
-            date=f"{next_m.year}-{next_m.month}-{1}"
-        )
-        employee_working_day.save()
+        employee_working_day_create(employee=user, working_days_count=days_in_next_month, date=f"{next_m.year}-{next_m.month}-{1}")
 
 @shared_task(name='create_user_permission_for_position_task')
 def create_user_permission_for_position_task(id):

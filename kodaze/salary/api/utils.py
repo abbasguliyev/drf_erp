@@ -101,14 +101,29 @@ def give_commission_after_contract(
 
 
 def send_amount_to_salary_view(user: User, amount: float, date) -> SalaryView:
+    """
+    İşçi ə/h cədvəlində yekun məbləğə verilmiş məbləğin əlavə edilməsi
+    """
     salary_view = salary_view_list().filter(employee=user, date= date).last()
     salary_view.final_salary = salary_view.final_salary + amount
     salary_view.save()
 
     return salary_view
 
+def get_back_amount_from_salary_view(user: User, amount: float, date) -> SalaryView:
+    """
+    İşçi ə/h cədvəlində yekun məbləğdən verilmiş məbləğin çıxılması
+    """
+    salary_view = salary_view_list().filter(employee=user, date= date).last()
+    salary_view.final_salary = salary_view.final_salary - amount
+    salary_view.save()
+
+    return salary_view
 
 def send_sale_quantity_to_salary_view(user: User, quantity: float, amount: float, commission_amount: float, date) -> SalaryView:
+    """
+    İşçi ə/h cədvəlində satış sayına verilmiş miqdarın əlavə edilməsi
+    """
     salary_view = salary_view_list().filter(employee=user, date= date).last()
     salary_view.sales_quantity = salary_view.sale_quantity + quantity
     salary_view.sales_amount = salary_view.sales_amount + amount
@@ -117,16 +132,10 @@ def send_sale_quantity_to_salary_view(user: User, quantity: float, amount: float
 
     return salary_view
 
-
-def get_back_amount_from_salary_view(user: User, amount: float, date) -> SalaryView:
-    salary_view = salary_view_list().filter(employee=user, date= date).last()
-    salary_view.final_salary = salary_view.final_salary - amount
-    salary_view.save()
-
-    return salary_view
-
-
 def get_back_sale_quantity_from_salary_view(user: User, quantity: float, amount: float, date) -> SalaryView:
+    """
+    İşçi ə/h cədvəlində satış sayından verilmiş miqdarın çıxılması
+    """
     salary_view = salary_view_list().filter(employee=user, date= date).last()
     salary_view.sales_quantity = salary_view.sale_quantity - quantity
     salary_view.sales_amount = salary_view.sales_amount - amount

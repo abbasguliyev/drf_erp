@@ -2,10 +2,8 @@ import json
 import os
 from account import FIX
 from account.models import Customer, EmployeeStatus, Region
-from company.models import Holding
 from rest_framework.exceptions import ValidationError
 from core.settings import BASE_DIR
-from salary.models import SalaryView
 import datetime
 from account import (
     COMPANY,
@@ -13,7 +11,11 @@ from account import (
 )
 from account.api.selectors import user_list, employee_status_list, region_list
 from django.contrib.auth import get_user_model
-from salary.api.selectors import salary_view_list
+
+from salary.api.utils import (
+    send_amount_to_salary_view, 
+    get_back_amount_from_salary_view,    
+)
 
 User = get_user_model()
 
@@ -130,16 +132,14 @@ def update_user(id, **data) -> User:
 
         now = datetime.date.today()
         this_month = f"{now.year}-{now.month}-{1}"
-        salary_view = salary_view_list().filter(employee=user, date=this_month).last()
 
         if salary > old_salary:
             difference = salary - old_salary
-            salary_view.final_salary = salary_view.final_salary + difference
-            salary_view.save()
+            send_amount_to_salary_view(user=user, amount=difference, date=this_month)
         elif salary < old_salary:
             difference = old_salary - salary
-            salary_view.final_salary = salary_view.final_salary - difference
-            salary_view.save()
+            get_back_amount_from_salary_view(user=user, amount=difference, date=this_month)
+
     obj = user_list.filter(id=id).update(**data)
     return obj
 

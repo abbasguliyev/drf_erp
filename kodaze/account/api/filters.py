@@ -40,6 +40,7 @@ class UserFilter(django_filters.FilterSet):
             'position__name': ['exact', 'icontains'],
             'position': ['exact'],
             'is_superuser': ['exact'],
+            'salary_style': ['exact'],
 
             'register_type': ['exact'],
             'company': ['exact'],

@@ -439,7 +439,6 @@ class CommissionSaleRangeListCreateAPIView(generics.ListCreateAPIView):
 class CommissionSaleRangeDetailAPIView(generics.ListCreateAPIView):
     queryset = CommissionSaleRange.objects.select_related('sale_range').all()
     serializer_class = CommissionSaleRangeSerializer
-    # permission_classes = [salary_permissions.CommissionSaleRangePermissions]
 
 
 class CommissionListCreateAPIView(generics.ListCreateAPIView):

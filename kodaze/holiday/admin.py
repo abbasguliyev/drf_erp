@@ -1,52 +1,66 @@
 from django.contrib import admin
 
 from holiday.models import (
-    HoldingWorkingDay,
+    EmployeeHoliday,
     EmployeeWorkingDay,
-    TeamWorkingDay,
-    OfficeWorkingDay,
-    CompanyWorkingDay,
-    SectionWorkingDay,
-    PositionWorkingDay,
-    HoldingExceptionWorker,
-    TeamExceptionWorker,
-    CompanyExceptionWorker,
-    OfficeExceptionWorker,
-    SectionExceptionWorker,
-    PositionExceptionWorker
+    EmployeeHolidayHistory,
+    HolidayOperation
 )
-
-# Register your models here.
-admin.site.register(HoldingWorkingDay)
-admin.site.register(TeamWorkingDay)
-admin.site.register(OfficeWorkingDay)
-admin.site.register(CompanyWorkingDay)
-admin.site.register(SectionWorkingDay)
-admin.site.register(PositionWorkingDay)
-admin.site.register(HoldingExceptionWorker)
-admin.site.register(TeamExceptionWorker)
-admin.site.register(CompanyExceptionWorker)
-admin.site.register(SectionExceptionWorker)
-admin.site.register(OfficeExceptionWorker)
-admin.site.register(PositionExceptionWorker)
 
 
 @admin.register(EmployeeWorkingDay)
 class EmployeeWorkingDayAdmin(admin.ModelAdmin):
     list_filter = [
         "employee__id",
+        "working_days_count",
         "date"
     ]
     list_display = (
         "id",
         "employee",
-        "date",
         "working_days_count",
-        "non_working_days_count",
-        "holidays",
-        "paid_leave_days",
-        "unpaid_leave_days",
-        "is_paid",
-        "payment_amount",
+        "date"
+    )
+
+@admin.register(EmployeeHoliday)
+class EmployeeHolidayAdmin(admin.ModelAdmin):
+    list_filter = [
+        "employee__id",
+        "history",
+        "holiday_date"
+    ]
+    list_display = (
+        "id",
+        "employee",
+        "history",
+        "holiday_date"
+    )
+
+@admin.register(EmployeeHolidayHistory)
+class EmployeeHolidayHistoryAdmin(admin.ModelAdmin):
+    list_filter = [
+        "note",
+        "created_date"
+    ]
+    list_display = (
+        "id",
+        "note",
+        "created_date"
+    )
+
+@admin.register(HolidayOperation)
+class HolidayOperationAdmin(admin.ModelAdmin):
+    list_filter = [
+        "holding",
+        "company",
+        "office",
+        "holiday_date"
+    ]
+    list_display = (
+        "id",
+        "holding",
+        "company",
+        "office",
+        "holiday_date"
     )
 

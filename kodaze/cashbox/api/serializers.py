@@ -19,6 +19,8 @@ from cashbox.models import (
 from company.api.serializers import HoldingSerializer, OfficeSerializer, CompanySerializer
 from account.api.serializers import UserSerializer, CustomerSerializer
 from account.api.selectors import user_list
+from cashbox.api.selectors import office_cashbox_list, company_cashbox_list
+from django.db.models import Sum, Q
 
 class HoldingCashboxSerializer(DynamicFieldsCategorySerializer):
     holding = HoldingSerializer(read_only=True, fields=['id', 'name'])
@@ -36,6 +38,17 @@ class CompanyCashboxSerializer(DynamicFieldsCategorySerializer):
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
     )
+    offices_of_company_total_balance = serializers.SerializerMethodField()
+
+    def get_offices_of_company_total_balance(self, instance):
+        company = instance.company
+        office_cashboxes = office_cashbox_list().filter(office__company = company).aggregate(
+            total_balance=Sum('balance', filter=Q(office__company = company))
+        )
+        offices_total_balance = office_cashboxes.get('total_balance')
+        if offices_total_balance is None:
+            offices_total_balance = 0
+        return offices_total_balance
 
     class Meta:
         model = CompanyCashbox
