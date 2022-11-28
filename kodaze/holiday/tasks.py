@@ -5,7 +5,7 @@ import datetime
 from .models import EmployeeWorkingDay
 from account.api.selectors import user_list
 from holiday.api.selectors import employee_working_day_list
-from kodaze.holiday.api.services.holiday_services import employee_working_day_create
+from holiday.api.services.holiday_services import employee_working_day_create
 
 
 @shared_task(name='employee_working_day_creater_task')
