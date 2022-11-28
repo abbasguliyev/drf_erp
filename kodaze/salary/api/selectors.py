@@ -15,7 +15,6 @@ from salary.api.filters import (
     SalaryDeductionFilter,
     SalaryPunishmentFilter,
     BonusFilter,
-    PaySalaryFilter,
     SalaryViewFilter,
 )
 
@@ -41,7 +40,7 @@ def bonus_list(*, filters=None) -> QuerySet[Bonus]:
 
 def pay_salary_list(*, filters=None) -> QuerySet[PaySalary]:
     filters = filters or {}
-    qs = PaySalary.objects.select_related('employee').all()
+    qs = PaySalary.objects.prefetch_related('salary_view').all()
     return qs
 
 def salary_view_list(*, filters=None) -> QuerySet[SalaryView]:

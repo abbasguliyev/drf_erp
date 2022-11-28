@@ -8,7 +8,7 @@ from salary.api.services.commission_services import (
     commission_create,
     commission_update
 )
-from salary.api.services.salary_pay_service import salary_pay_create
+from salary.api.services.salary_pay_service import salary_pay_service
 from salary.api.services.salarydeduction_service import salarydeduction_create
 from salary.api.services.salarypunishment_service import salarypunishment_create
 from salary.api.utils import salary_operation_delete
@@ -44,7 +44,6 @@ from salary.api.filters import (
     SalaryDeductionFilter,
     SalaryPunishmentFilter,
     SalaryViewFilter,
-    PaySalaryFilter,
     EmployeeActivityHistoryFilter
 )
 
@@ -265,50 +264,19 @@ class BonusDetailAPIView(generics.RetrieveDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** Maas Ode get post put delete **********************************
-class PaySalaryListCreateAPIView(generics.ListCreateAPIView):
+class PaySalaryCreateAPIView(generics.CreateAPIView):
     queryset = pay_salary_list()
     serializer_class = PaySalarySerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = PaySalaryFilter
     permission_classes = [salary_permissions.PaySalaryPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = self.queryset
-        elif request.user.company is not None:
-            if request.user.office is not None:
-                queryset = self.queryset.filter(employee__company=request.user.company,
-                                                    employee__office=request.user.office)
-            queryset = self.queryset.filter(
-                employee__company=request.user.company)
-        else:
-            queryset = self.queryset
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
             user = request.user
-            salary_pay_create(executor=user, **serializer.validated_data, func_name="salary_pay_create")
+            salary_pay_service(executor=user, **serializer.validated_data)
             return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PaySalaryDetailAPIView(generics.RetrieveAPIView):
-    queryset = pay_salary_list()
-    serializer_class = PaySalarySerializer
-    permission_classes = [salary_permissions.PaySalaryPermissions]
-
-
 # ********************************** SalaryView get post put delete **********************************
 class SalaryViewListAPIView(generics.ListAPIView):
     queryset = salary_view_list()

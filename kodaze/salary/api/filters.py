@@ -105,17 +105,17 @@ class SalaryViewFilter(DateYearMonthFilter):
         }
 
 
-class PaySalaryFilter(DateYearMonthFilter):
-    class Meta:
-        model = PaySalary
-        fields = {
-            'employee__fullname': ['exact', 'icontains'],
-            'employee__id': ['exact', 'icontains'],
-            'employee__position__name': ['exact', 'icontains'],
-            'employee__employee_status__status_name': ['exact', 'icontains'],
-            'amount': ['exact', 'gte', 'lte'],
-            'note': ['exact', 'icontains'],
-        }
+# class PaySalaryFilter(DateYearMonthFilter):
+#     class Meta:
+#         model = PaySalary
+#         fields = {
+#             'employee__fullname': ['exact', 'icontains'],
+#             'employee__id': ['exact', 'icontains'],
+#             'employee__position__name': ['exact', 'icontains'],
+#             'employee__employee_status__status_name': ['exact', 'icontains'],
+#             'amount': ['exact', 'gte', 'lte'],
+#             'note': ['exact', 'icontains'],
+#         }
 
 class EmployeeActivityHistoryFilter(django_filters.FilterSet):
     start_date = django_filters.DateFilter(

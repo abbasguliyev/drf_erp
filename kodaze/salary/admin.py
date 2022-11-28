@@ -71,11 +71,6 @@ class SalaryPunishmentAdmin(SalaryOprAdmin):
 class BonusAdmin(SalaryOprAdmin):
     pass
 
-@admin.register(PaySalary)
-class PaySalaryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'employee', 'amount', 'date', 'salary_date')
-
-
 @admin.register(Commission)
 class CommissionAdmin(admin.ModelAdmin):
     list_display = ('id', 'commission_name', 'for_office', 'cash', 'for_team')
@@ -103,3 +98,5 @@ class EmployeeActivityHistoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'salary_view', 'bonus', 'advance_payment', 'salary_deduction', 'salary_punishment', 'activity_date')
     list_filter = ('salary_view',)
     list_display_links = ('id', 'salary_view')
+
+admin.site.register(PaySalary)

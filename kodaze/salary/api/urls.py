@@ -8,8 +8,7 @@ urlpatterns = [
     path('bonus/', salary_views.BonusListCreateAPIView.as_view()),
     path('bonus/<int:pk>/', salary_views.BonusDetailAPIView.as_view()),
 
-    path('pay-salary/', salary_views.PaySalaryListCreateAPIView.as_view()),
-    path('pay-salary/<int:pk>/', salary_views.PaySalaryDetailAPIView.as_view()),
+    path('pay-salary/', salary_views.PaySalaryCreateAPIView.as_view()),
 
     path('advancepayment/', salary_views.AdvancePaymentListCreateAPIView.as_view()),
     path('advancepayment/<int:pk>/', salary_views.AdvancePaymentDetailAPIView.as_view()),

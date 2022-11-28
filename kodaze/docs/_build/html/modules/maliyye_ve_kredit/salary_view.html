@@ -537,13 +537,12 @@
 <li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/pay-salary/">http://localhost:8000/api/v1/salaries/pay-salary/</a>”</p></li>
 <li><dl class="simple">
 <dt>Json daxilində göndəriləcək data:</dt><dd><ul>
-<li><p>“employee” -&gt; required. işçi id - User</p></li>
-<li><p>“note” -&gt; nullable. qeyd - String</p></li>
-<li><p>“date” -&gt; required. tarix - Date. hansı tarixin maaşı ödənilməsi istənilirsə həmin tarix. Yəni əgər bu ay ödənəcəksə prosesin edildiyi tarix göndərilə bilər, backend üçün lazım olan ordakı il və aydır. Günün neçə daxil edilməsi önəmli deyil.</p></li>
+<li><p>“salary_view” -&gt; required. Ə/H id - SalaryView ID</p></li>
 </ul>
 </dd>
 </dl>
 </li>
+<li><p>Ə/H cədvəlindən ödənilməsi istənilən əməkhaqqılar seçilir və onların id-ləri json-da göndərilir</p></li>
 <li><p>Əməkhaqqı ödəmək əməliyyatı zamanı kassadan pul çıxılır və həmin tarixdə verilmiş bonus, kəsinti və cərimələr ödəndi statusuna keçir.</p></li>
 </ul>
 </dd>
@@ -551,49 +550,10 @@
 </li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;employee&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;note&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maas odemek&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;01-10-2022&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;salary_view&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">396</span><span class="p">,</span><span class="mi">398</span><span class="p">]</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><dl class="simple">
-<dt>Bütün əməkhaqqı ödəmə əməliyyatlarına bax</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/pay-salary/">http://localhost:8000/api/v1/salaries/pay-salary/</a>”</p></li>
-<li><dl class="simple">
-<dt>Json-da gələn data:</dt><dd><ul>
-<li><p>“employee” -&gt; işçi - User</p></li>
-<li><p>“note” -&gt; qeyd - String</p></li>
-<li><p>“date” -&gt; tarix - Date</p></li>
-<li><p>“salary_date” -&gt; maaşın ödənilmə tarixi - Date</p></li>
-<li><p>“amount” -&gt; ödənilmiş məbləğ - float</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss17.png"><img alt="../../_images/ss17.png" class="align-center" src="../../_images/ss17.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
-<li><dl class="simple">
-<dt>Filter</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/pay-salary/?employee__fullname=&amp;employee__fullname__icontains=&amp;employee__id=&amp;employee__id__icontains=&amp;employee__position__name=&amp;employee__position__name__icontains=&amp;employee__employee_status__status_name=&amp;employee__employee_status__status_name__icontains=&amp;amount=&amp;amount__gte=&amp;amount__lte=&amp;note=&amp;note__icontains=&amp;date=&amp;date__gte=&amp;date__lte=&amp;year=&amp;month=">http://localhost:8000/api/v1/salaries/pay-salary/?employee__fullname=&amp;employee__fullname__icontains=&amp;employee__id=&amp;employee__id__icontains=&amp;employee__position__name=&amp;employee__position__name__icontains=&amp;employee__employee_status__status_name=&amp;employee__employee_status__status_name__icontains=&amp;amount=&amp;amount__gte=&amp;amount__lte=&amp;note=&amp;note__icontains=&amp;date=&amp;date__gte=&amp;date__lte=&amp;year=&amp;month=</a>”</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>İD-ə görəə əməkhaqqı ödəmə əməliyyatına bax</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/pay-salary/1/">http://localhost:8000/api/v1/salaries/pay-salary/1/</a>”</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
 </section>
 </section>
 

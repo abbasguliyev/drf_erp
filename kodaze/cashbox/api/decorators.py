@@ -13,20 +13,27 @@ def cashbox_operation_decorator(func):
     Kassadan pul məxaric(mədaxil) edilməsini və pul axını səhifəsinə məlumatların əlavə edilməsini təmin edir.
     """
     def wrapper(*args, **kwargs):
-        employee = kwargs['employee']
-        date = kwargs['date']
-        note = kwargs['note']
+        try:
+            func_name = kwargs['func_name']
+        except:
+            func_name = None
+            
+        if func_name == "salary_pay_create":
+            salary_view = kwargs['salary_view']
+            employee = salary_view.employee
+            date = salary_view.date
+            note = salary_view.note
+        else:
+            employee = kwargs['employee']
+            date = kwargs['date']
+            note = kwargs['note']
+            
         executor = kwargs['executor']
         # operation fieldi decoratorun yazildigi funksiyadan mutleq gonderilmelidir, INCOME ve ya EXPENSE olaraq gonderilmelidir.
         try:
             operation = kwargs['operation']
         except:
             operation = EXPENSE
-
-        try:
-            func_name = kwargs['func_name']
-        except:
-            func_name = None
 
         print(f"{func_name=}")
 
@@ -42,7 +49,7 @@ def cashbox_operation_decorator(func):
             raise ValidationError({"detail": "Tarixi doğru daxil edin. Gələcək tarix daxil edilə bilməz"})
         
         if func_name == "salary_pay_create":
-            salary_view = salary_view_list().filter(employee=employee, date=f"{date.year}-{date.month}-{1}").last()
+            salary_view = kwargs['salary_view']
             amount = float(salary_view.final_salary)
         else:
             amount = kwargs['amount']

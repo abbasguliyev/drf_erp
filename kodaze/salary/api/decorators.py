@@ -1,12 +1,8 @@
-from salary.models import SalaryView, AdvancePayment, Bonus, SalaryDeduction, SalaryPunishment
 import datetime
 import pandas as pd
 from rest_framework.exceptions import ValidationError
 
 from salary.api.selectors import (
-    salary_deduction_list,
-    salary_punishment_list,
-    bonus_list,
     salary_view_list
 )
 
@@ -64,29 +60,7 @@ def add_amount_to_salary_view_decorator(func):
             if float(amount) > salary_view.final_salary:
                 raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
             
-            if func.__name__ == "salary_pay_create":
-                amount = float(salary_view.final_salary)
-                salary_view.final_salary = 0
-                salary_view.is_done = True
-                salary_view.is_paid = True
-                salary_view.pay_date = now
-                salary_view.save()
-
-                all_bonus = bonus_list().filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year) 
-                all_sd = salary_deduction_list().filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year).filter()
-                all_sp = salary_punishment_list().filter(employee=employee, salary_date__month=salary_view.date.month, salary_date__year=salary_view.date.year)
-
-                for b in all_bonus:
-                    b.is_paid = True
-                    b.save()
-                for sd in all_sd:
-                    sd.is_paid = True
-                    sd.save()
-                for sp in all_sp:
-                    sp.is_paid = True
-                    sp.save()
-            else:
-                salary_view.final_salary = salary_view.final_salary - float(amount)
+            salary_view.final_salary = salary_view.final_salary - float(amount)
         else:
             salary_view.final_salary = salary_view.final_salary + float(amount)
 

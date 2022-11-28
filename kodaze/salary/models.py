@@ -119,19 +119,6 @@ class AdvancePayment(AbstractSalaryMethod):
             ("delete_advancepayment", "Avans silə bilər")
         )
 
-
-class PaySalary(AbstractSalaryMethod):
-    class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-        permissions = (
-            ("view_paysalary", "Mövcud maaş ödəmələrinə baxa bilər"),
-            ("add_paysalary", "Maaş ödəmə əlavə edə bilər"),
-            ("change_paysalary", "Maaş ödəmə məlumatlarını yeniləyə bilər"),
-            ("delete_paysalary", "Maaş ödəmə silə bilər")
-        )
-
-
 class SalaryDeduction(AbstractSalaryMethod):
     class Meta:
         ordering = ("pk",)
@@ -199,6 +186,19 @@ class GivenCommissionAfterSignContract(models.Model):
 class SalaryViewExport(models.Model):
     file_data = models.FileField(upload_to="media/salary/%Y/%m/%d/")
     export_date =models.DateField(auto_now_add=True)
+
+class PaySalary(models.Model):
+    salary_view = models.ManyToManyField(SalaryView)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_paysalary", "Mövcud maaş ödəmələrinə baxa bilər"),
+            ("add_paysalary", "Maaş ödəmə əlavə edə bilər"),
+            ("change_paysalary", "Maaş ödəmə məlumatlarını yeniləyə bilər"),
+            ("delete_paysalary", "Maaş ödəmə silə bilər")
+        )
 
 
 class EmployeeActivityHistory(models.Model):

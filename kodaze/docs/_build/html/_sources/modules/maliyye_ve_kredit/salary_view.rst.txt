@@ -369,35 +369,12 @@ Kəsinti
 - Əməkhaqqı ödəmək
     - endpoint: "http://localhost:8000/api/v1/salaries/pay-salary/"
     - Json daxilində göndəriləcək data:
-        - "employee" -> required. işçi id - User
-        - "note" -> nullable. qeyd - String
-        - "date" -> required. tarix - Date. hansı tarixin maaşı ödənilməsi istənilirsə həmin tarix. Yəni əgər bu ay ödənəcəksə prosesin edildiyi tarix göndərilə bilər, backend üçün lazım olan ordakı il və aydır. Günün neçə daxil edilməsi önəmli deyil.
+        - "salary_view" -> required. Ə/H id - SalaryView ID
+    - Ə/H cədvəlindən ödənilməsi istənilən əməkhaqqılar seçilir və onların id-ləri json-da göndərilir
     - Əməkhaqqı ödəmək əməliyyatı zamanı kassadan pul çıxılır və həmin tarixdə verilmiş bonus, kəsinti və cərimələr ödəndi statusuna keçir.
 
 .. code:: json
 
   {
-    "employee": 21,
-    "note": "maas odemek",
-    "date": "01-10-2022"
+    "salary_view": [396,398]
   }
-
-- Bütün əməkhaqqı ödəmə əməliyyatlarına bax
-    - endpoint: "http://localhost:8000/api/v1/salaries/pay-salary/"
-    - Json-da gələn data:
-        - "employee" -> işçi - User
-        - "note" -> qeyd - String
-        - "date" -> tarix - Date
-        - "salary_date" -> maaşın ödənilmə tarixi - Date
-        - "amount" -> ödənilmiş məbləğ - float
-
-.. image:: _static/ss17.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
-- Filter
-    - endpoint: "http://localhost:8000/api/v1/salaries/pay-salary/?employee__fullname=&employee__fullname__icontains=&employee__id=&employee__id__icontains=&employee__position__name=&employee__position__name__icontains=&employee__employee_status__status_name=&employee__employee_status__status_name__icontains=&amount=&amount__gte=&amount__lte=&note=&note__icontains=&date=&date__gte=&date__lte=&year=&month="
-
-- İD-ə görəə əməkhaqqı ödəmə əməliyyatına bax
-    - endpoint: "http://localhost:8000/api/v1/salaries/pay-salary/1/"
