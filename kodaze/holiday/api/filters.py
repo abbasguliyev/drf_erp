@@ -2,7 +2,9 @@ import django_filters
 from holiday.models import (
     EmployeeWorkingDay,
     EmployeeHolidayHistory,
-    EmployeeHoliday
+    EmployeeHoliday,
+    EmployeeDayOff,
+    EmployeeDayOffHistory
 )
 
 class EmployeeWorkingDayFilter(django_filters.FilterSet):
@@ -42,4 +44,28 @@ class EmployeeHolidayFilter(django_filters.FilterSet):
         fields = {
             'employee': ['exact'],
             'history': ['exact']
+        }
+
+class EmployeeDayOffHistoryFilter(django_filters.FilterSet):
+    created_date__gte = django_filters.DateFilter(
+        field_name='created_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    created_date__lte = django_filters.DateFilter(
+        field_name='created_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
+    class Meta:
+        model = EmployeeDayOffHistory
+        fields = ('created_date', 'is_paid')
+
+class EmployeeDayOffFilter(django_filters.FilterSet):
+    day_off_date__gte = django_filters.DateFilter(
+        field_name='day_off_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    day_off_date__lte = django_filters.DateFilter(
+        field_name='day_off_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
+    class Meta:
+        model = EmployeeDayOff
+        fields = {
+            'employee': ['exact'],
+            'history': ['exact'],
+            'is_paid': ['exact']
         }

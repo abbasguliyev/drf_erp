@@ -70,19 +70,9 @@ class EmployeeDayOffSerializer(DynamicFieldsCategorySerializer):
         fields = '__all__'
 
 class EmployeeDayOffOperationSerializer(DynamicFieldsCategorySerializer):
-    person_on_duty = UserSerializer(read_only=True, many=True, fields=['id', 'username', 'fullname'])
-    person_on_duty_id = serializers.PrimaryKeyRelatedField(
-        queryset=user_list(), source='person_on_duty', many=True, write_only=True, allow_empty=True
-    )
-
-    company = CompanySerializer(read_only=True, fields=['id', 'name'])
-    company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), source='company', write_only=True,
-    )
-
-    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
-    office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.select_related('company').all(), source='office', write_only=True
+    employee = UserSerializer(read_only=True, many=True, fields=['id', 'username', 'fullname'])
+    employee_id = serializers.PrimaryKeyRelatedField(
+        queryset=user_list(), source='employee', many=True, write_only=True, allow_empty=True
     )
 
     class Meta:

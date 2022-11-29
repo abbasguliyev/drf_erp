@@ -20,3 +20,19 @@ class HolidayOperationPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="holidayoperation", view=view)
         return perm_util.add_user_permission_to_list()
+
+
+class EmployeeDayOffPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="employeedayoff", view=view)
+        return perm_util.add_user_permission_to_list()
+
+class EmployeeDayOffHistoryPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="employeedayoffhistory", view=view)
+        return perm_util.add_user_permission_to_list()
+
+class EmployeeDayOffOperationPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="employeedayoffoperation", view=view)
+        return perm_util.add_user_permission_to_list()
