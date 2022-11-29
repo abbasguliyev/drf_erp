@@ -47,7 +47,7 @@
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-views/"
 
 - Filter: 
-    - "http://localhost:8000/api/v1/salaries/salary-views/?employee=&employee__fullname=&employee__fullname__icontains=&employee__is_superuser=unknown&employee__salary_style=&employee__office=&employee__office__id=&employee__office__name=&employee__office__name__icontains=&employee__company=&employee__company__id=&employee__company__name=&employee__company__name__icontains=&employee__position=&employee__position__id=&employee__position__name=&employee__position__name__icontains=&employee__employee_status=&employee__employee_status__status_name=&employee__employee_status__status_name__icontains=&is_done=unknown&sale_quantity=&sale_quantity__gte=&sale_quantity__lte=&sales_amount=&sales_amount__gte=&sales_amount__lte=&final_salary=&final_salary__gte=&final_salary__lte=&date=&date__gte=&date__lte=&year=&month="
+    - "http://localhost:8000/api/v1/salaries/salary-views/?employee=&employee__fullname=&employee__fullname__icontains=&employee__is_superuser=unknown&employee__salary_style=&employee__office=&employee__office__id=&employee__office__name=&employee__office__name__icontains=&employee__company=&employee__company__id=&employee__company__name=&employee__company__name__icontains=&employee__position=&employee__position__id=&employee__position__name=&employee__position__name__icontains=&employee__employee_status=&employee__employee_status__status_name=&employee__employee_status__status_name__icontains=&is_done=unknown&sale_quantity=&sale_quantity__gte=&sale_quantity__lte=&sales_amount=&sales_amount__gte=&sales_amount__lte=&final_salary=&final_salary__gte=&final_salary__lte=&date=&date__gte=&date__lte=&date__month=&date__year="
 
 - Maaş cədvəlində id-ə görə axtarış
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-views/1/"
@@ -167,7 +167,7 @@ Avans
 
 
 - Filter:
-    - "http://localhost:8000/api/v1/salaries/advancepayment/?employee=1&year=2022&month=11"
+    - "http://localhost:8000/api/v1/salaries/advancepayment/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
 
 - İD-ə görə avans axtar
@@ -229,7 +229,7 @@ Bonus
 
 
 - Filter:
-    - "http://localhost:8000/api/v1/salaries/bonus/?employee=1&year=2022&month=11"
+    - "http://localhost:8000/api/v1/salaries/bonus/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
 
 - İD-ə görə bonus axtar
@@ -299,7 +299,7 @@ Cərimə
 
 
 - Filter:
-    - "http://localhost:8000/api/v1/salaries/salary-punishment/?employee=1&year=2022&month=11"
+    - "http://localhost:8000/api/v1/salaries/salary-punishment/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
 
 - İD-ə görə cərimə axtar
@@ -369,7 +369,7 @@ Kəsinti
 
 
 - Filter:
-    - "http://localhost:8000/api/v1/salaries/salary-deduction/?employee=1&year=2022&month=11"
+    - "http://localhost:8000/api/v1/salaries/salary-deduction/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
 
 - İD-ə görə Kəsinti axtar

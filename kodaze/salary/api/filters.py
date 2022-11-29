@@ -20,16 +20,6 @@ class DateYearMonthFilter(django_filters.FilterSet):
     date__lte = django_filters.DateFilter(
         field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
 
-    year = django_filters.CharFilter(method="year_filter", label="year")
-    month = django_filters.CharFilter(method="month_filter", label="month")
-    
-    def year_filter(self, queryset, name, value):
-        qs = self.queryset.filter(Q(salary_date__year=value))
-        return qs
-    def month_filter(self, queryset, name, value):
-        qs = self.queryset.filter(Q(salary_date__month=value))
-        return qs
-
 
 class AdvancePaymentFilter(DateYearMonthFilter):
     class Meta:
@@ -39,6 +29,7 @@ class AdvancePaymentFilter(DateYearMonthFilter):
             'employee__fullname': ['exact', 'icontains'],
             'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
+            'salary_date': ['exact', 'month', 'year'],
         }
 
 
@@ -50,6 +41,7 @@ class SalaryDeductionFilter(DateYearMonthFilter):
             'employee__fullname': ['exact', 'icontains'],
             'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
+            'salary_date': ['exact', 'month', 'year'],
         }
 
 class SalaryPunishmentFilter(DateYearMonthFilter):
@@ -60,6 +52,7 @@ class SalaryPunishmentFilter(DateYearMonthFilter):
             'employee__fullname': ['exact', 'icontains'],
             'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
+            'salary_date': ['exact', 'month', 'year'],
         }
 
 
@@ -71,6 +64,7 @@ class BonusFilter(DateYearMonthFilter):
             'employee__fullname': ['exact', 'icontains'],
             'amount': ['exact', 'icontains'],
             'note': ['exact', 'icontains'],
+            'salary_date': ['exact', 'month', 'year'],
         }
 
 class SalaryViewFilter(django_filters.FilterSet):
@@ -80,16 +74,6 @@ class SalaryViewFilter(django_filters.FilterSet):
         field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
     date__lte = django_filters.DateFilter(
         field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
-
-    year = django_filters.CharFilter(method="year_filter", label="year")
-    month = django_filters.CharFilter(method="month_filter", label="month")
-    
-    def year_filter(self, queryset, name, value):
-        qs = self.queryset.filter(Q(date__year=value))
-        return qs
-    def month_filter(self, queryset, name, value):
-        qs = self.queryset.filter(Q(date__month=value))
-        return qs
 
     class Meta:
         model = SalaryView
@@ -119,6 +103,7 @@ class SalaryViewFilter(django_filters.FilterSet):
             'sale_quantity': ['exact', 'gte', 'lte'],
             'sales_amount': ['exact', 'gte', 'lte'],
             'final_salary': ['exact', 'gte', 'lte'],
+            'date': ['exact', 'month', 'year'],
         }
 
 
