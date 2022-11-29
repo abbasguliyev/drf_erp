@@ -3,9 +3,8 @@ from rest_framework.exceptions import ValidationError
 from salary.models import AdvancePayment
 from salary.api.decorators import add_amount_to_salary_view_decorator
 from cashbox.api.decorators import cashbox_operation_decorator
-from salary.api.selectors import (
-    advance_payment_list,
-)
+from salary.api.selectors import advance_payment_list
+from salary.api.utils import salary_operation_delete
 
 
 @cashbox_operation_decorator
@@ -44,3 +43,7 @@ def advancepayment_create(
     advance_payment.save()
 
     return advance_payment
+
+def advance_payment_delete(instance_list_id, func_name=None):
+    for instance in instance_list_id:
+        salary_operation_delete(instance=instance, func_name=func_name)

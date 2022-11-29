@@ -7,6 +7,7 @@ urlpatterns = [
 
     path('bonus/', salary_views.BonusListCreateAPIView.as_view()),
     path('bonus/<int:pk>/', salary_views.BonusDetailAPIView.as_view()),
+    path('bonus-delete/', salary_views.BonusDelete.as_view()),
 
     path('pay-salary/', salary_views.PaySalaryCreateAPIView.as_view()),
 
@@ -15,9 +16,11 @@ urlpatterns = [
 
     path('salary-deduction/', salary_views.SalaryDeductionListCreateAPIView.as_view()),
     path('salary-deduction/<int:pk>/', salary_views.SalaryDeductionDetailAPIView.as_view()),
+    path('salary-deduction-delete/', salary_views.SalaryDeductionDelete.as_view()),
     
     path('salary-punishment/', salary_views.SalaryPunishmentListCreateAPIView.as_view()),
     path('salary-punishment/<int:pk>/', salary_views.SalaryPunishmentDetailAPIView.as_view()),
+    path('salary-punishment-delete/', salary_views.SalaryPunishmentDelete.as_view()),
 
     path('month-range/',salary_views.MonthRangeListCreateAPIView.as_view()),
     path('month-range/<int:pk>/', salary_views.MonthRangeDetailAPIView.as_view()),

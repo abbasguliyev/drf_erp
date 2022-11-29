@@ -2,6 +2,8 @@ import datetime
 from salary.models import Bonus
 from rest_framework.exceptions import ValidationError
 from salary.api.decorators import add_amount_to_salary_view_decorator
+from salary.api.utils import salary_operation_delete
+from salary.api.selectors import bonus_list
 
 @add_amount_to_salary_view_decorator
 def bonus_create(
@@ -33,3 +35,8 @@ def bonus_create(
     bonus.save()
 
     return bonus
+
+
+def bonus_delete(instance_list, func_name=None):
+    for instance in instance_list:
+        salary_operation_delete(instance=instance, func_name=func_name)

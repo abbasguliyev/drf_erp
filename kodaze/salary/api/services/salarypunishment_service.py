@@ -1,8 +1,9 @@
 import datetime
-from salary.models import SalaryPunishment, SalaryView
+from salary.models import SalaryPunishment
 from rest_framework.exceptions import ValidationError
-import pandas as pd
 from salary.api.decorators import add_amount_to_salary_view_decorator
+from salary.api.selectors import salary_punishment_list
+from salary.api.utils import salary_operation_delete
 
 @add_amount_to_salary_view_decorator
 def salarypunishment_create(
@@ -35,3 +36,6 @@ def salarypunishment_create(
 
     return salary_punishment
 
+def salary_punishment_delete(instance_list_id, func_name=None):
+    for instance in instance_list_id:
+        salary_operation_delete(instance=instance, func_name=func_name)

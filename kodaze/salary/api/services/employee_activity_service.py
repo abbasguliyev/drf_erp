@@ -31,12 +31,8 @@ def employee_activity_history_create(
         salary_punishment = 0
     month = salary_view.date.month
     year = salary_view.date.year
-    print(f"{month=}")
-    print(f"{year=}")
     obj = employee_activity_history_list().filter(salary_view=salary_view, activity_date__month=month, activity_date__year=year).last()
-    print(f"{obj=}")
     if obj is None:
-        print('obj is None')
         new_obj = EmployeeActivityHistory.objects.create(
             salary_view=salary_view,
             bonus=bonus,
@@ -48,7 +44,6 @@ def employee_activity_history_create(
         new_obj.full_clean()
         new_obj.save()
     else:
-        print('obj is not None')
         obj.advance_payment = obj.advance_payment + advance_payment 
         obj.bonus = obj.bonus + bonus 
         obj.salary_deduction = obj.salary_deduction + salary_deduction 

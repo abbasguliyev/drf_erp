@@ -236,8 +236,16 @@ Bonus
     - endpoint: "http://localhost:8000/api/v1/salaries/bonus/1/"
 
 - Bonus sil
-    - endpoint: "http://localhost:8000/api/v1/salaries/bonus/1/"
-    - Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, əks halda Ödənilmiş məbləği silə bilməyəcəyiniz ilə bağlı xəta mesajı alacaqsınız
+    - endpoint: "http://localhost:8000/api/v1/salaries/bonus-delete/"
+    - Silmək istədiyiniz bonusların list şəklində jsonda `instance_list` -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.
+    - Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, Front end tərəfdə validasiyası qoyulmalıdır
+    - Nümunə:
+
+.. code:: json
+
+ {
+    "instance_list": [70, 71]
+ }
 
 +------+
 |Cərimə|
@@ -298,8 +306,16 @@ Cərimə
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-punishment/1/"
 
 - Cərimə sil
-    - endpoint: "http://localhost:8000/api/v1/salaries/salary-punishment/1/"
-    - Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, əks halda Ödənilmiş məbləği silə bilməyəcəyiniz ilə bağlı xəta mesajı alacaqsınız
+    - endpoint: "http://localhost:8000/api/v1/salaries/salary-deduction-delete/"
+    - Silmək istədiyiniz cərimələri list şəklində jsonda `instance_list` -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.
+    - Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, Front end tərəfdə validasiyası qoyulmalıdır
+    - Nümunə:
+
+.. code:: json
+
+ {
+    "instance_list": [70, 71]
+ }
 
 +-------+
 |Kəsinti|
@@ -360,8 +376,16 @@ Kəsinti
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-deduction/1/"
 
 - Kəsinti sil
-    - endpoint: "http://localhost:8000/api/v1/salaries/salary-deduction/1/"
-    - Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, əks halda Ödənilmiş məbləği silə bilməyəcəyiniz ilə bağlı xəta mesajı alacaqsınız
+    - endpoint: "http://localhost:8000/api/v1/salaries/salary-punishment-delete/"
+    - Silmək istədiyiniz kəsintiləri list şəklində jsonda `instance_list` -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.
+    - Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, Front end tərəfdə validasiyası qoyulmalıdır
+    - Nümunə:
+
+.. code:: json
+
+ {
+    "instance_list": [70, 71]
+ }
 
 +--------+
 |Ə/H Ödə |

@@ -228,6 +228,6 @@ def salary_operation_delete(instance, func_name=None):
     """
     Avans, bonus, kəsinti, cərimə delete funksiyası
     """
-    if instance.is_paid == True:
-        raise ValidationError({"detail": "Ödənilmiş məbləği silə bilmərsiniz"})
+    # if instance.is_paid == True:
+    #     raise ValidationError({"detail": "Ödənilmiş məbləği silə bilmərsiniz"})
     instance.delete()

@@ -337,13 +337,20 @@
 </li>
 <li><dl class="simple">
 <dt>Bonus sil</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/bonus/1/">http://localhost:8000/api/v1/salaries/bonus/1/</a>”</p></li>
-<li><p>Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, əks halda Ödənilmiş məbləği silə bilməyəcəyiniz ilə bağlı xəta mesajı alacaqsınız</p></li>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/bonus-delete/">http://localhost:8000/api/v1/salaries/bonus-delete/</a>”</p></li>
+<li><p>Silmək istədiyiniz bonusların list şəklində jsonda <cite>instance_list</cite> -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.</p></li>
+<li><p>Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, Front end tərəfdə validasiyası qoyulmalıdır</p></li>
+<li><p>Nümunə:</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;instance_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">70</span><span class="p">,</span><span class="w"> </span><span class="mi">71</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Cərimə</p></td>
@@ -428,13 +435,20 @@
 </li>
 <li><dl class="simple">
 <dt>Cərimə sil</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/salary-punishment/1/">http://localhost:8000/api/v1/salaries/salary-punishment/1/</a>”</p></li>
-<li><p>Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, əks halda Ödənilmiş məbləği silə bilməyəcəyiniz ilə bağlı xəta mesajı alacaqsınız</p></li>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/salary-deduction-delete/">http://localhost:8000/api/v1/salaries/salary-deduction-delete/</a>”</p></li>
+<li><p>Silmək istədiyiniz cərimələri list şəklində jsonda <cite>instance_list</cite> -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.</p></li>
+<li><p>Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, Front end tərəfdə validasiyası qoyulmalıdır</p></li>
+<li><p>Nümunə:</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;instance_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">70</span><span class="p">,</span><span class="w"> </span><span class="mi">71</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Kəsinti</p></td>
@@ -519,13 +533,20 @@
 </li>
 <li><dl class="simple">
 <dt>Kəsinti sil</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/salary-deduction/1/">http://localhost:8000/api/v1/salaries/salary-deduction/1/</a>”</p></li>
-<li><p>Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, əks halda Ödənilmiş məbləği silə bilməyəcəyiniz ilə bağlı xəta mesajı alacaqsınız</p></li>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/salary-punishment-delete/">http://localhost:8000/api/v1/salaries/salary-punishment-delete/</a>”</p></li>
+<li><p>Silmək istədiyiniz kəsintiləri list şəklində jsonda <cite>instance_list</cite> -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.</p></li>
+<li><p>Silmə əməliyyatı yalnız ödənilməmiş məbləğlər üçün keçərlidir, Front end tərəfdə validasiyası qoyulmalıdır</p></li>
+<li><p>Nümunə:</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 </ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;instance_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">70</span><span class="p">,</span><span class="w"> </span><span class="mi">71</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Ə/H Ödə</p></td>

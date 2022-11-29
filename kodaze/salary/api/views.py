@@ -1,5 +1,5 @@
-from salary.api.services.advancedpayment_service import advancepayment_create
-from salary.api.services.bonus_service import bonus_create
+from salary.api.services.advancedpayment_service import advancepayment_create, advance_payment_delete
+from salary.api.services.bonus_service import bonus_create, bonus_delete
 from salary.api.services.commission_services import (
     month_range_create,
     sale_range_create,
@@ -9,8 +9,8 @@ from salary.api.services.commission_services import (
     commission_update
 )
 from salary.api.services.salary_pay_service import salary_pay_service
-from salary.api.services.salarydeduction_service import salarydeduction_create
-from salary.api.services.salarypunishment_service import salarypunishment_create
+from salary.api.services.salarydeduction_service import salarydeduction_create, salary_deduction_delete
+from salary.api.services.salarypunishment_service import salarypunishment_create, salary_punishment_delete
 from salary.api.utils import salary_operation_delete
 
 from salary.models import (
@@ -29,14 +29,14 @@ from salary.api.serializers import (
     CommissionInstallmentSerializer, CommissionSaleRangeSerializer,
     EmployeeActivityHistorySerializer
 )
+from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import status, generics, serializers
-
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from salary.api import permissions as salary_permissions
 
-from django_filters.rest_framework import DjangoFilterBackend
 
 from salary.api.filters import (
     AdvancePaymentFilter,
@@ -113,11 +113,6 @@ class AdvancePaymentDetailAPIView(generics.RetrieveAPIView):
     serializer_class = AdvancePaymentSerializer
     permission_classes = [salary_permissions.AdvancePaymentPermissions]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        salary_operation_delete(instance=instance, func_name='advance_payment_delete')
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # ********************************** SalaryDeduction get post put delete **********************************
 class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
@@ -157,15 +152,23 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryDeductionDetailAPIView(generics.RetrieveDestroyAPIView):
+class SalaryDeductionDetailAPIView(generics.RetrieveAPIView):
     queryset = salary_deduction_list()
     serializer_class = SalaryDeductionSerializer
     permission_classes = [salary_permissions.SalaryDeductionPermissions]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        salary_operation_delete(instance=instance, func_name='salary_deduction_delete')
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class SalaryDeductionDelete(APIView):
+    class InputSerializer(serializers.Serializer):
+        instance_list_id = serializers.PrimaryKeyRelatedField(
+            queryset=salary_deduction_list(), write_only=True, many=True
+        )
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        salary_deduction_delete(**serializer.validated_data, func_name='salary_deduction_delete')
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** SalaryPunishment get post put delete **********************************
 class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
@@ -205,15 +208,22 @@ class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryPunishmentDetailAPIView(generics.RetrieveDestroyAPIView):
+class SalaryPunishmentDetailAPIView(generics.RetrieveAPIView):
     queryset = salary_punishment_list()
     serializer_class = SalaryPunishmentSerializer
     permission_classes = [salary_permissions.SalaryPunishmentPermissions]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        salary_operation_delete(instance=instance, func_name='salary_punishment_delete')
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class SalaryPunishmentDelete(APIView):
+    class InputSerializer(serializers.Serializer):
+        instance_list = serializers.PrimaryKeyRelatedField(
+            queryset=salary_punishment_list(), write_only=True, many=True
+        )
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        salary_punishment_delete(**serializer.validated_data, func_name='salary_punishment_delete')
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
 
 # ********************************** Bonus get post put delete **********************************
 class BonusListCreateAPIView(generics.ListCreateAPIView):
@@ -253,15 +263,24 @@ class BonusListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BonusDetailAPIView(generics.RetrieveDestroyAPIView):
+class BonusDetailAPIView(generics.RetrieveAPIView):
     queryset = bonus_list()
     serializer_class = BonusSerializer
     permission_classes = [salary_permissions.BonusPermissions]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        salary_operation_delete(instance=instance, func_name='bonus_delete')
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class BonusDelete(APIView):
+    class InputSerializer(serializers.Serializer):
+        instance_list = serializers.PrimaryKeyRelatedField(
+            queryset=bonus_list(), write_only=True, many=True
+        )
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        bonus_delete(**serializer.validated_data, func_name='bonus_delete')
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
+
 
 # ********************************** Maas Ode get post put delete **********************************
 class PaySalaryCreateAPIView(generics.CreateAPIView):
