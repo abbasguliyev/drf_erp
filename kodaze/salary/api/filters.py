@@ -24,10 +24,10 @@ class DateYearMonthFilter(django_filters.FilterSet):
     month = django_filters.CharFilter(method="month_filter", label="month")
     
     def year_filter(self, queryset, name, value):
-        qs = self.queryset.filter(Q(date__year=value))
+        qs = self.queryset.filter(Q(salary_date__year=value))
         return qs
     def month_filter(self, queryset, name, value):
-        qs = self.queryset.filter(Q(date__month=value))
+        qs = self.queryset.filter(Q(salary_date__month=value))
         return qs
 
 
@@ -73,7 +73,14 @@ class BonusFilter(DateYearMonthFilter):
             'note': ['exact', 'icontains'],
         }
 
-class SalaryViewFilter(DateYearMonthFilter):
+class SalaryViewFilter(django_filters.FilterSet):
+    date = django_filters.DateFilter(
+        field_name='date', input_formats=["%d-%m-%Y"])
+    date__gte = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    date__lte = django_filters.DateFilter(
+        field_name='date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = SalaryView
         fields = {

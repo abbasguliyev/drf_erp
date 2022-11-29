@@ -58,7 +58,7 @@ class HolidayOperation(models.Model):
 
 class EmployeeDayOffOperation(models.Model):
     employee = models.ManyToManyField(User)
-    holiday_date = models.CharField(max_length=350)
+    day_off_date = models.CharField(max_length=350)
     is_paid = models.BooleanField(default=False)
     
     class Meta:

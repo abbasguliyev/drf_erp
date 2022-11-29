@@ -140,7 +140,7 @@ def update_user(id, **data) -> User:
             difference = old_salary - salary
             get_back_amount_from_salary_view(user=user, amount=difference, date=this_month)
 
-    obj = user_list.filter(id=id).update(**data)
+    obj = user_list().filter(id=id).update(**data)
     return obj
 
 
