@@ -44,6 +44,11 @@ def advancepayment_create(
 
     return advance_payment
 
+def advance_payment_update(instance, **data):
+    obj = advance_payment_list().filter(id=instance.id).update(**data)
+    return obj
+
+
 def advance_payment_delete(instance_list_id, func_name=None):
     for instance in instance_list_id:
         salary_operation_delete(instance=instance, func_name=func_name)

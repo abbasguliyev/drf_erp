@@ -9,8 +9,16 @@ from cashbox.api.selectors import (
     company_cashbox_opr_list
 )
 
-def update_cashbox_service(instance, **data) -> Cashbox:
-    obj = Cashbox.objects.filter(id=instance.id).update(**data)
+def update_holding_cashbox_service(instance, **data) -> Cashbox:
+    obj = holding_cashbox_list().filter(id=instance.id).update(**data)
+    return obj
+
+def update_company_cashbox_service(instance, **data) -> Cashbox:
+    obj = company_cashbox_list().filter(id=instance.id).update(**data)
+    return obj
+
+def update_office_cashbox_service(instance, **data) -> Cashbox:
+    obj = office_cashbox_list().filter(id=instance.id).update(**data)
     return obj
 
 def create_office_cashbox_service(
@@ -23,7 +31,7 @@ def create_office_cashbox_service(
     if office_cashbox == 0:
         balance = 0
         if title is None:
-            title = f"{office.name}({office.company.name}) ofisinin anbarı"
+            title = f"{office.name}({office.company.name}) ofisinin kassası"
         office_cashbox = OfficeCashbox.objects.create(title=title, office=office, balance=balance, note=note)
         office_cashbox.full_clean()
         office_cashbox.save()
@@ -40,7 +48,7 @@ def create_company_cashbox_service(
     if company_cashbox == 0:
         balance = 0
         if title is None:
-            title = f"{company.name} şirkətinin anbarı"
+            title = f"{company.name} şirkətinin kassası"
         company_cashbox = CompanyCashbox.objects.create(title=title, company=company, balance=balance, note=note)
         company_cashbox.full_clean()
         company_cashbox.save()
@@ -57,7 +65,7 @@ def create_holding_cashbox_service(
     if holding_cashbox == 0:
         balance = 0
         if title is None:
-            title = f"{holding.name} holdinqinin anbarı"
+            title = f"{holding.name} holdinqinin kassası"
         holding_cashbox = HoldingCashbox.objects.create(title=title, holding=holding, balance=balance, note=note)
         holding_cashbox.full_clean()
         holding_cashbox.save()

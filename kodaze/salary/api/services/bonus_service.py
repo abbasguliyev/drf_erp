@@ -36,6 +36,9 @@ def bonus_create(
 
     return bonus
 
+def bonus_update(instance, **data):
+    obj = bonus_list().filter(id=instance.id).update(**data)
+    return obj
 
 def bonus_delete(instance_list, func_name=None):
     for instance in instance_list:

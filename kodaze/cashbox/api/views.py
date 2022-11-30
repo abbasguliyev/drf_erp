@@ -12,15 +12,6 @@ from cashbox.api.serializers import (
     CompanyCashboxOperationSerializer
 )
 
-from cashbox.models import (
-    HoldingCashbox,
-    CompanyCashbox,
-    OfficeCashbox,
-    CashFlow,
-    HoldingCashboxOperation,
-    CompanyCashboxOperation
-)
-
 from cashbox.api.filters import (
     HoldingCashboxFilter,
     OfficeCashboxFilter,
@@ -33,7 +24,7 @@ from cashbox.api.filters import (
 from cashbox.api import permissions as cashbox_permissions
 from cashbox.api.services import (
     cashbox_operation_services,
-    cashbox_services
+    cashbox_services,
 )
 from cashbox.api.selectors import (
     holding_cashbox_list,
@@ -63,7 +54,7 @@ class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            cashbox_services.update_cashbox_service(instance=instance, data=serializer.validated_data)
+            cashbox_services.update_holding_cashbox_service(instance, **serializer.validated_data)
             return Response({"detail":"Holding kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -104,7 +95,7 @@ class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            cashbox_services.update_cashbox_service(instance=instance, data=serializer.validated_data)
+            cashbox_services.update_company_cashbox_service(instance, **serializer.validated_data)
             return Response({"detail":"Şirkət kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -148,7 +139,7 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            cashbox_services.update_cashbox_service(instance=instance, data=serializer.validated_data)
+            cashbox_services.update_office_cashbox_service(instance, **serializer.validated_data)
             return Response({"detail":"Office kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)

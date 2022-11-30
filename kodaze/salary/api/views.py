@@ -1,5 +1,5 @@
-from salary.api.services.advancedpayment_service import advancepayment_create, advance_payment_delete
-from salary.api.services.bonus_service import bonus_create, bonus_delete
+from salary.api.services.advancedpayment_service import advancepayment_create, advance_payment_update, advance_payment_delete
+from salary.api.services.bonus_service import bonus_create, bonus_delete, bonus_update
 from salary.api.services.commission_services import (
     month_range_create,
     sale_range_create,
@@ -9,8 +9,8 @@ from salary.api.services.commission_services import (
     commission_update
 )
 from salary.api.services.salary_pay_service import salary_pay_service
-from salary.api.services.salarydeduction_service import salarydeduction_create, salary_deduction_delete
-from salary.api.services.salarypunishment_service import salarypunishment_create, salary_punishment_delete
+from salary.api.services.salarydeduction_service import salarydeduction_create, salary_deduction_update, salary_deduction_delete
+from salary.api.services.salarypunishment_service import salarypunishment_create, salary_punishment_update, salary_punishment_delete
 from salary.api.utils import salary_operation_delete
 
 from salary.models import (
@@ -108,11 +108,19 @@ class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvancePaymentDetailAPIView(generics.RetrieveAPIView):
+class AdvancePaymentDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = advance_payment_list()
     serializer_class = AdvancePaymentSerializer
     permission_classes = [salary_permissions.AdvancePaymentPermissions]
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            advance_payment_update(instance, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 # ********************************** SalaryDeduction get post put delete **********************************
 class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
@@ -152,10 +160,19 @@ class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryDeductionDetailAPIView(generics.RetrieveAPIView):
+class SalaryDeductionDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = salary_deduction_list()
     serializer_class = SalaryDeductionSerializer
     permission_classes = [salary_permissions.SalaryDeductionPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            salary_deduction_update(instance, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SalaryDeductionDelete(APIView):
@@ -208,10 +225,20 @@ class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SalaryPunishmentDetailAPIView(generics.RetrieveAPIView):
+class SalaryPunishmentDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = salary_punishment_list()
     serializer_class = SalaryPunishmentSerializer
     permission_classes = [salary_permissions.SalaryPunishmentPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            salary_punishment_update(instance, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SalaryPunishmentDelete(APIView):
     class InputSerializer(serializers.Serializer):
@@ -263,10 +290,19 @@ class BonusListCreateAPIView(generics.ListCreateAPIView):
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BonusDetailAPIView(generics.RetrieveAPIView):
+class BonusDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = bonus_list()
     serializer_class = BonusSerializer
     permission_classes = [salary_permissions.BonusPermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            bonus_update(instance, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BonusDelete(APIView):
