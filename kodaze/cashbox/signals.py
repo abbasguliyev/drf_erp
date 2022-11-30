@@ -16,7 +16,7 @@ def create_office_cashbox(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Company)
 def create_company_cashbox(sender, instance, created, **kwargs):
     if created:
-        create_company_cashbox_service(holding=instance)
+        create_company_cashbox_service(company=instance)
 
 @receiver(post_save, sender=Holding)
 def create_holding_cashbox(sender, instance, created, **kwargs):

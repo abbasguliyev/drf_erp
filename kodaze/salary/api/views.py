@@ -168,7 +168,7 @@ class SalaryDeductionDelete(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         salary_deduction_delete(**serializer.validated_data, func_name='salary_deduction_delete')
-        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 # ********************************** SalaryPunishment get post put delete **********************************
 class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
@@ -223,7 +223,7 @@ class SalaryPunishmentDelete(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         salary_punishment_delete(**serializer.validated_data, func_name='salary_punishment_delete')
-        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 # ********************************** Bonus get post put delete **********************************
 class BonusListCreateAPIView(generics.ListCreateAPIView):
@@ -279,7 +279,7 @@ class BonusDelete(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         bonus_delete(**serializer.validated_data, func_name='bonus_delete')
-        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 
 # ********************************** Maas Ode get post put delete **********************************
