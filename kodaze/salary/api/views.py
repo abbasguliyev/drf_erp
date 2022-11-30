@@ -177,7 +177,7 @@ class SalaryDeductionDetailAPIView(generics.RetrieveUpdateAPIView):
 
 class SalaryDeductionDelete(APIView):
     class InputSerializer(serializers.Serializer):
-        instance_list_id = serializers.PrimaryKeyRelatedField(
+        instance_list = serializers.PrimaryKeyRelatedField(
             queryset=salary_deduction_list(), write_only=True, many=True
         )
 

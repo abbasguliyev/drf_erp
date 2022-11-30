@@ -56,17 +56,6 @@ class HolidayOperation(models.Model):
             ("add_holidayoperation", "Tətil əlavə etmə əməliyyatı edə bilər"),
         )
 
-class EmployeeDayOffOperation(models.Model):
-    employee = models.ManyToManyField(User)
-    day_off_date = models.CharField(max_length=350)
-    is_paid = models.BooleanField(default=False)
-    
-    class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-        permissions = (
-            ("add_employeedayoffoperation", "İcazə əlavə etmə əməliyyatı edə bilər"),
-        )
 
 class EmployeeDayOffHistory(models.Model):
     created_date = models.DateField(auto_now_add=True)
@@ -93,4 +82,16 @@ class EmployeeDayOff(models.Model):
         default_permissions = []
         permissions = (
             ("view_employeedayoff", "Mövcud icazələrə baxa bilər"),
+        )
+
+class EmployeeDayOffOperation(models.Model):
+    employee = models.ManyToManyField(User)
+    day_off_date = models.CharField(max_length=350)
+    is_paid = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("add_employeedayoffoperation", "İcazə əlavə etmə əməliyyatı edə bilər"),
         )

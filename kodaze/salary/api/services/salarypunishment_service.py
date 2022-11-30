@@ -41,6 +41,6 @@ def salary_punishment_update(instance, **data):
     obj = salary_punishment_list().filter(id=instance.id).update(**data)
     return obj
 
-def salary_punishment_delete(instance_list_id, func_name=None):
-    for instance in instance_list_id:
+def salary_punishment_delete(instance_list, func_name=None):
+    for instance in instance_list:
         salary_operation_delete(instance=instance, func_name=func_name)

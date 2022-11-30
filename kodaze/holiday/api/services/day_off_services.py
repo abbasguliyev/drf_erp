@@ -61,3 +61,13 @@ def employee_day_off_operation_create(
     obj.save()
 
     return obj
+
+
+def employee_day_off_history_delete(instance):
+    emp_days_off = employee_day_off_list().filter(history=instance)
+    for emp_day_off in emp_days_off:
+        employee = emp_day_off.employee
+        day_off_date = emp_day_off.day_off_date
+        employee_working_day_increase(employee=employee, day_off_date=day_off_date)
+    
+    instance.delete()

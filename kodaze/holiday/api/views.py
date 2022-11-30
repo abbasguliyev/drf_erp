@@ -30,8 +30,8 @@ from holiday.api.services.holiday_services import (
 )
 
 from holiday.api.services.day_off_services import (
-    employee_day_off_history_create,
-    employee_day_off_operation_create
+    employee_day_off_operation_create,
+    employee_day_off_history_delete
 )
 
 from holiday.api.filters import (
@@ -108,7 +108,7 @@ class EmployeeDayOffHistoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        employee_day_off_history_create(instance=instance)
+        employee_day_off_history_delete(instance=instance)
         return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
 
 
