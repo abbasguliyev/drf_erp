@@ -12,6 +12,7 @@ from rest_framework.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from salary.api.selectors import salary_view_list
 from salary.api.decorators import delete_emp_activity_history
+from account.api.selectors import user_list
 
 User = get_user_model()
 
@@ -149,7 +150,7 @@ def create_fix_commission():
     """
     İşçilərə fix komissiyaların verilməsi
     """
-    users = User.objects.values_list('id', flat=True).filter(is_active=True)
+    users = user_list().filter(is_active=True)
     now = datetime.date.today()
     this_month = f"{now.year}-{now.month}-{1}"
 

@@ -4,12 +4,22 @@ import os
 from celery import Celery
 from django.conf import settings
 from celery.schedules import crontab
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
-app = Celery('core', backend='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0', broker='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0')
-app.conf.broker_url = 'redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0'
+
+backend=os.environ['CELERY_RESULT_BACKEND']
+broker=os.environ['CELERY_BROKER_URL']
+
+app = Celery('core', backend=backend, broker=broker)
+app.conf.broker_url = broker
+
+# app = Celery('core', backend='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0', broker='redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0')
+# app.conf.broker_url = 'redis://:ENA7eWv7s58AZCDm4MtyKVPe8oNd2690@redis:6379/0'
 
 # app = Celery('core', backend='redis://127.0.0.1:6379/0', broker='redis://127.0.0.1:6379/0')
 # app.conf.broker_url = 'redis://127.0.0.1:6379/0'

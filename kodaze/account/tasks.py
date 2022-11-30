@@ -24,6 +24,7 @@ def salary_view_create_task():
     create_employee_salary_view_task taskı işçi üçün maaş cədvəli create edir. Bu task isə
     növbəti aylarda periodik olaraq create etmək üçündür.
     """
+    print("Periodik salary view taski ishe dushdu")
     users = user_list()
     now = datetime.date.today()
     
@@ -32,9 +33,9 @@ def salary_view_create_task():
     next_m = d + pd.offsets.MonthBegin(1)
 
     for user in users:
-        employee_salary_next_month = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month).count()
-        if employee_salary_next_month != 0:
-            emp_st_next_m = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month)
+        employee_salary_next_month = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month)
+        if employee_salary_next_month.count() != 0:
+            emp_st_next_m = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month).last()
             emp_ah_next_m = employee_activity_history_list().filter(salary_view=emp_st_next_m, activity_date__month=emp_st_next_m.date.month, activity_date__year=emp_st_next_m.date.year).count()
             if emp_ah_next_m != 0:
                 continue
@@ -55,8 +56,8 @@ def salary_view_create_task():
 
     for user in users:
         employee_salary_this_month = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month)
-        if employee_salary_this_month != 0:
-            emp_st_current = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month).count()
+        if employee_salary_this_month.count() != 0:
+            emp_st_current = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month).last()
             emp_ah_current = employee_activity_history_list().filter(salary_view=emp_st_current, activity_date__month=emp_st_current.date.month, activity_date__year=emp_st_current.date.year).count()
             if emp_ah_current != 0:
                 continue
@@ -105,7 +106,7 @@ def create_employee_salary_view_task(id):
             amount = 0
         )
     else:
-        emp_st_current = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month).count()
+        emp_st_current = salary_view_list().filter(employee = user, date__year = now.year, date__month = now.month).last()
         emp_ah_current = employee_activity_history_list().filter(salary_view=emp_st_current, activity_date__month=emp_st_current.date.month, activity_date__year=emp_st_current.date.year).count()
         if emp_ah_current == 0:
             employee_activity_history_create(
@@ -122,7 +123,7 @@ def create_employee_salary_view_task(id):
             amount = 0
         )
     else:
-        emp_st_next_m = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month)
+        emp_st_next_m = salary_view_list().filter(employee = user, date__year = next_m.year, date__month = next_m.month).last()
         emp_ah_next_m = employee_activity_history_list().filter(salary_view=emp_st_next_m, activity_date__month=emp_st_next_m.date.month, activity_date__year=emp_st_next_m.date.year).count()
         if emp_ah_next_m == 0:
             employee_activity_history_create(
