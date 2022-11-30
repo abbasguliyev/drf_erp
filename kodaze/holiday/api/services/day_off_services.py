@@ -71,3 +71,7 @@ def employee_day_off_history_delete(instance):
         employee_working_day_increase(employee=employee, day_off_date=day_off_date)
     
     instance.delete()
+
+def employe_paid_calculate(employee, working_day_count):
+    salary = employee.salary
+    amount = salary/working_day_count
