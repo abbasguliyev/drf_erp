@@ -31,7 +31,7 @@ class EmployeeHolidayHistoryFilter(django_filters.FilterSet):
 
     class Meta:
         model = EmployeeHolidayHistory
-        fields = ('created_date',)
+        fields = ('employee', 'created_date',)
 
 class EmployeeHolidayFilter(django_filters.FilterSet):
     holiday_date__gte = django_filters.DateFilter(
@@ -54,7 +54,7 @@ class EmployeeDayOffHistoryFilter(django_filters.FilterSet):
 
     class Meta:
         model = EmployeeDayOffHistory
-        fields = ('created_date', 'is_paid')
+        fields = ('employee', 'created_date', 'is_paid')
 
 class EmployeeDayOffFilter(django_filters.FilterSet):
     day_off_date__gte = django_filters.DateFilter(

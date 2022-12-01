@@ -28,8 +28,10 @@ from django.db import transaction
 def create_installment(sender, instance, created, **kwargs):
     if created:
         if(instance.payment_style == INSTALLMENT):
+            print("Signals.py log")
             instance_id = instance.id
-            transaction.on_commit(lambda: create_installment_task.delay(instance_id, True))
+            # transaction.on_commit(lambda: create_installment_task.delay(instance_id, True))
+            create_installment_task.delay(instance_id, True)
 
 
 @receiver(post_save, sender=Contract)

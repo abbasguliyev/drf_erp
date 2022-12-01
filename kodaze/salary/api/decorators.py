@@ -56,11 +56,6 @@ def add_amount_to_salary_view_decorator(func):
                 amount = kwargs['amount']
         elif func.__name__ == "salary_pay_create":
             amount = float(salary_view.final_salary)
-        elif func.__name__ == "employe_paid_day_off":
-            salary = employee.salary
-            working_day_count = kwargs['working_day_count']
-            amount = f"{salary/working_day_count:.2f}"
-            print(f"{amount=}")
         else:
             amount = kwargs['amount']
 

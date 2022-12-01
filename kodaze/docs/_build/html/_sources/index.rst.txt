@@ -17,20 +17,15 @@ Welcome to Kodaze CRM's documentation!
    :maxdepth: 2
    :caption: İnsan Resursları:
 
-   modules/insan-resurslari/isciler.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: İnsan Resursları2:
-
-   modules/insan_resurslari2/user.rst
-   modules/insan_resurslari2/employee_status.rst
-   modules/insan_resurslari2/region.rst
-   modules/insan_resurslari2/customer.rst
-   modules/insan_resurslari2/customer-note.rst
-   modules/insan_resurslari2/commission.rst
-   modules/insan_resurslari2/month_range.rst
-   modules/insan_resurslari2/sale_range.rst
+   modules/insan-resurslari/employee.rst
+   modules/insan-resurslari/work_graphic.rst
+   modules/insan-resurslari/employee_status.rst
+   modules/insan-resurslari/region.rst
+   modules/insan-resurslari/customer.rst
+   modules/insan-resurslari/customer-note.rst
+   modules/insan-resurslari/commission.rst
+   modules/insan-resurslari/month_range.rst
+   modules/insan-resurslari/sale_range.rst
 
 .. toctree::
    :maxdepth: 2
@@ -39,6 +34,7 @@ Welcome to Kodaze CRM's documentation!
    modules/maliyye_ve_kredit/salary_view.rst
    modules/maliyye_ve_kredit/balance.rst
    modules/maliyye_ve_kredit/transfer.rst
+   modules/maliyye_ve_kredit/view_installments.rst
    modules/maliyye_ve_kredit/cashflow.rst
 
 

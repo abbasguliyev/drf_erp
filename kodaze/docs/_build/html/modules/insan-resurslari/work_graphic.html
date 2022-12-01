@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>İş qrafiki &#8212; Kodaze CRM 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="is-qrafiki">
+<h1>İş qrafiki<a class="headerlink" href="#is-qrafiki" title="Permalink to this heading">¶</a></h1>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>İş qrafiki</p></td>
+</tr>
+</tbody>
+</table>
+<section id="is-qrafiki-cdvli">
+<h2>İş qrafiki Cədvəli<a class="headerlink" href="#is-qrafiki-cdvli" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>İş qrafiki Cədvəli</dt><dd><ul>
+<li><p>endpoint “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-working-days/">http://localhost:8000/api/v1/holidays/employee-working-days/</a>”</p></li>
+<li><dl class="simple">
+<dt>Json-da gələn data:</dt><dd><ul>
+<li><dl class="simple">
+<dt>“employee”: İşçi</dt><dd><ul>
+<li><p>“company”: sabit ə/h</p></li>
+<li><p>“office”: sabit ə/h</p></li>
+<li><p>“position”: sabit ə/h</p></li>
+<li><p>“username”: Istifadəçi adı</p></li>
+<li><p>“fullname”: Ad soyad ata adı</p></li>
+<li><p>“salary”: sabit ə/h</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“extra_data”:</dt><dd><ul>
+<li><p>“total_holiday”: Tətil Günü sayı</p></li>
+<li><p>“total_payed_days_off”: Ödənişli icazə günü sayı</p></li>
+<li><p>“total_unpayed_days_off”: Ödənişsiz icazə günü sayı</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>“working_days_count”: İş günü sayı</p></li>
+<li><p>“date”: Cədvəlin aid olduğu tarix</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Filter:</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&amp;employee__fullname=&amp;employee__fullname__icontains=&amp;employee__company=&amp;employee__office=&amp;employee__position=&amp;date__gte=&amp;date__lte=">http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&amp;employee__fullname=&amp;employee__fullname__icontains=&amp;employee__company=&amp;employee__office=&amp;employee__position=&amp;date__gte=&amp;date__lte=</a>”</p></li>
+<li><p>filterdəki start_date və end_date date fieldinə görə hərəkət edir.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="ttil">
+<h2>Tətil<a class="headerlink" href="#ttil" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Tətil əlavə et</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/holiday-operation/">http://localhost:8000/api/v1/holidays/holiday-operation/</a>”</p></li>
+<li><dl class="simple">
+<dt>Tətil əlavə etmək json-da üçün göndərilməli olan datalar:</dt><dd><ul>
+<li><dl class="simple">
+<dt>“person_on_duty_id”:  Növbətçilər</dt><dd><ul>
+<li><p>null göndərilə bilməz. Əgər növbətçi seçilməyəcəksə boş list göndərmək lazımdır.</p></li>
+<li><p>User endpointi: “<a class="reference external" href="http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true">http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“company_id”: Company İD</dt><dd><ul>
+<li><dl class="simple">
+<dt>“Holding” seçildiyi zaman “Şirkət” və “Ofis” null göndərilir. Bu o</dt><dd><p>deməkdir ki, tətil üçün seçilmiş günlər ancaq Holding personalına aiddir. “Holding” seçimi
+olmadığı təqdirdə isə Şirkət və Ofis seçimləri göndərilməlidir.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“office_id”: Office İD</dt><dd><ul>
+<li><dl class="simple">
+<dt>“Holding” seçildiyi zaman “Şirkət” və “Ofis” null göndərilir. Bu o</dt><dd><p>deməkdir ki, tətil üçün seçilmiş günlər ancaq Holding personalına aiddir. “Holding” seçimi
+olmadığı təqdirdə isə Şirkət və Ofis seçimləri göndərilməlidir.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“holiday_date”: Tətil günləri. Aşağıdakı nümunədə də göstərildiyi kimi dırnaq işarələri arasında yəni string formatında tətil edilməsi istənilən günlər seçilir və</dt><dd><p>işçilərin iş günləri sayı verilmiş tarixə uyğun olaraq azalır. Yəni Əgər string daxilində həm yanvar həm də fevral aylarından tətil günləri göndərilibsə bu zaman
+işçinin uyğun olaraq yanvar ayındakı və fevral ayındakı iş günü sayı azalır. İş günlərinin sayı işçi register edildiyində avtomatik olaraq cari ay və növbəti ayın
+günlərinin sayına görə 28, 29, 30, 31 olur. Hər ayın 1-i və 15i isə periodik olaraq növbəti aya uyğun iş günü sayı create olunur.
+- Nümunə: “holiday_date”: “01-11-2022, 02-11-2022, 03-11-2022, 04-11-2022”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“holding”: boolean. İşçinin holdingə aid olub olmadığını bildirir.</dt><dd><ul>
+<li><dl class="simple">
+<dt>“Holding” seçildiyi zaman “Şirkət” və “Ofis” null göndərilir. Bu o</dt><dd><p>deməkdir ki, tətil üçün seçilmiş günlər ancaq Holding personalına aiddir. “Holding” seçimi
+olmadığı təqdirdə isə Şirkət və Ofis seçimləri göndərilməlidir.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;person_on_duty_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">102</span><span class="p">,</span><span class="mi">103</span><span class="p">],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;company_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;office_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;holiday_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;01-11-2022, 02-11-2022, 03-11-2022, 04-11-2022&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;holding&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Bütün Tətil tarixçələrinə bax</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-holiday-history/?employee=1&amp;created_date=&amp;created_date__gte=&amp;created_date__lte=">http://localhost:8000/api/v1/holidays/employee-holiday-history/?employee=1&amp;created_date=&amp;created_date__gte=&amp;created_date__lte=</a>”</p></li>
+<li><dl class="simple">
+<dt>Json-da gələn data:</dt><dd><ul>
+<li><p>“employee” -&gt; işçi - User</p></li>
+<li><p>“note” -&gt; qeyd - String</p></li>
+<li><p>“day_count” -&gt; Tətil günü sayı - İnt</p></li>
+<li><p>“holiday_dates” -&gt; Tətil günləri listi - List[String]</p></li>
+<li><p>“created_date” -&gt; Tarix - Date</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>İD-ə görə Tətil tarixçəsi axtar</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-holiday-history/1/">http://localhost:8000/api/v1/holidays/employee-holiday-history/1/</a>”</p></li>
+<li><p>update üçün Put sorğusu göndərmək lazımdır. Dəyişilməsini istədiyiniz fieldları tək tək və ya toplu şəkildə göndərmək olar. Update ancaq qeyd (note) fieldi üçün edilməlidir.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Tətil tarixçəsi sil</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/holiday-history-delete/">http://localhost:8000/api/v1/holidays/holiday-history-delete/</a>”</p></li>
+<li><p>Silmək istədiyiniz tətil tarixçələrinin id-lərini list şəklində jsonda <cite>instance_list</cite> -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.</p></li>
+<li><p>Nümunə:</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;instance_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="icaz">
+<h2>İcazə<a class="headerlink" href="#icaz" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>İcazə əlavə et</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-day-off-operation/">http://localhost:8000/api/v1/holidays/employee-day-off-operation/</a>”</p></li>
+<li><dl class="simple">
+<dt>İcazələr ödənişli və ödənişsiz olmaq üzərə 2 yerə bölünür. Ödənişli icazələr yalnızca ə/h üslubu fix və fix+komissiya olan işçilər üçündür.</dt><dd><p>Bu zaman işçinin maaşını onun iş günü sayına bölüb alınan məbləği icazə gününü sayına vurub işçinin yekun maaşından çıxırıq. Proses backenddə baş verir.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>İcazə əlavə etmək json-da üçün göndərilməli olan datalar:</dt><dd><ul>
+<li><dl class="simple">
+<dt>“employee_id”:  İcazə veriləcək işçilərin siyahısı. List şəklində seçilmiş işçilərin id-si göndərilməlidir</dt><dd><ul>
+<li><p>null göndərilə bilməz. Əgər növbətçi seçilməyəcəksə boş list göndərmək lazımdır.</p></li>
+<li><p>User endpointi: “<a class="reference external" href="http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true">http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true</a>”</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“day_off_date”: İcazə günləri. Aşağıdakı nümunədə də göstərildiyi kimi dırnaq işarələri arasında yəni string formatında icazə tarixləri seçilir və</dt><dd><p>işçilərin iş günləri sayı verilmiş tarixə uyğun olaraq azalır. Yəni Əgər string daxilində həm yanvar həm də fevral aylarından icazə tarixləri göndərilibsə bu zaman
+işçinin uyğun olaraq yanvar ayındakı və fevral ayındakı iş günü sayı azalır. İş günlərinin sayı işçi register edildiyində avtomatik olaraq cari ay və növbəti ayın
+günlərinin sayına görə 28, 29, 30, 31 olur. Hər ayın 1-i və 15i isə periodik olaraq növbəti aya uyğun iş günü sayı create olunur.
+- Nümunə: “day_off_date”: “01-11-2022, 02-11-2022, 03-11-2022, 04-11-2022”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>“is_paid”: boolean.</dt><dd><ul>
+<li><p>İcazənin ödənişli olub olmadığını bildirir. True olarsa ödənişli, False olarsa isə ödənişsiz icazə create olacaq</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;employee_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">105</span><span class="p">,</span><span class="mi">106</span><span class="p">],</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;day_off_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;03-12-2022,04-12-2022&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;is_paid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Bütün İcazə tarixçələrinə bax</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-day-off-history/?employee=&amp;created_date=&amp;is_paid=unknown&amp;created_date__gte=&amp;created_date__lte=">http://localhost:8000/api/v1/holidays/employee-day-off-history/?employee=&amp;created_date=&amp;is_paid=unknown&amp;created_date__gte=&amp;created_date__lte=</a>”</p></li>
+<li><dl class="simple">
+<dt>Json-da gələn data:</dt><dd><ul>
+<li><p>“employee” -&gt; işçi - User</p></li>
+<li><p>“note” -&gt; qeyd - String</p></li>
+<li><p>“paid_day_count” -&gt; Ödənişli İcazə günü sayı - İnt</p></li>
+<li><p>“unpaid_day_count” -&gt; Ödənişsiz İcazə günü sayı - İnt</p></li>
+<li><p>“paid_days_off” -&gt; Ödənişli İcazə günləri listi - List[String]</p></li>
+<li><p>“unpaid_days_off” -&gt; Ödənişsiz İcazə günləri listi - List[String]</p></li>
+<li><p>“created_date” -&gt; Tarix - Date</p></li>
+<li><p>“is_paid”: Ödənişlidirmi - Boolean</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>İD-ə görə İcazə tarixçəsi axtar</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-day-off-history/3/">http://localhost:8000/api/v1/holidays/employee-day-off-history/3/</a>”</p></li>
+<li><p>update üçün Put sorğusu göndərmək lazımdır. Dəyişilməsini istədiyiniz fieldları tək tək və ya toplu şəkildə göndərmək olar. Update ancaq qeyd (note) fieldi üçün edilməlidir.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>İcazə tarixçəsi sil</dt><dd><ul>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/day-off-history-delete/">http://localhost:8000/api/v1/holidays/day-off-history-delete/</a>”</p></li>
+<li><p>Silmək istədiyiniz icazə tarixçələrinin id-lərini list şəklində jsonda <cite>instance_list</cite> -ə yazırsınız və post sorğusu ilə qeyd edilmiş url-ə göndərirsiniz.</p></li>
+<li><p>Nümunə:</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;instance_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Kodaze CRM</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">All about project:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installment.html">Installment And Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project_structure.html">Project Structure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">İnsan Resursları:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="employee.html">İşçilər</a></li>
+<li class="toctree-l1"><a class="reference internal" href="employee_status.html">Employee Status (İşçi Statusu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="region.html">Region (Bölgə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customer.html">Customer (Müştəri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commission.html">Commission (Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="month_range.html">MonthRange (Ay Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maliyyə və Kredit:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/salary_view.html">Əməkhaqqı</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/balance.html">Balans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/transfer.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/cashflow.html">Kassa Hərəkətləri</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Company:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../company/holding.html">Holding (Holdinq)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/company.html">Company (Şirkət)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/department.html">Department (Departament)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/office.html">Office (Ofis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/section.html">Section (Şöbə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/position.html">Position (Vəzifə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/team.html">Team (Komanda)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/permission_for_position.html">Permission For Position (Vəzifəyə görə icazə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/logo.html">Logo (Logo)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Product:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../product/product.html">Product (Məhsullar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product/category.html">Category (Kateqoriya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product/unit_of_measure.html">UnitOfMeasure (Ölçü vahidi)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Backup And Restore:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../backup_restore/backup.html">Backup</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Warehouse:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse.html">Warehouse (Anbar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse_request.html">Warehouse Request (Anbar Sorğu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/stock.html">Stock (Stok)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Manager:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/task_manager.html">TaskManager (Tapşırıqlar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/task_requests.html">TaskRequest (Tarixçə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/advertisement.html">Advertisement (Elan)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contract:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contract/contract.html">Contract (Müqavilə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contract/installment.html">Installment (Kredit)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Abbas Guliyev.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.2.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/modules/insan-resurslari/work_graphic.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

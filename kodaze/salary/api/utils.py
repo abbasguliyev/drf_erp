@@ -98,8 +98,8 @@ def give_commission_after_contract(
 
             given_commission_after_sign_contract_create(user=user, contract=contract, amount=final_salary)
 
-            send_sale_quantity_to_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date)
-            send_amount_to_salary_view(user=user, amount=final_salary, commission_amount=commission_amount, date=next_month_date)
+            send_sale_quantity_to_salary_view(user=user, quantity=quantity, amount=sales_amount, date=this_month_date, commission_amount=commission_amount)
+            send_amount_to_salary_view(user=user, amount=final_salary, date=next_month_date)
 
 
 def send_amount_to_salary_view(user: User, amount: float, date) -> SalaryView:
@@ -129,7 +129,7 @@ def send_sale_quantity_to_salary_view(user: User, quantity: float, amount: float
     salary_view = salary_view_list().filter(employee=user, date= date).last()
     salary_view.sales_quantity = salary_view.sale_quantity + quantity
     salary_view.sales_amount = salary_view.sales_amount + amount
-    salary_view.commission_amount = commission_amount
+    salary_view.commission_amount = salary_view.commission_amount + commission_amount
     salary_view.save()
 
     return salary_view

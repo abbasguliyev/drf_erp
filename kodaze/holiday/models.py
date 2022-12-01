@@ -18,6 +18,7 @@ class EmployeeWorkingDay(models.Model):
         )
 
 class EmployeeHolidayHistory(models.Model):
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="holiday_histories")
     created_date = models.DateField(auto_now_add=True)
     note = models.TextField(null=True, blank=True)
 
@@ -58,6 +59,7 @@ class HolidayOperation(models.Model):
 
 
 class EmployeeDayOffHistory(models.Model):
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="day_off_histories")
     created_date = models.DateField(auto_now_add=True)
     note = models.TextField(null=True, blank=True)
     is_paid = models.BooleanField(default=False)
@@ -76,6 +78,7 @@ class EmployeeDayOff(models.Model):
     history = models.ForeignKey(EmployeeDayOffHistory, on_delete=models.CASCADE, related_name="days_off")
     day_off_date = models.DateField()
     is_paid = models.BooleanField(default=False)
+    paid_amount = models.FloatField(default=0)
 
     class Meta:
         ordering = ("pk",)

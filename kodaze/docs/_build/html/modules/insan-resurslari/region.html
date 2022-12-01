@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Region (Bölgə) &#8212; Kodaze CRM 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Customer (Müştəri)" href="customer.html" />
+    <link rel="prev" title="Employee Status (İşçi Statusu)" href="employee_status.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="region-bolg">
+<h1>Region (Bölgə)<a class="headerlink" href="#region-bolg" title="Permalink to this heading">¶</a></h1>
+<ul class="simple">
+<li><dl class="simple">
+<dt>region_name</dt><dd><ul>
+<li><p>required.</p></li>
+<li><p>Mutleq gonderilmelidir</p></li>
+<li><p>(Bölgə adı - String)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<hr class="docutils" />
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>All Region create</p></td>
+</tr>
+</tbody>
+</table>
+<section id="all-region-create">
+<h2>All Region create<a class="headerlink" href="#all-region-create" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/all-region-create/">http://localhost:8000/api/v1/users/all-region-create/</a>”</p></li>
+<li><p>Boş json ilə post sorğusu göndərilir. Avtomatik backend-də olan cities.json-da qeyd olunmuş bölgələr database-d əlavə olunur</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Region create</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="region-create">
+<h2>Region create<a class="headerlink" href="#region-create" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/region/">http://localhost:8000/api/v1/users/region/</a>”</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;region_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Update Region</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="update-region">
+<h2>Update Region<a class="headerlink" href="#update-region" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/region/1/">http://localhost:8000/api/v1/users/region/1/</a>”</p></li>
+<li><p>put sorğusu patch kimi işləyir. Fieldlər tək tək və ya toplu şəkildə update edilə bilinir</p></li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;region_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Get All Region</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="get-all-region">
+<h2>Get All Region<a class="headerlink" href="#get-all-region" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/region/">http://localhost:8000/api/v1/users/region/</a>”</p></li>
+</ul>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Get Region By ID</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="get-region-by-id">
+<h2>Get Region By ID<a class="headerlink" href="#get-region-by-id" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/region/1/">http://localhost:8000/api/v1/users/region/1/</a>”</p></li>
+</ul>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Delete Region</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="delete-region">
+<h2>Delete Region<a class="headerlink" href="#delete-region" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/region/1/">http://localhost:8000/api/v1/users/region/1/</a>”</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Kodaze CRM</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">All about project:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installment.html">Installment And Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../project_structure.html">Project Structure</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">İnsan Resursları:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="employee.html">İşçilər</a></li>
+<li class="toctree-l1"><a class="reference internal" href="employee_status.html">Employee Status (İşçi Statusu)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Region (Bölgə)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#all-region-create">All Region create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#region-create">Region create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#update-region">Update Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-all-region">Get All Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-region-by-id">Get Region By ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delete-region">Delete Region</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customer.html">Customer (Müştəri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commission.html">Commission (Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="month_range.html">MonthRange (Ay Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maliyyə və Kredit:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/salary_view.html">Əməkhaqqı</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/balance.html">Balans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/transfer.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/cashflow.html">Kassa Hərəkətləri</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Company:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../company/holding.html">Holding (Holdinq)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/company.html">Company (Şirkət)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/department.html">Department (Departament)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/office.html">Office (Ofis)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/section.html">Section (Şöbə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/position.html">Position (Vəzifə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/team.html">Team (Komanda)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/permission_for_position.html">Permission For Position (Vəzifəyə görə icazə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../company/logo.html">Logo (Logo)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Product:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../product/product.html">Product (Məhsullar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product/category.html">Category (Kateqoriya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../product/unit_of_measure.html">UnitOfMeasure (Ölçü vahidi)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Backup And Restore:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../backup_restore/backup.html">Backup</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Warehouse:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse.html">Warehouse (Anbar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/warehouse_request.html">Warehouse Request (Anbar Sorğu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../warehouse/stock.html">Stock (Stok)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Manager:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/task_manager.html">TaskManager (Tapşırıqlar)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/task_requests.html">TaskRequest (Tarixçə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../task_manager/advertisement.html">Advertisement (Elan)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contract:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contract/contract.html">Contract (Müqavilə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contract/installment.html">Installment (Kredit)</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="employee_status.html" title="previous chapter">Employee Status (İşçi Statusu)</a></li>
+      <li>Next: <a href="customer.html" title="next chapter">Customer (Müştəri)</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Abbas Guliyev.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.2.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/modules/insan-resurslari/region.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

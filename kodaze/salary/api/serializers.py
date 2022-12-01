@@ -13,6 +13,8 @@ from salary.models import (
     EmployeeActivityHistory
 )
 
+from contract.models import DemoSales
+
 from account.api.serializers import UserSerializer
 from account.api.selectors import user_list
 from salary.api.selectors import employee_activity_history_list
@@ -188,6 +190,33 @@ class CommissionSerializer(DynamicFieldsCategorySerializer):
 
 class EmployeeActivityHistorySerializer(serializers.ModelSerializer):
     salary_view = SalaryViewSerializer(read_only=True, fields=['id', 'employee', 'sale_quantity', 'commission_amount', 'final_salary', 'date'])
+    extra_data = serializers.SerializerMethodField()
+
+    def get_extra_data(self, instance):
+        salary_view = instance.salary_view
+        qs = dict()
+        total_working_day = user_list().filter(pk= salary_view.employee.id).aggregate(total_working_day=Sum('working_days__working_days_count', filter=Q(
+            working_days__employee=salary_view.employee, working_days__date=salary_view.date)))
+        
+        total_demo_count = DemoSales.objects.filter(
+            user=salary_view.employee, created_date__month=salary_view.date.month, created_date__year=salary_view.date.year
+        ).aggregate(total_working_day=Sum('count'))
+
+        if total_working_day.get("total_working_day") is None:
+            total_working_day = 0
+        else:
+            total_working_day = total_working_day.get('total_working_day')
+
+        if total_demo_count.get("total_demo_count") is None:
+            total_demo_count = 0
+        else:
+            total_demo_count = total_demo_count.get('total_demo_count')
+
+        qs['total_working_day'] = total_working_day
+        qs['total_demo_count'] = total_demo_count
+
+        return qs
+    
     class Meta:
         model = EmployeeActivityHistory
         fields = '__all__'

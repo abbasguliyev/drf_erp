@@ -48,6 +48,7 @@ def demo_create_task():
 
 @shared_task(name='create_installment_task')
 def create_installment_task(id, created):
+    print("tasks.py log")
     instance = Contract.objects.get(id=id)
     loan_term = instance.loan_term
     product_quantity = instance.product_quantity
@@ -61,6 +62,8 @@ def create_installment_task(id, created):
 
         if(initial_payment is not None):
             initial_payment = float(initial_payment)
+        else:
+            initial_payment = 0
 
         if(initial_payment_debt is not None):
             initial_payment_debt = float(initial_payment_debt)

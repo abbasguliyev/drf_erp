@@ -23,7 +23,8 @@ from . import (
     ODENMEYEN,
     PAYMENT_STYLE_CHOICES,
     SERTLI_ODEME_STATUSU,
-    SIFIR_STATUS_CHOICES
+    SIFIR_STATUS_CHOICES,
+    PAY_STATUS_HELPER
 )
 
 from django.db.models import F
@@ -73,7 +74,6 @@ class Contract(models.Model):
 
     debt_finished = models.BooleanField(default=False, blank=True)
     note = models.TextField(null=True, blank=True)
-
 
     payment_style = models.CharField(
         max_length=20,
@@ -217,11 +217,17 @@ class Installment(models.Model):
     )
 
     overpayment_substatus = models.CharField(
-        max_length=20,
+        max_length=200,
         choices=ARTIQ_ODEME_STATUS_CHOICES,
         default=None,
         null=True,
         blank=True
+    )
+
+    pay_status_helper = models.CharField(
+        max_length=200,
+        choices=PAY_STATUS_HELPER,
+        default=ODENMEYEN
     )
 
     last_month = models.BooleanField(default=False)

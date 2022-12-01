@@ -132,25 +132,25 @@ class InstallmentListCreateAPIView(generics.ListCreateAPIView):
         
         queryset = self.filter_queryset(queryset)
 
-        umumi_quantity = 0
+        total_quantity = 0
 
         for q in queryset:
-            umumi_quantity += q.price
+            total_quantity += q.price
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([
-                {'umumi_quantity': umumi_quantity, 'data':serializer.data}
+                {'total_quantity': total_quantity, 'data':serializer.data}
             ])
 
         serializer = self.get_serializer(queryset, many=True)
         return self.get_paginated_response([
-                {'umumi_quantity': umumi_quantity, 'data':serializer.data}
+                {'total_quantity': total_quantity, 'data':serializer.data}
             ])
 
-    def create(self, request, *args, **kwargs):
-        return contract_utils.contract_create(self, request, *args, **kwargs)
+    # def create(self, request, *args, **kwargs):
+    #     return contract_utils.contract_create(self, request, *args, **kwargs)
 
 class InstallmentDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = Installment.objects.all()

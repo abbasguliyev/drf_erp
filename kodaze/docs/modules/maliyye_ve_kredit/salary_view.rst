@@ -172,6 +172,8 @@ Avans
 
 - İD-ə görə avans axtar
     - endpoint: "http://localhost:8000/api/v1/salaries/advancepayment/1/"
+    - update üçün Put sorğusu göndərmək lazımdır. Dəyişilməsini istədiyiniz fieldları tək tək və ya toplu şəkildə göndərmək olar. Update ancaq qeyd (note) fieldi üçün edilməlidir.
+
 
 - Avans sil
     - endpoint: "http://localhost:8000/api/v1/salaries/advancepayment/1/"
@@ -234,6 +236,7 @@ Bonus
 
 - İD-ə görə bonus axtar
     - endpoint: "http://localhost:8000/api/v1/salaries/bonus/1/"
+    - update üçün Put sorğusu göndərmək lazımdır. Dəyişilməsini istədiyiniz fieldları tək tək və ya toplu şəkildə göndərmək olar. Update ancaq qeyd (note) fieldi üçün edilməlidir.
 
 - Bonus sil
     - endpoint: "http://localhost:8000/api/v1/salaries/bonus-delete/"
@@ -304,6 +307,7 @@ Cərimə
 
 - İD-ə görə cərimə axtar
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-punishment/1/"
+    - update üçün Put sorğusu göndərmək lazımdır. Dəyişilməsini istədiyiniz fieldları tək tək və ya toplu şəkildə göndərmək olar. Update ancaq qeyd (note) fieldi üçün edilməlidir.
 
 - Cərimə sil
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-deduction-delete/"
@@ -374,6 +378,7 @@ Kəsinti
 
 - İD-ə görə Kəsinti axtar
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-deduction/1/"
+    - update üçün Put sorğusu göndərmək lazımdır. Dəyişilməsini istədiyiniz fieldları tək tək və ya toplu şəkildə göndərmək olar. Update ancaq qeyd (note) fieldi üçün edilməlidir.
 
 - Kəsinti sil
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-punishment-delete/"

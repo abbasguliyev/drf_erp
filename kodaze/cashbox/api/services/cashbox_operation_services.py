@@ -139,7 +139,7 @@ def company_cashbox_operation_create(
         
         cashflow_create(
             office=office,
-            company=office.company,
+            company=company,
             operation_style="MƏDAXİL",
             description=description_income,
             executor=executor,
@@ -160,7 +160,7 @@ def company_cashbox_operation_create(
             
         cashflow_create(
             office=office,
-            company=office.company,
+            company=company,
             operation_style="MƏXARİC",
             description=description_expense,
             executor=executor,

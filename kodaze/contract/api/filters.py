@@ -20,10 +20,10 @@ class InstallmentFilter(django_filters.FilterSet):
         model = Installment
         fields = {
             'contract' : ['exact'],
-            'contract__office__name': ['exact', 'icontains'],
-            'contract__company__name': ['exact', 'icontains'],
+            'contract__office': ['exact'],
+            'contract__company': ['exact'],
 
-            'contract__group_leader__fullname': ['exact', 'icontains'],
+            'contract__group_leader': ['exact'],
             'contract__group_leader__employee_status__status_name': ['exact', 'icontains'],
 
             'contract__payment_style': ['exact'],
@@ -33,12 +33,14 @@ class InstallmentFilter(django_filters.FilterSet):
             'contract__total_amount': ['exact', 'gte', 'lte'],
             'contract__product_quantity': ['exact', 'gte', 'lte'],
 
+            'contract__customer': ['exact'],
             'contract__customer__fullname': ['exact', 'icontains'],
             'contract__customer__address': ['exact', 'icontains'],
             'contract__customer__phone_number_1': ['exact', 'icontains'],
             'contract__customer__phone_number_2': ['exact', 'icontains'],
             'contract__customer__phone_number_3': ['exact', 'icontains'],
             'contract__customer__phone_number_4': ['exact', 'icontains'],
+            'contract__customer__region': ['exact'],
 
             'price': ['exact', 'gte', 'lte'],
             'payment_status': ['exact', 'icontains'],
@@ -48,6 +50,7 @@ class InstallmentFilter(django_filters.FilterSet):
             'overpayment_substatus': ['exact', 'icontains'],
             'conditional_payment_status': ['exact', 'icontains'],
             'close_the_debt_status': ['exact', 'icontains'],
+            'pay_status_helper': ['exact', 'icontains'],
         }
 
 

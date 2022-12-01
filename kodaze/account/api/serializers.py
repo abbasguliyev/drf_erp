@@ -157,7 +157,7 @@ class UserSerializer(DynamicFieldsCategorySerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        exclude = ('last_login', 'is_staff', 'password')
 
     def update(self, instance, validated_data):
         user = instance

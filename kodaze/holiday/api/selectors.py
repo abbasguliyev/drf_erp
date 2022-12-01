@@ -17,7 +17,7 @@ def employee_working_day_list(*, filters=None) -> QuerySet[EmployeeWorkingDay]:
 
 def employee_holiday_history_list(*, filters=None) -> QuerySet[EmployeeHolidayHistory]:
     filters = filters or {}
-    qs = EmployeeHolidayHistory.objects.all()
+    qs = EmployeeHolidayHistory.objects.select_related('employee').all()
     return qs
 
 def employee_holiday_list(*, filters=None) -> QuerySet[EmployeeHoliday]:
@@ -32,7 +32,7 @@ def holiday_operation_list(*, filters=None) -> QuerySet[HolidayOperation]:
 
 def employee_day_off_history_list(*, filters=None) -> QuerySet[EmployeeDayOffHistory]:
     filters = filters or {}
-    qs = EmployeeDayOffHistory.objects.all()
+    qs = EmployeeDayOffHistory.objects.select_related('employee').all()
     return qs
 
 def employee_day_off_list(*, filters=None) -> QuerySet[EmployeeDayOff]:

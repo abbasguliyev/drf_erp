@@ -46,8 +46,8 @@ def employee_holiday_create(
 
     return obj
 
-def employee_holiday_history_create(note: str = None) -> EmployeeHolidayHistory:
-    obj = EmployeeHolidayHistory.objects.create(note=note)
+def employee_holiday_history_create(employee, note: str = None) -> EmployeeHolidayHistory:
+    obj = EmployeeHolidayHistory.objects.create(employee=employee, note=note)
     obj.full_clean()
     obj.save()
 
@@ -64,6 +64,8 @@ def holiday_operation_create(
     employees = None
     if holding is True:
         employees = user_list().filter(register_type=HOLDING)
+        if employees.count() == 0:
+            return ValidationError({"detail": "Holdinqə aid işçi tapılmadı."})
     else:
         if office.company != company:
             return ValidationError({"detail": "Ofis və şirkət uyğun deyil"})
@@ -77,17 +79,15 @@ def holiday_operation_create(
         
         for employee in employees:
             if employee in person_on_duty:
-                print("Employee in person on duty!")
                 continue
-            
-            emp_history = employee_holiday_history_list().filter(created_date=datetime.date.today())
+            emp_history = employee_holiday_history_list().filter(employee=employee, created_date=datetime.date.today())
             if emp_history.count() == 0:
-                history = employee_holiday_history_create(note=None)
+                history = employee_holiday_history_create(employee=employee, note=None)
             else:
                 history = emp_history.last()
             
             emp_holiday = employee_holiday_list().filter(employee=employee, history=history, holiday_date=h_d)
-            if emp_holiday.count != 0:
+            if emp_holiday.count() != 0:
                 continue
 
             employee_working_day_decrease(employee=employee, holiday_date=h_d)
@@ -106,6 +106,10 @@ def holiday_operation_create(
 
     return obj
 
+def employee_holiday_history_update(instance, **data):
+    obj = employee_holiday_history_list().filter(id=instance.id).update(**data)
+    return obj
+
 def employee_holiday_history_delete(instance):
     emp_holidays = employee_holiday_list().filter(history=instance)
     for emp_holiday in emp_holidays:
@@ -114,3 +118,7 @@ def employee_holiday_history_delete(instance):
         employee_working_day_increase(employee=employee, holiday_date=holiday_date)
     
     instance.delete()
+
+def holiday_history_delete_service(instance_list):
+    for instance in instance_list:
+        employee_holiday_history_delete(instance=instance)

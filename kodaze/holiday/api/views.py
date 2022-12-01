@@ -1,4 +1,5 @@
-from rest_framework import status, generics
+from rest_framework import status, generics, serializers
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -26,12 +27,14 @@ from holiday.api.selectors import (
 
 from holiday.api.services.holiday_services import (
     holiday_operation_create,
-    employee_holiday_history_delete
+    holiday_history_delete_service,
+    employee_holiday_history_update
 )
 
 from holiday.api.services.day_off_services import (
     employee_day_off_operation_create,
-    employee_day_off_history_delete
+    days_off_history_delete_service,
+    employee_day_off_history_update
 )
 
 from holiday.api.filters import (
@@ -63,15 +66,33 @@ class EmployeeHolidayHistoryListAPIView(generics.ListAPIView):
     filterset_class = EmployeeHolidayHistoryFilter
     permission_classes = [holiday_permissions.EmployeeHolidayHistoryPermissions]
 
-class EmployeeHolidayHistoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeHolidayHistoryDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = employee_holiday_history_list()
     serializer_class = EmployeeHolidayHistorySerializer
     permission_classes = [holiday_permissions.EmployeeHolidayHistoryPermissions]
 
-    def destroy(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        employee_holiday_history_delete(instance=instance)
-        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            employee_holiday_history_update(instance, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmployeeHolidayHistoryDelete(APIView):
+    class InputSerializer(serializers.Serializer):
+        instance_list = serializers.PrimaryKeyRelatedField(
+            queryset=employee_holiday_history_list(), write_only=True, many=True
+        )
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        holiday_history_delete_service(**serializer.validated_data)
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
+
 
 
 class HolidayOperationListCreateAPIView(generics.ListCreateAPIView):
@@ -101,15 +122,31 @@ class EmployeeDayOffHistoryListAPIView(generics.ListAPIView):
     filterset_class = EmployeeDayOffHistoryFilter
     permission_classes = [holiday_permissions.EmployeeDayOffHistoryPermissions]
 
-class EmployeeDayOffHistoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeDayOffHistoryDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = employee_day_off_history_list()
     serializer_class = EmployeeDayOffHistorySerializer
     permission_classes = [holiday_permissions.EmployeeDayOffHistoryPermissions]
 
-    def destroy(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        employee_day_off_history_delete(instance=instance)
-        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_204_NO_CONTENT)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            employee_day_off_history_update(instance, **serializer.validated_data)
+            return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class EmployeeDayOffHistoryDelete(APIView):
+    class InputSerializer(serializers.Serializer):
+        instance_list = serializers.PrimaryKeyRelatedField(
+            queryset=employee_day_off_history_list(), write_only=True, many=True
+        )
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        days_off_history_delete_service(**serializer.validated_data)
+        return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 
 class EmployeeDayOffOperationListCreateAPIView(generics.ListCreateAPIView):
