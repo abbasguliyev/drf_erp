@@ -21,16 +21,19 @@ def employee_working_day_create(
 
     return obj
 
-def employee_working_day_increase(employee, holiday_date):
+def employee_working_day_increase(employee, holiday_date) -> int:
     emp_working_day = employee_working_day_list().filter(employee=employee, date__month=holiday_date.month, date__year=holiday_date.year).last()
     emp_working_day.working_days_count += 1
     emp_working_day.save()
 
-def employee_working_day_decrease(employee, holiday_date):
+    return emp_working_day.working_days_count
+
+def employee_working_day_decrease(employee, holiday_date) -> int:
     emp_working_day = employee_working_day_list().filter(employee=employee, date__month=holiday_date.month, date__year=holiday_date.year).last()
     emp_working_day.working_days_count -= 1
     emp_working_day.save()
-
+    print(f"{emp_working_day.working_days_count=}")
+    return emp_working_day.working_days_count
 
 def employee_holiday_create(
     *, employee,

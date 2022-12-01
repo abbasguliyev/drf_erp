@@ -82,7 +82,9 @@ class RegisterSerializer(DynamicFieldsCategorySerializer):
     register_type = serializers.CharField(required=True)
     salary_style = serializers.CharField(required=True)
     photo_ID = serializers.ImageField(required=True)
+    electronic_signature = serializers.ImageField(required=True)
     phone_number_1 = serializers.CharField(required=True)
+    position = PositionSerializer(required=True)
 
     class Meta:
         model = User

@@ -63,6 +63,8 @@ class CashFlowFilter(django_filters.FilterSet):
 
             'company__name': ['exact', 'icontains'],
             'company': ['exact'],
+            'personal': ['exact'],
+            'customer': ['exact'],
 
             'balance': ['exact', 'gte', 'lte'],
             'description': ['exact', 'icontains'],

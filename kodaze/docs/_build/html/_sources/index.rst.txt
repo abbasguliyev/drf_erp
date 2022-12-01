@@ -17,14 +17,20 @@ Welcome to Kodaze CRM's documentation!
    :maxdepth: 2
    :caption: İnsan Resursları:
 
-   modules/insan_resurslari/user.rst
-   modules/insan_resurslari/employee_status.rst
-   modules/insan_resurslari/region.rst
-   modules/insan_resurslari/customer.rst
-   modules/insan_resurslari/customer-note.rst
-   modules/insan_resurslari/commission.rst
-   modules/insan_resurslari/month_range.rst
-   modules/insan_resurslari/sale_range.rst
+   modules/insan-resurslari/isciler.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: İnsan Resursları2:
+
+   modules/insan_resurslari2/user.rst
+   modules/insan_resurslari2/employee_status.rst
+   modules/insan_resurslari2/region.rst
+   modules/insan_resurslari2/customer.rst
+   modules/insan_resurslari2/customer-note.rst
+   modules/insan_resurslari2/commission.rst
+   modules/insan_resurslari2/month_range.rst
+   modules/insan_resurslari2/sale_range.rst
 
 .. toctree::
    :maxdepth: 2
