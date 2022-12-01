@@ -24,7 +24,6 @@ def salary_view_create_task():
     create_employee_salary_view_task taskı işçi üçün maaş cədvəli create edir. Bu task isə
     növbəti aylarda periodik olaraq create etmək üçündür.
     """
-    print("Periodik salary view taski ishe dushdu")
     users = user_list()
     now = datetime.date.today()
     

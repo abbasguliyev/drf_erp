@@ -157,10 +157,10 @@ def create_fix_commission():
     sale_range_final_salary = 0
 
     for user in users:
-        salary_view_this_month = salary_view_list().filter(employee=user, date=this_month)
+        salary_view_this_month = salary_view_list().filter(employee=user, date=this_month).last()
         if user.commission is not None:
             for_sale_ranges = user.commission.for_sale_range
-            if len(for_sale_ranges) > 0:
+            if for_sale_ranges.count() > 0:
                 sales_quantity = salary_view_this_month.sales_quantity
 
                 for srm in for_sale_ranges:
@@ -173,8 +173,7 @@ def create_fix_commission():
                             if int(sales_quantity) >= srm.sale_range.start_count:
                                 sale_range_final_salary += srm.amount
 
-            salary_view_this_month.final_salary = salary_view_this_month.final_salary + sale_range_final_salary + float(
-                user.commission.cash)
+            salary_view_this_month.final_salary = salary_view_this_month.final_salary + sale_range_final_salary + float(user.commission.cash)
             salary_view_this_month.save()
 
 
