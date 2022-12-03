@@ -68,8 +68,9 @@ def create_user(
         if office is not None:
             raise ValidationError(
                 {"detail": "Holdinq işçisi qeydiyyatdan keçirildiyi zaman ofis daxil edilməməlidir"})
+    if region is None:
+        region = Region.objects.filter(region_name="Bakı").last()
         
-
     user = User.objects.create(
         fullname=fullname,
         phone_number_1=phone_number_1,

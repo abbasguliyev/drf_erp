@@ -22,7 +22,6 @@ Welcome to Kodaze CRM's documentation!
    modules/insan-resurslari/employee_status.rst
    modules/insan-resurslari/region.rst
    modules/insan-resurslari/customer.rst
-   modules/insan-resurslari/customer-note.rst
    modules/insan-resurslari/commission.rst
    modules/insan-resurslari/month_range.rst
    modules/insan-resurslari/sale_range.rst

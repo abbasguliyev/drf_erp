@@ -84,7 +84,10 @@ class RegisterSerializer(DynamicFieldsCategorySerializer):
     photo_ID = serializers.ImageField(required=True)
     electronic_signature = serializers.ImageField(required=True)
     phone_number_1 = serializers.CharField(required=True)
-    position = PositionSerializer(required=True)
+    # position = PositionSerializer(required=True)
+    position = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), write_only=True, required=True  
+    )
 
     class Meta:
         model = User
