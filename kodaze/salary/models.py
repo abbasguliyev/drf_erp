@@ -168,7 +168,7 @@ class SalaryView(AbstractSalaryMethod):
     commission_amount = models.FloatField(default=0, blank=True)
 
     class Meta:
-        ordering = ("pk",)
+        ordering = ("-pk",)
         default_permissions = []
         permissions = (
             ("view_salaryview", "Mövcud maaş cədvəllərinə baxa bilər"),

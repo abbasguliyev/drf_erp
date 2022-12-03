@@ -67,7 +67,7 @@
         - "photo_ID": required - image - Şəxsiyyət vəsiqəsi(ön hissə)
         - "back_photo_of_ID": nullable - image - Şəxsiyyət vəsiqəsi(arxa hissə)
         - "driving_license_photo":  nullable - image - Sürücülük vəsiqəsi
-        - "employee_status": nullable - EmployeeStatus İD - işçi statusu
+        - "employee_status": nullable - EmployeeStatus İD - işçi statusu(Dizaynda hal-hazırda yığışdırılıb. Dizayndakı işçi statusu database-dən is_active olaraq gələn statusdur, register zamanı daxil edilmir, update və delete proseslərində lazım olacaq.)
             - EmployeeStatus üçün endpoint: "http://localhost:8000/api/v1/users/employee-status/"
         - "commission": nullable - Commission İD - Komissiya növü
             - Commission üçün endpoint: "http://localhost:8000/api/v1/salaries/commission/"
@@ -140,7 +140,7 @@
     "electronic_signature": Elektron imza İmage,
     "profile_image": Profil şəkli İmage,
     "register_type": Qeydiyyat növü [Şirkət, Holding],
-    "supervisor": Supervisor User İD "http://localhost:8000/api/v1/users/?is_superuser=false&is_active=true"
+    "supervisor_id": Supervisor User İD "http://localhost:8000/api/v1/users/?is_superuser=false&is_active=true"
   }
 
 

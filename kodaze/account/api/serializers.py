@@ -84,7 +84,6 @@ class RegisterSerializer(DynamicFieldsCategorySerializer):
     photo_ID = serializers.ImageField(required=True)
     electronic_signature = serializers.ImageField(required=True)
     phone_number_1 = serializers.CharField(required=True)
-    # position = PositionSerializer(required=True)
     position = serializers.PrimaryKeyRelatedField(
         queryset=Position.objects.all(), write_only=True, required=True  
     )
@@ -112,6 +111,14 @@ class UserSerializer(DynamicFieldsCategorySerializer):
             fields = (
                 'commission_name',
             )
+    class SupervizorSerializer(DynamicFieldsCategorySerializer):
+        class Meta:
+            model = User
+            fields = (
+                'id',
+                'username',
+                'fullname'
+            )
 
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
     department = DepartmentSerializer(read_only=True, fields=['id', 'name'])
@@ -123,6 +130,7 @@ class UserSerializer(DynamicFieldsCategorySerializer):
     dismissal_date = serializers.DateField(read_only=True)
     commission = CommissionSerializer(read_only=True, fields=['id', 'commission_name'])
     region = RegionSerializer(read_only=True, fields=['id', 'region_name'])
+    supervisor = SupervizorSerializer(read_only=True, fields=['id', 'username', 'fullname'])
 
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True,
@@ -156,6 +164,10 @@ class UserSerializer(DynamicFieldsCategorySerializer):
 
     region_id = serializers.PrimaryKeyRelatedField(
         queryset=region_list(), source='region', write_only=True, allow_null=True
+    )
+
+    supervisor_id = serializers.PrimaryKeyRelatedField(
+        queryset=user_list(), source='supervisor', write_only=True, allow_null=True
     )
 
     class Meta:
