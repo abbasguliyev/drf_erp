@@ -1,18 +1,11 @@
 from cashbox.models import (
     HoldingCashboxOperation, 
-    CompanyCashboxOperation, 
-    HoldingCashbox, 
-    CompanyCashbox, 
-    OfficeCashbox
+    CompanyCashboxOperation,
 )
 from rest_framework.exceptions import ValidationError
 import datetime
 from cashbox.api.utils import (
-    calculate_holding_total_balance, 
     cashflow_create, 
-    calculate_office_balance, 
-    calculate_company_balance, 
-    calculate_holding_balance
 )
 from cashbox import INCOME, EXPENSE
 from company.models import Holding
@@ -20,9 +13,6 @@ from cashbox.api.selectors import (
     holding_cashbox_list,
     company_cashbox_list,
     office_cashbox_list,
-    cash_flow_list,
-    holding_cashbox_opr_list,
-    company_cashbox_opr_list
 )
 from django.contrib.auth import get_user_model
 
@@ -54,11 +44,11 @@ def holding_cashbox_operation_create(
         cashflow_create(
             holding=holding,
             operation_style="MƏDAXİL",
-            description=f"{holding.name} holdinq kassasına {float(amount)} AZN mədaxil edildi",
+            description=f"{holding.name} holdinq kassasına {amount} AZN mədaxil edildi",
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount),
+            quantity=amount,
             balance=balance
         )
     
@@ -74,11 +64,11 @@ def holding_cashbox_operation_create(
         cashflow_create(
             holding=holding,
             operation_style="MƏXARİC",
-            description=f"{holding.name} holdinq kassasından {float(amount)} AZN məxaric edildi",
+            description=f"{holding.name} holdinq kassasından {amount} AZN məxaric edildi",
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount),
+            quantity=amount,
             balance=balance
         )
     
@@ -115,8 +105,8 @@ def company_cashbox_operation_create(
         if cashbox is None:
             raise ValidationError({"detail": "Ofis kassa tapılmadı"})
         if note is None:
-            description_income=f"{office.name} ofis kassasına {float(amount)} AZN mədaxil edildi"
-            description_expense=f"{office.name} ofis kassasından {float(amount)} AZN məxaric edildi"
+            description_income=f"{office.name} ofis kassasına {amount} AZN mədaxil edildi"
+            description_expense=f"{office.name} ofis kassasından {amount} AZN məxaric edildi"
         else:
             description_income=note
             description_expense=note
@@ -125,8 +115,8 @@ def company_cashbox_operation_create(
         if cashbox is None:
             raise ValidationError({"detail": "Şirkət kassa tapılmadı"})
         if note is None:
-            description_income=f"{company.name} şirkət kassasına {float(amount)} AZN mədaxil edildi"
-            description_expense=f"{company.name} şirkət kassasından {float(amount)} AZN məxaric edildi"
+            description_income=f"{company.name} şirkət kassasına {amount} AZN mədaxil edildi"
+            description_expense=f"{company.name} şirkət kassasından {amount} AZN məxaric edildi"
         else:
             description_income=note
             description_expense=note
@@ -145,7 +135,7 @@ def company_cashbox_operation_create(
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount),
+            quantity=amount,
             balance=balance
         )
     
@@ -166,7 +156,7 @@ def company_cashbox_operation_create(
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
-            quantity=float(amount),
+            quantity=amount,
             balance=balance
         )
     

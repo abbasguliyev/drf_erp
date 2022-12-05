@@ -61,12 +61,12 @@ def create_installment_task(id, created):
         initial_payment_debt = instance.initial_payment_debt
 
         if(initial_payment is not None):
-            initial_payment = float(initial_payment)
+            initial_payment = initial_payment
         else:
             initial_payment = 0
 
         if(initial_payment_debt is not None):
-            initial_payment_debt = float(initial_payment_debt)
+            initial_payment_debt = initial_payment_debt
 
         total_amount = instance.total_amount
         if(initial_payment_debt == 0 or initial_payment_debt == None):

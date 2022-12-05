@@ -38,7 +38,7 @@ class Category(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=300)
     purchase_price = models.FloatField(default=0, null=True, blank=True)
-    price = models.FloatField()
+    price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="company_product")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, related_name="products")
     unit_of_measure = models.ForeignKey(UnitOfMeasure, on_delete=models.SET_NULL, null=True, blank=True)

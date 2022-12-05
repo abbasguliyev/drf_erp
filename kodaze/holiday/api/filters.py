@@ -21,6 +21,8 @@ class EmployeeWorkingDayFilter(django_filters.FilterSet):
             'employee__company': ['exact'],
             'employee__office': ['exact'],
             'employee__position': ['exact'],
+            'employee__register_type': ['exact', 'icontains'],
+            'date': ['exact', 'month', 'year'],
         }
 
 class EmployeeHolidayHistoryFilter(django_filters.FilterSet):

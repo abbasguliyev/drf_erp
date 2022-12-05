@@ -6,11 +6,11 @@ USER = get_user_model()
 
 class AbstractTransfer(models.Model):
     executor = models.ForeignKey(USER, on_delete=models.CASCADE, null=True)
-    transfer_amount = models.FloatField(default=0)
+    transfer_amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     transfer_date = models.DateField(auto_now=True)
     transfer_note = models.TextField(null=True, blank=True)
-    recipient_subsequent_balance = models.FloatField(default=0, blank=True)
-    sender_subsequent_balance = models.FloatField(default=0, blank=True)
+    recipient_subsequent_balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    sender_subsequent_balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
     class Meta:
         abstract = True

@@ -17,7 +17,7 @@
     <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Kassa Hərəkətləri" href="cashflow.html" />
+    <link rel="next" title="Ödəniş izləmə" href="view_installments.html" />
     <link rel="prev" title="Balans" href="balance.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
@@ -37,8 +37,25 @@
             
   <section id="transfer">
 <h1>Transfer<a class="headerlink" href="#transfer" title="Permalink to this heading">¶</a></h1>
-<a class="reference internal image-reference" href="../../_images/ss20.png"><img alt="../../_images/ss20.png" class="align-center" src="../../_images/ss20.png" style="width: 300px; height: 100px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss22.png"><img alt="../../_images/ss22.png" class="align-center" src="../../_images/ss22.png" style="width: 800px; height: 300px;" /></a>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Response-da extra və data deyə 2 məlumat gəlir.</dt><dd><ul>
+<li><p>data içində yazılan normal response datalarıdır.</p></li>
+<li><dl class="simple">
+<dt>extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:</dt><dd><ul>
+<li><p>“all_amount” -&gt; Responseda gələn bütün toplam məbləğləri ifadə edir,</p></li>
+<li><p>“all_recipient_subsequent_balance” -&gt; Responseda gələn bütün toplam qəbul edən son balanslarını ifadə edir,</p></li>
+<li><p>“all_sender_subsequent_balance” -&gt; Responseda gələn bütün toplam göndərən son balanslarını ifadə edir</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>extra içindəki datalar, pagination və filterləməyə uyğun çalışır.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Holdinq Şirkət arası Transfer</p></td>
@@ -47,8 +64,6 @@
 </table>
 <section id="holdinq-sirkt-arasi-transfer">
 <h2>Holdinq Şirkət arası Transfer<a class="headerlink" href="#holdinq-sirkt-arasi-transfer" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss23.png"><img alt="../../_images/ss23.png" class="align-center" src="../../_images/ss23.png" style="width: 2000px; height: 500px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss24.png"><img alt="../../_images/ss24.png" class="align-center" src="../../_images/ss24.png" style="width: 1500px; height: 300px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Holdinq-şirkət arası transfer etmək</dt><dd><ul>
@@ -113,9 +128,6 @@
 </dd>
 </dl>
 </li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss25.png"><img alt="../../_images/ss25.png" class="align-center" src="../../_images/ss25.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
 <li><dl class="simple">
 <dt>Filter:</dt><dd><ul>
 <li><p>“<a class="reference external" href="http://localhost:8000/api/v1/transfer/holding-transfer/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;sending_company__name=&amp;sending_company__name__icontains=&amp;receiving_company__name=&amp;receiving_company__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=">http://localhost:8000/api/v1/transfer/holding-transfer/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;sending_company__name=&amp;sending_company__name__icontains=&amp;receiving_company__name=&amp;receiving_company__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=</a>”</p></li>
@@ -133,8 +145,6 @@
 </section>
 <section id="sirkt-ofis-arasi-transfer">
 <h2>Şirkət Ofis arası Transfer<a class="headerlink" href="#sirkt-ofis-arasi-transfer" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss26.png"><img alt="../../_images/ss26.png" class="align-center" src="../../_images/ss26.png" style="width: 2000px; height: 100px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss27.png"><img alt="../../_images/ss27.png" class="align-center" src="../../_images/ss27.png" style="width: 1500px; height: 300px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Şirkət Ofis arası Transfer etmək</dt><dd><ul>
@@ -208,9 +218,6 @@
 </dd>
 </dl>
 </li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss28.png"><img alt="../../_images/ss28.png" class="align-center" src="../../_images/ss28.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
 <li><dl class="simple">
 <dt>Filter:</dt><dd><ul>
 <li><p>“<a class="reference external" href="http://localhost:8000/api/v1/transfer/company-transfer/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;company=&amp;company__name=&amp;company__name__icontains=&amp;sending_office__name=&amp;sending_office__name__icontains=&amp;receiving_office__name=&amp;receiving_office__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=">http://localhost:8000/api/v1/transfer/company-transfer/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;company=&amp;company__name=&amp;company__name__icontains=&amp;sending_office__name=&amp;sending_office__name__icontains=&amp;receiving_office__name=&amp;receiving_office__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=</a>”</p></li>
@@ -228,9 +235,6 @@
 </section>
 <section id="ofislr-arasi-transfer">
 <h2>Ofislər arası Transfer<a class="headerlink" href="#ofislr-arasi-transfer" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss29.png"><img alt="../../_images/ss29.png" class="align-center" src="../../_images/ss29.png" style="width: 1500px; height: 300px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss30.png"><img alt="../../_images/ss30.png" class="align-center" src="../../_images/ss30.png" style="width: 1500px; height: 300px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss31.png"><img alt="../../_images/ss31.png" class="align-center" src="../../_images/ss31.png" style="width: 1500px; height: 300px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Ofislər arası Transfer etmək</dt><dd><ul>
@@ -301,9 +305,6 @@
 </dd>
 </dl>
 </li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss32.png"><img alt="../../_images/ss32.png" class="align-center" src="../../_images/ss32.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
 <li><dl class="simple">
 <dt>Filter:</dt><dd><ul>
 <li><p>“<a class="reference external" href="http://localhost:8000/api/v1/transfer/office-transfer/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;company=&amp;company__name=&amp;company__name__icontains=&amp;sending_office__name=&amp;sending_office__name__icontains=&amp;receiving_office__name=&amp;receiving_office__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=">http://localhost:8000/api/v1/transfer/office-transfer/?executor__fullname=&amp;executor__fullname__icontains=&amp;executor__position__name=&amp;executor__position__name__icontains=&amp;executor__employee_status__status_name=&amp;executor__employee_status__status_name__icontains=&amp;company=&amp;company__name=&amp;company__name__icontains=&amp;sending_office__name=&amp;sending_office__name__icontains=&amp;receiving_office__name=&amp;receiving_office__name__icontains=&amp;recipient_subsequent_balance=&amp;sender_subsequent_balance=&amp;transfer_amount=&amp;transfer_amount__gte=&amp;transfer_amount__lte=&amp;transfer_note=&amp;transfer_note__icontains=&amp;transfer_date=&amp;transfer_date__gte=&amp;transfer_date__lte=</a>”</p></li>
@@ -339,14 +340,14 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">İnsan Resursları:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/user.html">User (İşçi)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/employee_status.html">Employee Status (İşçi Statusu)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/region.html">Region (Bölgə)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/customer.html">Customer (Müştəri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/commission.html">Commission (Komissiya)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/month_range.html">MonthRange (Ay Aralığı)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/employee.html">İşçilər</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/work_graphic.html">İş qrafiki</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/employee_status.html">Employee Status (İşçi Statusu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/region.html">Region (Bölgə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/customer.html">Customer (Müştəri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/commission.html">Commission (Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/month_range.html">MonthRange (Ay Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maliyyə və Kredit:</span></p>
 <ul class="current">
@@ -358,6 +359,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#ofislr-arasi-transfer">Ofislər arası Transfer</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="view_installments.html">Ödəniş izləmə</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cashflow.html">Kassa Hərəkətləri</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Company:</span></p>
@@ -405,7 +407,7 @@
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="balance.html" title="previous chapter">Balans</a></li>
-      <li>Next: <a href="cashflow.html" title="next chapter">Kassa Hərəkətləri</a></li>
+      <li>Next: <a href="view_installments.html" title="next chapter">Ödəniş izləmə</a></li>
   </ul></li>
 </ul>
 </div>

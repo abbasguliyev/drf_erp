@@ -15,17 +15,17 @@ def calculate_holding_total_balance():
     h_cashbox = holding_cashbox_list()
     holding_balance = 0
     for hk in h_cashbox:
-        holding_balance += float(hk.balance)
+        holding_balance += hk.balance
 
     c_cashbox = company_cashbox_list()
     company_balance = 0
     for sk in c_cashbox:
-        company_balance += float(sk.balance)
+        company_balance += sk.balance
 
     o_cashbox = office_cashbox_list()
     office_balance = 0
     for ok in o_cashbox:
-        office_balance += float(ok.balance)
+        office_balance += ok.balance
 
     total_balance = holding_balance + company_balance + office_balance
     return total_balance

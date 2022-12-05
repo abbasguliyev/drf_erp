@@ -28,7 +28,7 @@ def give_commission_after_contract(
     """
     contract = Contract.objects.get(id=contract_id)
     quantity = contract.product_quantity
-    sales_amount = float(contract.product.price) * float(quantity)
+    sales_amount = contract.product.price * quantity
 
     now = datetime.date.today()
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
@@ -173,7 +173,7 @@ def create_fix_commission():
                             if int(sales_quantity) >= srm.sale_range.start_count:
                                 sale_range_final_salary += srm.amount
 
-            salary_view_this_month.final_salary = salary_view_this_month.final_salary + sale_range_final_salary + float(user.commission.cash)
+            salary_view_this_month.final_salary = salary_view_this_month.final_salary + sale_range_final_salary + user.commission.cash
             salary_view_this_month.save()
 
 
@@ -205,7 +205,7 @@ def return_commission_after_cancel_contract(contract):
     :return:
     """
     quantity = contract.product_quantity
-    sales_amount = float(contract.product.price) * float(quantity)
+    sales_amount = contract.product.price * quantity
 
     now = datetime.date.today()
     d = pd.to_datetime(f"{now.year}-{now.month}-{1}")

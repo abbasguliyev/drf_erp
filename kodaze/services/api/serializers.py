@@ -50,9 +50,9 @@ class ServiceStatistikaSerializer(DynamicFieldsCategorySerializer):
         representation = super().to_representation(instance)
 
         discount = 0
-        discount += float(instance.discount)
+        discount += instance.discount
         try:
-            discount_faizi = (discount * 100) / float(instance.total_amount_to_be_paid)
+            discount_faizi = (discount * 100) / instance.total_amount_to_be_paid
         except:
             discount_faizi = 0
         representation['endrim_faizi'] = discount_faizi

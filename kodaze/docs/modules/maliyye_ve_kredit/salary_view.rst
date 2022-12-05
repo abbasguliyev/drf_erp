@@ -9,23 +9,19 @@
 Əməkhaqqı cədvəli
 -----------------
 
-.. image:: _static/ss1.png
-   :width: 1000px
-   :height: 200px
-   :alt: melumat
-   :align: center
-
-.. image:: _static/emekhaqqi.png
-   :width: 1500px
-   :height: 300px
-   :alt: emekhaqqi cedveli
-   :align: center
-
-.. image:: _static/ss4.png
-   :width: 300px
-   :height: 300px
-   :alt: json
-   :align: center
+- Response-da extra və data deyə 2 məlumat gəlir. 
+    - data içində yazılan normal response datalarıdır. 
+    - extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:
+        - "all_bonus" -> Responseda gələn bütün toplam bonusları ifadə edir,
+        - "all_advancepayment" -> Responseda gələn bütün toplam avansları ifadə edir,
+        - "all_salarydeduction" -> Responseda gələn bütün toplam kəsintiləri ifadə edir,
+        - "all_salarypunishment" -> Responseda gələn bütün toplam cərimələri ifadə edir,
+        - "all_final_salary" -> Responseda gələn bütün toplam yekun maaşları ifadə edir,
+        - "all_working_day" -> Responseda gələn bütün toplam iş günlərini ifadə edir,
+        - "all_const_salary" -> Responseda gələn bütün toplam sabit ə/h-ları ifadə edir,
+        - "all_sale_quantity" -> Responseda gələn bütün toplam satış saylarını ifadə edir,
+        - "all_commission" -> Responseda gələn bütün toplam komisiyyaları ifadə edir
+    - extra içindəki datalar, pagination və filterləməyə uyğun çalışır.
 
 - Json içində gələn datalar:
     - "employee" -> işçi - User (Şəkildəki ad soyad, şirkət, ofis, vəzifə, sabit məlumatları employee içində gəlir)
@@ -47,7 +43,7 @@
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-views/"
 
 - Filter: 
-    - "http://localhost:8000/api/v1/salaries/salary-views/?employee=&employee__fullname=&employee__fullname__icontains=&employee__is_superuser=unknown&employee__salary_style=&employee__office=&employee__office__id=&employee__office__name=&employee__office__name__icontains=&employee__company=&employee__company__id=&employee__company__name=&employee__company__name__icontains=&employee__position=&employee__position__id=&employee__position__name=&employee__position__name__icontains=&employee__employee_status=&employee__employee_status__status_name=&employee__employee_status__status_name__icontains=&is_done=unknown&sale_quantity=&sale_quantity__gte=&sale_quantity__lte=&sales_amount=&sales_amount__gte=&sales_amount__lte=&final_salary=&final_salary__gte=&final_salary__lte=&date=&date__gte=&date__lte=&date__month=&date__year="
+    - "http://localhost:8000/api/v1/salaries/salary-views/?employee=&employee__fullname=&employee__fullname__icontains=&employee__is_superuser=unknown&employee__salary_style=&employee__office=&employee__office__id=&employee__office__name=&employee__office__name__icontains=&employee__company=&employee__company__id=&employee__company__name=&employee__company__name__icontains=&employee__position=&employee__position__id=&employee__position__name=&employee__position__name__icontains=&employee__register_type=&employee__register_type__icontains=&employee__employee_status=&employee__employee_status__status_name=&employee__employee_status__status_name__icontains=&is_done=unknown&sale_quantity=&sale_quantity__gte=&sale_quantity__lte=&sales_amount=&sales_amount__gte=&sales_amount__lte=&final_salary=&final_salary__gte=&final_salary__lte=&date=&date__month=&date__year=&date__gte=&date__lte="
 
 - Maaş cədvəlində id-ə görə axtarış
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-views/1/"
@@ -120,16 +116,6 @@
 Avans
 -----
 
-.. image:: _static/ss2.png
-   :width: 1000px
-   :height: 40px
-   :align: center
-
-.. image:: _static/ss3.png
-   :width: 500px
-   :height: 300px
-   :align: center
-
 - Avans əlavə et
     - endpoint: "http://localhost:8000/api/v1/salaries/advancepayment/"
     - Avans əlavə etmək json-da üçün göndərilməli olan datalar:
@@ -160,12 +146,6 @@ Avans
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
 
-.. image:: _static/ss5.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
-
 - Filter:
     - "http://localhost:8000/api/v1/salaries/advancepayment/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
@@ -185,16 +165,6 @@ Avans
 
 Bonus
 -----
-
-.. image:: _static/ss6.png
-   :width: 400px
-   :height: 30px
-   :align: center
-
-.. image:: _static/ss7.png
-   :width: 500px
-   :height: 300px
-   :align: center
 
 - Bonus əlavə et
     - endpoint: "http://localhost:8000/api/v1/salaries/bonus/"
@@ -224,12 +194,6 @@ Bonus
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
 
-.. image:: _static/ss8.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
-
 - Filter:
     - "http://localhost:8000/api/v1/salaries/bonus/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
@@ -256,16 +220,6 @@ Bonus
 
 Cərimə
 ------
-
-.. image:: _static/ss9.png
-   :width: 400px
-   :height: 30px
-   :align: center
-
-.. image:: _static/ss10.png
-   :width: 500px
-   :height: 300px
-   :align: center
 
 - Cərimə əlavə et
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-punishment/"
@@ -295,12 +249,6 @@ Cərimə
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
 
-.. image:: _static/ss11.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
-
 - Filter:
     - "http://localhost:8000/api/v1/salaries/salary-punishment/?employee=1&salary_date__month=&salary_date__year="
     - year və month-a salary view içərisində gələn date-in year və month məlumatları verilməlidir.
@@ -327,16 +275,6 @@ Cərimə
 
 Kəsinti
 -------
-
-.. image:: _static/ss12.png
-   :width: 400px
-   :height: 30px
-   :align: center
-
-.. image:: _static/ss13.png
-   :width: 500px
-   :height: 300px
-   :align: center
 
 - Kəsinti əlavə et
     - endpoint: "http://localhost:8000/api/v1/salaries/salary-deduction/"
@@ -365,12 +303,6 @@ Kəsinti
         - "salary_date" -> əməliyyatın aparıldığı ə/h cədvəlinin tarixi - Date
         - "amount" -> "məbləğ" - float
         - "is_paid" -> "status" - Boolean, Ödənilib ödənilmədiyini bildirir.
-
-.. image:: _static/ss14.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
 
 - Filter:
     - "http://localhost:8000/api/v1/salaries/salary-deduction/?employee=1&salary_date__month=&salary_date__year="

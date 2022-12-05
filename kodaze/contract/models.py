@@ -46,7 +46,7 @@ class Contract(models.Model):
     product = models.ForeignKey("product.Product", on_delete=models.CASCADE, related_name="contracts", null=True,
                                blank=True)
     product_quantity = models.PositiveIntegerField(default=1, blank=True)
-    total_amount = models.FloatField(default=0, blank=True)
+    total_amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     electronic_signature = models.ImageField(upload_to="media/contract/%Y/%m/%d/", null=True, blank=True,
                                       validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     contract_date = models.DateField(null=True, blank=True)
@@ -54,11 +54,11 @@ class Contract(models.Model):
     company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="contracts", null=True,
                                 blank=True)
     office = models.ForeignKey('company.Office', on_delete=models.CASCADE, related_name="contracts", null=True, blank=True)
-    remaining_debt = models.FloatField(default=0, blank=True)
+    remaining_debt = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     is_remove = models.BooleanField(default=False)
     loan_term = models.IntegerField(default=0, blank=True)
-    initial_payment = models.FloatField(blank=True, null=True)
-    initial_payment_debt = models.FloatField(blank=True, null=True)
+    initial_payment = models.DecimalField(default=0, null=True, blank=True, max_digits=10, decimal_places=2)
+    initial_payment_debt = models.DecimalField(default=0, null=True, blank=True, max_digits=10, decimal_places=2)
     initial_payment_date = models.DateField(blank=True, null=True)
     initial_payment_debt_date = models.DateField(blank=True, null=True)
     pdf = models.FileField(upload_to="media/media/contract_doc/%Y/%m/%d/", blank=True, null=True,
@@ -69,8 +69,8 @@ class Contract(models.Model):
     cancelled_date = models.DateField(null=True, blank=True)
     debt_closing_date = models.DateField(null=True, blank=True)
 
-    compensation_income = models.FloatField(default=0, null=True, blank=True)
-    compensation_expense = models.FloatField(default=0, null=True, blank=True)
+    compensation_income = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    compensation_expense = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
     debt_finished = models.BooleanField(default=False, blank=True)
     note = models.TextField(null=True, blank=True)
@@ -81,7 +81,7 @@ class Contract(models.Model):
         default=CASH
     )
 
-    new_graphic_amount = models.FloatField(default=0, blank=True)
+    new_graphic_amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     new_graphic_status = models.CharField(
         max_length=50,
         choices=NEW_GRAPH_CHOICES,
@@ -169,7 +169,7 @@ class Installment(models.Model):
     contract = models.ForeignKey(Contract, blank=True, null=True, related_name='installments',
                                  on_delete=models.CASCADE)
     date = models.DateField(default=False, blank=True, null=True)
-    price = models.FloatField(default=0, blank=True)
+    price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     payment_status = models.CharField(
         max_length=30,
         choices=ODEME_STATUS_CHOICES,

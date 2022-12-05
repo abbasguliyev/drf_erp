@@ -9,12 +9,6 @@ from transfer.api.serializers import (
     OfficeTransferSerializer,
 )
 
-from transfer.models import (
-    HoldingTransfer,
-    CompanyTransfer,
-    OfficeTransfer,
-)
-
 from transfer.api.filters import (
     HoldingTransferFilter,
     CompanyTransferFilter,
@@ -34,6 +28,7 @@ from transfer.api.selectors import (
 )
 
 from transfer.api import permissions as transfer_permissions
+from decimal import Decimal
 
 class HoldingTransferListCreateAPIView(generics.ListCreateAPIView):
     queryset = holding_transfer_list()
@@ -52,9 +47,25 @@ class HoldingTransferListCreateAPIView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        all_amount = 0
+        all_recipient_subsequent_balance = 0
+        all_sender_subsequent_balance = 0
+
+        for q in page:
+            all_amount += q.transfer_amount
+            all_recipient_subsequent_balance += q.recipient_subsequent_balance
+            all_sender_subsequent_balance += q.sender_subsequent_balance
+            extra['all_amount'] = all_amount
+            extra['all_recipient_subsequent_balance'] = all_recipient_subsequent_balance
+            extra['all_sender_subsequent_balance'] = all_sender_subsequent_balance
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -85,9 +96,27 @@ class CompanyTransferListCreateAPIView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        all_amount = 0
+        all_recipient_subsequent_balance = 0
+        all_sender_subsequent_balance = 0
+
+        for q in page:
+            all_amount += q.transfer_amount
+            all_recipient_subsequent_balance += q.recipient_subsequent_balance
+            all_sender_subsequent_balance += q.sender_subsequent_balance
+
+            extra['all_amount'] = all_amount
+            extra['all_recipient_subsequent_balance'] = all_recipient_subsequent_balance
+            extra['all_sender_subsequent_balance'] = Decimal(all_sender_subsequent_balance)
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
+
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -118,9 +147,25 @@ class OfficeTransferListCreateAPIView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
+        
+        extra = dict()
+        all_amount = 0
+        all_recipient_subsequent_balance = 0
+        all_sender_subsequent_balance = 0
+
+        for q in page:
+            all_amount += q.transfer_amount
+            all_recipient_subsequent_balance += q.recipient_subsequent_balance
+            all_sender_subsequent_balance += q.sender_subsequent_balance
+            extra['all_amount'] = all_amount
+            extra['all_recipient_subsequent_balance'] = all_recipient_subsequent_balance
+            extra['all_sender_subsequent_balance'] = all_sender_subsequent_balance
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

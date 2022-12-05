@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Holding (Holdinq)" href="../company/holding.html" />
-    <link rel="prev" title="Transfer" href="transfer.html" />
+    <link rel="prev" title="Ödəniş izləmə" href="view_installments.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -45,9 +45,23 @@
 </table>
 <section id="id1">
 <h2>Kassa Hərəkətləri<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss33.png"><img alt="melumat" class="align-center" src="../../_images/ss33.png" style="width: 1000px; height: 250px;" /></a>
-<a class="reference internal image-reference" href="../../_images/ss34.png"><img alt="melumat" class="align-center" src="../../_images/ss34.png" style="width: 1000px; height: 250px;" /></a>
 <ul class="simple">
+<li><dl class="simple">
+<dt>Response-da extra və data deyə 2 məlumat gəlir.</dt><dd><ul>
+<li><p>data içində yazılan normal response datalarıdır.</p></li>
+<li><dl class="simple">
+<dt>extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:</dt><dd><ul>
+<li><p>“total_quantity” -&gt; Responseda gələn bütün toplam məbləğləri ifadə edir,</p></li>
+<li><p>“total_balance” -&gt; Responseda gələn bütün toplam balansları ifadə edir</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>extra içindəki datalar, pagination və filterləməyə uyğun çalışır.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>Jsonda gələn data:</dt><dd><ul>
 <li><p>date - (Tarix - Date)</p></li>
@@ -70,9 +84,6 @@
 </dd>
 </dl>
 </li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss35.png"><img alt="melumat" class="align-center" src="../../_images/ss35.png" style="width: 1500px; height: 250px;" /></a>
-<ul class="simple">
 <li><dl class="simple">
 <dt>Bütün Kassa Hərəkətləri</dt><dd><ul>
 <li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/cashbox/cashflow/">http://localhost:8000/api/v1/cashbox/cashflow/</a>”</p></li>
@@ -104,7 +115,6 @@
 </section>
 <section id="sirkt-mliyyat">
 <h2>Şirkət Əməliyyat<a class="headerlink" href="#sirkt-mliyyat" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss36.png"><img alt="melumat" class="align-center" src="../../_images/ss36.png" style="width: 1000px; height: 200px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Şirkət Əməliyyatı etmək</dt><dd><ul>
@@ -164,7 +174,6 @@
 </section>
 <section id="holdinq-mliyyat">
 <h2>Holdinq Əməliyyat<a class="headerlink" href="#holdinq-mliyyat" title="Permalink to this heading">¶</a></h2>
-<a class="reference internal image-reference" href="../../_images/ss38.png"><img alt="melumat" class="align-center" src="../../_images/ss38.png" style="width: 1500px; height: 350px;" /></a>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Holdinq Əməliyyatı etmək</dt><dd><ul>
@@ -225,20 +234,21 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">İnsan Resursları:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/user.html">User (İşçi)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/employee_status.html">Employee Status (İşçi Statusu)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/region.html">Region (Bölgə)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/customer.html">Customer (Müştəri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/commission.html">Commission (Komissiya)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/month_range.html">MonthRange (Ay Aralığı)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan_resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/employee.html">İşçilər</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/work_graphic.html">İş qrafiki</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/employee_status.html">Employee Status (İşçi Statusu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/region.html">Region (Bölgə)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/customer.html">Customer (Müştəri)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/commission.html">Commission (Komissiya)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/month_range.html">MonthRange (Ay Aralığı)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maliyyə və Kredit:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="salary_view.html">Əməkhaqqı</a></li>
 <li class="toctree-l1"><a class="reference internal" href="balance.html">Balans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="view_installments.html">Ödəniş izləmə</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Kassa Hərəkətləri</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">Kassa Hərəkətləri</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sirkt-mliyyat">Şirkət Əməliyyat</a></li>
@@ -290,7 +300,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="transfer.html" title="previous chapter">Transfer</a></li>
+      <li>Previous: <a href="view_installments.html" title="previous chapter">Ödəniş izləmə</a></li>
       <li>Next: <a href="../company/holding.html" title="next chapter">Holding (Holdinq)</a></li>
   </ul></li>
 </ul>

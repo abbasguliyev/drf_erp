@@ -17,6 +17,8 @@
     <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Employee Status (İşçi Statusu)" href="employee_status.html" />
+    <link rel="prev" title="İşçilər" href="employee.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -44,6 +46,25 @@
 <section id="is-qrafiki-cdvli">
 <h2>İş qrafiki Cədvəli<a class="headerlink" href="#is-qrafiki-cdvli" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
+<li><dl class="simple">
+<dt>Response-da extra və data deyə 2 məlumat gəlir.</dt><dd><ul>
+<li><p>data içində yazılan normal response datalarıdır.</p></li>
+<li><dl class="simple">
+<dt>extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:</dt><dd><ul>
+<li><p>“all_working_day_count” -&gt; Responseda gələn bütün toplam iş günlərini ifadə edir,</p></li>
+<li><p>“all_const_salary” -&gt; Responseda gələn bütün toplam sabit ə/h-ları ifadə edir,</p></li>
+<li><p>“all_holiday” -&gt; Responseda gələn bütün toplam tətil günlərini ifadə edir,</p></li>
+<li><p>“all_payed_days_off” -&gt; Responseda gələn bütün toplam ödənişli icazələri ifadə edir,</p></li>
+<li><p>“all_unpayed_days_off” -&gt; Responseda gələn bütün toplam ödənişsiz icazələri ifadə edir</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>extra içindəki datalar, pagination və filterləməyə uyğun çalışır.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>İş qrafiki Cədvəli</dt><dd><ul>
 <li><p>endpoint “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-working-days/">http://localhost:8000/api/v1/holidays/employee-working-days/</a>”</p></li>
@@ -82,7 +103,7 @@
 </li>
 <li><dl class="simple">
 <dt>Filter:</dt><dd><ul>
-<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&amp;employee__fullname=&amp;employee__fullname__icontains=&amp;employee__company=&amp;employee__office=&amp;employee__position=&amp;date__gte=&amp;date__lte=">http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&amp;employee__fullname=&amp;employee__fullname__icontains=&amp;employee__company=&amp;employee__office=&amp;employee__position=&amp;date__gte=&amp;date__lte=</a>”</p></li>
+<li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&amp;employee__fullname=&amp;employee__fullname__icontains=&amp;employee__company=&amp;employee__office=&amp;employee__position=&amp;employee__register_type=&amp;employee__register_type__icontains=&amp;date=&amp;date__month=&amp;date__year=&amp;date__gte=&amp;date__lte=">http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&amp;employee__fullname=&amp;employee__fullname__icontains=&amp;employee__company=&amp;employee__office=&amp;employee__position=&amp;employee__register_type=&amp;employee__register_type__icontains=&amp;date=&amp;date__month=&amp;date__year=&amp;date__gte=&amp;date__lte=</a>”</p></li>
 <li><p>filterdəki start_date və end_date date fieldinə görə hərəkət edir.</p></li>
 </ul>
 </dd>
@@ -334,12 +355,17 @@ günlərinin sayına görə 28, 29, 30, 31 olur. Hər ayın 1-i və 15i isə per
 <li class="toctree-l1"><a class="reference internal" href="../project_structure.html">Project Structure</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">İnsan Resursları:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="employee.html">İşçilər</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">İş qrafiki</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#is-qrafiki-cdvli">İş qrafiki Cədvəli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ttil">Tətil</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#icaz">İcazə</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="employee_status.html">Employee Status (İşçi Statusu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="region.html">Region (Bölgə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customer.html">Customer (Müştəri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commission.html">Commission (Komissiya)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="month_range.html">MonthRange (Ay Aralığı)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
@@ -349,6 +375,7 @@ günlərinin sayına görə 28, 29, 30, 31 olur. Hər ayın 1-i və 15i isə per
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/salary_view.html">Əməkhaqqı</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/balance.html">Balans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/transfer.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/view_installments.html">Ödəniş izləmə</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/cashflow.html">Kassa Hərəkətləri</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Company:</span></p>
@@ -395,6 +422,8 @@ günlərinin sayına görə 28, 29, 30, 31 olur. Hər ayın 1-i və 15i isə per
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="employee.html" title="previous chapter">İşçilər</a></li>
+      <li>Next: <a href="employee_status.html" title="next chapter">Employee Status (İşçi Statusu)</a></li>
   </ul></li>
 </ul>
 </div>

@@ -4,20 +4,102 @@ from cashbox.api.selectors import (
     holding_cashbox_list,
     company_cashbox_list,
     office_cashbox_list,
-    cash_flow_list,
-    holding_cashbox_opr_list,
-    company_cashbox_opr_list
 )
+from cashbox.api.utils import cashflow_create
+import datetime
+from rest_framework.exceptions import ValidationError
 
-def update_holding_cashbox_service(instance, **data) -> Cashbox:
+def update_holding_cashbox_service(user, instance, **data) -> Cashbox:
+    try:
+        new_balance = data['balance']
+    except:
+        new_balance = None
+    
+    if new_balance is not None:
+        before_update_balance = instance.balance
+        if new_balance > before_update_balance:
+            operation_style="MƏDAXİL"
+            difference = new_balance - before_update_balance
+        elif new_balance < before_update_balance:
+            operation_style="MƏXARİC"
+            difference = before_update_balance - new_balance
+        else:
+            raise ValidationError({'detail': 'Daxil etdiyiniz məbləğ əməliyyatdan əvvəl balansda olan məbləğ ilə eynidir'})
+        
+        cashflow_create(
+            holding=instance.holding,
+            operation_style=operation_style,
+            description="Holdinq kassasının balansı balans səhifəsindən yeniləndi",
+            executor=user,
+            personal=None,
+            date=datetime.date.today(),
+            quantity=difference,
+            balance=new_balance
+        )
+        
     obj = holding_cashbox_list().filter(id=instance.id).update(**data)
     return obj
 
-def update_company_cashbox_service(instance, **data) -> Cashbox:
+def update_company_cashbox_service(user, instance, **data) -> Cashbox:
+    try:
+        new_balance = data['balance']
+    except:
+        new_balance = None
+    
+    if new_balance is not None:
+        before_update_balance = instance.balance
+        if new_balance > before_update_balance:
+            operation_style="MƏDAXİL"
+            difference = new_balance - before_update_balance
+        elif new_balance < before_update_balance:
+            operation_style="MƏXARİC"
+            difference = before_update_balance - new_balance
+        else:
+            raise ValidationError({'detail': 'Daxil etdiyiniz məbləğ əməliyyatdan əvvəl balansda olan məbləğ ilə eynidir'})
+        
+        cashflow_create(
+            office=None,
+            company=instance.company,
+            operation_style=operation_style,
+            description="Şirkət kassasının balansı balans səhifəsindən yeniləndi",
+            executor=user,
+            personal=None,
+            date=datetime.date.today(),
+            quantity=difference,
+            balance=new_balance
+        )
     obj = company_cashbox_list().filter(id=instance.id).update(**data)
     return obj
 
-def update_office_cashbox_service(instance, **data) -> Cashbox:
+def update_office_cashbox_service(user, instance, **data) -> Cashbox:
+    try:
+        new_balance = data['balance']
+    except:
+        new_balance = None
+    
+    if new_balance is not None:
+        before_update_balance = instance.balance
+        if new_balance > before_update_balance:
+            operation_style="MƏDAXİL"
+            difference = new_balance - before_update_balance
+        elif new_balance < before_update_balance:
+            operation_style="MƏXARİC"
+            difference = before_update_balance - new_balance
+        else:
+            raise ValidationError({'detail': 'Daxil etdiyiniz məbləğ əməliyyatdan əvvəl balansda olan məbləğ ilə eynidir'})
+        
+        cashflow_create(
+            office=instance.office,
+            company=instance.office.company,
+            operation_style=operation_style,
+            description="Ofis kassasının balansı balans səhifəsindən yeniləndi",
+            executor=user,
+            personal=None,
+            date=datetime.date.today(),
+            quantity=difference,
+            balance=new_balance
+        )
+
     obj = office_cashbox_list().filter(id=instance.id).update(**data)
     return obj
 

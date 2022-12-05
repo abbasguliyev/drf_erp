@@ -9,6 +9,16 @@
 İş qrafiki Cədvəli
 ------------------
 
+- Response-da extra və data deyə 2 məlumat gəlir. 
+    - data içində yazılan normal response datalarıdır. 
+    - extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:
+        - "all_working_day_count" -> Responseda gələn bütün toplam iş günlərini ifadə edir,
+        - "all_const_salary" -> Responseda gələn bütün toplam sabit ə/h-ları ifadə edir,
+        - "all_holiday" -> Responseda gələn bütün toplam tətil günlərini ifadə edir,
+        - "all_payed_days_off" -> Responseda gələn bütün toplam ödənişli icazələri ifadə edir,
+        - "all_unpayed_days_off" -> Responseda gələn bütün toplam ödənişsiz icazələri ifadə edir
+    - extra içindəki datalar, pagination və filterləməyə uyğun çalışır.
+
 - İş qrafiki Cədvəli
     - endpoint "http://localhost:8000/api/v1/holidays/employee-working-days/"
     - Json-da gələn data:
@@ -27,7 +37,7 @@
         - "date": Cədvəlin aid olduğu tarix
 
 - Filter:
-    - endpoint: "http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&employee__fullname=&employee__fullname__icontains=&employee__company=&employee__office=&employee__position=&date__gte=&date__lte="
+    - endpoint: "http://localhost:8000/api/v1/holidays/employee-working-days/?employee=&employee__fullname=&employee__fullname__icontains=&employee__company=&employee__office=&employee__position=&employee__register_type=&employee__register_type__icontains=&date=&date__month=&date__year=&date__gte=&date__lte="
     - filterdəki start_date və end_date date fieldinə görə hərəkət edir.
 
 Tətil

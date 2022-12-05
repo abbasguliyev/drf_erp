@@ -11,7 +11,6 @@ from salary.api.services.commission_services import (
 from salary.api.services.salary_pay_service import salary_pay_service
 from salary.api.services.salarydeduction_service import salarydeduction_create, salary_deduction_update, salary_deduction_delete
 from salary.api.services.salarypunishment_service import salarypunishment_create, salary_punishment_update, salary_punishment_delete
-from salary.api.utils import salary_operation_delete
 
 from salary.models import (
     MonthRange, SaleRange, Commission, CommissionInstallment, CommissionSaleRange,
@@ -37,7 +36,6 @@ from rest_framework.response import Response
 
 from salary.api import permissions as salary_permissions
 
-
 from salary.api.filters import (
     AdvancePaymentFilter,
     BonusFilter,
@@ -58,6 +56,9 @@ from salary.api.selectors import (
 )
 
 from salary.api.export_excell import export_salary_view
+from holiday.api.selectors import employee_working_day_list
+
+from django.db.models import Sum, Q
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -354,9 +355,46 @@ class SalaryViewListAPIView(generics.ListAPIView):
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        all_bonus = 0
+        all_advancepayment = 0
+        all_salarydeduction = 0
+        all_salarypunishment = 0
+        all_working_day = 0
+        all_const_salary = 0
+        all_sale_quantity = 0
+        all_commission = 0
+        for q in page:
+            month = q.date.month
+            year = q.date.year
+            total_working_day = employee_working_day_list().filter(employee=q.employee, date__month=month, date__year=year).last()
+            all_working_day += total_working_day.working_days_count
+            e_history = employee_activity_history_list().filter(salary_view=q, activity_date__month = month, activity_date__year = year).last()
+            all_bonus += e_history.bonus
+            all_advancepayment += e_history.advance_payment
+            all_salarydeduction += e_history.salary_deduction
+            all_salarypunishment += e_history.salary_punishment
+            all_const_salary += q.employee.salary
+            all_sale_quantity += q.sale_quantity
+            all_commission += q.commission_amount
+            
+            extra['all_bonus'] = all_bonus
+            extra['all_advancepayment'] = all_advancepayment
+            extra['all_salarydeduction'] = all_salarydeduction
+            extra['all_salarypunishment'] = all_salarypunishment
+            extra['all_final_salary'] = q.final_salary
+            extra['all_working_day'] = all_working_day
+            extra['all_const_salary'] = all_const_salary
+            extra['all_sale_quantity'] = all_sale_quantity
+            extra['all_commission'] = all_commission
+
+        
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
 
         return Response(serializer.data)
 

@@ -52,6 +52,44 @@ class EmployeeWorkingDayListAPIView(generics.ListAPIView):
     filterset_class = EmployeeWorkingDayFilter
     permission_classes = [holiday_permissions.EmployeeWorkingDayPermissions]
 
+    def get(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        all_working_day_count = 0
+        all_const_salary = 0
+        all_holiday = 0
+        all_payed_days_off = 0
+        all_unpayed_days_off = 0
+        for q in page:
+            emp = q.employee
+            all_working_day_count += q.working_days_count
+            all_const_salary += emp.salary
+            total_holiday = employee_holiday_list().filter(employee = emp, holiday_date__month=q.date.month, holiday_date__year=q.date.year).count()
+            total_payed_days_off = employee_day_off_list().filter(employee = emp, is_paid=True, day_off_date__month=q.date.month, day_off_date__year=q.date.year).count()
+            total_unpayed_days_off = employee_day_off_list().filter(employee = emp, is_paid=False, day_off_date__month=q.date.month, day_off_date__year=q.date.year).count()
+            all_holiday += total_holiday
+            all_payed_days_off += total_payed_days_off
+            all_unpayed_days_off += total_unpayed_days_off
+
+            extra['all_working_day_count'] = all_working_day_count
+            extra['all_const_salary'] = all_const_salary
+            extra['all_holiday'] = all_holiday
+            extra['all_payed_days_off'] = all_payed_days_off
+            extra['all_unpayed_days_off'] = all_unpayed_days_off
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response([
+                {'extra': extra, 'data':serializer.data}
+            ])
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 class EmployeeHolidayListAPIView(generics.ListAPIView):
     queryset = employee_holiday_list()
     serializer_class = EmployeeHolidaySerializer

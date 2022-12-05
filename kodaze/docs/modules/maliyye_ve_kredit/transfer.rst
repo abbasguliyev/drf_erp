@@ -2,15 +2,13 @@
 Transfer
 ########
 
-.. image:: _static/ss20.png
-   :width: 300px
-   :height: 100px
-   :align: center
-
-.. image:: _static/ss22.png
-   :width: 800px
-   :height: 300px
-   :align: center
+- Response-da extra və data deyə 2 məlumat gəlir. 
+    - data içində yazılan normal response datalarıdır. 
+    - extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:
+        - "all_amount" -> Responseda gələn bütün toplam məbləğləri ifadə edir,
+        - "all_recipient_subsequent_balance" -> Responseda gələn bütün toplam qəbul edən son balanslarını ifadə edir,
+        - "all_sender_subsequent_balance" -> Responseda gələn bütün toplam göndərən son balanslarını ifadə edir
+    - extra içindəki datalar, pagination və filterləməyə uyğun çalışır.
 
 +-----------------------------+
 |Holdinq Şirkət arası Transfer|
@@ -18,16 +16,6 @@ Transfer
 
 Holdinq Şirkət arası Transfer
 -----------------------------
-
-.. image:: _static/ss23.png
-   :width: 2000px
-   :height: 500px
-   :align: center
-
-.. image:: _static/ss24.png
-   :width: 1500px
-   :height: 300px
-   :align: center
 
 - Holdinq-şirkət arası transfer etmək
     - endpoint: "http://localhost:8000/api/v1/transfer/holding-transfer/"
@@ -63,11 +51,6 @@ Holdinq Şirkət arası Transfer
         - "recipient_subsequent_balance" -> Qəbul edən son balansı - float
         - "sender_subsequent_balance" -> Göndərən son balansı - float
 
-.. image:: _static/ss25.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
 - Filter:
     - "http://localhost:8000/api/v1/transfer/holding-transfer/?executor__fullname=&executor__fullname__icontains=&executor__position__name=&executor__position__name__icontains=&executor__employee_status__status_name=&executor__employee_status__status_name__icontains=&sending_company__name=&sending_company__name__icontains=&receiving_company__name=&receiving_company__name__icontains=&recipient_subsequent_balance=&sender_subsequent_balance=&transfer_amount=&transfer_amount__gte=&transfer_amount__lte=&transfer_note=&transfer_note__icontains=&transfer_date=&transfer_date__gte=&transfer_date__lte="
 
@@ -77,16 +60,6 @@ Holdinq Şirkət arası Transfer
 
 Şirkət Ofis arası Transfer
 --------------------------
-
-.. image:: _static/ss26.png
-   :width: 2000px
-   :height: 100px
-   :align: center
-
-.. image:: _static/ss27.png
-   :width: 1500px
-   :height: 300px
-   :align: center
 
 - Şirkət Ofis arası Transfer etmək
     - endpoint: "http://localhost:8000/api/v1/transfer/company-transfer/"
@@ -126,11 +99,6 @@ Holdinq Şirkət arası Transfer
         - "recipient_subsequent_balance" -> Qəbul edən son balansı - float
         - "sender_subsequent_balance" -> Göndərən son balansı - float
 
-.. image:: _static/ss28.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
 - Filter:
     - "http://localhost:8000/api/v1/transfer/company-transfer/?executor__fullname=&executor__fullname__icontains=&executor__position__name=&executor__position__name__icontains=&executor__employee_status__status_name=&executor__employee_status__status_name__icontains=&company=&company__name=&company__name__icontains=&sending_office__name=&sending_office__name__icontains=&receiving_office__name=&receiving_office__name__icontains=&recipient_subsequent_balance=&sender_subsequent_balance=&transfer_amount=&transfer_amount__gte=&transfer_amount__lte=&transfer_note=&transfer_note__icontains=&transfer_date=&transfer_date__gte=&transfer_date__lte="
 
@@ -140,21 +108,6 @@ Holdinq Şirkət arası Transfer
 
 Ofislər arası Transfer
 ----------------------
-
-.. image:: _static/ss29.png
-   :width: 1500px
-   :height: 300px
-   :align: center
-
-.. image:: _static/ss30.png
-   :width: 1500px
-   :height: 300px
-   :align: center
-
-.. image:: _static/ss31.png
-   :width: 1500px
-   :height: 300px
-   :align: center
 
 - Ofislər arası Transfer etmək
     - endpoint: "http://localhost:8000/api/v1/transfer/office-transfer/"
@@ -190,11 +143,6 @@ Ofislər arası Transfer
         - "transfer_note" -> Transfer qeydi - String
         - "recipient_subsequent_balance" -> Qəbul edən son balansı - float
         - "sender_subsequent_balance" -> Göndərən son balansı - float
-
-.. image:: _static/ss32.png
-   :width: 300px
-   :height: 200px
-   :align: center
 
 - Filter:
     - "http://localhost:8000/api/v1/transfer/office-transfer/?executor__fullname=&executor__fullname__icontains=&executor__position__name=&executor__position__name__icontains=&executor__employee_status__status_name=&executor__employee_status__status_name__icontains=&company=&company__name=&company__name__icontains=&sending_office__name=&sending_office__name__icontains=&receiving_office__name=&receiving_office__name__icontains=&recipient_subsequent_balance=&sender_subsequent_balance=&transfer_amount=&transfer_amount__gte=&transfer_amount__lte=&transfer_note=&transfer_note__icontains=&transfer_date=&transfer_date__gte=&transfer_date__lte="

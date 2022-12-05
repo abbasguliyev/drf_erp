@@ -67,7 +67,7 @@ def create_is_auto_services_when_update_service(contract, created, kartric_novu,
             for i in range(1):
                 price = 0
                 for j in kartric:
-                    price += float(j.price)
+                    price += j.price
                     
                     stok = Stock.objects.filter(warehouse=warehouse, product=j)[0]
                     stok.quantity = stok.quantity - 1
@@ -149,10 +149,10 @@ def service_create(self, request, *args, **kwargs):
                 traceback.print_exc()
                 return Response({"detail":"Warehouseın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
 
-        if float(discount) >  float(price):
+        if discount >  price:
             return Response({"detail":"Endirim qiyməti service qiymətindən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
 
-        total_amount_to_be_paid = float(price) - float(initial_payment) - float(discount)
+        total_amount_to_be_paid = price - initial_payment - discount
         
         serializer.save(total_amount_to_be_paid=total_amount_to_be_paid, price=price)
         return Response({"detail":"Service düzəldildi"}, status=status.HTTP_200_OK)
@@ -228,7 +228,7 @@ def service_update(self, request, *args, **kwargs):
                     office_subsequent_balance=office_subsequent_balance,
                     executor=user,
                     operation_style="MƏDAXİL",
-                    quantity=float(s.amount_to_be_paid)
+                    quantity=s.amount_to_be_paid
                 )
         serializer.save()
         return Response({"detail":"Proses yerinə yetirildi"}, status=status.HTTP_200_OK)
@@ -282,7 +282,7 @@ def service_payment_update(self, request, *args, **kwargs):
                     
                     note = f"Creditor - {user.fullname}, müştəri - {contract.customer.fullname}, service ödənişi"
                     # c_income(cashbox, service_payment.amount_to_be_paid, user, note)
-                    creditorun_serviceden_alacagi_amount = (float(service_payment.amount_to_be_paid) * int(prim_percent)) / 100
+                    creditorun_serviceden_alacagi_amount = (service_payment.amount_to_be_paid * int(prim_percent)) / 100
 
                     subsequent_balance = calculate_holding_total_balance()
                     office_subsequent_balance = calculate_office_balance(office=contract.office)
@@ -296,7 +296,7 @@ def service_payment_update(self, request, *args, **kwargs):
                         office_subsequent_balance=office_subsequent_balance,
                         executor=user,
                         operation_style="MƏDAXİL",
-                        quantity=float(service_payment.amount_to_be_paid)
+                        quantity=service_payment.amount_to_be_paid
                     )
 
                     salary_goruntulenme_creditor.final_salary = salary_goruntulenme_creditor.final_salary + creditorun_serviceden_alacagi_amount

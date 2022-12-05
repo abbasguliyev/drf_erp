@@ -9,17 +9,13 @@ Kassa Hərəkətləri
 Kassa Hərəkətləri
 -----------------
 
-.. image:: _static/ss33.png
-   :width: 1000px
-   :height: 250px
-   :alt: melumat
-   :align: center
 
-.. image:: _static/ss34.png
-   :width: 1000px
-   :height: 250px
-   :alt: melumat
-   :align: center
+- Response-da extra və data deyə 2 məlumat gəlir. 
+    - data içində yazılan normal response datalarıdır. 
+    - extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:
+        - "total_quantity" -> Responseda gələn bütün toplam məbləğləri ifadə edir,
+        - "total_balance" -> Responseda gələn bütün toplam balansları ifadə edir
+    - extra içindəki datalar, pagination və filterləməyə uyğun çalışır.
 
 - Jsonda gələn data:
     - date - (Tarix - Date)
@@ -39,13 +35,6 @@ Kassa Hərəkətləri
     - office_initial_balance - (Ofis İlkin balans - Float)
     - office_subsequent_balance - (Ofis Sonrakı balans - Float)
 
-.. image:: _static/ss35.png
-   :width: 1500px
-   :height: 250px
-   :alt: melumat
-   :align: center
-
-
 - Bütün Kassa Hərəkətləri
     - endpoint: "http://localhost:8000/api/v1/cashbox/cashflow/"
 
@@ -61,12 +50,6 @@ Kassa Hərəkətləri
 
 Şirkət Əməliyyat
 ----------------
-
-.. image:: _static/ss36.png
-   :width: 1000px
-   :height: 200px
-   :alt: melumat
-   :align: center
 
 - Şirkət Əməliyyatı etmək
     - endpoint: "http://localhost:8000/api/v1/cashbox/company-cashbox-operation/"
@@ -99,12 +82,6 @@ Kassa Hərəkətləri
 
 Holdinq Əməliyyat
 -----------------
-
-.. image:: _static/ss38.png
-   :width: 1500px
-   :height: 350px
-   :alt: melumat
-   :align: center
 
 - Holdinq Əməliyyatı etmək
     - endpoint: "http://localhost:8000/api/v1/cashbox/holding-cashbox-operation/"

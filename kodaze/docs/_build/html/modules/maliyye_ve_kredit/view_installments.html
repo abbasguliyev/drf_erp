@@ -47,6 +47,22 @@
 <h2>Ödəniş izləmə<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
+<dt>Response-da extra və data deyə 2 məlumat gəlir.</dt><dd><ul>
+<li><p>data içində yazılan normal response datalarıdır.</p></li>
+<li><dl class="simple">
+<dt>extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:</dt><dd><ul>
+<li><p>“total_price” -&gt; Responseda gələn bütün toplam ödəyəcəyi məbləğləri ifadə edir,</p></li>
+<li><p>“total_remaining_debt” -&gt; Responseda gələn bütün toplam qalıq borcları ifadə edir</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>extra içindəki datalar, pagination və filterləməyə uyğun çalışır.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
 <dt>Ödəniş izləmə</dt><dd><ul>
 <li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/contract/installments/">http://localhost:8000/api/v1/contract/installments/</a>”</p></li>
 <li><dl class="simple">
@@ -126,7 +142,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/employee_status.html">Employee Status (İşçi Statusu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/region.html">Region (Bölgə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/customer.html">Customer (Müştəri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/commission.html">Commission (Komissiya)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/month_range.html">MonthRange (Ay Aralığı)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../insan-resurslari/sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>

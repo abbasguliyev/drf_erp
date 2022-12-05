@@ -52,9 +52,10 @@ class HoldingCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = request.user
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            cashbox_services.update_holding_cashbox_service(instance, **serializer.validated_data)
+            cashbox_services.update_holding_cashbox_service(user, instance, **serializer.validated_data)
             return Response({"detail":"Holding kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -93,9 +94,10 @@ class CompanyCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = request.user
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            cashbox_services.update_company_cashbox_service(instance, **serializer.validated_data)
+            cashbox_services.update_company_cashbox_service(user, instance, **serializer.validated_data)
             return Response({"detail":"Şirkət kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -137,9 +139,10 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = request.user
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            cashbox_services.update_office_cashbox_service(instance, **serializer.validated_data)
+            cashbox_services.update_office_cashbox_service(user, instance, **serializer.validated_data)
             return Response({"detail":"Office kassa məlumatları yeniləndi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
@@ -155,22 +158,27 @@ class CashFlowListAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        
-        total_quantity = 0
-
-        for q in queryset:
-            total_quantity += q.quantity
-
         page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        total_quantity = 0
+        total_balance = 0
+        for q in page:
+            total_quantity += q.quantity
+            total_balance += q.balance
+
+            extra['total_quantity'] = total_quantity
+            extra['total_balance'] = total_balance
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([
-                {'total_quantity': total_quantity, 'data':serializer.data}
+                {'extra': extra, 'data':serializer.data}
             ])
 
         serializer = self.get_serializer(queryset, many=True)
         return Response([
-                {'total_quantity': total_quantity, 'data':serializer.data}
+                {'extra': extra, 'data':serializer.data}
             ])
 
 class CashFlowDetailAPIView(generics.RetrieveAPIView):

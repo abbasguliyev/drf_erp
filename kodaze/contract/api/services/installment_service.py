@@ -66,7 +66,7 @@ def installment_update(self, request, *args, **kwargs):
 
         amount_for_month = 0
         for i in unpaid_installments:
-            amount_for_month = amount_for_month + float(i.price)
+            amount_for_month = amount_for_month + i.price
             i.delete()
 
         current_installment.price = remaining_debt
@@ -84,7 +84,7 @@ def installment_update(self, request, *args, **kwargs):
         office_initial_balance = calculate_office_balance(office=office)
 
         note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}. Borcu tam bağlandı"
-        # c_income(cashbox, float(amount_for_month), group_leader, note)
+        # c_income(cashbox, amount_for_month, group_leader, note)
 
         subsequent_balance = calculate_holding_total_balance()
         office_subsequent_balance = calculate_office_balance(office=office)
@@ -98,7 +98,7 @@ def installment_update(self, request, *args, **kwargs):
             office_subsequent_balance=office_subsequent_balance,
             executor=user,
             operation_style="MƏDAXİL",
-            quantity=float(amount_for_month)
+            quantity=amount_for_month
         )
 
         pdf_create_when_contract_updated(contract, contract, True)
@@ -186,7 +186,7 @@ def installment_update(self, request, *args, **kwargs):
         and 
         conditional_payment_status == "NATAMAM AY" 
         and 
-        0 < float(amount_wants_to_pay) < current_installment.price 
+        0 < amount_wants_to_pay < current_installment.price 
         and 
         incomplete_month_substatus != ""
         and 
@@ -199,15 +199,15 @@ def installment_update(self, request, *args, **kwargs):
         current_installment.save()
 
         unpaid_installments = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN", conditional_payment_status=None)
-        amount_wants_to_pay = float(request.data.get("price"))
+        amount_wants_to_pay = request.data.get("price")
         
         initial_balance = calculate_holding_total_balance()
         office_initial_balance = calculate_office_balance(office=office)
 
         note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}, şərtli ödəmə - {current_installment.conditional_payment_status}"
-        # c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
+        # c_income(cashbox, amount_wants_to_pay, group_leader, note)
         remaining_debt = contract.remaining_debt
-        remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
+        remaining_debt = remaining_debt - amount_wants_to_pay
         contract.remaining_debt = remaining_debt
         contract.save()
 
@@ -223,7 +223,7 @@ def installment_update(self, request, *args, **kwargs):
             office_subsequent_balance=office_subsequent_balance,
             executor=user,
             operation_style="MƏDAXİL",
-            quantity=float(amount_wants_to_pay)
+            quantity=amount_wants_to_pay
         )
         
         if(incomplete_month_substatus == "NATAMAM DİGƏR AYLAR"):
@@ -288,13 +288,13 @@ def installment_update(self, request, *args, **kwargs):
             return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
         
     # Buraxilmis Ay odeme statusu ile bagli operationlar
-    if((conditional_payment_status == "BURAXILMIŞ AY" and missed_month_substatus != None) or (float(amount_wants_to_pay) == 0 and missed_month_substatus != None)):
+    if((conditional_payment_status == "BURAXILMIŞ AY" and missed_month_substatus != None) or (amount_wants_to_pay == 0 and missed_month_substatus != None)):
         current_installment = self.get_object()
         contract = current_installment.contract
         initial_payment = contract.initial_payment
         initial_payment_debt = contract.initial_payment_debt
         unpaid_installments = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN", conditional_payment_status=None)
-        amount_wants_to_pay = float(request.data.get("price"))
+        amount_wants_to_pay = request.data.get("price")
         
         if(missed_month_substatus == "SIFIR NÖVBƏTİ AY"):
             next_month = get_object_or_404(Installment, pk=self.get_object().id+1)
@@ -348,8 +348,8 @@ def installment_update(self, request, *args, **kwargs):
 
     # RAZILASDIRILMIS AZ ODEME ile bagli operationlar
     if(conditional_payment_status == "RAZILAŞDIRILMIŞ AZ ÖDƏMƏ"):
-        amount_wants_to_pay = float(request.data.get("price"))
-        if float(current_installment.price) <= float(amount_wants_to_pay):
+        amount_wants_to_pay = request.data.get("price")
+        if current_installment.price <= amount_wants_to_pay:
             return Response({"detail": "Razılaşdırılmış ödəmə statusunda ödənmək istənilən məbləğ cari məbləğdən az olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             current_installment = self.get_object()
@@ -379,7 +379,7 @@ def installment_update(self, request, *args, **kwargs):
             current_installment.price = amount_wants_to_pay
             current_installment.save()
 
-            remaining_debt = float(remaining_debt) - float(current_installment.price)
+            remaining_debt = remaining_debt - current_installment.price
             contract.save()
 
             i = 0
@@ -401,16 +401,16 @@ def installment_update(self, request, *args, **kwargs):
     if(conditional_payment_status == "ARTIQ ÖDƏMƏ"):
         amount_wants_to_pay = request.data.get("price")
         
-        if float(current_installment.price) >= float(amount_wants_to_pay):
+        if current_installment.price >= amount_wants_to_pay:
             return Response({"detail": "Artıq ödəmə statusunda ödənmək istənilən məbləğ cari məbləğdən çox olmalıdır"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             if(overpayment_substatus == "ARTIQ BİR AY"):
                 current_installment = self.get_object()
                 contract = current_installment.contract
-                amount_wants_to_pay = float(request.data.get("price"))
+                amount_wants_to_pay = request.data.get("price")
                 amount_normally_due = current_installment.price
 
-                if float(amount_wants_to_pay) > float(contract.remaining_debt):
+                if amount_wants_to_pay > contract.remaining_debt:
                     return Response({"detail": "Artıq ödəmə statusunda qalıq borcunuzdan artıq məbləğ ödəyə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
                 difference_amount_wants_to_pay_and_amount_normally_due = amount_wants_to_pay - amount_normally_due
@@ -421,7 +421,7 @@ def installment_update(self, request, *args, **kwargs):
                 current_installment.overpayment_substatus = "ARTIQ BİR AY"
                 current_installment.save()
                 
-                remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
+                remaining_debt = remaining_debt - amount_wants_to_pay
                 contract.save()
 
                 last_month = unpaid_installments[len(unpaid_installments)-1]
@@ -446,7 +446,7 @@ def installment_update(self, request, *args, **kwargs):
                         last_month = unpaid_installments[len(unpaid_installments)-1]
 
                 if(request.data.get("payment_status") == "ÖDƏNƏN"):
-                    remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
+                    remaining_debt = remaining_debt - amount_wants_to_pay
                     contract.remaining_debt = remaining_debt
                     contract.save()
 
@@ -454,7 +454,7 @@ def installment_update(self, request, *args, **kwargs):
                     office_initial_balance = calculate_office_balance(office=office)
                     
                     note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}. kredit ödəməsi"
-                    # c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
+                    # c_income(cashbox, amount_wants_to_pay, group_leader, note)
 
                     current_installment.payment_status = "ÖDƏNƏN"
                     current_installment.save()
@@ -471,7 +471,7 @@ def installment_update(self, request, *args, **kwargs):
                         office_subsequent_balance=office_subsequent_balance,
                         executor=user,
                         operation_style="MƏDAXİL",
-                        quantity=float(amount_wants_to_pay)
+                        quantity=amount_wants_to_pay
                     )
 
 
@@ -480,10 +480,10 @@ def installment_update(self, request, *args, **kwargs):
             elif(overpayment_substatus == "ARTIQ BÜTÜN AYLAR"):
                 current_installment = self.get_object()
                 contract = current_installment.contract
-                amount_wants_to_pay = float(request.data.get("price"))
+                amount_wants_to_pay = request.data.get("price")
                 amount_normally_due = current_installment.price
 
-                if float(amount_wants_to_pay) > float(contract.remaining_debt):
+                if amount_wants_to_pay > contract.remaining_debt:
                     return Response({"detail": "Artıq ödəmə statusunda qalıq borcunuzdan artıq məbləğ ödəyə bilməzsiniz"}, status=status.HTTP_400_BAD_REQUEST)
 
                 unpaid_installments = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN", conditional_payment_status=None)
@@ -492,8 +492,8 @@ def installment_update(self, request, *args, **kwargs):
 
                 sertli_odemeden_gelen_amount = 0
                 for s in sertli_odeme:
-                    sertli_odemeden_gelen_amount += float(s.price)
-                remaining_debt = float(contract.remaining_debt)
+                    sertli_odemeden_gelen_amount += s.price
+                remaining_debt = contract.remaining_debt
                 yeni_remaining_debt = remaining_debt-sertli_odemeden_gelen_amount
                 yeni_aylar = yeni_remaining_debt // amount_wants_to_pay
                 silinecek_ay = len(umumi_unpaid_installments) - yeni_aylar - len(sertli_odeme)
@@ -503,7 +503,7 @@ def installment_update(self, request, *args, **kwargs):
                 current_installment.overpayment_substatus = "ARTIQ BÜTÜN AYLAR"
                 current_installment.save()
 
-                remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
+                remaining_debt = remaining_debt - amount_wants_to_pay
                 contract.save()
 
                 a = 1
@@ -513,12 +513,12 @@ def installment_update(self, request, *args, **kwargs):
                     a += 1
 
                 b = 0
-                if float(amount_wants_to_pay) == float(remaining_debt):
+                if amount_wants_to_pay == remaining_debt:
                     while(b < yeni_aylar):
                         unpaid_installments[b].price = amount_wants_to_pay
                         unpaid_installments[b].save()
                         b += 1
-                elif float(amount_wants_to_pay) < float(remaining_debt):
+                elif amount_wants_to_pay < remaining_debt:
                     while(b < yeni_aylar):
                         if(b < yeni_aylar-1):
                             installment = unpaid_installments[b]
@@ -538,9 +538,9 @@ def installment_update(self, request, *args, **kwargs):
     if(conditional_payment_status == "SON AYIN BÖLÜNMƏSİ"):
         current_installment = self.get_object()
         contract = current_installment.contract
-        amount_wants_to_pay = float(request.data.get("price"))
+        amount_wants_to_pay = request.data.get("price")
 
-        if float(amount_wants_to_pay) == 0:
+        if amount_wants_to_pay == 0:
             return Response({"detail": "Sonuncu ayda 0 AZN daxil edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
 
         unpaid_installments = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN")
@@ -559,7 +559,7 @@ def installment_update(self, request, *args, **kwargs):
         last_month.note = note
         last_month.save()
 
-        remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
+        remaining_debt = remaining_debt - amount_wants_to_pay
         contract.save()
 
         inc_month = pd.date_range(last_month.date, periods = 2, freq='M')
@@ -572,7 +572,7 @@ def installment_update(self, request, *args, **kwargs):
         pdf_create_when_contract_updated(contract, contract, True)
         return Response({"detail": "Əməliyyat uğurla yerinə yetirildi"}, status=status.HTTP_200_OK)
     # Odenen ay ile bagli operation
-    if((current_installment.payment_status == "ÖDƏNMƏYƏN" and float(amount_wants_to_pay) == current_installment.price)):
+    if((current_installment.payment_status == "ÖDƏNMƏYƏN" and amount_wants_to_pay == current_installment.price)):
         unpaid_installments_qs = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN")
         unpaid_installments = list(unpaid_installments_qs)
         if serializer.is_valid():
@@ -582,7 +582,7 @@ def installment_update(self, request, *args, **kwargs):
                 contract.contract_status = "BİTMİŞ"
                 contract.save()
             
-            remaining_debt = float(remaining_debt) - float(amount_wants_to_pay)
+            remaining_debt = remaining_debt - amount_wants_to_pay
             contract.remaining_debt = remaining_debt
             contract.save()
 
@@ -590,7 +590,7 @@ def installment_update(self, request, *args, **kwargs):
             office_initial_balance = calculate_office_balance(office=office)
             
             note = f"GroupLeader - {group_leader.fullname}, müştəri - {customer.fullname}, tarix - {today}, ödəniş üslubu - {payment_style}. kredit ödəməsi"
-            # c_income(cashbox, float(amount_wants_to_pay), group_leader, note)
+            # c_income(cashbox, amount_wants_to_pay, group_leader, note)
 
             subsequent_balance = calculate_holding_total_balance()
             office_subsequent_balance = calculate_office_balance(office=office)
@@ -604,7 +604,7 @@ def installment_update(self, request, *args, **kwargs):
                 office_subsequent_balance=office_subsequent_balance,
                 executor=user,
                 operation_style="MƏDAXİL",
-                quantity=float(amount_wants_to_pay)
+                quantity=amount_wants_to_pay
             )
 
             pdf_create_when_contract_updated(contract, contract, True)

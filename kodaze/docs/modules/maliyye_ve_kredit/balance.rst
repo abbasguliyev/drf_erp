@@ -9,12 +9,6 @@ Balans
 Balans
 ------
 
-.. image:: _static/ss15.png
-   :width: 1500px
-   :height: 300px
-   :alt: melumat
-   :align: center
-
 +-------------+
 |Holding Kassa|
 +-------------+
@@ -37,11 +31,6 @@ Holding Kassa
 
 - Bütün holding kassa balanslarına baxmaq
     - endpoint: "http://localhost:8000/api/v1/cashbox/holding-cashbox/"
-
-.. image:: _static/ss16.png
-   :width: 300px
-   :height: 200px
-   :align: center
 
 - Filter
     - endpoint: "http://localhost:8000/api/v1/cashbox/holding-cashbox/?holding__id=&holding__name=&holding__name__icontains="
@@ -72,11 +61,6 @@ Holding Kassa
 - Bütün şirkət kassa balanslarına baxmaq
     - endpoint: "http://localhost:8000/api/v1/cashbox/office-cashbox/"
 
-.. image:: _static/ss18.png
-   :width: 300px
-   :height: 200px
-   :align: center
-
 - Filter
     - endpoint: "http://localhost:8000/api/v1/cashbox/office-cashbox/?company__id=&company__name=&company__name__icontains=&company__is_active=unknown&balance=&balance__gte=&balance__lte="
 
@@ -105,11 +89,6 @@ Ofis Kassa
 
 - Bütün ofis kassa balanslarına baxmaq
     - endpoint: "http://localhost:8000/api/v1/cashbox/office-cashbox/"
-
-.. image:: _static/ss19.png
-   :width: 300px
-   :height: 200px
-   :align: center
 
 - Filter
     - endpoint: "http://localhost:8000/api/v1/cashbox/office-cashbox/?office__id=&office__name=&office__name__icontains=&office__is_active=unknown&office__company__id=&office__company__name=&office__company__name__icontains=&balance=&balance__gte=&balance__lte="

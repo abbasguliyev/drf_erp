@@ -50,7 +50,7 @@ def cashbox_operation_decorator(func):
         
         if func_name == "salary_pay_create":
             salary_view = kwargs['salary_view']
-            amount = float(salary_view.final_salary)
+            amount = salary_view.final_salary
         else:
             amount = kwargs['amount']
 

@@ -207,7 +207,7 @@ def contract_create(self, request, *args, **kwargs):
                         total_amount = calc_total_amount(
                             product.price, int(product_quantity))
 
-                        remaining_debt = float(total_amount)
+                        remaining_debt = total_amount
 
                         serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company, office=office,
                                         total_amount=total_amount, remaining_debt=remaining_debt)
@@ -215,7 +215,7 @@ def contract_create(self, request, *args, **kwargs):
                                         status=status.HTTP_201_CREATED)
                     elif (initial_payment is not None and initial_payment_debt == None):
                         total_amount = calc_total_amount(product.price, int(product_quantity))
-                        if float(initial_payment) >= float(total_amount):
+                        if initial_payment >= total_amount:
                             return Response({"detail": "İlkin ödəniş məbləği müqavilənin məbləğindən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
                         # ilkin odenis bu gunku tarixe daxil edilerse ve qaliq ilkin odenis daxil edilmezse
                         if (now_date_san == initial_payment_date_san):
@@ -225,9 +225,9 @@ def contract_create(self, request, *args, **kwargs):
                             initial_balance = calculate_holding_total_balance()
                             office_initial_balance = calculate_office_balance(office=office)
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, tarix - {initial_payment_date}, ödəniş üslubu - {payment_style}, tam ilkin ödəniş"
-                            # c_income(cashbox, float(initial_payment), user, note)
+                            # c_income(cashbox, initial_payment, user, note)
 
-                            remaining_debt = float(total_amount) - float(initial_payment)
+                            remaining_debt = total_amount - initial_payment
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
                                             initial_payment_status="BİTMİŞ", total_amount=total_amount, remaining_debt=remaining_debt,)
@@ -243,7 +243,7 @@ def contract_create(self, request, *args, **kwargs):
                                 office_subsequent_balance=office_subsequent_balance,
                                 executor=user,
                                 operation_style="MƏDAXİL",
-                                quantity=float(initial_payment)
+                                quantity=initial_payment
                             )
                             return Response(data=serializer.data,
                                             status=status.HTTP_201_CREATED)
@@ -252,8 +252,8 @@ def contract_create(self, request, *args, **kwargs):
                             total_amount = calc_total_amount(
                                 product.price, int(product_quantity))
 
-                            # remaining_debt = float(total_amount) - float(initial_payment)
-                            remaining_debt = float(total_amount)
+                            # remaining_debt = total_amount - initial_payment
+                            remaining_debt = total_amount
 
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
@@ -268,18 +268,18 @@ def contract_create(self, request, *args, **kwargs):
                                         status=status.HTTP_201_CREATED)
 
                     elif ((initial_payment == None and initial_payment_debt is not None) or (
-                            float(initial_payment) == 0 and initial_payment_debt is not None)):
+                            initial_payment == 0 and initial_payment_debt is not None)):
                         return Response({"detail": "İlkin ödəniş daxil edilmədən qalıq ilkin ödəniş daxil edilə bilməz"},
                                         status=status.HTTP_400_BAD_REQUEST)
 
-                    elif (float(initial_payment) == 0):
+                    elif (initial_payment == 0):
                         # Umumi ilkin odenis amounti 0 olarsa
                         return Response({"detail": "İlkin ödəniş 0 azn daxil edilə bilməz"},
                                         status=status.HTTP_400_BAD_REQUEST)
                     elif (initial_payment_debt is not None):
                         total_amount2 = calc_total_amount(product.price, int(product_quantity))
-                        remaining_debt2 = float(total_amount2) - float(initial_payment_debt)
-                        if float(initial_payment) >= float(remaining_debt2):
+                        remaining_debt2 = total_amount2 - initial_payment_debt
+                        if initial_payment >= remaining_debt2:
                             return Response({"detail": "İlkin ödəniş qalıq məbləği qalıq məbləğdən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
                         if ((now_date_san == initial_payment_date_san) and (
                                 now_date_san < initial_payment_debt_date_san)):
@@ -291,9 +291,9 @@ def contract_create(self, request, *args, **kwargs):
                             office_initial_balance = calculate_office_balance(office=office)
 
                             note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, tarix - {initial_payment_date}, ödəniş üslubu - {payment_style}, 2-dəfəyə ilkin ödənişin birincisi."
-                            # c_income(cashbox, float(initial_payment), user, note)
+                            # c_income(cashbox, initial_payment, user, note)
 
-                            remaining_debt = float(total_amount) - float(initial_payment)
+                            remaining_debt = total_amount - initial_payment
 
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
@@ -312,7 +312,7 @@ def contract_create(self, request, *args, **kwargs):
                                 office_subsequent_balance=office_subsequent_balance,
                                 executor=user,
                                 operation_style="MƏDAXİL",
-                                quantity=float(initial_payment)
+                                quantity=initial_payment
                             )
                             return Response(data=serializer.data,
                                             status=status.HTTP_201_CREATED)
@@ -343,7 +343,7 @@ def contract_create(self, request, *args, **kwargs):
                             total_amount = calc_total_amount(
                                 product.price, int(product_quantity))
 
-                            remaining_debt = float(total_amount)
+                            remaining_debt = total_amount
 
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
@@ -358,7 +358,7 @@ def contract_create(self, request, *args, **kwargs):
                             total_amount = calc_total_amount(
                                 product.price, int(product_quantity))
 
-                            remaining_debt = float(total_amount)
+                            remaining_debt = total_amount
 
                             serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company,
                                             office=office, initial_payment=initial_payment,
@@ -393,7 +393,7 @@ def contract_create(self, request, *args, **kwargs):
                 office_initial_balance = calculate_office_balance(office=office)
 
                 note = f"GroupLeader - {user.fullname}, müştəri - {customer.fullname}, date - {now_date_date}, ödəniş üslubu - {payment_style}"
-                # c_income(cashbox, float(total_amount), user, note)
+                # c_income(cashbox, total_amount, user, note)
 
                 serializer.save(group_leader=user, manager1=manager1, manager2=manager2, company=company, office=office,
                                 contract_status="BİTMİŞ", total_amount=total_amount)
@@ -410,7 +410,7 @@ def contract_create(self, request, *args, **kwargs):
                     office_subsequent_balance=office_subsequent_balance,
                     executor=user,
                     operation_style="MƏDAXİL",
-                    quantity=float(total_amount)
+                    quantity=total_amount
                 )
                 return Response(data=serializer.data, status=status.HTTP_201_CREATED)
             else:
@@ -456,17 +456,17 @@ def contract_update(self, request, *args, **kwargs):
 
             unpaid_installments_amount = Installment.objects.filter(contract=contract, payment_status="ÖDƏNMƏYƏN", conditional_payment_status=None)[0].price
 
-            wants_to_pay_amount = float(request.data.get("new_graphic_amount"))
+            wants_to_pay_amount = request.data.get("new_graphic_amount")
 
             if wants_to_pay_amount < unpaid_installments_amount:
                 paid_amount = 0
                 for i in installments_paid:
-                    paid_amount += float(i.price)
+                    paid_amount += i.price
 
                 amount_come_from_conditional_payment = 0
                 for s in conditional_payment:
-                    amount_come_from_conditional_payment += float(s.price)
-                paid = float(paid_amount) + initial_payment_total
+                    amount_come_from_conditional_payment += s.price
+                paid = paid_amount + initial_payment_total
                 remaining_debt = product_price - paid
                 deducted_amount = remaining_debt -  amount_come_from_conditional_payment
 
@@ -630,7 +630,7 @@ def contract_update(self, request, *args, **kwargs):
                 customer = contract.customer
 
                 note = f"GroupLeader - {contract_group_leader.fullname}, müştəri - {customer.fullname}, date - {now_date_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {compensation_income}"
-                # c_income(cashbox, float(compensation_income), contract_group_leader, note)
+                # c_income(cashbox, compensation_income, contract_group_leader, note)
 
                 contract.contract_status = CANCELLED
                 contract.compensation_income = request.data.get("compensation_income")
@@ -648,12 +648,12 @@ def contract_update(self, request, *args, **kwargs):
                     office_subsequent_balance=office_subsequent_balance,
                     executor=user,
                     operation_style="MƏDAXİL",
-                    quantity=float(compensation_income)
+                    quantity=compensation_income
                 )
 
 
             elif (compensation_expense is not None):
-                if (cashbox_balance < float(compensation_expense)):
+                if (cashbox_balance < compensation_expense):
                     return Response({"detail": "Kompensasiya məxaric məbləği Ofisin balansından çox ola bilməz"},
                                     status=status.HTTP_400_BAD_REQUEST)
                 initial_balance = calculate_holding_total_balance()
@@ -663,7 +663,7 @@ def contract_update(self, request, *args, **kwargs):
                 customer = contract.customer
 
                 note = f"GroupLeader - {contract_group_leader.fullname}, müştəri - {customer.fullname}, tarix - {now_date_date}, müqavilə düşən statusuna keçirildiyi üçün. Kompensasiya məbləği => {compensation_expense}"
-                # expense(cashbox, float(compensation_expense), contract_group_leader, note)
+                # expense(cashbox, compensation_expense, contract_group_leader, note)
 
                 contract.contract_status = CANCELLED
                 contract.compensation_expense = request.data.get("compensation_expense")
@@ -681,7 +681,7 @@ def contract_update(self, request, *args, **kwargs):
                     office_subsequent_balance=office_subsequent_balance,
                     executor=user,
                     operation_style="MƏXARİC",
-                    quantity=float(compensation_expense)
+                    quantity=compensation_expense
                 )
 
             if (compensation_income == None and compensation_expense == None):
@@ -727,23 +727,23 @@ def contract_update(self, request, *args, **kwargs):
         # Ilkin ödənişlərin ödənməsi
         if (contract.payment_style == INSTALLMENT):
             if (wants_to_pay_initial_payment != None and initial_payment_status == CONTINUING):
-                if (float(wants_to_pay_initial_payment) != initial_payment):
+                if (wants_to_pay_initial_payment != initial_payment):
                     return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-                elif (float(wants_to_pay_initial_payment) == initial_payment):
+                elif (wants_to_pay_initial_payment == initial_payment):
                     contract.initial_payment_status = "BİTMİŞ"
                     contract.initial_payment_date = now_date_date
-                    contract.remaining_debt = float(contract.remaining_debt) - float(initial_payment)
+                    contract.remaining_debt = contract.remaining_debt - initial_payment
                     contract.save()
                     return Response({"detail": "İlkin ödəniş ödənildi"}, status=status.HTTP_200_OK)
 
             if (wants_to_pay_debt_initial_payment != None and initial_payment_status == "BİTMİŞ" and initial_payment_debt_status == CONTINUING):
-                if (float(wants_to_pay_debt_initial_payment) == initial_payment_debt):
+                if (wants_to_pay_debt_initial_payment == initial_payment_debt):
                     contract.initial_payment_debt_status = "BİTMİŞ"
                     contract.initial_payment_debt_date = now_date_date
-                    contract.remaining_debt = float(contract.remaining_debt) - float(initial_payment_debt)
+                    contract.remaining_debt = contract.remaining_debt - initial_payment_debt
                     contract.save()
                     return Response({"detail": "Qalıq ilkin ödəniş ödənildi"}, status=status.HTTP_200_OK)
-                elif (float(wants_to_pay_debt_initial_payment) != initial_payment_debt):
+                elif (wants_to_pay_debt_initial_payment != initial_payment_debt):
                     return Response({"detail": "Məbləği düzgün daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({"detail": "Bu əməliyyatı icra etmək mümkün olmadı"}, status=status.HTTP_400_BAD_REQUEST)

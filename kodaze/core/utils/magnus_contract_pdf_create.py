@@ -240,11 +240,11 @@ def magnus_installment_contract_pdf_canvas(contract) -> list:
     initial_payment_debt = contract.initial_payment_debt
     if initial_payment_debt == None or initial_payment_debt == "":
         initial_payment_debt = 0
-    initial_payment_tam = float(initial_payment) + float(initial_payment_debt)
+    initial_payment_tam = initial_payment + initial_payment_debt
     if contract.initial_payment_status == "BİTMİŞ":
-        qalan_amount = float(product_pricei) - float(initial_payment)
+        qalan_amount = product_pricei - initial_payment
     else:
-        qalan_amount = float(product_pricei) - float(initial_payment_tam)
+        qalan_amount = product_pricei - initial_payment_tam
 
     payment_dateleri_list = []
     payment_dateleri = Installment.objects.filter(contract=contract)

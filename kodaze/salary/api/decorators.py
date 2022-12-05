@@ -51,22 +51,22 @@ def add_amount_to_salary_view_decorator(func):
 
         if func.__name__ == "advancepayment_create":
             if kwargs['amount'] is None:
-                amount = (float(salary_view.final_salary) * 15) / 100
+                amount = (salary_view.final_salary * 15) / 100
             else:
                 amount = kwargs['amount']
         elif func.__name__ == "salary_pay_create":
-            amount = float(salary_view.final_salary)
+            amount = salary_view.final_salary
         else:
             amount = kwargs['amount']
 
 
         if bonus == False:
-            if float(amount) > salary_view.final_salary:
+            if amount > salary_view.final_salary:
                 raise ValidationError({"detail": "Daxil edilmiş məbləği işçinin yekun maaşından çox ola bilməz"})
             
-            salary_view.final_salary = salary_view.final_salary - float(amount)
+            salary_view.final_salary = salary_view.final_salary - amount
         else:
-            salary_view.final_salary = salary_view.final_salary + float(amount)
+            salary_view.final_salary = salary_view.final_salary + amount
 
         salary_view.save()
         
@@ -96,19 +96,19 @@ def delete_emp_activity_history(func):
         history = employee_activity_history_list().filter(salary_view=salary_view).last()
 
         if func_name == 'advance_payment_delete':
-            history.advance_payment = history.advance_payment - float(amount)
+            history.advance_payment = history.advance_payment - amount
             history.save()
         if func_name == 'bonus_delete':
-            history.bonus = history.bonus - float(amount)
+            history.bonus = history.bonus - amount
             history.save()
         if func_name == 'salary_deduction_delete':
-            history.salary_deduction = history.salary_deduction - float(amount)
+            history.salary_deduction = history.salary_deduction - amount
             history.save()
         if func_name == 'salary_punishment_delete':
-            history.salary_punishment = history.salary_punishment - float(amount)
+            history.salary_punishment = history.salary_punishment - amount
             history.save()
         
-        salary_view.final_salary = salary_view.final_salary - float(amount)
+        salary_view.final_salary = salary_view.final_salary - amount
         salary_view.save()
         func(*args, **kwargs)
 

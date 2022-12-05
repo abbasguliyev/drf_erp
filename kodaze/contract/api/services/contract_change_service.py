@@ -47,11 +47,11 @@ def contract_change(self, request, *args, **kwargs):
 
             if len(paid_installments) != 0:
                 for odenmis_date in paid_installments:
-                    paid_amount = float(paid_amount) + float(odenmis_date.price) + float(initial_payment) + float(initial_payment_debt)
+                    paid_amount = paid_amount + odenmis_date.price + initial_payment + initial_payment_debt
             else:
-                paid_amount = float(paid_amount) + float(initial_payment) + float(initial_payment_debt)
+                paid_amount = paid_amount + initial_payment + initial_payment_debt
 
-            total_amount = float(product.price) * int(old_contract.product_quantity)
+            total_amount = product.price * int(old_contract.product_quantity)
 
             office = old_contract.office
             try:
@@ -82,7 +82,7 @@ def contract_change(self, request, *args, **kwargs):
                 # Kredit muddeti 0 ay daxil edilerse
                 return Response({"detail": "Kredit müddəti 0 ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
 
-            remaining_debt = float(total_amount) - float(paid_amount)
+            remaining_debt = total_amount - paid_amount
             contract_utils.reduce_product_from_stock(stok, int(old_contract.product_quantity))
 
             yeni_contract = Contract.objects.create(

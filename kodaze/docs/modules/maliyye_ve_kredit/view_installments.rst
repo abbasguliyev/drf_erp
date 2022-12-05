@@ -9,6 +9,13 @@
 Ödəniş izləmə
 -------------
 
+- Response-da extra və data deyə 2 məlumat gəlir. 
+    - data içində yazılan normal response datalarıdır. 
+    - extra içində isə bəzi dataların ümumi toplamı gəlir. Əməkhaqqı cədvəlində extra içində gələn datalar aşağıdakılardır:
+        - "total_price" -> Responseda gələn bütün toplam ödəyəcəyi məbləğləri ifadə edir,
+        - "total_remaining_debt" -> Responseda gələn bütün toplam qalıq borcları ifadə edir
+    - extra içindəki datalar, pagination və filterləməyə uyğun çalışır.
+
 - Ödəniş izləmə
     - endpoint: "http://localhost:8000/api/v1/contract/installments/"
     - Json-da gələn datalar

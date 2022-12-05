@@ -131,22 +131,27 @@ class InstallmentListCreateAPIView(generics.ListCreateAPIView):
             queryset = self.queryset
         
         queryset = self.filter_queryset(queryset)
-
-        total_quantity = 0
-
-        for q in queryset:
-            total_quantity += q.price
-
         page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        total_price = 0
+        total_remaining_debt = 0
+        for q in page:
+            total_price += q.price
+            total_remaining_debt += q.contract.remaining_debt
+
+            extra['total_price'] = total_price
+            extra['total_remaining_debt'] = total_remaining_debt
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response([
-                {'total_quantity': total_quantity, 'data':serializer.data}
+                {'extra': extra, 'data':serializer.data}
             ])
 
         serializer = self.get_serializer(queryset, many=True)
         return self.get_paginated_response([
-                {'total_quantity': total_quantity, 'data':serializer.data}
+                {'extra': extra, 'data':serializer.data}
             ])
 
     # def create(self, request, *args, **kwargs):
@@ -238,7 +243,7 @@ class DemoSalesDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             count_q = serializer.validated_data.get("count")
-            count = instance.count + float(count_q)
+            count = instance.count + count_q
             serializer.save(count=count)
             return Response({"detail": "Demo əlavə olundu"})
 
@@ -285,10 +290,10 @@ def create_test_installment(request):
         initial_payment_debt = initial_payment_debt
 
         if(initial_payment is not None):
-            initial_payment = float(initial_payment)
+            initial_payment = initial_payment
         
         if(initial_payment_debt is not None):
-            initial_payment_debt = float(initial_payment_debt)
+            initial_payment_debt = initial_payment_debt
 
         productun_pricei = product_quantity * product.price
         if(initial_payment_debt == 0):

@@ -17,7 +17,7 @@
     <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Employee Status (İşçi Statusu)" href="employee_status.html" />
+    <link rel="next" title="İş qrafiki" href="work_graphic.html" />
     <link rel="prev" title="Project Structure" href="../project_structure.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
@@ -157,7 +157,7 @@
 <li><p>“back_photo_of_ID”: nullable - image - Şəxsiyyət vəsiqəsi(arxa hissə)</p></li>
 <li><p>“driving_license_photo”:  nullable - image - Sürücülük vəsiqəsi</p></li>
 <li><dl class="simple">
-<dt>“employee_status”: nullable - EmployeeStatus İD - işçi statusu</dt><dd><ul>
+<dt>“employee_status”: nullable - EmployeeStatus İD - işçi statusu(Dizaynda hal-hazırda yığışdırılıb. Dizayndakı işçi statusu database-dən is_active olaraq gələn statusdur, register zamanı daxil edilmir, update və delete proseslərində lazım olacaq.)</dt><dd><ul>
 <li><p>EmployeeStatus üçün endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/employee-status/">http://localhost:8000/api/v1/users/employee-status/</a>”</p></li>
 </ul>
 </dd>
@@ -221,40 +221,40 @@
 </dd>
 </dl>
 </li>
+<li><dl class="simple">
+<dt>Json-da göndəriləcəklər:</dt><dd><ul>
+<li><p>“company_id”: Şirkət İD “<a class="reference external" href="http://localhost:8000/api/v1/company/?is_active=true">http://localhost:8000/api/v1/company/?is_active=true</a>”,</p></li>
+<li><p>“department_id”: Department İD “<a class="reference external" href="http://localhost:8000/api/v1/company/departments/?is_active=true">http://localhost:8000/api/v1/company/departments/?is_active=true</a>”,</p></li>
+<li><p>“office_id”: Ofis İD “<a class="reference external" href="http://localhost:8000/api/v1/company/offices/?is_active=true">http://localhost:8000/api/v1/company/offices/?is_active=true</a>”,</p></li>
+<li><p>“position_id”: Vəzifə İD “<a class="reference external" href="http://localhost:8000/api/v1/company/positions/?is_active=true">http://localhost:8000/api/v1/company/positions/?is_active=true</a>”,</p></li>
+<li><p>“employee_status_id”: İşçi status İD “<a class="reference external" href="http://localhost:8000/api/v1/users/employee-status/">http://localhost:8000/api/v1/users/employee-status/</a>”,</p></li>
+<li><p>“user_permissions_id”: İcazə id-lər “<a class="reference external" href="http://localhost:8000/api/v1/users/permission-list/">http://localhost:8000/api/v1/users/permission-list/</a>”,</p></li>
+<li><p>“groups_id”: İcazə qrupları “<a class="reference external" href="http://localhost:8000/api/v1/users/all-permission-group/">http://localhost:8000/api/v1/users/all-permission-group/</a>”,</p></li>
+<li><p>“commission_id”: Komissiya İD “<a class="reference external" href="http://localhost:8000/api/v1/salaries/commission/">http://localhost:8000/api/v1/salaries/commission/</a>”,</p></li>
+<li><p>“region_id”: Bölgə İD “<a class="reference external" href="http://localhost:8000/api/v1/users/region/">http://localhost:8000/api/v1/users/region/</a>”,</p></li>
+<li><p>“is_superuser”: false Boolean,</p></li>
+<li><p>“username”: İstifadəçi adı String,</p></li>
+<li><p>“is_active”: false Boolean,</p></li>
+<li><p>“date_joined”: Join tarixi Date,</p></li>
+<li><p>“fullname”: Ad soyad Ata adı String,</p></li>
+<li><p>“phone_number_1”: Telefon nömrəsi 1 String,</p></li>
+<li><p>“phone_number_2”: Telefon nömrəsi 2 String,</p></li>
+<li><p>“address”: Ünvan String,</p></li>
+<li><p>“email”: E-poçt String,</p></li>
+<li><p>“photo_ID”: Şəxsiyyət vəsiqəsi ön şəkli İmage,</p></li>
+<li><p>“back_photo_of_ID”: Şəxsiyyət vəsiqəsi arxa şəkli İmage,</p></li>
+<li><p>“driving_license_photo”: Sürücülük vəsiqəsi İmage,</p></li>
+<li><p>“salary_style”: ə/h üslubu String [Fix, Fix+Kommissiya, Kommissiya],</p></li>
+<li><p>“salary”: ə/h Float,</p></li>
+<li><p>“note”: qeyd String,</p></li>
+<li><p>“electronic_signature”: Elektron imza İmage,</p></li>
+<li><p>“profile_image”: Profil şəkli İmage,</p></li>
+<li><p>“register_type”: Qeydiyyat növü [Şirkət, Holding],</p></li>
+<li><p>“supervisor_id”: Supervisor User İD “<a class="reference external" href="http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true">http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true</a>”</p></li>
 </ul>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
-  &quot;company_id&quot;: Şirkət İD &quot;http://localhost:8000/api/v1/company/?is_active=true&quot;,
-  &quot;department_id&quot;: Department İD &quot;http://localhost:8000/api/v1/company/departments/?is_active=true&quot;,
-  &quot;office_id&quot;: Ofis İD &quot;http://localhost:8000/api/v1/company/offices/?is_active=true&quot;,
-  &quot;position_id&quot;: Vəzifə İD &quot;http://localhost:8000/api/v1/company/positions/?is_active=true&quot;,
-  &quot;employee_status_id&quot;: İşçi status İD &quot;http://localhost:8000/api/v1/users/employee-status/&quot;,
-  &quot;user_permissions_id&quot;: İcazə id-lər &quot;http://localhost:8000/api/v1/users/permission-list/&quot;,
-  &quot;groups_id&quot;: İcazə qrupları &quot;http://localhost:8000/api/v1/users/all-permission-group/&quot;,
-  &quot;commission_id&quot;: Komissiya İD &quot;http://localhost:8000/api/v1/salaries/commission/&quot;,
-  &quot;region_id&quot;: Bölgə İD &quot;http://localhost:8000/api/v1/users/region/&quot;,
-  &quot;is_superuser&quot;: false Boolean,
-  &quot;username&quot;: İstifadəçi adı String,
-  &quot;is_active&quot;: false Boolean,
-  &quot;date_joined&quot;: Join tarixi Date,
-  &quot;fullname&quot;: Ad soyad Ata adı String,
-  &quot;phone_number_1&quot;: Telefon nömrəsi 1 String,
-  &quot;phone_number_2&quot;: Telefon nömrəsi 2 String,
-  &quot;address&quot;: Ünvan String,
-  &quot;email&quot;: E-poçt String,
-  &quot;photo_ID&quot;: Şəxsiyyət vəsiqəsi ön şəkli İmage,
-  &quot;back_photo_of_ID&quot;: Şəxsiyyət vəsiqəsi arxa şəkli İmage,
-  &quot;driving_license_photo&quot;: Sürücülük vəsiqəsi İmage,
-  &quot;salary_style&quot;: ə/h üslubu String [Fix, Fix+Kommissiya, Kommissiya],
-  &quot;salary&quot;: ə/h Float,
-  &quot;note&quot;: qeyd String,
-  &quot;electronic_signature&quot;: Elektron imza İmage,
-  &quot;profile_image&quot;: Profil şəkli İmage,
-  &quot;register_type&quot;: Qeydiyyat növü [Şirkət, Holding],
-  &quot;supervisor&quot;: Supervisor User İD &quot;http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true&quot;
-}
-</pre></div>
-</div>
-<ul class="simple">
+</dd>
+</dl>
+</li>
 <li><dl class="simple">
 <dt>Bütün işçilərə bax</dt><dd><ul>
 <li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true">http://localhost:8000/api/v1/users/?is_superuser=false&amp;is_active=true</a>”</p></li>
@@ -297,9 +297,6 @@
 </dd>
 </dl>
 </li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss17.png"><img alt="../../_images/ss17.png" class="align-center" src="../../_images/ss17.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
 <li><dl class="simple">
 <dt>Filter:</dt><dd><ul>
 <li><p>“<a class="reference external" href="http://localhost:8000/api/v1/users/?fullname=&amp;fullname__icontains=&amp;position__name=&amp;position__name__icontains=&amp;position=&amp;is_superuser=unknown&amp;salary_style=&amp;register_type=&amp;company=&amp;company__name=&amp;company__name__icontains=&amp;office=&amp;office__name=&amp;office__name__icontains=&amp;department=&amp;department__name=&amp;department__name__icontains=&amp;is_active=unknown&amp;employee_status=&amp;employee_status__status_name=&amp;employee_status__status_name__icontains=&amp;contract_date=&amp;contract_date__gte=&amp;contract_date__lte=">http://localhost:8000/api/v1/users/?fullname=&amp;fullname__icontains=&amp;position__name=&amp;position__name__icontains=&amp;position=&amp;is_superuser=unknown&amp;salary_style=&amp;register_type=&amp;company=&amp;company__name=&amp;company__name__icontains=&amp;office=&amp;office__name=&amp;office__name__icontains=&amp;department=&amp;department__name=&amp;department__name__icontains=&amp;is_active=unknown&amp;employee_status=&amp;employee_status__status_name=&amp;employee_status__status_name__icontains=&amp;contract_date=&amp;contract_date__gte=&amp;contract_date__lte=</a>”</p></li>
@@ -374,9 +371,6 @@
 </dd>
 </dl>
 </li>
-</ul>
-<a class="reference internal image-reference" href="../../_images/ss21.png"><img alt="../../_images/ss21.png" class="align-center" src="../../_images/ss21.png" style="width: 300px; height: 200px;" /></a>
-<ul class="simple">
 <li><dl class="simple">
 <dt>Filter</dt><dd><ul>
 <li><p>endpoint: “<a class="reference external" href="http://localhost:8000/api/v1/salaries/employee-activity/?salary_view__employee__id=1&amp;salary_view__final_salary=&amp;salary_view__sale_quantity=&amp;bonus=&amp;advance_payment=&amp;salary_deduction=&amp;salary_punishment=&amp;start_date=&amp;end_date=">http://localhost:8000/api/v1/salaries/employee-activity/?salary_view__employee__id=1&amp;salary_view__final_salary=&amp;salary_view__sale_quantity=&amp;bonus=&amp;advance_payment=&amp;salary_deduction=&amp;salary_punishment=&amp;start_date=&amp;end_date=</a>”</p></li>
@@ -418,10 +412,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#tarixc">Tarixçə</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="work_graphic.html">İş qrafiki</a></li>
 <li class="toctree-l1"><a class="reference internal" href="employee_status.html">Employee Status (İşçi Statusu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="region.html">Region (Bölgə)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customer.html">Customer (Müştəri)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="customer-note.html">Customer Note (Müştəri Qeydləri)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commission.html">Commission (Komissiya)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="month_range.html">MonthRange (Ay Aralığı)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sale_range.html">SaleRange (Satış sayı Aralığı)</a></li>
@@ -431,6 +425,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/salary_view.html">Əməkhaqqı</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/balance.html">Balans</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/transfer.html">Transfer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/view_installments.html">Ödəniş izləmə</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maliyye_ve_kredit/cashflow.html">Kassa Hərəkətləri</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Company:</span></p>
@@ -478,7 +473,7 @@
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../project_structure.html" title="previous chapter">Project Structure</a></li>
-      <li>Next: <a href="employee_status.html" title="next chapter">Employee Status (İşçi Statusu)</a></li>
+      <li>Next: <a href="work_graphic.html" title="next chapter">İş qrafiki</a></li>
   </ul></li>
 </ul>
 </div>

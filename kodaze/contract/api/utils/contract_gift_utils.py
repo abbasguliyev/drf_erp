@@ -49,7 +49,7 @@ def gifts_create(self, request, *args, **kwargs):
                     cashbox = office_cashbox_list().filter(office=office)[0]
                 except:
                     return Response({"detail": "Ofis Kassa tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
-                amount_to_be_added = float(product.price)*int(quantity)
+                amount_to_be_added = product.price*int(quantity)
                 note = f"{contract} müqviləsinə {user.fullname} tərəfindən {quantity} ədəd {product} hədiyyə verildiyi üçün, {cashbox} ofis kassasına {amount_to_be_added} AZN mədaxil edildi"
                 # c_income(
                 #     company_cashbox=cashbox,
@@ -80,8 +80,8 @@ def gifts_destroy(self, request, *args, **kwargs):
                 cashbox = office_cashbox_list().filter(office=office)[0]
             except:
                 return Response({"detail": "Office Kassa tapılmadı"}, status=status.HTTP_400_BAD_REQUEST)
-            amount_to_be_added = float(product.price)*int(quantity)
-            if amount_to_be_added > float(cashbox.balance):
+            amount_to_be_added = product.price*int(quantity)
+            if amount_to_be_added > cashbox.balance:
                 return Response({"detail": "Kassanın balansında yetəri qədər məbləğ yoxdur"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 note = f"{contract} müqviləsindən {user.fullname} tərəfindən {quantity} ədəd {product} hədiyyəsi geri alındığı üçün, {cashbox} office kassasından {amount_to_be_added} AZN məxaric edildi"

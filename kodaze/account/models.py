@@ -68,7 +68,7 @@ class User(AbstractUser):
         choices=SALARY_STYLE_CHOICES,
         default=FIX
     )
-    salary = models.FloatField(default=0, null=True, blank=True, help_text=_('Ə/H'))
+    salary = models.DecimalField(default=0, max_digits=10, decimal_places=2, help_text=_('Ə/H'))
     note = models.TextField(null=True, blank=True, help_text=_('Qeyd'))
     electronic_signature = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
     profile_image = models.ImageField(upload_to="media/account/%Y/%m/%d/", null=True, blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])], help_text=_('Profil şəkli'))

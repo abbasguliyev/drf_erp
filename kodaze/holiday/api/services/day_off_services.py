@@ -95,8 +95,8 @@ def employe_paid_day_off(employee, working_day_count):
         raise err
     
     salary = employee.salary
-    amount = f"{salary/working_day_count:.2f}"
-    salary_view.final_salary = salary_view.final_salary - float(amount)
+    amount = salary/working_day_count
+    salary_view.final_salary = salary_view.final_salary - amount
     salary_view.save()
 
     return amount
@@ -124,7 +124,7 @@ def employe_get_back_paid_amount_day_off(instance):
     except ValidationError as err:
         raise err
     
-    salary_view.final_salary = salary_view.final_salary + float(paid_amount)
+    salary_view.final_salary = salary_view.final_salary + paid_amount
     salary_view.save()
 
     return paid_amount

@@ -33,7 +33,7 @@ def create_services_task(id):
         while(q < instance.product_quantity):
             price = 0
             for p in products:
-                price += float(p.price)
+                price += p.price
             if(now.day < 29):
                 service = Service.objects.create(
                     contract=instance,

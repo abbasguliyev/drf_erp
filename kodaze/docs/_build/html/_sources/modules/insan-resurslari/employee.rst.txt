@@ -67,7 +67,7 @@
         - "photo_ID": required - image - Şəxsiyyət vəsiqəsi(ön hissə)
         - "back_photo_of_ID": nullable - image - Şəxsiyyət vəsiqəsi(arxa hissə)
         - "driving_license_photo":  nullable - image - Sürücülük vəsiqəsi
-        - "employee_status": nullable - EmployeeStatus İD - işçi statusu
+        - "employee_status": nullable - EmployeeStatus İD - işçi statusu(Dizaynda hal-hazırda yığışdırılıb. Dizayndakı işçi statusu database-dən is_active olaraq gələn statusdur, register zamanı daxil edilmir, update və delete proseslərində lazım olacaq.)
             - EmployeeStatus üçün endpoint: "http://localhost:8000/api/v1/users/employee-status/"
         - "commission": nullable - Commission İD - Komissiya növü
             - Commission üçün endpoint: "http://localhost:8000/api/v1/salaries/commission/"
@@ -110,38 +110,35 @@
     - endpoint "http://localhost:8000/api/v1/users/2/"
     - Update zamanı Json-da göstərilən fieldlar tək tək və ya toplu şəkildə göndərilərək update prosesi yerinə yetirilir. Put sorğusu ilə göndərilir, ancaq patch sorğusu kimi fieldlar tək tək də göndərilə bilinir
 
-.. code:: json
-
-  {
-    "company_id": Şirkət İD "http://localhost:8000/api/v1/company/?is_active=true",
-    "department_id": Department İD "http://localhost:8000/api/v1/company/departments/?is_active=true",
-    "office_id": Ofis İD "http://localhost:8000/api/v1/company/offices/?is_active=true",
-    "position_id": Vəzifə İD "http://localhost:8000/api/v1/company/positions/?is_active=true",
-    "employee_status_id": İşçi status İD "http://localhost:8000/api/v1/users/employee-status/",
-    "user_permissions_id": İcazə id-lər "http://localhost:8000/api/v1/users/permission-list/",
-    "groups_id": İcazə qrupları "http://localhost:8000/api/v1/users/all-permission-group/",
-    "commission_id": Komissiya İD "http://localhost:8000/api/v1/salaries/commission/",
-    "region_id": Bölgə İD "http://localhost:8000/api/v1/users/region/",
-    "is_superuser": false Boolean,
-    "username": İstifadəçi adı String,
-    "is_active": false Boolean,
-    "date_joined": Join tarixi Date,
-    "fullname": Ad soyad Ata adı String,
-    "phone_number_1": Telefon nömrəsi 1 String,
-    "phone_number_2": Telefon nömrəsi 2 String,
-    "address": Ünvan String,
-    "email": E-poçt String,
-    "photo_ID": Şəxsiyyət vəsiqəsi ön şəkli İmage,
-    "back_photo_of_ID": Şəxsiyyət vəsiqəsi arxa şəkli İmage,
-    "driving_license_photo": Sürücülük vəsiqəsi İmage,
-    "salary_style": ə/h üslubu String [Fix, Fix+Kommissiya, Kommissiya],
-    "salary": ə/h Float,
-    "note": qeyd String,
-    "electronic_signature": Elektron imza İmage,
-    "profile_image": Profil şəkli İmage,
-    "register_type": Qeydiyyat növü [Şirkət, Holding],
-    "supervisor": Supervisor User İD "http://localhost:8000/api/v1/users/?is_superuser=false&is_active=true"
-  }
+- Json-da göndəriləcəklər:   
+    - "company_id": Şirkət İD "http://localhost:8000/api/v1/company/?is_active=true",
+    - "department_id": Department İD "http://localhost:8000/api/v1/company/departments/?is_active=true",
+    - "office_id": Ofis İD "http://localhost:8000/api/v1/company/offices/?is_active=true",
+    - "position_id": Vəzifə İD "http://localhost:8000/api/v1/company/positions/?is_active=true",
+    - "employee_status_id": İşçi status İD "http://localhost:8000/api/v1/users/employee-status/",
+    - "user_permissions_id": İcazə id-lər "http://localhost:8000/api/v1/users/permission-list/",
+    - "groups_id": İcazə qrupları "http://localhost:8000/api/v1/users/all-permission-group/",
+    - "commission_id": Komissiya İD "http://localhost:8000/api/v1/salaries/commission/",
+    - "region_id": Bölgə İD "http://localhost:8000/api/v1/users/region/",
+    - "is_superuser": false Boolean,
+    - "username": İstifadəçi adı String,
+    - "is_active": false Boolean,
+    - "date_joined": Join tarixi Date,
+    - "fullname": Ad soyad Ata adı String,
+    - "phone_number_1": Telefon nömrəsi 1 String,
+    - "phone_number_2": Telefon nömrəsi 2 String,
+    - "address": Ünvan String,
+    - "email": E-poçt String,
+    - "photo_ID": Şəxsiyyət vəsiqəsi ön şəkli İmage,
+    - "back_photo_of_ID": Şəxsiyyət vəsiqəsi arxa şəkli İmage,
+    - "driving_license_photo": Sürücülük vəsiqəsi İmage,
+    - "salary_style": ə/h üslubu String [Fix, Fix+Kommissiya, Kommissiya],
+    - "salary": ə/h Float,
+    - "note": qeyd String,
+    - "electronic_signature": Elektron imza İmage,
+    - "profile_image": Profil şəkli İmage,
+    - "register_type": Qeydiyyat növü [Şirkət, Holding],
+    - "supervisor_id": Supervisor User İD "http://localhost:8000/api/v1/users/?is_superuser=false&is_active=true"
 
 
 - Bütün işçilərə bax
@@ -176,11 +173,6 @@
         - "contract_date": kontrakt tarixi
         - "register_type": Registrasiya növü
         - "supervisor": Supervizor
-
-.. image:: _static/ss1.png
-   :width: 300px
-   :height: 200px
-   :align: center
 
 - Filter:
     - "http://localhost:8000/api/v1/users/?fullname=&fullname__icontains=&position__name=&position__name__icontains=&position=&is_superuser=unknown&salary_style=&register_type=&company=&company__name=&company__name__icontains=&office=&office__name=&office__name__icontains=&department=&department__name=&department__name__icontains=&is_active=unknown&employee_status=&employee_status__status_name=&employee_status__status_name__icontains=&contract_date=&contract_date__gte=&contract_date__lte="
@@ -218,11 +210,6 @@ Tarixçə
         - "salary_deduction": Kəsinti
         - "salary_punishment": Cərimə
         - "activity_date": Tarixçənin aid olduğu tarix. Ə/h cədvəlinin date fieldi ilə eyni tarixi göstərir.
-
-.. image:: _static/ss2.png
-   :width: 300px
-   :height: 200px
-   :align: center
 
 - Filter
     - endpoint: "http://localhost:8000/api/v1/salaries/employee-activity/?salary_view__employee__id=1&salary_view__final_salary=&salary_view__sale_quantity=&bonus=&advance_payment=&salary_deduction=&salary_punishment=&start_date=&end_date="

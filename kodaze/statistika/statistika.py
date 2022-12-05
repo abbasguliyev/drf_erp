@@ -84,7 +84,7 @@ class DemoStatistikaListAPIView(generics.ListAPIView):
             sale_count += q.sale_count
 
         try:
-            demo_sale_nisbeti = float(demo_quantityi)/float(sale_count)
+            demo_sale_nisbeti = demo_quantityi/sale_count
         except:
            return Response({'detail': "Satış quantityı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
 
@@ -122,7 +122,7 @@ class ContractStatistikaAPIView(generics.ListAPIView):
         contract_quantityi = queryset.count()
         dusen_contract_quantityi = queryset_dusen.count()
         try:
-            dusme_faizi = (float(dusen_contract_quantityi) * 100)/float(contract_quantityi)
+            dusme_faizi = (dusen_contract_quantityi * 100)/contract_quantityi
         except:
            return Response({'detail': "Müqavilə quantityı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
 
@@ -176,7 +176,7 @@ class UserStatistikaList(generics.ListAPIView):
         active_user_count = a_queryset.count()
         user_count = queryset.count()
         try:
-            azad_olma_nisbeti = float(active_user_count)/float(deactive_user_count)
+            azad_olma_nisbeti = active_user_count/deactive_user_count
         except:
            return Response({'detail': "İşdən çıxan işçi quantityı 0-a bərabərdir"}, status=status.HTTP_400_BAD_REQUEST) 
 

@@ -36,7 +36,7 @@ def create_service_payment(sender, instance, created, **kwargs):
             initial_payment = 0
 
         price = instance.price
-        total = float(price) - float(initial_payment) - float(discount)
+        total = price - initial_payment - discount
         result1 = total // loan_term
         result2 = result1 * (loan_term - 1)
         last_month = total - result2

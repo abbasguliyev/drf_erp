@@ -117,7 +117,7 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
             validated_data['contract_date'] = datetime.date.today()
         if payment_style == "KREDİT":
             if initial_payment is not None:
-                if float(initial_payment) > 0:
+                if initial_payment > 0:
                     if initial_payment_date == None:
                         validated_data['initial_payment_date'] = datetime.date.today()
         return super(ContractSerializer, self).create(validated_data)
