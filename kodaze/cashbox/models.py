@@ -11,14 +11,14 @@ USER = get_user_model()
 
 class Cashbox(models.Model):
     title = models.CharField(max_length=150)
-    balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    balance = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     note = models.CharField(max_length=250, null=True, blank=True)
 
     class Meta:
         abstract = True
 
 class AbstractCashboxOperation(models.Model):
-    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     note = models.TextField(null=True, blank=True)
     date = models.DateField(auto_now_add=True)
     operation = models.CharField(
@@ -80,10 +80,10 @@ class CashFlow(models.Model):
     customer = models.ForeignKey('account.Customer', on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flows")
     personal = models.ForeignKey(USER, on_delete=models.CASCADE, null=True, blank=True, related_name="cash_flow_personals")
     description = models.TextField(null=True, blank=True)
-    balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    balance = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     executor = models.ForeignKey(USER, related_name="cash_flows", on_delete=models.CASCADE, null=True, blank=True)
     operation_style = models.CharField(max_length=100, choices=OPERATION_STYLE_CHOICE, default=None, null=True, blank=True)
-    quantity = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    quantity = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
     class Meta:
         ordering = ("-pk",)

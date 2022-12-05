@@ -9,7 +9,7 @@ USER = get_user_model()
 
 class AbstractSalaryMethod(models.Model):
     employee = models.ForeignKey(USER, on_delete=models.CASCADE)
-    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     note = models.TextField(default="", null=True, blank=True)
     date = models.DateField(default=django.utils.timezone.now, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
@@ -55,7 +55,7 @@ class SaleRange(models.Model):
 
 class CommissionInstallment(models.Model):
     month_range = models.ForeignKey(MonthRange, on_delete=models.CASCADE, related_name="month_ranges")
-    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
     class Meta:
         ordering = ("pk",)
@@ -70,7 +70,7 @@ class CommissionInstallment(models.Model):
 
 class CommissionSaleRange(models.Model):
     sale_range = models.ForeignKey(SaleRange, on_delete=models.CASCADE, related_name="sale_ranges")
-    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     sale_type = models.CharField(max_length=50, choices=SALARY_RANGE_STYLE_CHOICES, default="fix")
 
     class Meta:
@@ -86,9 +86,9 @@ class CommissionSaleRange(models.Model):
 
 class Commission(models.Model):
     commission_name = models.CharField(max_length=200)
-    for_office = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    cash = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    for_team = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    for_office = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    cash = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    for_team = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     installment = models.ManyToManyField(CommissionInstallment, related_name="commissions")
     for_sale_range = models.ManyToManyField(CommissionSaleRange, related_name="commissions")
     creditor_per_cent = models.PositiveIntegerField(default=0, null=True, blank=True)
@@ -107,7 +107,7 @@ class Commission(models.Model):
 # -----------------------------------------------------------------------------------------------------------------------------
 
 class AdvancePayment(AbstractSalaryMethod):
-    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
     class Meta:
         ordering = ("pk",)
@@ -160,12 +160,12 @@ class SalaryView(AbstractSalaryMethod):
     
     employee = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="employee_salary_views")
     sale_quantity = models.PositiveBigIntegerField(default=0, blank=True)
-    sales_amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    final_salary = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    sales_amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    final_salary = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     date = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)
     pay_date = models.DateField(null=True, blank=True)
-    commission_amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    commission_amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
     class Meta:
         ordering = ("-pk",)
@@ -181,7 +181,7 @@ class SalaryView(AbstractSalaryMethod):
 class GivenCommissionAfterSignContract(models.Model):
     user = models.ForeignKey(USER, on_delete=models.CASCADE, related_name="given_commissions")
     contract = models.ForeignKey("contract.Contract", on_delete=models.CASCADE, related_name="given_commissions")
-    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
 class SalaryViewExport(models.Model):
     file_data = models.FileField(upload_to="media/salary/%Y/%m/%d/")
@@ -203,8 +203,8 @@ class PaySalary(models.Model):
 
 class EmployeeActivityHistory(models.Model):
     salary_view = models.ForeignKey(SalaryView, on_delete=models.CASCADE, related_name="activity_histories")
-    bonus = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    advance_payment = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    salary_deduction = models.DecimalField(default=0, max_digits=10, decimal_places=2)
-    salary_punishment = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    bonus = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    advance_payment = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    salary_deduction = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    salary_punishment = models.DecimalField(default=0, max_digits=20, decimal_places=2)
     activity_date = models.DateField()

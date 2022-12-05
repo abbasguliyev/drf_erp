@@ -78,7 +78,7 @@ class EmployeeDayOff(models.Model):
     history = models.ForeignKey(EmployeeDayOffHistory, on_delete=models.CASCADE, related_name="days_off")
     day_off_date = models.DateField()
     is_paid = models.BooleanField(default=False)
-    paid_amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    paid_amount = models.DecimalField(default=0, max_digits=20, decimal_places=2)
 
     class Meta:
         ordering = ("pk",)
