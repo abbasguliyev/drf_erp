@@ -67,8 +67,6 @@ def holiday_operation_create(
         if employees.count() == 0:
             return ValidationError({"detail": "Holdinqə aid işçi tapılmadı."})
     else:
-        if office.company != company:
-            return ValidationError({"detail": "Ofis və şirkət uyğun deyil"})
         employees = user_list().filter(register_type=COMPANY, office=office)
         if employees.count() == 0:
             return ValidationError({"detail": "Bu ofisə bağlı işçi tapılmadı"})

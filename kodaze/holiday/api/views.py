@@ -142,7 +142,7 @@ class HolidayOperationListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
             holiday_operation_create(**serializer.validated_data)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -196,6 +196,6 @@ class EmployeeDayOffOperationListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if (serializer.is_valid()):
             employee_day_off_operation_create(**serializer.validated_data)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail" : serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
