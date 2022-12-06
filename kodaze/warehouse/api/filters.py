@@ -50,7 +50,9 @@ class WarehouseFilter(django_filters.FilterSet):
         fields = {
             'name': ['exact', 'icontains'],
             'is_active': ['exact'],
+            'office': ['exact'],
             'office__name': ['exact', 'icontains'],
+            'office__company': ['exact'],
             'office__company__name': ['exact', 'icontains'],
         }
 

@@ -2,7 +2,7 @@ from django.urls import path
 from warehouse.api import views as warehouse_views
 
 urlpatterns = [
-    path('', warehouse_views.WarehouseListCreateAPIView.as_view()),
+    path('', warehouse_views.WarehouseListAPIView.as_view()),
     path('<int:pk>/', warehouse_views.WarehouseDetailAPIView.as_view()),
 
     path('warehouse-requests/', warehouse_views.WarehouseRequestListCreateAPIView.as_view()),

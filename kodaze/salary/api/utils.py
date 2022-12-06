@@ -48,7 +48,10 @@ def give_commission_after_contract(
     user_list.append(manager2)
 
     for user in user_list:
-        commission = user.commission
+        try:
+            commission = user.commission
+        except:
+            commission = None
         if commission is not None:
             salary_view_this_month = salary_view_list().filter(employee=user, date=this_month_date).last()
 

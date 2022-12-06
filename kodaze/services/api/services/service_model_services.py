@@ -2,7 +2,7 @@ from datetime import date
 from services import INSTALLMENT, CASH
 from services.models import Service
 from rest_framework.exceptions import ValidationError
-
+from warehouse.api.selectors import warehouse_list
 from warehouse.models import Warehouse, Stock
 
 
@@ -31,7 +31,7 @@ def service_create(
         initial_payment = 0
 
     office = contract.office
-    warehouse = Warehouse.objects.get(office=office)
+    warehouse = warehouse_list().filter(office=office).last()
     # Aşağıda for-un 2 dəfə yazılmasında məqsəd, əgər stokda məhsullardan hər hansısa biri yoxdursa əvvəlcədən bilinsin
     # və stokdan heçbir məhsul çıxarılmasın
     # for product in products:

@@ -12,7 +12,6 @@ from warehouse.api.serializers import (
 
 from warehouse.models import (
     Operation,
-    Warehouse,
     WarehouseRequest,
     Stock
 )
@@ -31,12 +30,13 @@ from warehouse.api.filters import (
 )
 
 from warehouse.api import permissions as contract_permissions
+from warehouse.api.selectors import warehouse_list
+from warehouse.api.services.warehouse_service import warehouse_update, warehouse_delete
 
-# ********************************** warehouse put get post delete **********************************
+# ********************************** warehouse put get delete **********************************
 
-
-class WarehouseListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Warehouse.objects.select_related('office', 'company').all()
+class WarehouseListAPIView(generics.ListAPIView):
+    queryset =warehouse_list()
     serializer_class = WarehouseSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = WarehouseFilter
@@ -44,14 +44,13 @@ class WarehouseListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Warehouse.objects.select_related('office', 'company').all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Warehouse.objects.select_related('office', 'company').filter(
-                    company=request.user.company, office=request.user.office)
-            queryset = Warehouse.objects.select_related('office', 'company').filter(company=request.user.company)
+                queryset = self.queryset.filter(company=request.user.company, office=request.user.office)
+            queryset = self.queryset.filter(company=request.user.company)
         else:
-            queryset = Warehouse.objects.select_related('office', 'company').all()
+            queryset = self.queryset
 
         queryset = self.filter_queryset(queryset)
 
@@ -62,22 +61,9 @@ class WarehouseListCreateAPIView(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-    
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            # office = serializer.validated_data.get("office")
-            # is_have_warehouse = Warehouse.objects.select_related('office', 'company').filter(office=office)
-            # if len(is_have_warehouse) > 0:
-            #     return Response({"detail": "Bir ofisin yalnız bir anbarı ola bilər!"}, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
-            return Response({"detail": "Anbar əlavə edildi"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class WarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Warehouse.objects.all()
+    queryset = warehouse_list()
     serializer_class = WarehouseSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = WarehouseFilter
@@ -85,22 +71,19 @@ class WarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            warehouse_update(instance, **serializer.validated_data)
             return Response({"detail": "Anbar məlumatları yeniləndi"}, status=status.HTTP_200_OK)
         else:
-            return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
-        warehouse = self.get_object()
-        warehouse.is_active = False
-        warehouse.save()
+        instance = self.get_object()
+        warehouse_delete(instance=instance)
         return Response({"detail": "Anbar qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** warehouse put delete post get **********************************
-
+# ********************************** warehouse request put delete post get **********************************
 
 class WarehouseRequestListCreateAPIView(generics.ListCreateAPIView):
     queryset = WarehouseRequest.objects.all()
