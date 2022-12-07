@@ -63,6 +63,10 @@ def employee_day_off_operation_create(
             if is_paid == True:
                 if emp.salary_style == FIX_COMISSION or emp.salary_style == FIX:
                     paid_amount = employe_paid_day_off(employee=emp, working_day_count=working_day_count)
+                else:
+                    paid_amount = 0
+            else:
+                paid_amount = 0
 
             employee_day_off_create(employee=emp, history=history, day_off_date=h_d, is_paid=is_paid, paid_amount=paid_amount)
     obj = EmployeeDayOffOperation.objects.create(day_off_date=day_off_date, is_paid=is_paid)

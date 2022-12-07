@@ -14,8 +14,6 @@ class ProductFilter(django_filters.FilterSet):
             'product_name': ['exact', 'icontains'],
             'purchase_price': ['exact', 'gte', 'lte'],
             'price': ['exact', 'gte', 'lte'],
-            'company': ['exact'],
-            'company__name': ['exact', 'icontains'],
             'barcode': ['exact', 'icontains'],
             'is_gift': ['exact'],
         }

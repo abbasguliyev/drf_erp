@@ -32,7 +32,6 @@ def employee_working_day_decrease(employee, holiday_date) -> int:
     emp_working_day = employee_working_day_list().filter(employee=employee, date__month=holiday_date.month, date__year=holiday_date.year).last()
     emp_working_day.working_days_count -= 1
     emp_working_day.save()
-    print(f"{emp_working_day.working_days_count=}")
     return emp_working_day.working_days_count
 
 def employee_holiday_create(
@@ -65,11 +64,11 @@ def holiday_operation_create(
     if holding is True:
         employees = user_list().filter(register_type=HOLDING)
         if employees.count() == 0:
-            return ValidationError({"detail": "Holdinqə aid işçi tapılmadı."})
+            raise ValidationError({"detail": "Holdinqə aid işçi tapılmadı."})
     else:
         employees = user_list().filter(register_type=COMPANY, office=office)
         if employees.count() == 0:
-            return ValidationError({"detail": "Bu ofisə bağlı işçi tapılmadı"})
+            raise ValidationError({"detail": "Bu ofisə bağlı işçi tapılmadı"})
 
     for holiday_date in holiday_date_list:
         holiday_date_str = holiday_date.strip()
