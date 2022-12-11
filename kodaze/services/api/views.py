@@ -20,7 +20,7 @@ from services.api.filters import (
 
 from services.api import permissions as contract_permissions
 
-# ********************************** service put delete post get **********************************
+# ********************************** service endpoints **********************************
 
 class ServiceListCreateAPIView(generics.ListCreateAPIView):
     queryset = Service.objects.all()
@@ -68,7 +68,7 @@ class ServiceDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
-# ********************************** service odeme put delete post get **********************************
+# ********************************** service odeme endpoints **********************************
 
 class ServicePaymentListCreateAPIView(generics.ListCreateAPIView):
     queryset = ServicePayment.objects.all()

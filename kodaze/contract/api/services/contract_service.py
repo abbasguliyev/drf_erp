@@ -32,11 +32,12 @@ from cashbox.api.utils import (
 
 from django.contrib.auth import get_user_model
 
-from contract.api.utils.contract_utils import (
+from warehouse.api.services.stock_service import (
     add_product_to_stock,
-    pdf_create_when_contract_updated,
-    reduce_product_from_stock,   
+    reduce_product_from_stock 
 )
+
+from contract.api.utils.contract_utils import pdf_create_when_contract_updated
 
 from contract import CASH, NEW_GRAPH, CONTINUING, INSTALLMENT, CANCELLED
 

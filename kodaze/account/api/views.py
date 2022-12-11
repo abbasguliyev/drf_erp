@@ -105,7 +105,7 @@ class ResetPasswordView(generics.UpdateAPIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# ********************************** permission model get post put delete **********************************
+# ********************************** permission model endpoints **********************************
 class PermissionListApi(generics.ListAPIView):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
@@ -113,7 +113,7 @@ class PermissionListApi(generics.ListAPIView):
     filterset_class = PermissionFilter
     permission_classes = [account_permissions.PermissionModelPermissions]
 
-# ********************************** permission group model get post put delete **********************************
+# ********************************** permission group model endpoints **********************************
 class GroupListApi(generics.ListAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -149,7 +149,7 @@ class GroupDetailApi(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         return Response({"detail": "Permission Group silindi"}, status=status.HTTP_204_NO_CONTENT)
 
-# ********************************** user get post put delete **********************************
+# ********************************** user endpoints **********************************
 
 class RegisterApi(generics.CreateAPIView):
     queryset = user_list()
@@ -237,7 +237,7 @@ class Login(TokenObtainPairView):
         return Response(data)
 
 
-# ********************************** customer get post put delete **********************************
+# ********************************** customer endpoints **********************************
 class CustomerListCreateAPIView(generics.ListCreateAPIView):
     queryset = customer_list()
     serializer_class = CustomerSerializer
@@ -272,7 +272,7 @@ class CustomerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         customer.save()
         return Response({"detail": "Müştəri qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** region put delete post get **********************************
+# ********************************** region endpoints **********************************
 
 class RegionListCreateAPIView(generics.ListCreateAPIView):
     queryset = region_list()
@@ -324,7 +324,7 @@ class RegionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-# ********************************** status put delete post get **********************************
+# ********************************** status endpoints **********************************
 
 class EmployeeStatusListCreateAPIView(generics.ListCreateAPIView):
     queryset = employee_status_list()

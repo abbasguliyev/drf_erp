@@ -58,12 +58,12 @@ def office_create(*, name: str, company) -> Office:
 
     return office
 
-def section_create(*, name: str, office) -> Section:
-    section_qs = Section.objects.filter(name = name, office=office).count()
+def section_create(*, name: str) -> Section:
+    section_qs = Section.objects.filter(name = name).count()
     if section_qs > 0:
         raise ValidationError({"detail": 'Bu ad ilə şöbə artıq əlavə olunub'})
         
-    section = Section.objects.create(name=name, office=office)
+    section = Section.objects.create(name=name)
     section.full_clean()
     section.save()
 

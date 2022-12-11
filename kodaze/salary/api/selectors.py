@@ -7,15 +7,9 @@ from salary.models import (
     Bonus,
     PaySalary,
     SalaryView,
-    EmployeeActivityHistory
-)
-
-from salary.api.filters import (
-    AdvancePaymentFilter,
-    SalaryDeductionFilter,
-    SalaryPunishmentFilter,
-    BonusFilter,
-    SalaryViewFilter,
+    EmployeeActivityHistory,
+    SaleRange,
+    MonthRange
 )
 
 def advance_payment_list(*, filters=None) -> QuerySet[AdvancePayment]:
@@ -51,4 +45,15 @@ def salary_view_list(*, filters=None) -> QuerySet[SalaryView]:
 def employee_activity_history_list(*, filters=None) -> QuerySet[EmployeeActivityHistory]:
     filters = filters or {}
     qs = EmployeeActivityHistory.objects.select_related('salary_view').all()
+    return qs
+
+
+def sale_range_list(*, filters=None) -> QuerySet[SaleRange]:
+    filters = filters or {}
+    qs = SaleRange.objects.all()
+    return qs
+
+def month_range_list(*, filters=None) -> QuerySet[MonthRange]:
+    filters = filters or {}
+    qs = MonthRange.objects.all()
     return qs

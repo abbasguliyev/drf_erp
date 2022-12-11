@@ -35,7 +35,7 @@ from cashbox.api.selectors import (
     company_cashbox_opr_list
 )
 
-# ********************************** kassa put delete post get **********************************
+# ********************************** kassa endpoints **********************************
 
 class HoldingCashboxListCreateAPIView(generics.ListAPIView):
     queryset = holding_cashbox_list()
@@ -147,7 +147,7 @@ class OfficeCashboxDetailAPIView(generics.RetrieveUpdateAPIView):
         else:
             return Response({"detail":"Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
-# ********************************** Pul Axini get **********************************
+# ********************************** Pul Axini endpoints **********************************
 
 class CashFlowListAPIView(generics.ListAPIView):
     queryset = cash_flow_list()

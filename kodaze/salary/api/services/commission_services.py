@@ -6,6 +6,7 @@ from salary.models import (
     CommissionInstallment,
     CommissionSaleRange, Commission
 )
+from salary.api.selectors import sale_range_list, month_range_list
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -22,7 +23,7 @@ def month_range_create(start_month: int, end_month: int = None) -> MonthRange:
         else:
             title = f"{start_month}+"
 
-    mr = MonthRange.objects.filter(title=title).count()
+    mr = month_range_list().filter(title=title).count()
     if mr > 0:
         raise ValidationError({'detail': 'Bu aralıq artıq daxil edilib'})
 
@@ -32,6 +33,33 @@ def month_range_create(start_month: int, end_month: int = None) -> MonthRange:
 
     return obj
 
+def month_range_update(instance, **data) -> MonthRange:
+    start_month = data.get('start_month')
+    if start_month is None:
+        start_month = instance.start_month
+    
+    end_month = data.get('end_month')
+
+    if end_month is not None and end_month > 0:
+        if int(start_month) > int(end_month):
+            raise ValidationError({'detail': 'Ay aralığını doğru daxil edin'})
+        title = f"{start_month}-{end_month}"
+    elif end_month is None or end_month == 0:
+        if start_month == 0:
+            title = f"{start_month}"
+        else:
+            title = f"{start_month}+"
+
+    mr = month_range_list().filter(title=title).count()
+    if mr > 0:
+        raise ValidationError({'detail': 'Bu aralıq artıq daxil edilib'})
+
+    instance.title = title
+    instance.start_month = start_month
+    instance.end_month = end_month
+    instance.save()
+
+    return instance
 
 def sale_range_create(start_count: int, end_count: int = None) -> SaleRange:
     if end_count is not None and end_count > 0:
@@ -44,7 +72,7 @@ def sale_range_create(start_count: int, end_count: int = None) -> SaleRange:
         else:
             title = f"{start_count}+"
 
-    mr = SaleRange.objects.filter(title=title).count()
+    mr = sale_range_list().filter(title=title).count()
     if mr > 0:
         raise ValidationError({'detail': 'Bu aralıq artıq daxil edilib'})
 
@@ -54,6 +82,33 @@ def sale_range_create(start_count: int, end_count: int = None) -> SaleRange:
 
     return obj
 
+def sale_range_update(instance, **data) -> SaleRange:
+    start_count = data.get('start_count')
+    if start_count is None:
+        start_count = instance.start_count
+        
+    end_count = data.get('end_count')
+    
+    if end_count is not None and end_count > 0:
+        if int(start_count) > int(end_count):
+            raise ValidationError({'detail': 'Satış aralığını doğru daxil edin'})
+        title = f"{start_count}-{end_count}"
+    elif end_count is None or end_count == 0:
+        if start_count == 0:
+            title = f"{start_count}"
+        else:
+            title = f"{start_count}+"
+
+    mr = sale_range_list().filter(title=title).count()
+    if mr > 0:
+        raise ValidationError({'detail': 'Bu aralıq artıq daxil edilib'})
+
+    instance.title = title
+    instance.start_count = start_count
+    instance.end_count = end_count
+    instance.save()
+
+    return instance
 
 def commission_installment_create(month_range, amount: float) -> CommissionInstallment:
     obj = CommissionInstallment.object.create(month_range=month_range, amount=amount)

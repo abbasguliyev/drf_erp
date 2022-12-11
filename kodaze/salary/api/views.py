@@ -2,7 +2,9 @@ from salary.api.services.advancedpayment_service import advancepayment_create, a
 from salary.api.services.bonus_service import bonus_create, bonus_delete, bonus_update
 from salary.api.services.commission_services import (
     month_range_create,
+    month_range_update,
     sale_range_create,
+    sale_range_update,
     commission_installment_create,
     commission_sale_range_create,
     commission_create,
@@ -68,7 +70,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# ********************************** AdvancePayment get post put delete **********************************
+# ********************************** AdvancePayment endpoints **********************************
 
 
 class AdvancePaymentListCreateAPIView(generics.ListCreateAPIView):
@@ -123,7 +125,7 @@ class AdvancePaymentDetailAPIView(generics.RetrieveUpdateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-# ********************************** SalaryDeduction get post put delete **********************************
+# ********************************** SalaryDeduction endpoints **********************************
 class SalaryDeductionListCreateAPIView(generics.ListCreateAPIView):
     queryset = salary_deduction_list()
     serializer_class = SalaryDeductionSerializer
@@ -188,7 +190,7 @@ class SalaryDeductionDelete(APIView):
         salary_deduction_delete(**serializer.validated_data, func_name='salary_deduction_delete')
         return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
-# ********************************** SalaryPunishment get post put delete **********************************
+# ********************************** SalaryPunishment endpoints **********************************
 class SalaryPunishmentListCreateAPIView(generics.ListCreateAPIView):
     queryset = salary_punishment_list()
     serializer_class = SalaryPunishmentSerializer
@@ -253,7 +255,7 @@ class SalaryPunishmentDelete(APIView):
         salary_punishment_delete(**serializer.validated_data, func_name='salary_punishment_delete')
         return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
-# ********************************** Bonus get post put delete **********************************
+# ********************************** Bonus endpoints **********************************
 class BonusListCreateAPIView(generics.ListCreateAPIView):
     queryset = bonus_list()
     serializer_class = BonusSerializer
@@ -319,7 +321,7 @@ class BonusDelete(APIView):
         return Response({'detail': 'Silmə əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 
-# ********************************** Maas Ode get post put delete **********************************
+# ********************************** Maas Ode endpoints **********************************
 class PaySalaryCreateAPIView(generics.CreateAPIView):
     queryset = pay_salary_list()
     serializer_class = PaySalarySerializer
@@ -333,7 +335,7 @@ class PaySalaryCreateAPIView(generics.CreateAPIView):
             return Response({"detail": "Maaş ödəmə yerinə yetirildi"}, status=status.HTTP_201_CREATED)
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-# ********************************** SalaryView get post put delete **********************************
+# ********************************** SalaryView endpoints **********************************
 class SalaryViewListAPIView(generics.ListAPIView):
     queryset = salary_view_list()
     serializer_class = SalaryViewSerializer
@@ -425,7 +427,7 @@ class ExportData(generics.CreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-# ********************************** Commission get post put delete **********************************
+# ********************************** Commission endpoints **********************************
 class MonthRangeListCreateAPIView(generics.ListCreateAPIView):
     queryset = MonthRange.objects.all()
     serializer_class = MonthRangeSerializer
@@ -444,6 +446,13 @@ class MonthRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MonthRange.objects.all()
     serializer_class = MonthRangeSerializer
     permission_classes = [salary_permissions.MonthRangePermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        month_range_update(instance, **serializer.validated_data)
+        return Response({'detail': 'Ay aralığı məlumatları yeniləndi'}, status=status.HTTP_200_OK)
 
 
 class SaleRangeListCreateAPIView(generics.ListCreateAPIView):
@@ -464,6 +473,13 @@ class SaleRangeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = SaleRange.objects.all()
     serializer_class = SaleRangeSerializer
     permission_classes = [salary_permissions.SaleRangePermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        sale_range_update(instance, **serializer.validated_data)
+        return Response({'detail': 'Satış sayı aralığı məlumatları yeniləndi'}, status=status.HTTP_200_OK)
 
 
 class CommissionInstallmentListCreateAPIView(generics.ListCreateAPIView):

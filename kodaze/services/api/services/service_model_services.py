@@ -2,9 +2,7 @@ from datetime import date
 from services import INSTALLMENT, CASH
 from services.models import Service
 from rest_framework.exceptions import ValidationError
-from warehouse.api.selectors import warehouse_list
-from warehouse.models import Warehouse, Stock
-
+from warehouse.api.selectors import warehouse_list, stock_list
 
 def service_create(
         *, pay_method: str,
@@ -36,7 +34,7 @@ def service_create(
     # və stokdan heçbir məhsul çıxarılmasın
     # for product in products:
     #     try:
-    #         stock = Stock.objects.get(warehouse=warehouse, product=product)
+    #         stock = stock_list().filter(warehouse=warehouse, product=product).last()
     #     except Exception:
     #         raise ValidationError({"detail": f"Anbarın stokunda {product.product_name} məhsulu yoxdur"})
     #
@@ -44,7 +42,7 @@ def service_create(
     # for prod in products:
     #     price += prod.price
     #     try:
-    #         stock = Stock.objects.get(warehouse=warehouse, product=prod)
+    #         stock = stock_list().filter(warehouse=warehouse, product=prod).last()
     #         stock.decrease_stock(quantity=1)
     #         if stock.quantity == 0:
     #             stock.delete()

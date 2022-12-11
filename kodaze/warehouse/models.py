@@ -11,6 +11,18 @@ from . import (
 )
 User = get_user_model()
 
+class HoldingWarehouse(models.Model):
+    product = models.ForeignKey('product.Product', on_delete=models.CASCADE, related_name="holding_warehouse")
+    quantity = models.PositiveIntegerField(default=0)
+    useful_product_count = models.PositiveIntegerField(default=0)
+    unuseful_product_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("pk",)
+        default_permissions = []
+        permissions = (
+            ("view_holdingwarehouse", "Holding anbarına baxa bilər"),
+        )
 
 class Warehouse(models.Model):
     name = models.CharField(max_length=100)
@@ -60,34 +72,21 @@ class Stock(models.Model):
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="stocks")
     product = models.ForeignKey(
         "product.Product", on_delete=models.CASCADE, related_name="stocks")
-    quantity = models.IntegerField(default=0)
-    date = models.DateField(auto_now=True, blank=True)
+    quantity = models.PositiveIntegerField(default=0)
+    useful_product_count = models.PositiveIntegerField(default=0)
+    changed_product_count = models.PositiveIntegerField(default=0)
+    date = models.DateField(auto_now_add=True)
     note = models.TextField(default="", null=True, blank=True)
 
     class Meta:
         ordering = ("pk",)
-        constraints = [
-            models.UniqueConstraint(
-                fields=["warehouse", "product"], name="unique name for your stock constraint"
-            )
-        ]
         default_permissions = []
         permissions = (
-            ("view_stok", "Mövcud stoklara baxa bilər"),
-            ("add_stok", "Stock əlavə edə bilər"),
-            ("change_stok", "Stock məlumatlarını yeniləyə bilər"),
-            ("delete_stok", "Stock silə bilər")
+            ("view_stock", "Mövcud stoklara baxa bilər"),
+            ("add_stock", "Stock əlavə edə bilər"),
+            ("change_stock", "Stock məlumatlarını yeniləyə bilər"),
+            ("delete_stock", "Stock silə bilər")
         )
-
-    def increase_stock(self, quantity: int):
-        """Return given quantity of product to a stock."""
-        self.quantity = F("quantity") + quantity
-        self.save(update_fields=["quantity"])
-
-    def decrease_stock(self, quantity: int):
-        self.quantity = F("quantity") - quantity
-        self.save(update_fields=["quantity"])
-
 
 class Operation(models.Model):
     shipping_warehouse = models.ForeignKey(
@@ -116,4 +115,16 @@ class Operation(models.Model):
             ("add_operation", "Əməliyyat əlavə edə bilər"),
             ("change_operation", "Əməliyyat məlumatlarını yeniləyə bilər"),
             ("delete_operation", "Əməliyyat silə bilər")
+        )
+
+class ChangeUnuselessOperation(models.Model):
+    products_and_quantity = models.CharField(max_length=500)
+    note = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_changeunuselessoperation", "Mövcud utilizasiyalara baxa bilər"),
+            ("add_changeunuselessoperation", "Utilizasiya edə bilər"),
         )

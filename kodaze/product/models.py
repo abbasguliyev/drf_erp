@@ -1,4 +1,3 @@
-from enum import unique
 from django.db import models
 from django.db.models import (
     F
@@ -42,18 +41,17 @@ class Product(models.Model):
     unit_of_measure = models.ForeignKey(UnitOfMeasure, on_delete=models.SET_NULL, null=True, blank=True)
     purchase_price = models.FloatField(default=0, null=True, blank=True)
     price = models.DecimalField(default=0, max_digits=20, decimal_places=2)
-    quantity = models.PositiveIntegerField(default=0)
-    guarantee = models.PositiveIntegerField(null=True, blank=True)
+    guarantee = models.PositiveIntegerField(default=0)
     is_gift = models.BooleanField(default=False)
-    volume = models.FloatField(null=True, blank=True)
     weight = models.FloatField(null=True, blank=True)
     width = models.FloatField(null=True, blank=True)
     length = models.FloatField(null=True, blank=True)
     height = models.FloatField(null=True, blank=True)
+    volume = models.FloatField(null=True, blank=True)
     note = models.TextField(null=True, blank=True)
     product_image = models.ImageField(upload_to="media/product/%Y/%m/%d/", null=True,
                                       blank=True, validators=[file_size, FileExtensionValidator(['png', 'jpeg', 'jpg'])])
-
+    
     class Meta:
         ordering = ("pk",)
         default_permissions = []
@@ -63,9 +61,3 @@ class Product(models.Model):
             ("change_product", "Məhsul məlumatlarını yeniləyə bilər"),
             ("delete_product", "Məhsul silə bilər")
         )
-
-    @property
-    def box_volume(self, *args, **kwargs):
-        self.volume = F("weight") * F("width") * F("length")
-        self.save(update_fields=["volume"])
-

@@ -6,7 +6,6 @@ from product.models import (
     UnitOfMeasure
 )
 
-
 class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = Product
@@ -16,6 +15,9 @@ class ProductFilter(django_filters.FilterSet):
             'price': ['exact', 'gte', 'lte'],
             'barcode': ['exact', 'icontains'],
             'is_gift': ['exact'],
+            'category': ['exact'],
+            'unit_of_measure': ['exact'],
+            'guarantee': ['exact'],
         }
 
 

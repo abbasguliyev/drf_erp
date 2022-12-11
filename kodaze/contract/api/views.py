@@ -12,7 +12,8 @@ from cashbox.models import OfficeCashbox
 
 from rest_framework.decorators import api_view
 from product.models import Product
-from warehouse.models import Stock, Warehouse
+from product.api.selectors import product_list
+
 
 from contract.api.serializers import (
     DemoSalesSerializer,
@@ -52,7 +53,7 @@ from contract.api.services import contract_service, installment_service, contrac
 
 from contract.api import permissions as contract_permissions
  
-# ********************************** contract get post put delete **********************************
+# ********************************** contract endpoints **********************************
 
 class ContractListCreateAPIView(generics.ListCreateAPIView):
     queryset = Contract.objects.select_related(
@@ -110,7 +111,7 @@ class ContractDetailAPIView(generics.RetrieveUpdateAPIView):
         return contract_service.contract_update(self, request, *args, **kwargs)
 
 
-# ********************************** odeme tarixi put get post delete **********************************
+# ********************************** odeme tarixi put endpoints **********************************
 
 
 class InstallmentListCreateAPIView(generics.ListCreateAPIView):
@@ -170,7 +171,7 @@ class InstallmentDetailAPIView(generics.RetrieveUpdateAPIView):
         return installment_service.installment_update(self, request, *args, **kwargs)
 
 
-# ********************************** hediyye put delete post get **********************************
+# ********************************** hediyye endpoints **********************************
 class ContractGiftListCreateAPIView(generics.ListCreateAPIView):
     queryset = ContractGift.objects.select_related('contract', 'product').all()
     serializer_class = ContractGiftSerializer
@@ -212,7 +213,7 @@ class ContractGiftDetailAPIView(generics.RetrieveDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         return contract_gift_utils.gifts_destroy(self, request, *args, **kwargs)
 
-# ********************************** ContractChange put delete post get **********************************
+# ********************************** ContractChange endpoints **********************************
 
 class ContractChangeListCreateAPIView(generics.ListCreateAPIView):
     queryset = ContractChange.objects.all()
@@ -221,7 +222,7 @@ class ContractChangeListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         return contract_change_service.contract_change(self, request, *args, **kwargs)
-# ********************************** demo sale put delete post get **********************************
+# ********************************** demo sale endpoints **********************************
 
 class DemoSalesListAPIView(generics.ListAPIView):
     queryset = DemoSales.objects.all()
@@ -274,7 +275,7 @@ def create_test_installment(request):
     product_quantity = instance.data.get("product_quantity")
     product_id = instance.data.get("product_id")
     payment_style = instance.data.get("payment_style")
-    product = Product.objects.get(id=product_id)
+    product = product_list().filter(pk=product_id).last()
     contract_date_str = instance.data.get("contract_date")
     contract_date = datetime.datetime.strptime(contract_date_str, '%d-%m-%Y')
 

@@ -10,10 +10,12 @@ from warehouse.models import (
     Stock
 )
 
-from contract.api.utils.contract_utils import (
+from warehouse.api.services.stock_service import (
     reduce_product_from_stock, 
     add_product_to_stock, 
 )
+from product.api.selectors import product_list
+
 from rest_framework.generics import get_object_or_404
 from cashbox.api.selectors import office_cashbox_list
 
@@ -28,7 +30,7 @@ def gifts_create(self, request, *args, **kwargs):
             p_q = p.split("-")
             product_id = int(p_q[0].strip())
             quantity = int(p_q[1])
-            product = Product.objects.get(pk=product_id)
+            product = product_list().filter(pk=product_id).last()
 
             contract = serializer.validated_data.get("contract")
             if quantity == None or quantity == "":

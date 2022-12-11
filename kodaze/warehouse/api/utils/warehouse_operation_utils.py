@@ -2,11 +2,9 @@ import traceback
 from rest_framework import status
 from rest_framework.response import Response
 
-from product.models import (
-    Product,
-)
 from warehouse.models import Stock
 from rest_framework.generics import get_object_or_404
+from product.api.selectors import product_list
 
 
 def operation_create(self, request, *args, **kwargs):
@@ -26,7 +24,7 @@ def operation_create(self, request, *args, **kwargs):
                 product_ve_quantity = m.split("-")
                 product_id = int(product_ve_quantity[0].strip())
                 quantity = int(product_ve_quantity[1])
-                product = Product.objects.get(pk=product_id)
+                product = product_list().filter(pk=product_id).last()
                 try:
                     stok1 = get_object_or_404(
                         Stock, warehouse=shipping_warehouse, product=product)

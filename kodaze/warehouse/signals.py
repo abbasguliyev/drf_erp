@@ -1,4 +1,3 @@
-from warehouse.models import Warehouse
 from company.models import Office
 from django.db.models.signals import post_save
 from django.dispatch import receiver

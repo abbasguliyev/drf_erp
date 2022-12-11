@@ -15,6 +15,8 @@ from product.models import (
 
 from contract.api.serializers import ContractSerializer
 from product.api.serializers import ProductSerializer
+from product.api.selectors import product_list
+
 
 class ServiceSerializer(DynamicFieldsCategorySerializer):
     contract = ContractSerializer(read_only=True)
@@ -24,7 +26,7 @@ class ServiceSerializer(DynamicFieldsCategorySerializer):
         queryset=Contract.objects.all(), source='contract', write_only=True, required=False, allow_null=True
     )
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(), source='product', many=True, write_only=True
+        queryset=product_list(), source='product', many=True, write_only=True
     )
 
     is_auto = serializers.BooleanField(read_only=True)
@@ -41,7 +43,7 @@ class ServiceStatistikaSerializer(DynamicFieldsCategorySerializer):
         queryset=Contract.objects.all(), source='contract', write_only=True, required=False, allow_null=True
     )
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(), source='product', many=True, write_only=True
+        queryset=product_list(), source='product', many=True, write_only=True
     )
 
     is_auto = serializers.BooleanField(read_only=True)

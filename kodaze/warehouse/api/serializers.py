@@ -1,16 +1,13 @@
 from rest_framework import serializers
 from core.utils.base_serializer import DynamicFieldsCategorySerializer
-
-from rest_framework.exceptions import ValidationError
-from warehouse.api.selectors import warehouse_list
+from warehouse.api.selectors import warehouse_list, stock_list
 from warehouse.models import (
     Operation, 
     Warehouse, 
     WarehouseRequest, 
     Stock,
-)
-from product.models import (
-    Product, 
+    ChangeUnuselessOperation,
+    HoldingWarehouse
 )
 
 from company.models import (
@@ -21,6 +18,7 @@ from company.models import (
 from account.api.selectors import user_list
 from account.api.serializers import UserSerializer
 from product.api.serializers import ProductSerializer
+from product.api.selectors import product_list
 
 from company.api.serializers import OfficeSerializer, CompanySerializer
 
@@ -37,6 +35,29 @@ class WarehouseSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Warehouse
         fields = "__all__"
+
+class StockSerializer(DynamicFieldsCategorySerializer):
+    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
+    product = ProductSerializer(read_only=True, fields=['id', 'product_name', 'price'])
+
+    warehouse_id = serializers.PrimaryKeyRelatedField(
+        queryset=warehouse_list(), source='warehouse', write_only=True
+    )
+
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=product_list(), source='product', write_only=True
+    )
+
+    useful_product_count = serializers.SerializerMethodField()
+
+    def get_useful_product_count(self, instance) -> int:
+        instance.product
+
+    
+    class Meta:
+        model = Stock
+        fields = "__all__"
+
 
 class OperationSerializer(DynamicFieldsCategorySerializer):
     executor = UserSerializer(read_only=True, fields = ['id', 'fullname'])
@@ -64,7 +85,7 @@ class OperationSerializer(DynamicFieldsCategorySerializer):
                     product_ve_quantity = m.split("-")
                     product_id = int(product_ve_quantity[0].strip())
                     quantity = int(product_ve_quantity[1])
-                    product = Product.objects.get(pk=product_id)
+                    product = product_list().filter(pk=product_id).last()
                     data[product.product_name]=quantity
             else:
                 data[product_and_quantity]=stok_ile_gelen_quantity
@@ -76,23 +97,6 @@ class OperationSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Operation
         fields = "__all__"
-
-class StockSerializer(DynamicFieldsCategorySerializer):
-    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
-    product = ProductSerializer(read_only=True, fields=['id', 'product_name', 'price'])
-
-    warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=warehouse_list(), source='warehouse', write_only=True
-    )
-
-    product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.select_related('company', 'category', 'unit_of_measure').all(), source='product', write_only=True
-    )
-    
-    class Meta:
-        model = Stock
-        fields = "__all__"
-
 
 class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
     warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
@@ -121,11 +125,11 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
                 product_id = int(product_ve_quantity[0].strip())
                 quantity = int(product_ve_quantity[1])
                 try:
-                    product = Product.objects.get(pk=product_id)
+                    product = product_list().filter(pk=product_id).last()
                 except:
                     product=None
                 try:
-                    stok = Stock.objects.filter(product=product, warehouse=instance.warehouse)[0]
+                    stok = stock_list().filter(product=product, warehouse=instance.warehouse)[0]
                     stok_data['id'] = stok.id
                     stok_data['product_id'] = stok.product.id
                     stok_data['product'] = stok.product.product_name
@@ -144,3 +148,15 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
         model = WarehouseRequest
         fields = "__all__"
         read_only_fields = ('employee_who_sent_the_request', 'stok')
+
+
+class HoldingWarehouseSerializer(DynamicFieldsCategorySerializer):
+    product = ProductSerializer(read_only=True)
+    class Meta:
+        model = HoldingWarehouse
+        fields = '__all__'
+
+class ChangeUnuselessOperationSerializer(DynamicFieldsCategorySerializer):
+    class Meta:
+        model = ChangeUnuselessOperation
+        fields = '__all__'

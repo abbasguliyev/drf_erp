@@ -4,21 +4,21 @@ from warehouse.models import (
     Operation, 
     Warehouse, 
     WarehouseRequest, 
-    Stock
+    Stock,
+    HoldingWarehouse
 )
 
 class StockFilter(django_filters.FilterSet):
     class Meta:
         model = Stock
         fields = {
-            'product__id': ['exact'],
+            'product': ['exact'],
             'product__product_name': ['exact', 'icontains'],
             'product__price': ['exact', 'gte', 'lte'],
             'product__barcode': ['exact', 'gte', 'lte'],
 
-            'warehouse__company__name': ['exact', 'icontains'],
-            'warehouse__office__name': ['exact', 'icontains'],
-            'warehouse__name': ['exact', 'icontains'],
+            'warehouse__company': ['exact'],
+            'warehouse': ['exact'],
             'product__is_gift': ['exact'],
         }
 
@@ -51,9 +51,7 @@ class WarehouseFilter(django_filters.FilterSet):
             'name': ['exact', 'icontains'],
             'is_active': ['exact'],
             'office': ['exact'],
-            'office__name': ['exact', 'icontains'],
-            'office__company': ['exact'],
-            'office__company__name': ['exact', 'icontains'],
+            'company': ['exact'],
         }
 
 class WarehouseRequestFilter(django_filters.FilterSet):
@@ -63,4 +61,17 @@ class WarehouseRequestFilter(django_filters.FilterSet):
             'note': ['exact', 'icontains'],
             'warehouse__name': ['exact', 'icontains'],
             'warehouse__office__name': ['exact', 'icontains'],
+        }
+
+
+class HoldingWarehouseFilter(django_filters.FilterSet):
+    class Meta:
+        model = HoldingWarehouse
+        fields = {
+            'product': ['exact'],
+            'product__product_name': ['exact', 'icontains'],
+            'product__barcode': ['exact', 'icontains'],
+            'quantity': ['exact'],
+            'useful_product_count': ['exact'],
+            'unuseful_product_count': ['exact'],
         }

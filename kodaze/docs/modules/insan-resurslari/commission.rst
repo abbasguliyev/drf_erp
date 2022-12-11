@@ -23,7 +23,7 @@ Commission (Komissiya)
     - Müqaviləyə təyin olunmuş kreditorun neçə faiz komissiya alacağını təyin edir.
     - Kreditor komissiyası bu hissədə yazılır.
 - "month_ranges"
-    - nullable
+    - required deyil. Göndərilməyəcəksə boş string olaraq göndərilməlidir.
     - (kredit aralığı - Create və update zamanı göndərilir. String olaraq göndərilməlidir)
     - "month_range_id-məbləğ" formasında göndərilməlidir.
     - Dizayndakı kredit aralığı hissəsindəki 2-3, 4-12 MonthRange table-dan get sorğusu ilə gəlməlidir.
@@ -33,7 +33,7 @@ Commission (Komissiya)
         və məbləğ olaraq 180 yazıldı.
         Bu zaman json-da 2-3 month range id-sini və məbləği "1-180" olaraq göndəririk.
 - "sale_ranges"
-    - nullable
+    - required deyil. Göndərilməyəcəksə boş string olaraq göndərilməlidir.
     - (Satış sayı aralığı - Create və update zamanı göndərilir. String olaraq göndərilməlidir)
     - "sale_range_id-məbləğ-fix(və ya say)" formasında göndərilməlidir.
     - Dizayndakı satış sayı aralığı hissəsindəki 2-3, 4-12 SaleRange table-dan get sorğusu ilə gəlməlidir.

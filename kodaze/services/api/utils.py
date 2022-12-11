@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from cashbox.models import OfficeCashbox
 from salary.models import SalaryView
 from salary.api.selectors import salary_view_list
+from product.api.selectors import product_list
+from warehouse.api.selectors import stock_list
 
 from product.models import (
     Product,
@@ -56,9 +58,9 @@ def create_is_auto_services_when_update_service(contract, created, kartric_novu,
         month_service = pd.date_range(start=d, periods=2, freq=month)[1]
         warehouse = get_object_or_404(Warehouse, office=instance.office)
         
-        kartric = Product.objects.filter(kartric_novu=kartric_novu, company=instance.company)
+        kartric = product_list().filter(kartric_novu=kartric_novu, company=instance.company)
         for c in kartric:
-            stok = Stock.objects.filter(warehouse=warehouse, product=c)[0]
+            stok = stock_list().filter(warehouse=warehouse, product=c)[0]
             if stok == None or stok.quantity == 0:
                 return Response({"detail":f"Anbarın stokunda {c.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -69,7 +71,7 @@ def create_is_auto_services_when_update_service(contract, created, kartric_novu,
                 for j in kartric:
                     price += j.price
                     
-                    stok = Stock.objects.filter(warehouse=warehouse, product=j)[0]
+                    stok = stock_list().filter(warehouse=warehouse, product=j)[0]
                     stok.quantity = stok.quantity - 1
                     stok.save()
                     if (stok.quantity == 0):
@@ -127,7 +129,7 @@ def service_create(self, request, *args, **kwargs):
         product = []
         product_data = request.data.get("product_id")
         for meh in product_data:
-            mhs = Product.objects.get(pk=int(meh))
+            mhs = product_list().filter(pk=int(meh)).last()
             product.append(mhs)
         warehouse = get_object_or_404(Warehouse, office=contract.office)
         for j in product:

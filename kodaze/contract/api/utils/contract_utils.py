@@ -1,5 +1,3 @@
-import datetime
-
 from core.utils.ocean_contract_pdf_create import (
     ocean_contract_pdf_canvas,
     ocean_create_contract_pdf,
@@ -13,7 +11,6 @@ from core.utils.magnus_contract_pdf_create import (
     magnus_installment_create_contract_pdf,
     magnus_installment_contract_pdf_canvas,
 )
-
 
 def create_and_add_pdf_when_contract_updated(sender, instance, created, **kwargs):
     if created:
@@ -62,21 +59,3 @@ def pdf_create_when_contract_updated(sender, instance, created):
         sender=sender, instance=instance, created=created)
     create_and_add_pdf_when_contract_installment_updated(
         sender=sender, instance=instance, created=created)
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-def reduce_product_from_stock(stock, product_quantity):
-    # stock.quantity = stock.quantity - int(product_quantity)
-    stock.decrease_stock(int(product_quantity))
-    stock.save()
-    if stock.quantity == 0:
-        stock.delete()
-    return stock.quantity
-
-
-def add_product_to_stock(stock, product_quantity):
-    # stock.quantity = stock.quantity + int(product_quantity)
-    stock.increase_stock(int(product_quantity))
-    stock.save()
-    return stock.quantity

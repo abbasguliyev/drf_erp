@@ -6,6 +6,7 @@ from account.api.serializers import CustomerSerializer, UserSerializer
 from account.api.selectors import user_list, customer_list
 from product.api.serializers import ProductSerializer
 from core.utils.base_serializer import DynamicFieldsCategorySerializer
+from product.api.selectors import product_list
 
 from contract.models import (
     ContractGift, 
@@ -24,16 +25,11 @@ from product.models import (
     Product,
 )
 
-from account.models import (
-    User, 
-    Customer,
-)
-
 from company.models import (
     Company,
     Office,
 )
-        
+
 class ServiceContractSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Service
@@ -67,7 +63,7 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
         queryset=customer_list(), source='customer', write_only=True, required=False, allow_null=True
     )
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.select_related('category', 'company', 'unit_of_measure').all(), source='product', write_only=True, required=False, allow_null=True
+        queryset=product_list(), source='product', write_only=True, required=False, allow_null=True
     )
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True, required=False, allow_null=True
@@ -144,7 +140,7 @@ class ContractGiftSerializer(DynamicFieldsCategorySerializer):
     contract = ContractSerializer(read_only=True, fields=["id", "customer"])
 
     product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.select_related('category', 'company', 'unit_of_measure').all(), source='product', write_only=True, allow_null=True
+        queryset=product_list(), source='product', write_only=True, allow_null=True
     )
 
     contract_id = serializers.PrimaryKeyRelatedField(

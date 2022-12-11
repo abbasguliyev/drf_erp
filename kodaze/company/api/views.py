@@ -47,7 +47,7 @@ from account.api.selectors import user_list
 from .services import company_create, holding_create, department_create, office_create, position_create, section_create
 
 
-# ********************************** holding put delete post get **********************************
+# ********************************** holding endpoints **********************************
 
 class HoldingListCreateAPIView(generics.ListCreateAPIView):
     queryset = Holding.objects.all()
@@ -75,7 +75,7 @@ class HoldingDetailAPIView(generics.RetrieveUpdateAPIView):
         else:
             return Response({"detail": "Məlumatları doğru daxil etdiyinizdən əmin olun"}, status=status.HTTP_400_BAD_REQUEST)
 
-# ********************************** company put delete post get **********************************
+# ********************************** company endpoints **********************************
 
 class CompanyListCreateAPIView(generics.ListCreateAPIView):
     queryset = Company.objects.all()
@@ -129,7 +129,7 @@ class CompanyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Şirkət deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** department put delete post get **********************************
+# ********************************** department endpoints **********************************
 
 class DepartmentListCreateAPIView(generics.ListCreateAPIView):
     queryset = Department.objects.all()
@@ -184,7 +184,7 @@ class DepartmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Departament deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** officeler put delete post get **********************************
+# ********************************** officeler endpoints **********************************
 
 class OfficeListCreateAPIView(generics.ListCreateAPIView):
     queryset = Office.objects.select_related('company').all()
@@ -243,7 +243,7 @@ class OfficeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Ofis deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** section put delete post get **********************************
+# ********************************** section endpoints **********************************
 
 class SectionListCreateAPIView(generics.ListCreateAPIView):
     queryset = Section.objects.all()
@@ -301,7 +301,7 @@ class SectionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Şöbə deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** team get post put delete **********************************
+# ********************************** team endpoints **********************************
 
 class TeamListCreateAPIView(generics.ListCreateAPIView):
     queryset = Team.objects.all()
@@ -348,7 +348,7 @@ class TeamDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         team.save()
         return Response({"detail": "Komanda qeyri-atkiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** position put delete post get **********************************
+# ********************************** position endpoints **********************************
 
 
 class PositionListCreateAPIView(generics.ListCreateAPIView):
@@ -399,7 +399,7 @@ class PositionDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance.save()
         return Response({"detail": "Vəzifə deaktiv edildi"}, status=status.HTTP_200_OK)
 
-# ********************************** PermissionForPosition put delete post get **********************************
+# ********************************** PermissionForPosition endpoints **********************************
 
 class PermissionForPositionListCreateAPIView(generics.ListCreateAPIView):
     queryset = PermissionForPosition.objects.select_related('position', 'permission_group').all()
