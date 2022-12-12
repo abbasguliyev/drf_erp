@@ -177,6 +177,7 @@ class CommissionSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = Commission
         fields = (
+            'id',
             'commission_name',
             'for_office',
             'cash',

@@ -204,7 +204,9 @@ def commission_update(instance, **data) -> Commission:
     if data.get("month_ranges") is not None:
         month_ranges_str = data.pop("month_ranges")
         if month_ranges_str is not None:
-            month_ranges_list = month_ranges_str.split(',')
+            month_ranges_list_full = month_ranges_str.split(',')
+            month_ranges_list = None
+            month_ranges_list = [x for x in month_ranges_list_full if x != ' ' and x!='']
         else:
             month_ranges_list = None
 
@@ -226,11 +228,13 @@ def commission_update(instance, **data) -> Commission:
     if data.get("sale_ranges") is not None:
         sale_ranges_str = data.pop("sale_ranges")
         if sale_ranges_str is not None:
-            sale_ranges_list = sale_ranges_str.split(',')
+            sale_ranges_list_full = sale_ranges_str.split(',')
+            sale_ranges_list = None
+            sale_ranges_list = [x for x in sale_ranges_list_full if x != ' ' and x!='']
         else:
             sale_ranges_list = None
 
-        if sale_ranges_list is not None and len(sale_ranges_list) > 1:
+        if sale_ranges_list is not None and len(sale_ranges_list) > 0:
             s_list = list()
             for sr_list in sale_ranges_list:
                 splited_s_list = sr_list.split('-')
