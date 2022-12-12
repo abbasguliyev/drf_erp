@@ -158,12 +158,14 @@ def commission_create(
     month_ranges_str = month_ranges
     if month_ranges_str is not None:
         month_ranges_list = month_ranges_str.split(',')
+        month_ranges_list = list(filter(None, month_ranges_list))
     else:
         month_ranges_list = None
 
     sale_ranges_str = sale_ranges
     if sale_ranges_str is not None:
         sale_ranges_list = sale_ranges_str.split(',')
+        sale_ranges_list = list(filter(None, sale_ranges_list))
     else:
         sale_ranges_list = None
 
