@@ -157,19 +157,21 @@ def commission_create(
 
     month_ranges_str = month_ranges
     if month_ranges_str is not None:
-        month_ranges_list = month_ranges_str.split(',')
-        month_ranges_list = list(filter(None, month_ranges_list))
+        month_ranges_list_full = month_ranges_str.split(',')
+        month_ranges_list = None
+        month_ranges_list = [x for x in month_ranges_list_full if x != ' ' and x!='']
     else:
         month_ranges_list = None
 
     sale_ranges_str = sale_ranges
     if sale_ranges_str is not None:
-        sale_ranges_list = sale_ranges_str.split(',')
-        sale_ranges_list = list(filter(None, sale_ranges_list))
+        sale_ranges_list_full = sale_ranges_str.split(',')
+        sale_ranges_list = None
+        sale_ranges_list = [x for x in sale_ranges_list_full if x != ' ' and x!='']
     else:
         sale_ranges_list = None
 
-    if month_ranges_list is not None and len(month_ranges_list) > 1:
+    if month_ranges_list is not None and len(month_ranges_list) > 0:
         m_list = list()
         for mr_list in month_ranges_list:
             splited_list = mr_list.split('-')
@@ -180,7 +182,7 @@ def commission_create(
         ])
         commission.installment.set(ci)
 
-    if sale_ranges_list is not None and len(sale_ranges_list) > 1:
+    if sale_ranges_list is not None and len(sale_ranges_list) > 0:
         s_list = list()
         for sr_list in sale_ranges_list:
             splited_s_list = sr_list.split('-')
