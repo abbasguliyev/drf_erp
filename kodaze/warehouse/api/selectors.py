@@ -4,7 +4,9 @@ from warehouse.models import (
     HoldingWarehouse,
     Warehouse,
     Stock,
-    ChangeUnuselessOperation
+    ChangeUnuselessOperation,
+    WarehouseRequest,
+    WarehouseHistory
 )
 
 def holding_warehouse_list(*, filters=None) -> QuerySet[HoldingWarehouse]:
@@ -25,4 +27,14 @@ def stock_list(*, filters=None) -> QuerySet[Stock]:
 def change_unuseless_operation_list(*, filters=None) -> QuerySet[ChangeUnuselessOperation]:
     filters = filters or {}
     qs = ChangeUnuselessOperation.objects.all()
+    return qs
+
+def warehouse_request_list(*, filters=None) -> QuerySet[WarehouseRequest]:
+    filters = filters or {}
+    qs = WarehouseRequest.objects.select_related('employee_who_sent_the_request', 'warehouse').all()
+    return qs
+
+def warehouse_history_list(*, filters=None) -> QuerySet[WarehouseHistory]:
+    filters = filters or {}
+    qs = WarehouseHistory.objects.select_related('company', 'customer', 'executor').all()
     return qs

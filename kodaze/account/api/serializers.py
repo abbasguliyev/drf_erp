@@ -109,6 +109,7 @@ class UserSerializer(DynamicFieldsCategorySerializer):
         class Meta:
             model = Commission
             fields = (
+                'id',
                 'commission_name',
             )
     class SupervizorSerializer(DynamicFieldsCategorySerializer):

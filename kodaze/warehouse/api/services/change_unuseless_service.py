@@ -2,7 +2,10 @@ from warehouse.models import ChangeUnuselessOperation
 from warehouse.api.selectors import holding_warehouse_list
 
 def change_unuseless_operation_create(*, products_and_quantity: str, note: str = "") -> ChangeUnuselessOperation:
-    products_and_quantity_list = products_and_quantity.split(',')
+    products_and_quantity_list_full = products_and_quantity.split(',')
+    products_and_quantity_list = None
+    products_and_quantity_list = [x for x in products_and_quantity_list_full if x != ' ' and x!='']
+
     for product_and_quantity in products_and_quantity_list:
         new_list = product_and_quantity.split('-')
         product_id = new_list[0]

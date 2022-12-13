@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from core.utils.base_serializer import DynamicFieldsCategorySerializer
-from warehouse.api.selectors import warehouse_list, stock_list
+from warehouse.api.selectors import warehouse_list
 from warehouse.models import (
-    Operation, 
     Warehouse, 
     WarehouseRequest, 
     Stock,
     ChangeUnuselessOperation,
-    HoldingWarehouse
+    HoldingWarehouse,
+    WarehouseHistory
 )
 
 from company.models import (
@@ -16,9 +16,10 @@ from company.models import (
 )
 
 from account.api.selectors import user_list
-from account.api.serializers import UserSerializer
+from account.api.serializers import UserSerializer, CustomerSerializer
 from product.api.serializers import ProductSerializer
 from product.api.selectors import product_list
+from warehouse.api.selectors import holding_warehouse_list
 
 from company.api.serializers import OfficeSerializer, CompanySerializer
 
@@ -58,50 +59,10 @@ class StockSerializer(DynamicFieldsCategorySerializer):
         model = Stock
         fields = "__all__"
 
-
-class OperationSerializer(DynamicFieldsCategorySerializer):
-    executor = UserSerializer(read_only=True, fields = ['id', 'fullname'])
-    shipping_warehouse = WarehouseSerializer(read_only=True, fields = ['id', 'name'])
-    receiving_warehouse = WarehouseSerializer(read_only=True, fields = ['id', 'name'])
-
-    shipping_warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=warehouse_list(), source="shipping_warehouse", write_only=True, required= True
-    )
-    receiving_warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=warehouse_list(), source="receiving_warehouse", write_only=True, required= True
-    )
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-
-        product_and_quantity = instance.product_and_quantity
-        operation_type = instance.operation_type
-        stok_ile_gelen_quantity = instance.quantity
-        data = dict()
-        if(product_and_quantity is not None):
-            if operation_type == "transfer":
-                product_and_quantity_list = product_and_quantity.split(",")
-                for m in product_and_quantity_list:
-                    product_ve_quantity = m.split("-")
-                    product_id = int(product_ve_quantity[0].strip())
-                    quantity = int(product_ve_quantity[1])
-                    product = product_list().filter(pk=product_id).last()
-                    data[product.product_name]=quantity
-            else:
-                data[product_and_quantity]=stok_ile_gelen_quantity
-
-        representation['product'] = data
-
-        return representation
-
-    class Meta:
-        model = Operation
-        fields = "__all__"
-
 class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
     warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
     warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=warehouse_list(), source='warehouse', write_only=True
+        queryset=warehouse_list(), source='warehouse', write_only=True, required=False
     )
 
     employee_who_sent_the_request = UserSerializer(read_only=True, fields=['id', 'fullname'])
@@ -109,40 +70,24 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
         queryset=user_list(), source='employee_who_sent_the_request', write_only=True, required=False, allow_null=True
     )
 
-    stok = StockSerializer(read_only=True)
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-
-        product_and_quantity = instance.product_and_quantity
-        stok_list = list()
-        
-        if(product_and_quantity is not None):
-            product_and_quantity_list = product_and_quantity.split(",")
-            for m in product_and_quantity_list:
-                stok_data = dict()
-                product_ve_quantity = m.split("-")
-                product_id = int(product_ve_quantity[0].strip())
-                quantity = int(product_ve_quantity[1])
-                try:
-                    product = product_list().filter(pk=product_id).last()
-                except:
-                    product=None
-                try:
-                    stok = stock_list().filter(product=product, warehouse=instance.warehouse)[0]
-                    stok_data['id'] = stok.id
-                    stok_data['product_id'] = stok.product.id
-                    stok_data['product'] = stok.product.product_name
-                    stok_data['price'] = stok.product.price
-                    stok_data['stock_quantity'] = stok.quantity
-                    stok_data['needed_quantity'] = quantity
-                    stok_list.append(stok_data)
-                except:
-                    stok_list.append(stok_data)
-        
-        representation['product'] = stok_list
-
-        return representation
+    products_and_quantities = serializers.SerializerMethodField()
+    def get_products_and_quantities(self, instance):
+        products_and_quantity = instance.product_and_quantity
+        products_and_quantity_list = products_and_quantity.split(',')
+        wanted_prod_list = list()
+        if(products_and_quantity is not None):
+            for product_and_quantity in products_and_quantity_list:
+                data = dict()
+                new_list = product_and_quantity.split('-')
+                product_id = new_list[0]
+                quantity = int(new_list[1])
+                holding_warehouse = holding_warehouse_list().filter(pk=product_id).last()
+                product = holding_warehouse.product
+                data['id'] = holding_warehouse.id
+                data['product'] = product.product_name
+                data['quantity'] = quantity
+                wanted_prod_list.append(data)
+        return wanted_prod_list
 
     class Meta:
         model = WarehouseRequest
@@ -159,4 +104,13 @@ class HoldingWarehouseSerializer(DynamicFieldsCategorySerializer):
 class ChangeUnuselessOperationSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = ChangeUnuselessOperation
+        fields = '__all__'
+
+class WarehouseHistorySerializer(DynamicFieldsCategorySerializer):
+    company = CompanySerializer(read_only=True, fields=['id', 'name'])
+    customer = CustomerSerializer(read_only=True, fields=['id', 'fullname'])
+    executor = UserSerializer(read_only=True, fields=['id', 'fullname'])
+
+    class Meta:
+        model = WarehouseHistory
         fields = '__all__'

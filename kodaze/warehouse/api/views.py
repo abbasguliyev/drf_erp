@@ -7,23 +7,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from warehouse.api.serializers import (
     WarehouseSerializer,
-    OperationSerializer,
     WarehouseRequestSerializer,
     StockSerializer,
     ChangeUnuselessOperationSerializer,
     HoldingWarehouseSerializer
 )
 
-from warehouse.models import (
-    Operation,
-    WarehouseRequest,
-)
-from warehouse.api.utils import warehouse_operation_utils
-
 from warehouse.api.filters import (
     WarehouseFilter,
     WarehouseRequestFilter,
-    OperationFilter,
     StockFilter,
     HoldingWarehouseFilter
 )
@@ -33,12 +25,14 @@ from warehouse.api.selectors import (
     holding_warehouse_list, 
     warehouse_list, 
     stock_list, 
-    change_unuseless_operation_list
+    warehouse_request_list
 )
-from warehouse.api.services.warehouse_service import warehouse_update, warehouse_delete, product_add_to_holding_warehouse
+from warehouse.api.services.warehouse_request_service import warehouse_request_create
+from warehouse.api.services.warehouse_service import warehouse_update, warehouse_delete, product_add_to_holding_warehouse, holding_warehouse_update
 from warehouse.api.services.product_transfer_service import (
     holding_office_product_transfer_service,
-
+    between_office_product_transfer_service,
+    office_to_holding_product_transfer
 )
 from warehouse.api.services.change_unuseless_service import change_unuseless_operation_create
 from product.api.selectors import category_list, unit_of_measure_list, product_list
@@ -102,7 +96,7 @@ class WarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class WarehouseRequestListCreateAPIView(generics.ListCreateAPIView):
-    queryset = WarehouseRequest.objects.all()
+    queryset = warehouse_request_list()
     serializer_class = WarehouseRequestSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = WarehouseRequestFilter
@@ -110,15 +104,15 @@ class WarehouseRequestListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = WarehouseRequest.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = WarehouseRequest.objects.filter(
+                queryset = self.queryset.filter(
                     warehouse__company=request.user.company, warehouse__office=request.user.office)
-            queryset = WarehouseRequest.objects.filter(
+            queryset = self.queryset.filter(
                 warehouse__company=request.user.company)
         else:
-            queryset = WarehouseRequest.objects.all()
+            queryset = self.queryset
 
         queryset = self.filter_queryset(queryset)
 
@@ -134,14 +128,14 @@ class WarehouseRequestListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         user = request.user
         if serializer.is_valid():
-            serializer.save(employee_who_sent_the_request=user)
+            warehouse_request_create(user=user, **serializer.validated_data)
             return Response({"detail": "Sorğu göndərildi"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WarehouseRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WarehouseRequest.objects.all()
+    queryset = warehouse_request_list()
     serializer_class = WarehouseRequestSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = WarehouseRequestFilter
@@ -149,8 +143,7 @@ class WarehouseRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"detail": "Sorğu yeniləndi"}, status=status.HTTP_200_OK)
@@ -196,84 +189,47 @@ class StockListCreateAPIView(generics.ListAPIView):
 
 # ********************************** product transfer endpoints **********************************
 
-class HoldingOfficeProductTransfer(APIView):
+class HoldingToOfficeProductTransfer(APIView):
     class InputSerializer(serializers.Serializer):
         products_and_quantity = serializers.CharField()
-        company = serializers.PrimaryKeyRelatedField(
-            queryset=Company.objects.all(), required=True)
-        warehouse = serializers.PrimaryKeyRelatedField(
-            queryset=Office.objects.all(), required=True)
+        company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
+        warehouse = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        holding_office_product_transfer_service(**serializer.validated_data)
+        user = request.user
+        holding_office_product_transfer_service(user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 class BetweenOfficeProductTransfer(APIView):
     class InputSerializer(serializers.Serializer):
         products_and_quantity = serializers.CharField()
-        company = serializers.PrimaryKeyRelatedField(
-            queryset=Company.objects.all(), required=True)
-        sender_office = serializers.PrimaryKeyRelatedField(
-            queryset=Office.objects.all(), required=True)
-        recipient_office = serializers.PrimaryKeyRelatedField(
-            queryset=Office.objects.all(), required=True)
+        company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
+        sender_office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
+        recipient_office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
+        note = serializers.CharField(required=False)
 
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        holding_office_product_transfer_service(**serializer.validated_data)
+        user = request.user
+        between_office_product_transfer_service(user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_200_OK)
 
+class OfficeToHoldingProductTransfer(APIView):
+    class InputSerializer(serializers.Serializer):
+        products_and_quantity = serializers.CharField()
+        company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
+        warehouse = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
 
-# ********************************** operation endpoints **********************************
-
-
-class OperationListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Operation.objects.all()
-    serializer_class = OperationSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OperationFilter
-    permission_classes = [warehouse_permissions.OperationPermissions]
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            queryset = Operation.objects.all()
-        elif request.user.company is not None:
-            if request.user.office is not None:
-                queryset = Operation.objects.filter(shipping_warehouse__company=request.user.company, shipping_warehouse__office=request.user.office,
-                                                    receiving_warehouse__company=request.user.company, receiving_warehouse__office=request.user.office)
-            queryset = Operation.objects.filter(
-                shipping_warehouse__company=request.user.company, receiving_warehouse__company=request.user.company)
-        else:
-            queryset = Operation.objects.all()
-
-        queryset = self.filter_queryset(queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, *args, **kwargs):
-        return warehouse_operation_utils.operation_create(self, request, *args, **kwargs)
-
-
-class OperationDetailAPIView(generics.RetrieveUpdateAPIView):
-    queryset = Operation.objects.all()
-    serializer_class = OperationSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = OperationFilter
-    permission_classes = [warehouse_permissions.OperationPermissions]
-
-    def update(self, request, *args, **kwargs):
-        return warehouse_operation_utils.operation_create(self, request, *args, **kwargs)
-
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        office_to_holding_product_transfer(user, **serializer.validated_data)
+        return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 class ChangeUnuselessOperationAPIView(APIView):
     def post(self, request):
@@ -290,6 +246,47 @@ class HoldingWarehouseAPIView(generics.ListAPIView):
     filterset_class = HoldingWarehouseFilter
     permission_classes = [warehouse_permissions.HoldingWarehousePermissions]
 
+class HoldingWarehouseRetriveAPIView(generics.RetrieveAPIView):
+    queryset = holding_warehouse_list()
+    serializer_class = HoldingWarehouseSerializer
+    permission_classes = [warehouse_permissions.HoldingWarehousePermissions]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+class HoldingWarehouseDestroyAPIView(generics.DestroyAPIView):
+    queryset = holding_warehouse_list()
+    serializer_class = HoldingWarehouseSerializer
+    permission_classes = [warehouse_permissions.HoldingWarehousePermissions]
+
+class HoldingWarehouseUpdateAPIView(APIView):
+    class InputSerializer(serializers.Serializer):
+        product_name = serializers.CharField()
+        barcode = serializers.IntegerField()
+        category = serializers.PrimaryKeyRelatedField(queryset=category_list())
+        unit_of_measure = serializers.PrimaryKeyRelatedField(queryset=unit_of_measure_list())
+        purchase_price = serializers.FloatField()
+        price = serializers.DecimalField(max_digits=20, decimal_places=2)
+        guarantee = serializers.IntegerField()
+        is_gift = serializers.BooleanField()
+        weight = serializers.FloatField()
+        width = serializers.FloatField()
+        length = serializers.FloatField()
+        height = serializers.FloatField()
+        volume = serializers.FloatField()
+        note = serializers.CharField()
+        product_image = serializers.ImageField()
+        quantity = serializers.IntegerField()
+
+    def put(self, request, pk):
+        serializer = self.InputSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            holding_warehouse_update(instance=pk, **serializer.validated_data)
+            return Response({'detail': 'Əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
+        return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class ProductAddToHoldigWarehouseAPIView(APIView):
     class InputSerializer(serializers.Serializer):
@@ -323,5 +320,6 @@ class ProductAddToHoldigWarehouseAPIView(APIView):
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        product_add_to_holding_warehouse(**serializer.validated_data)
+        user = request.user
+        product_add_to_holding_warehouse(user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)

@@ -1,14 +1,13 @@
-import django
 from django.db import models
-from django.core.validators import FileExtensionValidator
 from account.models import User
-from core.image_validator import file_size
 from django.contrib.auth import get_user_model
-from django.db.models import F
+
 from . import (
-    TRANSFER,
-    EMELIYYAT_NOVU_CHOICES,
+    STATUS_CHOICES,
+    WAITING,
+    OPERATION_STYLE_CHOICES
 )
+
 User = get_user_model()
 
 class HoldingWarehouse(models.Model):
@@ -48,14 +47,17 @@ class Warehouse(models.Model):
         )
 
 class WarehouseRequest(models.Model):
-    employee_who_sent_the_request = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, related_name="warehouse_requests")
-    product_and_quantity = models.CharField(max_length=250, null=True, blank=True)
+    employee_who_sent_the_request = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="warehouse_requests")
+    product_and_quantity = models.CharField(max_length=800, null=True, blank=True)
     note = models.TextField(null=True, blank=True)
-    warehouse = models.ForeignKey(
-        Warehouse, on_delete=models.CASCADE, related_name="warehouse_note")
-    is_done = models.BooleanField(default=False)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="warehouse_note")
+    status = models.CharField(
+        max_length=100,
+        choices=STATUS_CHOICES,
+        default=WAITING
+    )
     request_date = models.DateField(auto_now_add=True)
+    execution_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ("-pk",)
@@ -88,37 +90,8 @@ class Stock(models.Model):
             ("delete_stock", "Stock silə bilər")
         )
 
-class Operation(models.Model):
-    shipping_warehouse = models.ForeignKey(
-        Warehouse, on_delete=models.CASCADE, null=True, related_name="shipping_warehouse")
-    receiving_warehouse = models.ForeignKey(
-        Warehouse, on_delete=models.CASCADE, null=True, related_name="receiving_warehouse")
-
-    product_and_quantity = models.CharField(max_length=500, null=True, blank=True)
-
-    note = models.TextField(default="", null=True, blank=True)
-    operation_date = models.DateField(
-        auto_now_add=True, null=True, blank=True)
-
-    operation_type = models.CharField(
-        max_length=50, choices=EMELIYYAT_NOVU_CHOICES, default=TRANSFER)
-
-    quantity = models.IntegerField(default=0, blank=True, null=True)
-    executor = models.ForeignKey(
-        User, related_name="operation", on_delete=models.SET_NULL, null=True, blank=True)
-
-    class Meta:
-        ordering = ("pk",)
-        default_permissions = []
-        permissions = (
-            ("view_operation", "Mövcud əməliyyatlara baxa bilər"),
-            ("add_operation", "Əməliyyat əlavə edə bilər"),
-            ("change_operation", "Əməliyyat məlumatlarını yeniləyə bilər"),
-            ("delete_operation", "Əməliyyat silə bilər")
-        )
-
 class ChangeUnuselessOperation(models.Model):
-    products_and_quantity = models.CharField(max_length=500)
+    products_and_quantity = models.CharField(max_length=800)
     note = models.TextField(blank=True)
 
     class Meta:
@@ -127,4 +100,31 @@ class ChangeUnuselessOperation(models.Model):
         permissions = (
             ("view_changeunuselessoperation", "Mövcud utilizasiyalara baxa bilər"),
             ("add_changeunuselessoperation", "Utilizasiya edə bilər"),
+        )
+
+class WarehouseHistory(models.Model):
+    date = models.DateField(auto_now_add=True)
+    company = models.ForeignKey('company.Company', on_delete=models.SET_NULL, null=True, blank=True, related_name="warehouse_histories")
+    sender_warehouse = models.CharField(max_length=250, null=True, blank=True)
+    receiving_warehouse = models.CharField(max_length=250, null=True, blank=True)
+    sender_previous_quantity = models.PositiveIntegerField(default=0)
+    sender_subsequent_quantity = models.PositiveIntegerField(default=0)
+    recepient_previous_quantity = models.PositiveIntegerField(default=0)
+    recepient_subsequent_quantity = models.PositiveIntegerField(default=0)
+    customer = models.ForeignKey('account.Customer', on_delete=models.SET_NULL, null=True, blank=True, related_name="warehouse_histories")
+    products_and_quantity = models.CharField(max_length=800, null=True, blank=True)
+    operation_style = models.CharField(
+        max_length=150,
+        choices=OPERATION_STYLE_CHOICES,
+        blank=True,
+        null=True
+    )
+    executor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="warehouse_histories")
+    note = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-pk",)
+        default_permissions = []
+        permissions = (
+            ("view_warehousehistory", "Mövcud utilizasiyalara baxa bilər"),
         )

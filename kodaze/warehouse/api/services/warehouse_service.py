@@ -1,7 +1,10 @@
+from rest_framework.exceptions import ValidationError
 from warehouse.models import Warehouse, HoldingWarehouse
-from warehouse.api.selectors import warehouse_list
+from warehouse.api.selectors import warehouse_list, holding_warehouse_list
 from product.api.selectors import product_list
 from product.api.services import product_create
+from warehouse import GIRIS
+from warehouse.api.services.warehouse_history_service import warehouse_history_create
 
 def warehouse_create(
     *, name: str, 
@@ -42,7 +45,8 @@ def holding_warehouse_create(
     return obj
 
 def product_add_to_holding_warehouse(
-    *, product_name: str,
+    *, user, 
+    product_name: str,
     barcode = None,
     category = None,
     unit_of_measure = None,
@@ -111,4 +115,29 @@ def product_add_to_holding_warehouse(
         unuseful_product_count=unuseful_product_count
     )
 
+    warehouse_history_create(
+        user=user, receiving_warehouse="Holding anbarı", recepient_previous_quantity=0,
+        recepient_subsequent_quantity=quantity, operation_style=GIRIS, executor=user, note=note
+    )
+
     holding_warehouse.save()
+
+def holding_warehouse_update(instance, **data):
+    holding_warehouse = holding_warehouse_list().filter(pk=instance).last()
+    product = holding_warehouse.product
+
+    holding_warehouse_dict = dict()
+
+    try:
+        quantity = data.pop('quantity')
+        holding_warehouse_dict['quantity']=quantity
+        if quantity < holding_warehouse.unuseful_product_count:
+            raise ValidationError({'detail': 'Daxil edilən say istifadəyə yararsız məhsulların sayından az ola bilməz'})
+        useful_product_count = quantity - holding_warehouse.unuseful_product_count
+        holding_warehouse_dict['useful_product_count']=useful_product_count
+    except:
+        pass
+
+    product_instance = product_list().filter(pk=product.id).update(**data)
+    hw_instance = holding_warehouse_list().filter(pk=instance).update(**holding_warehouse_dict)
+    

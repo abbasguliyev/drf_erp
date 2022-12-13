@@ -22,7 +22,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("id", "name", "company")
     list_display_links = ("id", "name")
 
 
