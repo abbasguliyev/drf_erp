@@ -1,84 +1,136 @@
-#################
-Warehouse (Anbar)
-#################
+########
+Anbarlar
+########
 
-- "name"
-    - required.
-    - (Anbar adı - String)
-- "office_id"
-    - nullable.
-    - (Ofis İD - Office)
-- "company_id"
-    - nullable
-    - (Şirkət İD - Company)
-- "is_active"
-    - default: true.
-    - create zamanı json içində göndərməyə ehtiyac yoxdur.
-    - (Aktiv/Deaktiv - Boolean)
++---------+
+|Anbarlar |
++---------+
 
-=====
+Anbarlar
+--------
 
-+-----------------+
-|Warehouse create |
-+-----------------+
+- Bütün anbarlara bax
+    - endpoint: "http://localhost:8000/api/v1/warehouse/"
+    - Ofis əlavə edildikdə, həmin ofis üçün avtomatik olaraq anbar qurulur. Proses backenddə baş verir. 
+    - Get sorğusundan sonra response içərində gələn data:
+        - "id" -> anbarın id-si - int
+        - "company" -> anbarın aid olduğu şirkət - Json
+            - "id" -> şirkətin id-si - int
+            - "name" -> şirkətin adı - string
+        - "office" -> anbarın aid olduğu ofis - Json
+            - "id" -> ofisin id-si - int
+            - "name" -> ofisin adı - string
+            - "company" -> ofisin aid olduğu şirkət - Json
+                - "id" -> şirkətin id-si - int
+                - "name" -> şirkətin adı - string
+        - "name" -> Anbarın adı - string
+        - "is_active" -> anbarın aktiv olub olmadığını bildirir. (true/false) - Boolean
 
-Warehouse create
-----------------
+    - Filter
+        - endpoint "http://localhost:8000/api/v1/warehouse/?name=&name__icontains=&is_active=unknown&office=&company="
 
-- endpoint: "http://localhost:8000/api/v1/warehouse/"
+- anbarı id-sinə görə axtarmaq
+    - endpoint: "http://localhost:8000/api/v1/warehouse/1/"
 
-.. code:: json
++--------------+
+|Holding Anbar |
++--------------+
 
-  {
-    "company_id": null,
-    "office_id": null,
-    "name": ""
-  }
+Holding Anbar
+-------------
 
-+-----------------+
-|Update Warehouse |
-+-----------------+
+- Bütün holding anbar məhsullarına bax
+    - endpoint: "http://localhost:8000/api/v1/warehouse/holding-warehouse/"
+    - Response-da results listi içərisində 2 json gəlir. extra və data.
+    - Response-da gələn extra:
+        - "all_quantity" - ümumi miqdarın cəmini bildirir.
+        - "all_useful_product_count" - istifadəyə yararlı məhsulların miqdarının cəmini bildirir
+        - "all_unuseful_product_count" - istifadəyə yararsız məhsulların miqdarının cəmini bildirir
+        - "all_price" - məhsulların qiymətinin cəmini bildirir.
+    - Response-da gələn data:
+        - "id" -> anbarın id-si - int
+        - "product" -> məhsul - Json
+            - "id" - məhsulun id-si - int 
+            - "category" - məhsulun kateqoriyası - Json
+                - "id" - kateqoriyanın id-si - int
+                - "category_name" - kateqoriyanın adı - string
+            - "unit_of_measure" - məhsulun ölçü vahidi - Json
+                - "id" - ölçü vahidinin id-si - int
+                - "name" - ölçü vahidinin adı - string
+            - "product_name" - məhsulun adı - string
+            - "barcode" - məhsulun barcode-u - int
+            - "purchase_price" - məhsulun alış qiyməti - float
+            - "price" - məhsulun satış qiyməti - float
+            - "guarantee" - zəmanət(ay) - int
+            - "is_gift" - hədiyyə - boolean
+            - "weight" - çəkisi - float
+            - "width" - eni - float
+            - "length" - uzunluğu - float
+            - "height" - hündürlüyü - float
+            - "volume" - həcmi - float
+            - "note" - qeyd - string
+            - "product_image" - məhsulun şəkli - İmage
+        - "quantity" - miqdarı - int
+        - "useful_product_count" - yararlı məhsulların miqdarı - int
+        - "unuseful_product_count" - yararsız məhsulların miqdarı - int
 
-Update Warehouse
-----------------
+- Holding anbar məhsulunu id-sinə görə axtar
+    - endpoint: "http://localhost:8000/api/v1/warehouse/holding-warehouse/1/"
 
-- endpoint: "http://localhost:8000/api/v1/warehouse/1/"
-- put sorğusu patch kimi işləyir. Fieldlər tək tək və ya toplu şəkildə update edilə bilinir
+- Filter
+    - endpoint "http://localhost:8000/api/v1/warehouse/holding-warehouse/?product=&product__product_name=&product__product_name__icontains=&product__barcode=&product__barcode__icontains=&quantity=&useful_product_count=&unuseful_product_count="
 
-.. code:: json
+- Holding anbarına məhsul əlavə etmək
+    - endpoint: "http://localhost:8000/api/v1/warehouse/product-add-to-holding-warehouse/"
+    - Jsonda göndərilməli olan data
+        - "product_name" - required - məhsulun adı - string
+        - "barcode" - məhsulun barcode-u - int
+        - "category" - məhsulun kategoriya id-si - int
+            - kateqoriyalar üçün endpoint - "http://localhost:8000/api/v1/product/categories/"
+        - "unit_of_measure" - məhsulun ölçü vahidinin id-si - int
+            - ölçü vahidləri üçün endpoint - "http://localhost:8000/api/v1/product/unit-of-measure/"
+        - "purchase_price" - məhsulun alış qiyməti - float
+        - "price" - məhsulun satış qiyməti - float
+        - "guarantee" - zəmanət(ay) - int
+        - "is_gift" - hədiyyə - boolean
+        - "weight" - çəkisi - float
+        - "width" - eni - float
+        - "length" - uzunluğu - float
+        - "height" - hündürlüyü - float
+        - "volume" - həcmi - float
+        - "note" - qeyd - string
+        - "product_image" - məhsulun şəkli - İmage
+        - "quantity" - miqdarı - int
 
-  {
-    "company_id": null,
-    "office_id": null,
-    "name": "",
-    "is_active": true
-  }
+- holding anbarındakı məhsulu update etmək
+    - endpoint "http://localhost:8000/api/v1/warehouse/holding-warehouse-update/3/"
+    - Update üçün put sorğusu göndəriləcək. Amma put sorğusu patch kimi işləyir.Yəni fieldlar tək-tək və ya toplu şəkildə göndərilə bilinir.
+    - Jsonda göndəriləcək datalar
+        - "product_name" - məhsulun adı - string
+        - "barcode" - məhsulun barcode-u - int
+        - "category" - məhsulun kategoriya id-si - int
+            - kateqoriyalar üçün endpoint - "http://localhost:8000/api/v1/product/categories/"
+        - "unit_of_measure" - məhsulun ölçü vahidinin id-si - int
+            - ölçü vahidləri üçün endpoint - "http://localhost:8000/api/v1/product/unit-of-measure/"
+        - "purchase_price" - məhsulun alış qiyməti - float
+        - "price" - məhsulun satış qiyməti - float
+        - "guarantee" - zəmanət(ay) - int
+        - "is_gift" - hədiyyə - boolean
+        - "weight" - çəkisi - float
+        - "width" - eni - float
+        - "length" - uzunluğu - float
+        - "height" - hündürlüyü - float
+        - "volume" - həcmi - float
+        - "note" - qeyd - string
+        - "product_image" - məhsulun şəkli - İmage
+        - "quantity" - miqdarı - int
 
-+------------------+
-|Get All Warehouse |
-+------------------+
-
-Get All Warehouse
------------------
-
-- endpoint: "http://localhost:8000/api/v1/warehouse/"
-
-
-+--------------------+
-|Get Warehouse By ID |
-+--------------------+
-
-Get Warehouse By ID
--------------------
-
-- endpoint: "http://localhost:8000/api/v1/warehouse/1/"
-
-+----------------------+
-|Deactivated Warehouse |
-+----------------------+
-
-Deactivated Warehouse
----------------------
-
-- endpoint: "http://localhost:8000/api/v1/warehouse/1/"
-- Anbarı deaktiv etmək üçün bu endpoint-ə delete sorğusu göndərilir. Delete sorğusu datanı database-dən silmir. Sadəcə is_active fieldini False edir.
+- Utilizasiya
+    - endpoint "http://localhost:8000/api/v1/warehouse/change-unuseless-product/"
+    - Jsonda göndəriləcək data
+        - "products_and_quantity" - required - utilizasiya edilməsini istədiyiniz məhsullar və sayı
+            - json-da data aşağıdakı şəkildə göndərilməlidir
+                - "3-100, 4-50, 5-100, 7-5000"
+                - Burda defis işarəsindən solda yazılan silinməsi istənilən holding anbar məhsulunun id-sidir. defisdən sağda yazılan isə silinməsi istənilən saydır.
+                - Holding anbar məhsullarının id-si üçün endpoint: "http://localhost:8000/api/v1/warehouse/holding-warehouse/". Burdan holding warehouse id-sini götürürük. Qeyd - bu endpointə  sorğu atanda həm təkcə id datası gəlir, həmdə product datası və onun içində id datası gəlir. Bizə lazım olan tək id datasıdır. 1-ci sıradakı.
+        - "note" - Qeyd

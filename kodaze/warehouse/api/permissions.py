@@ -21,6 +21,10 @@ class HoldingWarehousePermissions(permissions.IsAdminUser):
         perm_util = PermissionUtil(user=request.user, request=request, object_name="holdingwarehouse", view=view)
         return perm_util.add_user_permission_to_list()
 
+class WarehouseHistoryPermissions(permissions.IsAdminUser):
+    def has_permission(self, request, view):
+        perm_util = PermissionUtil(user=request.user, request=request, object_name="warehousehistory", view=view)
+        return perm_util.add_user_permission_to_list()
 
 class ChangeUnuselessOperationPermissions(permissions.IsAdminUser):
     def has_permission(self, request, view):

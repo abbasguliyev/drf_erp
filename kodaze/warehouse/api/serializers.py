@@ -25,7 +25,7 @@ from company.api.serializers import OfficeSerializer, CompanySerializer
 
 class WarehouseSerializer(DynamicFieldsCategorySerializer):
     company = CompanySerializer(read_only=True, fields=['id', 'name'])
-    office = OfficeSerializer(read_only=True, fields=['id', 'name'])
+    office = OfficeSerializer(read_only=True, fields=['id', 'name', 'company'])
     company_id = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), source='company', write_only=True
     )
@@ -60,7 +60,7 @@ class StockSerializer(DynamicFieldsCategorySerializer):
         fields = "__all__"
 
 class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
-    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
+    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name', 'office'])
     warehouse_id = serializers.PrimaryKeyRelatedField(
         queryset=warehouse_list(), source='warehouse', write_only=True, required=False
     )
@@ -69,6 +69,8 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
     employee_who_sent_the_request_id = serializers.PrimaryKeyRelatedField(
         queryset=user_list(), source='employee_who_sent_the_request', write_only=True, required=False, allow_null=True
     )
+
+    product_and_quantity = serializers.CharField(write_only=True)
 
     products_and_quantities = serializers.SerializerMethodField()
     def get_products_and_quantities(self, instance):
@@ -81,9 +83,15 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
                 new_list = product_and_quantity.split('-')
                 product_id = new_list[0]
                 quantity = int(new_list[1])
-                holding_warehouse = holding_warehouse_list().filter(pk=product_id).last()
-                product = holding_warehouse.product
-                data['id'] = holding_warehouse.id
+                product = product_list().filter(pk=product_id).last()
+                holding_warehouse = holding_warehouse_list().filter(product=product).last()
+                if holding_warehouse is not None:
+                    data['product_in_holding_warehouse_id'] = holding_warehouse.id
+                    data['product_in_holding_warehouse_quantity'] = holding_warehouse.useful_product_count
+                else:
+                    data['product_in_holding_warehouse_id'] = holding_warehouse.id
+                    data['product_in_holding_warehouse_quantity'] = 0
+                data['id'] = product.id
                 data['product'] = product.product_name
                 data['quantity'] = quantity
                 wanted_prod_list.append(data)
@@ -92,7 +100,6 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
     class Meta:
         model = WarehouseRequest
         fields = "__all__"
-        read_only_fields = ('employee_who_sent_the_request', 'stok')
 
 
 class HoldingWarehouseSerializer(DynamicFieldsCategorySerializer):

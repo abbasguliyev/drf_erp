@@ -36,6 +36,17 @@ Welcome to Kodaze CRM's documentation!
    modules/maliyye_ve_kredit/view_installments.rst
    modules/maliyye_ve_kredit/cashflow.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Anbar:
+  
+   modules/warehouse/warehouse.rst
+   modules/warehouse/stock.rst
+   modules/warehouse/warehouse_request.rst
+   modules/warehouse/category.rst
+   modules/warehouse/unit_of_measure.rst
+   modules/warehouse/warehouse_history.rst
+
 
 .. toctree::
    :maxdepth: 2
@@ -53,25 +64,9 @@ Welcome to Kodaze CRM's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Product:
-  
-   modules/product/product.rst
-   modules/product/category.rst
-   modules/product/unit_of_measure.rst
-
-.. toctree::
-   :maxdepth: 2
    :caption: Backup And Restore:
   
    modules/backup_restore/backup.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Warehouse:
-  
-   modules/warehouse/warehouse.rst
-   modules/warehouse/warehouse_request.rst
-   modules/warehouse/stock.rst
 
 .. toctree::
    :maxdepth: 2

@@ -117,7 +117,7 @@ def product_add_to_holding_warehouse(
 
     warehouse_history_create(
         user=user, receiving_warehouse="Holding anbarı", recepient_previous_quantity=0,
-        recepient_subsequent_quantity=quantity, operation_style=GIRIS, executor=user, note=note
+        recepient_subsequent_quantity=quantity, product=product.product_name, quantity = quantity, operation_style=GIRIS, executor=user, note=note
     )
 
     holding_warehouse.save()

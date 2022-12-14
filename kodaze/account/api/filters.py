@@ -6,7 +6,6 @@ from account.models import (
     Region,
     EmployeeStatus
 )
-
 from django.contrib.auth.models import Permission, Group
 
 class PermissionFilter(django_filters.FilterSet):

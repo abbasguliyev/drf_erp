@@ -112,7 +112,8 @@ class WarehouseHistory(models.Model):
     recepient_previous_quantity = models.PositiveIntegerField(default=0)
     recepient_subsequent_quantity = models.PositiveIntegerField(default=0)
     customer = models.ForeignKey('account.Customer', on_delete=models.SET_NULL, null=True, blank=True, related_name="warehouse_histories")
-    products_and_quantity = models.CharField(max_length=800, null=True, blank=True)
+    product = models.CharField(max_length=200, null=True, blank=True)
+    quantity = models.CharField(max_length=200, null=True, blank=True)
     operation_style = models.CharField(
         max_length=150,
         choices=OPERATION_STYLE_CHOICES,

@@ -1,7 +1,9 @@
+import datetime
 from warehouse.models import WarehouseRequest
-from warehouse import WAITING
-from warehouse.api.selectors import holding_warehouse_list, warehouse_list
+from warehouse import WAITING, DONE, REJECT
+from warehouse.api.selectors import holding_warehouse_list, warehouse_list, warehouse_request_list
 from rest_framework.exceptions import ValidationError
+from warehouse.api.services.product_transfer_service import holding_office_product_transfer_service
 
 def warehouse_request_create(
     *, user,
@@ -12,22 +14,6 @@ def warehouse_request_create(
     status = WAITING,
     execution_date = None
 ) -> WarehouseRequest:
-    products_and_quantity_list_full = product_and_quantity.split(',')
-    products_and_quantity_list = None
-    products_and_quantity_list = [
-        x for x in products_and_quantity_list_full if x != ' ' and x != '']
-
-    for product_and_quantity in products_and_quantity_list:
-        new_list = product_and_quantity.split('-')
-        product_id = new_list[0]
-        quantity = int(new_list[1])
-
-        holding_warehouse = holding_warehouse_list().filter(pk=product_id)
-        if holding_warehouse.count() == 0:
-            raise ValidationError({'detail': 'Sorğu üçün göndərilən məhsulların holding anbarında olması lazımdır'})
-        if quantity > holding_warehouse.last().useful_product_count:
-            raise ValidationError({'detail': 'Sorğu üçün göndərilən məhsulların sayı holding anbarındakı saya uyğun olmalıdır'})
-
     employee_who_sent_the_request = user
     office = employee_who_sent_the_request.office
     warehouse = warehouse_list().filter(office=office).last()
@@ -44,3 +30,30 @@ def warehouse_request_create(
     obj.save()
 
     return obj
+
+def warehouse_request_execute(*, instance_id, user, products_and_quantity=None, company=None, office=None, note=None, status):
+    obj = warehouse_request_list().filter(pk=instance_id).last()
+    execution_date = datetime.date.today()
+
+    if obj.status == WAITING:
+        if status == REJECT:
+            obj.status = REJECT
+            obj.note = note
+            obj.execution_date = execution_date
+            obj.save()
+        elif status == DONE:
+            if products_and_quantity is None or company is None or office is None:
+                raise ValidationError({'detail': 'Məlumatları doğru daxil edin'})
+
+            holding_office_product_transfer_service(
+                user=user, products_and_quantity=products_and_quantity,
+                company=company, warehouse=office, note=note
+            )
+            obj.status = DONE
+            obj.note = note
+            obj.execution_date = execution_date
+            obj.save()
+        else:
+            raise ValidationError({'detail': 'Məlumatları doğru daxil edin'})
+    else:
+        raise ValidationError({'detail': 'Ancaq yerinə yetirilməmiş sorğuları icra etmək mümkündür.'})

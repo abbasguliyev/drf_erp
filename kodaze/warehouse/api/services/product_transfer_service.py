@@ -4,7 +4,7 @@ from warehouse.api.selectors import stock_list, warehouse_list, holding_warehous
 from warehouse.api.services import warehouse_service, stock_service, warehouse_history_service
 from warehouse import TRANSFER
 
-def holding_office_product_transfer_service(*, user ,products_and_quantity: str, company, warehouse):
+def holding_office_product_transfer_service(*, user, products_and_quantity: str, company, warehouse, note:str=None):
     if warehouse.company != company:
         raise ValidationError({'detail': 'Anbar qeyd edilmiş şirkətə aid deyil'})
 
@@ -22,7 +22,7 @@ def holding_office_product_transfer_service(*, user ,products_and_quantity: str,
         product_id = new_list[0]
         quantity = int(new_list[1])
 
-        holding_warehouse = holding_warehouse_list().filter(product__id=product_id).last()
+        holding_warehouse = holding_warehouse_list().filter(id=product_id).last()
         product = holding_warehouse.product
         sender_previous_quantity = holding_warehouse.quantity
 
@@ -43,11 +43,11 @@ def holding_office_product_transfer_service(*, user ,products_and_quantity: str,
                 useful_product_count=quantity,
                 note=None
             )
+            stock = stock_list().filter(warehouse=warehouse, product=product).last()
         else:
             recepient_previous_quantity = stock.quantity
-
             stock_service.add_product_to_stock(stock=stock, product_quantity=quantity)
-        
+
         recepient_subsequent_quantity = stock.quantity
 
         holding_warehouse.quantity = holding_warehouse.quantity - quantity
@@ -55,13 +55,13 @@ def holding_office_product_transfer_service(*, user ,products_and_quantity: str,
         holding_warehouse.save()
         sender_subsequent_quantity = holding_warehouse.quantity
 
-    warehouse_history_service.warehouse_history_create(
-        user = user, sender_warehouse="Holding anbarı", 
-        receiving_warehouse= f"{warehouse.name}", 
-        sender_previous_quantity=sender_previous_quantity, sender_subsequent_quantity=sender_subsequent_quantity,
-        recepient_previous_quantity=recepient_previous_quantity, recepient_subsequent_quantity=recepient_subsequent_quantity,
-        products_and_quantity=products_and_quantity, operation_style=TRANSFER, executor=user
-    )
+        warehouse_history_service.warehouse_history_create(
+            user = user, sender_warehouse="Holding anbarı", 
+            receiving_warehouse= f"{warehouse.name}", 
+            sender_previous_quantity=sender_previous_quantity, sender_subsequent_quantity=sender_subsequent_quantity,
+            recepient_previous_quantity=recepient_previous_quantity, recepient_subsequent_quantity=recepient_subsequent_quantity,
+            product=product.product_name, quantity = quantity, operation_style=TRANSFER, executor=user, note=note
+        )
 
 
 def between_office_product_transfer_service(*, user, products_and_quantity: str, company, sender_office, recipient_office, note: str = None):
@@ -108,6 +108,7 @@ def between_office_product_transfer_service(*, user, products_and_quantity: str,
                 useful_product_count=quantity,
                 note=None
             )
+            recipient_stock = stock_list().filter(warehouse=recipient_warehouse, product=product).last()
         else:
             recepient_previous_quantity = recipient_stock.quantity
 
@@ -115,13 +116,13 @@ def between_office_product_transfer_service(*, user, products_and_quantity: str,
         
         recepient_subsequent_quantity = recipient_stock.quantity
     
-    warehouse_history_service.warehouse_history_create(
-        user = user, sender_warehouse=f"{sender_warehouse.name}",
-        receiving_warehouse= f"{recipient_warehouse.name}", 
-        sender_previous_quantity=sender_previous_quantity, sender_subsequent_quantity=sender_subsequent_quantity,
-        recepient_previous_quantity=recepient_previous_quantity, recepient_subsequent_quantity=recepient_subsequent_quantity,
-        products_and_quantity=products_and_quantity, operation_style=TRANSFER, executor=user, note=note
-    )
+        warehouse_history_service.warehouse_history_create(
+            user = user, sender_warehouse=f"{sender_warehouse.name}",
+            receiving_warehouse= f"{recipient_warehouse.name}", 
+            sender_previous_quantity=sender_previous_quantity, sender_subsequent_quantity=sender_subsequent_quantity,
+            recepient_previous_quantity=recepient_previous_quantity, recepient_subsequent_quantity=recepient_subsequent_quantity,
+            product=product.product_name, quantity = quantity, operation_style=TRANSFER, executor=user, note=note
+        )
 
 def office_to_holding_product_transfer(*, user, products_and_quantity: str, company, warehouse):
     if warehouse.company != company:
@@ -162,6 +163,7 @@ def office_to_holding_product_transfer(*, user, products_and_quantity: str, comp
                 useful_product_count=quantity,
                 unuseful_product_count=0
             )
+            holding_warehouse = holding_warehouse_list().filter(product__id=product_id).last()
         else:
             recepient_previous_quantity = holding_warehouse.quantity
 
@@ -171,10 +173,10 @@ def office_to_holding_product_transfer(*, user, products_and_quantity: str, comp
         
         recepient_subsequent_quantity = holding_warehouse.quantity
 
-    warehouse_history_service.warehouse_history_create(
-        user = user, sender_warehouse=f"{warehouse.name}",
-        receiving_warehouse= "Holding anbarı", 
-        sender_previous_quantity=sender_previous_quantity, sender_subsequent_quantity=sender_subsequent_quantity,
-        recepient_previous_quantity=recepient_previous_quantity, recepient_subsequent_quantity=recepient_subsequent_quantity,
-        products_and_quantity=products_and_quantity, operation_style=TRANSFER, executor=user
-    )
+        warehouse_history_service.warehouse_history_create(
+            user = user, sender_warehouse=f"{warehouse.name}",
+            receiving_warehouse= "Holding anbarı", 
+            sender_previous_quantity=sender_previous_quantity, sender_subsequent_quantity=sender_subsequent_quantity,
+            recepient_previous_quantity=recepient_previous_quantity, recepient_subsequent_quantity=recepient_subsequent_quantity,
+            product=product.product_name, quantity = quantity, operation_style=TRANSFER, executor=user
+        )

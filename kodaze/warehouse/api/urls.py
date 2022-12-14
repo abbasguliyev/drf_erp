@@ -5,8 +5,12 @@ urlpatterns = [
     path('', warehouse_views.WarehouseListAPIView.as_view()),
     path('<int:pk>/', warehouse_views.WarehouseDetailAPIView.as_view()),
 
+    path('get-all-warehouses/', warehouse_views.GetAllWarehouse.as_view()),
+    
     path('warehouse-requests/', warehouse_views.WarehouseRequestListCreateAPIView.as_view()),
-    path('warehouse-requests/<int:pk>/', warehouse_views.WarehouseRequestDetailAPIView.as_view()),
+    path('warehouse-requests/<int:pk>/', warehouse_views.WarehouseRequestRetriveDestroyAPIView.as_view()),
+    path('warehouse-requests-execute/<int:pk>/', warehouse_views.WarehouseRequestExecuteAPIView.as_view()),
+    path('warehouse-history/', warehouse_views.WarehouseHistoryListAPIView.as_view()),
 
     path('stocks/', warehouse_views.StockListCreateAPIView.as_view()),
 

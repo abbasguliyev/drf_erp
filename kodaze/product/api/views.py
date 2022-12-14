@@ -31,22 +31,10 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
-        
-        extra = dict()
-        total_quantity = 0
-        total_price = 0
-        
-        for q in page:
-            total_quantity += q.quantity
-            total_price += q.price
-            extra['total_quantity'] = total_quantity
-            extra['total_price'] = total_price
-
+    
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response({
-                'extra': extra, 'data': serializer.data
-            })
+            return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

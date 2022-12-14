@@ -11,7 +11,8 @@ def warehouse_history_create(
     recepient_previous_quantity = 0,
     recepient_subsequent_quantity = 0,
     customer = None,
-    products_and_quantity = None,
+    product = None,
+    quantity = None,
     operation_style = None,
     executor = None,
     note = None
@@ -26,7 +27,8 @@ def warehouse_history_create(
         recepient_previous_quantity = recepient_previous_quantity,
         recepient_subsequent_quantity = recepient_subsequent_quantity,
         customer = customer,
-        products_and_quantity = products_and_quantity,
+        product = product,
+        quantity = quantity,
         operation_style = operation_style,
         executor = executor,
         note = note

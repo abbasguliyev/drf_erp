@@ -10,14 +10,16 @@ from warehouse.api.serializers import (
     WarehouseRequestSerializer,
     StockSerializer,
     ChangeUnuselessOperationSerializer,
-    HoldingWarehouseSerializer
+    HoldingWarehouseSerializer,
+    WarehouseHistorySerializer
 )
 
 from warehouse.api.filters import (
     WarehouseFilter,
     WarehouseRequestFilter,
     StockFilter,
-    HoldingWarehouseFilter
+    HoldingWarehouseFilter,
+    WarehouseHistoryFilter
 )
 
 from warehouse.api import permissions as warehouse_permissions
@@ -25,9 +27,10 @@ from warehouse.api.selectors import (
     holding_warehouse_list, 
     warehouse_list, 
     stock_list, 
-    warehouse_request_list
+    warehouse_request_list,
+    warehouse_history_list
 )
-from warehouse.api.services.warehouse_request_service import warehouse_request_create
+from warehouse.api.services.warehouse_request_service import warehouse_request_create, warehouse_request_execute
 from warehouse.api.services.warehouse_service import warehouse_update, warehouse_delete, product_add_to_holding_warehouse, holding_warehouse_update
 from warehouse.api.services.product_transfer_service import (
     holding_office_product_transfer_service,
@@ -133,28 +136,34 @@ class WarehouseRequestListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class WarehouseRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class WarehouseRequestRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
     queryset = warehouse_request_list()
     serializer_class = WarehouseRequestSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = WarehouseRequestFilter
     permission_classes = [warehouse_permissions.WarehouseRequestPermissions]
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "Sorğu yeniləndi"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"detail": "Məlumatları doğru daxil edin."}, status=status.HTTP_400_BAD_REQUEST)
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_204_NO_CONTENT)
 
+
+class WarehouseRequestExecuteAPIView(APIView):
+    class InputSerializer(serializers.Serializer):
+        products_and_quantity = serializers.CharField(required=False)
+        company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=False)
+        office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=False)
+        note = serializers.CharField(required=False)
+        status = serializers.CharField(required=True)
+    
+    def post(self, request, pk):
+        serializer = self.InputSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            warehouse_request_execute(instance_id=pk, user=user, **serializer.validated_data)
+            return Response({'detail': 'Əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
+        return Response({'detail': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 # ********************************** stok endpoints **********************************
 
@@ -170,19 +179,33 @@ class StockListCreateAPIView(generics.ListAPIView):
             queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = self.queryset.filter(
-                    warehouse__company=request.user.company, warehouse__office=request.user.office)
-            queryset = self.queryset.filter(
-                warehouse__company=request.user.company)
+                queryset = self.queryset.filter(warehouse__company=request.user.company, warehouse__office=request.user.office)
+            queryset = self.queryset.filter(warehouse__company=request.user.company)
         else:
             queryset = self.queryset
 
         queryset = self.filter_queryset(queryset)
-
+        
         page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        all_quantity = 0
+        all_useful_product_count = 0
+        all_changed_product_count = 0
+        for q in page:
+            all_quantity += q.quantity
+            all_useful_product_count += q.useful_product_count
+            all_changed_product_count += q.changed_product_count
+            
+            extra['all_quantity'] = all_quantity
+            extra['all_useful_product_count'] = all_useful_product_count
+            extra['all_changed_product_count'] = all_changed_product_count
+        
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -194,12 +217,13 @@ class HoldingToOfficeProductTransfer(APIView):
         products_and_quantity = serializers.CharField()
         company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
         warehouse = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
+        note = serializers.CharField(required=False)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
-        holding_office_product_transfer_service(user, **serializer.validated_data)
+        holding_office_product_transfer_service(user=user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 class BetweenOfficeProductTransfer(APIView):
@@ -215,7 +239,7 @@ class BetweenOfficeProductTransfer(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
-        between_office_product_transfer_service(user, **serializer.validated_data)
+        between_office_product_transfer_service(user=user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 class OfficeToHoldingProductTransfer(APIView):
@@ -228,14 +252,15 @@ class OfficeToHoldingProductTransfer(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
-        office_to_holding_product_transfer(user, **serializer.validated_data)
+        office_to_holding_product_transfer(user=user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyat yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 class ChangeUnuselessOperationAPIView(APIView):
     def post(self, request):
         serializer = ChangeUnuselessOperationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        change_unuseless_operation_create(**serializer.validated_data)
+        user = request.user
+        change_unuseless_operation_create(user=user, **serializer.validated_data)
         return Response({'detail': 'Utilizasiya prosesi yerinə yetirildi'}, status=status.HTTP_200_OK)
 
 
@@ -245,6 +270,37 @@ class HoldingWarehouseAPIView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = HoldingWarehouseFilter
     permission_classes = [warehouse_permissions.HoldingWarehousePermissions]
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+
+        extra = dict()
+        all_quantity = 0
+        all_useful_product_count = 0
+        all_unuseful_product_count = 0
+        all_price = 0
+        for q in page:
+            all_quantity += q.quantity
+            all_useful_product_count += q.useful_product_count
+            all_unuseful_product_count += q.unuseful_product_count
+            all_price += q.product.price
+            
+            extra['all_quantity'] = all_quantity
+            extra['all_useful_product_count'] = all_useful_product_count
+            extra['all_unuseful_product_count'] = all_unuseful_product_count
+            extra['all_price'] = all_price
+
+        
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
+
+        return Response(serializer.data)
+
 
 class HoldingWarehouseRetriveAPIView(generics.RetrieveAPIView):
     queryset = holding_warehouse_list()
@@ -321,5 +377,32 @@ class ProductAddToHoldigWarehouseAPIView(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
-        product_add_to_holding_warehouse(user, **serializer.validated_data)
+        product_add_to_holding_warehouse(user=user, **serializer.validated_data)
         return Response({'detail': 'Əməliyyatı yerinə yetirildi'}, status=status.HTTP_200_OK)
+
+
+class WarehouseHistoryListAPIView(generics.ListAPIView):
+    queryset = warehouse_history_list()
+    serializer_class = WarehouseHistorySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = WarehouseHistoryFilter
+    permission_classes = [warehouse_permissions.WarehouseHistoryPermissions]
+
+class GetAllWarehouse(APIView):
+    def get(self, request):
+        w_l = list()
+        warehouses = warehouse_list()
+        for w in warehouses:
+            w_d_2 = dict()
+            w_d_2['name'] = w.name
+            w_d_2['company'] = w.office.company.name
+            w_l.append(w_d_2)
+
+        w_d = dict()
+        holding_warehouse = "Holding anbarı"
+        w_d['name'] = holding_warehouse
+        w_d['company'] = None
+        
+        w_l.append(w_d)
+
+        return Response(w_l)
