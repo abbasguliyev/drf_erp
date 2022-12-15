@@ -30,7 +30,7 @@ def change_unuseless_operation_create(*, user, products_and_quantity: str, note:
 
         warehouse_history_create(
             user=user, sender_warehouse="Holding anbarı", sender_previous_quantity=sender_previous_quantity,
-            sender_subsequent_quantity=sender_subsequent_quantity, product=holding_warehouse_product.product_name, quantity = quantity, operation_style=UTILIZASIYA,
+            sender_subsequent_quantity=sender_subsequent_quantity, product=holding_warehouse_product.product.product_name, quantity = quantity, operation_style=UTILIZASIYA,
             executor=user, note=note
         )
 
