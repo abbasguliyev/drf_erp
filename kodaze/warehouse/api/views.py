@@ -318,6 +318,14 @@ class HoldingWarehouseDestroyAPIView(generics.DestroyAPIView):
     serializer_class = HoldingWarehouseSerializer
     permission_classes = [warehouse_permissions.HoldingWarehousePermissions]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.quantity > 0:
+            return Response({'detail': 'Silmə əməliyyatı yalnız sayı 0 olan məhsullar üçün keçərlidir'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
 class HoldingWarehouseUpdateAPIView(APIView):
     class InputSerializer(serializers.Serializer):
         product_name = serializers.CharField()

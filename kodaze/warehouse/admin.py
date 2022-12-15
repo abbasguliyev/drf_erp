@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Warehouse, HoldingWarehouse, Stock, WarehouseRequest, ChangeUnuselessOperation
+from .models import Warehouse, HoldingWarehouse, Stock, WarehouseRequest, ChangeUnuselessOperation, WarehouseHistory
 
 # Register your models here.
 admin.site.register(Warehouse)
 admin.site.register(WarehouseRequest)
+admin.site.register(WarehouseHistory)
 
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):
