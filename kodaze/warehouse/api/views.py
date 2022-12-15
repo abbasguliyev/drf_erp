@@ -320,7 +320,7 @@ class HoldingWarehouseDestroyAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance.quantity > 0:
+        if instance.useful_product_count > 0:
             return Response({'detail': 'Silmə əməliyyatı yalnız sayı 0 olan məhsullar üçün keçərlidir'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             instance.delete()

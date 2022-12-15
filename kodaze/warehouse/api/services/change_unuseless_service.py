@@ -15,12 +15,11 @@ def change_unuseless_operation_create(*, user, products_and_quantity: str, note:
 
         holding_warehouse_product = holding_warehouse_list().filter(pk=product_id).last()
 
-        if quantity > holding_warehouse_product.quantity:
+        if quantity > holding_warehouse_product.useful_product_count:
             continue
         
         sender_previous_quantity = holding_warehouse_product.quantity
 
-        holding_warehouse_product.quantity = holding_warehouse_product.quantity - quantity
         holding_warehouse_product.useful_product_count -= quantity
         holding_warehouse_product.unuseful_product_count += quantity
         
