@@ -365,13 +365,6 @@ class ProductAddToHoldigWarehouseAPIView(APIView):
         useful_product_count = serializers.IntegerField(required=False, allow_null=True)
         unuseful_product_count = serializers.IntegerField(required=False, allow_null=True)
 
-        class Meta:
-            validators = [
-            UniqueTogetherValidator(
-                queryset=product_list(),
-                fields=['barcode']
-            )
-        ]
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)

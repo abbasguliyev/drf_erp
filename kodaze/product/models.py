@@ -36,7 +36,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     product_name = models.CharField(max_length=300)
-    barcode = models.PositiveIntegerField(null=True, blank=True, unique=True)
+    barcode = models.PositiveIntegerField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, related_name="products")
     unit_of_measure = models.ForeignKey(UnitOfMeasure, on_delete=models.SET_NULL, null=True, blank=True)
     purchase_price = models.FloatField(default=0, null=True, blank=True)
