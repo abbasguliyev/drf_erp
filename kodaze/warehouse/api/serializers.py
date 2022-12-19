@@ -91,8 +91,12 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
                 else:
                     data['product_in_holding_warehouse_id'] = None
                     data['product_in_holding_warehouse_quantity'] = 0
-                data['id'] = product.id
-                data['product'] = product.product_name
+                if product is not None:
+                    data['id'] = product.id
+                    data['product'] = product.product_name
+                else:
+                    data['id'] = None
+                    data['product'] = None
                 data['quantity'] = quantity
                 wanted_prod_list.append(data)
         return wanted_prod_list
