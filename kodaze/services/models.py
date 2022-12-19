@@ -5,21 +5,23 @@ from services import PAY_METHOD_CHOICES, CASH
 
 
 class Service(models.Model):
-    pay_method = models.CharField(max_length=50, choices=PAY_METHOD_CHOICES, default=CASH)
-    loan_term = models.IntegerField(default=0, null=True, blank=True)
-    discount = models.FloatField(default=0, null=True, blank=True)
-    contract = models.ForeignKey("contract.Contract", related_name="services", null=True, on_delete=models.CASCADE)
-    product = models.ManyToManyField("product.Product", related_name="services")
+    create_date = models.DateField(auto_now_add=True)
+    appointment_date = models.DateField(null=True, blank=True)
+    service_date = models.DateField(null=True, blank=True)
     customer = models.ForeignKey("account.Customer", on_delete=models.CASCADE, null=True, blank=True, related_name="services")
-    service_date = models.DateField(default=django.utils.timezone.now, blank=True)
+    contract = models.ForeignKey("contract.Contract", on_delete=models.CASCADE, null=True, blank=True, related_name="services")
+    product = models.ManyToManyField("product.Product", related_name="services")
+    pay_method = models.CharField(max_length=50, choices=PAY_METHOD_CHOICES, default=CASH)
+    price = models.DecimalField(default=0, max_digits=20, decimal_places=2)
+    loan_term = models.IntegerField(default=0)
+    discount = models.FloatField(default=0)
     is_done = models.BooleanField(default=False)
-    price = models.FloatField(default=0, blank=True)
     initial_payment = models.FloatField(default=0, blank=True)
-    total_amount_to_be_paid = models.FloatField(default=0, blank=True)
+    total_amount_to_be_paid = models.FloatField(default=0)
     confirmation = models.BooleanField(default=False)
     note = models.TextField(default="", null=True, blank=True)
     is_auto = models.BooleanField(default=False)
-    create_date = models.DateField(default=django.utils.timezone.now, editable=False)
+
 
     class Meta:
         ordering = ("-pk",)

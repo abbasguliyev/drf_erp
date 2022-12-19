@@ -217,7 +217,7 @@ class HoldingToOfficeProductTransfer(APIView):
         products_and_quantity = serializers.CharField()
         company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
         warehouse = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
-        note = serializers.CharField(required=False)
+        note = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
@@ -232,7 +232,7 @@ class BetweenOfficeProductTransfer(APIView):
         company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
         sender_office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
         recipient_office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all(), required=True)
-        note = serializers.CharField(required=False)
+        note = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
 
     def post(self, request):
@@ -324,7 +324,7 @@ class HoldingWarehouseDestroyAPIView(generics.DestroyAPIView):
             return Response({'detail': 'Silmə əməliyyatı yalnız sayı 0 olan məhsullar üçün keçərlidir'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             instance.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({'detail': 'Məhsul Holdinq anbardan silindi'}, status=status.HTTP_204_NO_CONTENT)
 
 class HoldingWarehouseUpdateAPIView(APIView):
     class InputSerializer(serializers.Serializer):

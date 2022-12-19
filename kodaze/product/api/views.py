@@ -83,6 +83,24 @@ class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
     permission_classes = [product_permissions.CategoryPermissions]
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+
 class UnitOfMeasureListCreateAPIView(generics.ListCreateAPIView):
     queryset = unit_of_measure_list()
     serializer_class = UnitOfMeasureSerializer
@@ -102,3 +120,21 @@ class UnitOfMeasureDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = unit_of_measure_list()
     serializer_class = UnitOfMeasureSerializer
     permission_classes = [product_permissions.UnitOfMeasurePermissions]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"detail": "Əməliyyat yerinə yetirildi"}, status=status.HTTP_200_OK)

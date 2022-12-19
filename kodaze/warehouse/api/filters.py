@@ -38,12 +38,19 @@ class WarehouseFilter(django_filters.FilterSet):
         }
 
 class WarehouseRequestFilter(django_filters.FilterSet):
+    request_date = django_filters.DateFilter(field_name='request_date', input_formats=["%d-%m-%Y"])
+    request_date__gte = django_filters.DateFilter(field_name='request_date', lookup_expr='gte', input_formats=["%d-%m-%Y"])
+    request_date__lte = django_filters.DateFilter(field_name='request_date', lookup_expr='lte', input_formats=["%d-%m-%Y"])
+
     class Meta:
         model = WarehouseRequest
         fields = {
-            'note': ['exact', 'icontains'],
             'warehouse__name': ['exact', 'icontains'],
-            'warehouse__office__name': ['exact', 'icontains'],
+            'note': ['exact', 'icontains'],
+            'warehouse__office': ['exact'],
+            'warehouse__company': ['exact'],
+            'employee_who_sent_the_request': ['exact'],
+            'status': ['exact'],
         }
 
 
@@ -71,6 +78,7 @@ class WarehouseHistoryFilter(django_filters.FilterSet):
         fields = {
             'customer': ['exact'],
             'customer__fullname': ['exact', 'icontains'],
+            'product': ['exact', 'icontains'],
             'company': ['exact'],
             'sender_warehouse': ['exact'],
             'receiving_warehouse': ['exact'],

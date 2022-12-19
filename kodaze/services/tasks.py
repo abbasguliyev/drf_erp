@@ -13,8 +13,7 @@ def create_services_task(id):
     instance = Contract.objects.get(id=id)
     now = instance.contract_date
 
-    service_products_for_contract = ServiceProductForContract.objects.prefetch_related(
-        "product").all()
+    service_products_for_contract = ServiceProductForContract.objects.prefetch_related("product").all()
     date_format = '%d-%m-%Y'
     for service_product in service_products_for_contract:
         service_period = service_product.service_period

@@ -38,8 +38,8 @@ class WarehouseSerializer(DynamicFieldsCategorySerializer):
         fields = "__all__"
 
 class StockSerializer(DynamicFieldsCategorySerializer):
-    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name'])
-    product = ProductSerializer(read_only=True, fields=['id', 'product_name', 'price'])
+    warehouse = WarehouseSerializer(read_only=True, fields=['id', 'name', 'company'])
+    product = ProductSerializer(read_only=True, fields=['id', 'product_name', 'price', 'unit_of_measure'])
 
     warehouse_id = serializers.PrimaryKeyRelatedField(
         queryset=warehouse_list(), source='warehouse', write_only=True
@@ -71,8 +71,8 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
     )
 
     product_and_quantity = serializers.CharField(write_only=True)
-
     products_and_quantities = serializers.SerializerMethodField()
+
     def get_products_and_quantities(self, instance):
         products_and_quantity = instance.product_and_quantity
         products_and_quantity_list = products_and_quantity.split(',')
@@ -89,7 +89,7 @@ class WarehouseRequestSerializer(DynamicFieldsCategorySerializer):
                     data['product_in_holding_warehouse_id'] = holding_warehouse.id
                     data['product_in_holding_warehouse_quantity'] = holding_warehouse.useful_product_count
                 else:
-                    data['product_in_holding_warehouse_id'] = holding_warehouse.id
+                    data['product_in_holding_warehouse_id'] = None
                     data['product_in_holding_warehouse_quantity'] = 0
                 data['id'] = product.id
                 data['product'] = product.product_name

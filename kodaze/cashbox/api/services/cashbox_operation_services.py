@@ -33,6 +33,10 @@ def holding_cashbox_operation_create(
     if holding_cashbox is None:
         raise ValidationError({"detail": "Holdinq kassa tapılmadı"})
     
+    if note is None or note == "" or note == " ":
+        description_income=f"{holding.name} ofis kassasına {amount} AZN mədaxil edildi"
+        description_expense=f"{holding.name} ofis kassasından {amount} AZN məxaric edildi"
+    
     balance = 0
 
     if operation == INCOME:            
@@ -44,7 +48,7 @@ def holding_cashbox_operation_create(
         cashflow_create(
             holding=holding,
             operation_style="MƏDAXİL",
-            description=f"{holding.name} holdinq kassasına {amount} AZN mədaxil edildi",
+            description=description_income,
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
@@ -64,7 +68,7 @@ def holding_cashbox_operation_create(
         cashflow_create(
             holding=holding,
             operation_style="MƏXARİC",
-            description=f"{holding.name} holdinq kassasından {amount} AZN məxaric edildi",
+            description=description_expense,
             executor=executor,
             personal=personal,
             date=datetime.date.today(),
@@ -104,7 +108,7 @@ def company_cashbox_operation_create(
         cashbox = office_cashbox_list().filter(office=office).last()
         if cashbox is None:
             raise ValidationError({"detail": "Ofis kassa tapılmadı"})
-        if note is None:
+        if note is None or note == "" or note == " ":
             description_income=f"{office.name} ofis kassasına {amount} AZN mədaxil edildi"
             description_expense=f"{office.name} ofis kassasından {amount} AZN məxaric edildi"
         else:
@@ -114,7 +118,7 @@ def company_cashbox_operation_create(
         cashbox = company_cashbox_list().last()
         if cashbox is None:
             raise ValidationError({"detail": "Şirkət kassa tapılmadı"})
-        if note is None:
+        if note is None or note == "" or note == " ":
             description_income=f"{company.name} şirkət kassasına {amount} AZN mədaxil edildi"
             description_expense=f"{company.name} şirkət kassasından {amount} AZN məxaric edildi"
         else:
