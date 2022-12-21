@@ -36,6 +36,9 @@ def holding_cashbox_operation_create(
     if note is None or note == "" or note == " ":
         description_income=f"{holding.name} ofis kassasına {amount} AZN mədaxil edildi"
         description_expense=f"{holding.name} ofis kassasından {amount} AZN məxaric edildi"
+    else:
+        description_income = note
+        description_expense = note
     
     balance = 0
 
