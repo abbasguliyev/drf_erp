@@ -69,6 +69,9 @@ def holiday_operation_create(
         employees = user_list().filter(register_type=COMPANY, office=office)
         if employees.count() == 0:
             raise ValidationError({"detail": "Bu ofisə bağlı işçi tapılmadı"})
+        if office.company != company:
+            raise ValidationError({"detail": "Ofis Şirkətə məxsus deyil"})
+
 
     for holiday_date in holiday_date_list:
         holiday_date_str = holiday_date.strip()
