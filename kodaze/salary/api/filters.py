@@ -82,6 +82,7 @@ class SalaryViewFilter(django_filters.FilterSet):
             'employee__fullname': ['exact', 'icontains'],
             'employee__is_superuser': ['exact'],
             'employee__salary_style': ['exact'],
+            'employee__is_active': ['exact'],
 
             'employee__office': ['exact'],
             'employee__office__id': ['exact'],

@@ -145,8 +145,11 @@ def contract_create(self, request, *args, **kwargs):
         office = Office.objects.get(pk=office_id)
     else:
         office = user.office
-    if (user.company == None):
-        company = product.company
+    if (user.company is None):
+        if (office is not None):
+            company = office.company
+        else:
+            company = None
     else:
         company = user.company
 

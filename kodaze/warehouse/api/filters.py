@@ -89,6 +89,6 @@ class WarehouseHistoryFilter(django_filters.FilterSet):
     def phone_number_filter(self, queryset, name, value):
         qs = None
         for term in value.split():
-            qs = self.queryset.filter(
+            qs = queryset.filter(
                 Q(customer__phone_number_1__icontains=term) | Q(customer__phone_number_2__icontains=term) | Q(customer__phone_number_3__icontains=term) | Q(customer__phone_number_4__icontains=term))
         return qs

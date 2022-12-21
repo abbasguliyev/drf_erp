@@ -75,35 +75,6 @@ class ContractSerializer(DynamicFieldsCategorySerializer):
 
     contract_created_date = serializers.DateField(read_only=True)
 
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     contract_gifts = ContractGift.objects.select_related("contract", "product").filter(contract=instance)
-    #     creditor_contracts = ContractCreditor.objects.select_related('creditor', 'contract').filter(contract=instance).first()
-    #     creditor = None
-    #     gift = None
-    #     if creditor_contracts is not None:
-    #         creditor = dict()
-    #         user_creditor = creditor_contracts.creditor
-    #         creditor_contracts_id = creditor_contracts.id
-    #         creditor_fullname = user_creditor.fullname
-
-    #         creditor['id'] = creditor_contracts_id
-    #         creditor['creditor_fullname'] = creditor_fullname
-    #     if contract_gifts is not None:
-    #         gift = list()
-    #         for prod in contract_gifts:
-    #             products = dict()
-    #             prod_id = prod.id
-    #             prod_name = prod.product.product_name
-    #             prod_quantity = prod.quantity
-    #             products['id'] = prod_id
-    #             products['product_name'] = prod_name
-    #             products['quantity'] = prod_quantity
-    #             gift.append(products)
-    #     representation['creditor_contracts'] = creditor
-    #     representation['contract_gifts'] = gift
-    #     return representation
-
     def create(self, validated_data):
         contract_date = validated_data.get('contract_date')
         initial_payment_date = validated_data.get('initial_payment_date')

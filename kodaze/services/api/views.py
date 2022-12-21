@@ -10,6 +10,8 @@ from services.models import (
     ServicePayment, 
 )
 from services.api import utils as service_utils
+from services.api.services import service_model_services
+from services.api.selectors import service_list
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -23,7 +25,7 @@ from services.api import permissions as contract_permissions
 # ********************************** service endpoints **********************************
 
 class ServiceListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Service.objects.all()
+    queryset = service_list()
     serializer_class = ServiceSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ServiceFilter
@@ -31,26 +33,46 @@ class ServiceListCreateAPIView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Service.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Service.objects.filter(contract__company=request.user.company, contract__office=request.user.office)
-            queryset = Service.objects.filter(contract__company=request.user.company)
+                queryset = self.queryset.filter(contract__company=request.user.company, contract__office=request.user.office)
+            queryset = self.queryset.filter(contract__company=request.user.company)
         else:
-            queryset = Service.objects.all()
+            queryset = self.queryset
         
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
+        
+        extra = dict()
+        all_price = 0
+        all_total_paid_amount = 0
+        all_remaining_payment = 0
+        for q in page:
+            all_price += q.price
+            all_total_paid_amount += q.total_paid_amount
+            all_remaining_payment += q.remaining_payment
+            
+            extra['all_price'] = all_price
+            extra['all_total_paid_amount'] = all_total_paid_amount
+            extra['all_remaining_payment'] = all_remaining_payment
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response({
+                'extra': extra, 'data': serializer.data
+            })
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        return service_utils.service_create(self, request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user=request.user
+        service_model_services.service_create(user=user, **serializer.validated_data)
+        return Response({'detail': 'Servis əlavə olundu'}, status=status.HTTP_201_CREATED)
 
 
 class ServiceDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
