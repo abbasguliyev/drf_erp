@@ -2,7 +2,8 @@ import django_filters
 
 from services.models import (
     Service,
-    ServicePayment
+    ServicePayment,
+    ServiceProductForContract
 )
 
 from django.db.models import Q
@@ -82,3 +83,13 @@ class ServicePaymentFilter(django_filters.FilterSet):
             'service_amount': ['exact'],
             'service__is_done': ['exact'],
         }
+
+class ServiceProductForContractFilter(django_filters.FilterSet):
+    class Meta:
+        model = ServiceProductForContract
+        fields = {
+            'company': ['exact'],
+            'service_period': ['exact'],
+            'product': ['exact'],
+        }
+

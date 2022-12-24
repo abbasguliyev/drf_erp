@@ -57,20 +57,15 @@ class ServicePayment(models.Model):
 
 
 class ServiceProductForContract(models.Model):
+    company = models.ForeignKey('company.Company', on_delete=models.CASCADE, related_name="service_product_for_contracts")
     service_period = models.IntegerField(default=1)
-    product = models.ManyToManyField(
-        "product.Product", related_name="service_for_contracts")
-
+    product = models.ForeignKey("product.Product", on_delete=models.CASCADE, related_name="service_for_contracts")
     class Meta:
         ordering = ("pk",)
         default_permissions = []
         permissions = (
-            ("view_serviceproductforcontract",
-             "Müqaviləyə periodik servis üçün təyin olunmuş məhsullara baxa bilər"),
-            ("add_serviceproductforcontract",
-             "Müqaviləyə periodik servis üçün məhsullar əlavə edə bilər"),
-            ("change_serviceproductforcontract",
-             "Müqaviləyə periodik servis üçün təyin olunmuş məhsulların məlumatlarını yeniləyə bilər"),
-            ("delete_serviceproductforcontract",
-             "Müqaviləyə periodik servis üçün təyin olunmuş məhsulları silə bilər")
+            ("view_serviceproductforcontract", "Müqaviləyə periodik servis üçün təyin olunmuş məhsullara baxa bilər"),
+            ("add_serviceproductforcontract", "Müqaviləyə periodik servis üçün məhsullar əlavə edə bilər"),
+            ("change_serviceproductforcontract", "Müqaviləyə periodik servis üçün təyin olunmuş məhsulların məlumatlarını yeniləyə bilər"),
+            ("delete_serviceproductforcontract", "Müqaviləyə periodik servis üçün təyin olunmuş məhsulları silə bilər")
         )

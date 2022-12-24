@@ -36,7 +36,7 @@ class UserFilter(django_filters.FilterSet):
         model = User
         fields = {
             'fullname': ['exact', 'icontains'],
-            'position__name': ['exact', 'icontains'],
+            'position__name': ['exact', 'icontains', 'in'],
             'position': ['exact'],
             'is_superuser': ['exact'],
             'salary_style': ['exact'],

@@ -17,10 +17,8 @@ def warehouse_create(
 
     return obj
 
-def warehouse_update(instance, data) -> Warehouse:
+def warehouse_update(instance, **data) -> Warehouse:
     obj = warehouse_list().filter(pk=instance.id).update(**data)
-    obj.save()
-
     return obj
 
 def warehouse_delete(instance):

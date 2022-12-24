@@ -34,6 +34,7 @@ from account.api.filters import (
 )
 
 from salary.api.selectors import salary_view_list
+from services.api.selectors import service_list
 
 class SalaryViewStatistikaAPIView(generics.ListAPIView):
     queryset = salary_view_list()
@@ -193,7 +194,7 @@ class UserStatistikaList(generics.ListAPIView):
             ])
 
 class ServiceStatistikaAPIView(generics.ListAPIView):
-    queryset = Service.objects.all()
+    queryset = service_list()
     serializer_class = ServiceStatistikaSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ServiceFilter
@@ -201,13 +202,13 @@ class ServiceStatistikaAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            queryset = Service.objects.all()
+            queryset = self.queryset
         elif request.user.company is not None:
             if request.user.office is not None:
-                queryset = Service.objects.filter(contract__company=request.user.company, contract__office=request.user.office)
-            queryset = Service.objects.filter(contract__company=request.user.company)
+                queryset = self.queryset.filter(contract__company=request.user.company, contract__office=request.user.office)
+            queryset = self.queryset.filter(contract__company=request.user.company)
         else:
-            queryset = Service.objects.all()
+            queryset = self.queryset
         
         queryset = self.filter_queryset(queryset)
 

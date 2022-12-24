@@ -13,5 +13,5 @@ def service_payment_list(*, filters=None) -> QuerySet[ServicePayment]:
 
 def service_product_for_contract_list(*, filters=None) -> QuerySet[ServiceProductForContract]:
     filters = filters or {}
-    qs = ServiceProductForContract.objects.prefetch_related('product').all()
+    qs = ServiceProductForContract.objects.select_related('company', 'product').all()
     return qs

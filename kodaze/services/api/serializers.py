@@ -7,13 +7,15 @@ from contract.models import (
 from services.models import (
     Service, 
     ServicePayment, 
+    ServiceProductForContract
 )
-
+from company.models import Company
 from account.api.serializers import CustomerSerializer, UserSerializer
 from account.api.selectors import customer_list, user_list
 from contract.api.serializers import ContractSerializer
 from product.api.serializers import ProductSerializer
 from product.api.selectors import product_list
+from services.api.selectors import service_list
 
 
 class ServiceSerializer(DynamicFieldsCategorySerializer):
@@ -50,12 +52,20 @@ class ServiceSerializer(DynamicFieldsCategorySerializer):
 class ServicePaymentSerializer(DynamicFieldsCategorySerializer):
     service = ServiceSerializer(read_only=True)
     service_id = serializers.PrimaryKeyRelatedField(
-        queryset=Service.objects.all(), source='service', write_only=True, required=False, allow_null=True
+        queryset=service_list(), source='service', write_only=True, required=False, allow_null=True
     )
 
     class Meta:
         model = ServicePayment
         fields = "__all__"
+
+class ServiceProductForContractSerializer(serializers.ModelSerializer):
+    company = ServiceSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = ServiceProductForContract
+        fields = '__all__'
 
 
 class ServiceStatistikaSerializer(DynamicFieldsCategorySerializer):

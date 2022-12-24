@@ -29,7 +29,7 @@ from cashbox.api.utils import (
     cashflow_create, 
     calculate_office_balance, 
 )
-
+from services.api.selectors import service_payment_list, service_list
 from django.contrib.auth import get_user_model
 
 from warehouse.api.services.stock_service import (
@@ -687,9 +687,9 @@ def contract_update(self, request, *args, **kwargs):
             d = pd.to_datetime(f"{now.year}-{now.month}-{1}")
             next_m = d + pd.offsets.MonthBegin(1)
 
-            all_service = Service.objects.filter(contract=contract)
+            all_service = service_list().filter(contract=contract)
             for service in all_service:
-                all_service_payment = ServicePayment.objects.filter(
+                all_service_payment = service_payment_list().filter(
                     service=service, is_done=False)
                 if len(all_service_payment) == 1:
                     all_service_payment[0].delete()

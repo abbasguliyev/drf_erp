@@ -35,6 +35,7 @@ from cashbox.api.utils import (
     cashflow_create,
     calculate_office_balance, 
 )
+from services.api.selectors import service_payment_list, service_list
 def create_is_auto_services_when_update_service(contract, created, kartric_novu, **kwargs):
     """
         Contract imzalanarken create olan servicelerin vaxti catdiqda ve
@@ -103,64 +104,6 @@ def create_is_auto_services_when_update_service(contract, created, kartric_novu,
                 service.save()
             q+=1
 
-def service_create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data)
-
-    if serializer.is_valid():
-        contract_id = request.data.get("contract_id")
-        contract = Contract.objects.get(id=contract_id)
-
-        installment = request.data.get("installment")
-
-        loan_term = request.data.get("loan_term")
-
-        if bool(installment) == True: 
-            if ((int(loan_term) == 0) or (int(loan_term) == 1)):
-                return Response({"detail":"Kredit statusu qeyd olunarsa, kredit müddəti 0 və ya 1 daxil edilə bilməz"}, status=status.HTTP_400_BAD_REQUEST)
-        discount = serializer.validated_data.get("discount")
-        if discount == None:
-            discount = 0
-        service_date = request.data.get("service_date")
-        is_done = request.data.get("is_done")
-        initial_payment = request.data.get("initial_payment")
-        if initial_payment == None:
-            initial_payment = 0
-        
-        product = []
-        product_data = request.data.get("product_id")
-        for meh in product_data:
-            mhs = product_list().filter(pk=int(meh)).last()
-            product.append(mhs)
-        warehouse = get_object_or_404(Warehouse, office=contract.office)
-        for j in product:
-            try:
-                stok = get_object_or_404(Stock, warehouse=warehouse, product=j)
-            except Exception:
-                return Response({"detail": f"Warehouseın stokunda {j.product_name} məhsulu yoxdur"}, status=status.HTTP_404_NOT_FOUND)
-
-        price = 0
-        for i in product:
-            price += i.price
-            try:
-                stok = get_object_or_404(Stock, warehouse=warehouse, product=i)
-                stok.quantity = stok.quantity - 1
-                stok.save()
-                if (stok.quantity == 0):
-                    stok.delete()
-            except Exception:
-                traceback.print_exc()
-                return Response({"detail":"Warehouseın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
-
-        if discount >  price:
-            return Response({"detail":"Endirim qiyməti service qiymətindən çox ola bilməz"}, status=status.HTTP_400_BAD_REQUEST)
-
-        total_amount_to_be_paid = price - initial_payment - discount
-        
-        serializer.save(total_amount_to_be_paid=total_amount_to_be_paid, price=price)
-        return Response({"detail":"Service düzəldildi"}, status=status.HTTP_200_OK)
-    else:
-        return Response({"detail":"Məlumatları doğru daxil edin"}, status=status.HTTP_400_BAD_REQUEST)
-
 def service_update(self, request, *args, **kwargs):
     service = self.get_object()
     serializer = self.get_serializer(service, data=request.data, partial=True)
@@ -204,7 +147,7 @@ def service_update(self, request, *args, **kwargs):
                 except Exception:
                     return Response({"detail":"Warehouseın stokunda məhsul yoxdur"}, status=status.HTTP_404_NOT_FOUND)
 
-            service_paymentleri = ServicePayment.objects.filter(service=service)
+            service_paymentleri = service_payment_list().filter(service=service)
             for s in service_paymentleri:
                 s.is_done = True
                 s.save()
@@ -268,7 +211,7 @@ def service_payment_update(self, request, *args, **kwargs):
 
         if is_done is not None:
             if bool(is_done) == True:
-                serviceler_qs = ServicePayment.objects.filter(service=service_payment.service, is_done=False)
+                serviceler_qs = service_payment_list().filter(service=service_payment.service, is_done=False)
                 serviceler = list(serviceler_qs)
                 if service_payment == serviceler[-1]:
                     service_payment.service.is_done = True
