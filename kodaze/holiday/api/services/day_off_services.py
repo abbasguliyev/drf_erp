@@ -7,7 +7,7 @@ from holiday.models import (
     EmployeeDayOffOperation
 )
 from account import FIX, FIX_COMISSION
-from holiday.api.selectors import employee_day_off_history_list, employee_day_off_list, employee_day_off_operation_list
+from holiday.api.selectors import employee_day_off_history_list, employee_day_off_list, employee_day_off_operation_list, employee_holiday_list
 from holiday.api.services.holiday_services import employee_working_day_decrease, employee_working_day_increase
 from salary.api.decorators import add_amount_to_salary_view_decorator
 
@@ -44,12 +44,22 @@ def employee_day_off_operation_create(
     day_off_date: str,
     is_paid: bool = False
 ) -> EmployeeDayOffOperation:
+    print(employee)
+    if employee is None:
+        raise ValidationError({'detail': 'İşçi seçilməyib'})
+
+    if len(employee)==0:
+        raise ValidationError({'detail': 'İşçi seçilməyib'})
+
     day_off_date_list = day_off_date.split(',')
     for day_off_date in day_off_date_list:
         day_off_date_str = day_off_date.strip()
         h_d = datetime.datetime.strptime(day_off_date_str, '%d-%m-%Y')
-        
         for emp in employee:
+            emp_holiday = employee_holiday_list().filter(employee=emp, holiday_date=h_d)
+            if emp_holiday.count() != 0:
+                continue
+
             emp_history = employee_day_off_history_list().filter(employee=emp, created_date=datetime.date.today(), is_paid=is_paid)
             if emp_history.count() == 0:
                 history = employee_day_off_history_create(employee=emp, note=None, is_paid=is_paid)

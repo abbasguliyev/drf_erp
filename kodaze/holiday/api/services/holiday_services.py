@@ -6,7 +6,7 @@ from holiday.models import (
     EmployeeHolidayHistory,
     HolidayOperation
 )
-from holiday.api.selectors import employee_holiday_history_list, employee_working_day_list, employee_holiday_list
+from holiday.api.selectors import employee_holiday_history_list, employee_working_day_list, employee_holiday_list, employee_day_off_list
 from account.api.selectors import user_list
 from account import HOLDING, COMPANY
 
@@ -80,6 +80,11 @@ def holiday_operation_create(
         for employee in employees:
             if employee in person_on_duty:
                 continue
+            
+            emp_days_off = employee_day_off_list().filter(employee=employee, day_off_date=h_d)
+            if emp_days_off.count() != 0:
+                continue
+            
             emp_history = employee_holiday_history_list().filter(employee=employee, created_date=datetime.date.today())
             if emp_history.count() == 0:
                 history = employee_holiday_history_create(employee=employee, note=None)
