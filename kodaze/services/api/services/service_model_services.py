@@ -14,7 +14,7 @@ def service_create(
     service_date = None,
     customer=None,
     contract=None,
-    product,
+    product=None,
     product_quantity,
     pay_method: str = CASH,
     price: float = 0,
@@ -53,9 +53,6 @@ def service_create(
         else:
             customer = contract.customer
 
-    if len(product_quantity_list) != len(product):
-        raise ValidationError({'detail': 'Məhsullar listinin və saylar listinin uzunluqları bir-birinə bərabər deyil'})
-
     if user is not None:
         operator = user
     
@@ -65,16 +62,20 @@ def service_create(
     if initial_payment is None:
         initial_payment = 0
 
-    total_price = 0
-    for i, prod in enumerate(product):
-        prod_price = prod.price
-        total_price = total_price + (prod_price*int(product_quantity_list[i]))
-    price = total_price
-    total_paid_amount = initial_payment
-    remaining_payment = float(price) - float(initial_payment) - float(discount)
+    if product is not None:
+        if len(product_quantity_list) != len(product):
+            raise ValidationError({'detail': 'Məhsullar listinin və saylar listinin uzunluqları bir-birinə bərabər deyil'})
+
+        total_price = 0
+        for i, prod in enumerate(product):
+            prod_price = prod.price
+            total_price = total_price + (prod_price*int(product_quantity_list[i]))
+        price = total_price
+        total_paid_amount = initial_payment
+        remaining_payment = float(price) - float(initial_payment) - float(discount)
     
-    if discount > remaining_payment:
-        raise ValidationError({"detail":"Endirim qiyməti servis qiymətindən çox ola bilməz"})
+        if discount > remaining_payment:
+            raise ValidationError({"detail":"Endirim qiyməti servis qiymətindən çox ola bilməz"})
 
     obj = Service.objects.create(
         appointment_date = appointment_date,
@@ -199,12 +200,17 @@ def service_update(instance, **data):
         
         instance.price = price
         instance.remaining_payment = remaining_payment
+        instance.save()
 
         if instance.pay_method == CASH:
             service_payment = service_payments.last()
             if service_payment.is_done == False:
                 service_payment_update(instance=service_payment, salary_amount=remaining_payment)
-        
+        else:
+            unpaid_service_payments = service_payment_list().filter(service=instance, is_done=False)
+            # for unpaid_service_payment in unpaid_service_payments:
+            #     service_payment_update(instance=unpaid_service_payment, salary_amount=)
+
     if is_done == True:
         instance.is_done = True
         instance.service_date = datetime.date.today()

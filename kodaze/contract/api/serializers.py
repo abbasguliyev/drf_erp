@@ -164,15 +164,7 @@ class InstallmentSerializer(DynamicFieldsCategorySerializer):
             creditor['id'] = creditor_contracts_id
             creditor['creditor_fullname'] = creditor_fullname
         return creditor
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     qalan_ay_quantityi = 0
-    #     odenmeyen_installmentler = Installment.objects.filter(contract=instance.contract, payment_status="ÖDƏNMƏYƏN").exclude(conditional_payment_status="BURAXILMIŞ AY")
-    #     qalan_ay_quantityi = len(odenmeyen_installmentler)
-    #     representation['qalan_ay_quantityi'] = qalan_ay_quantityi
-
-    #     return representation
-
+    
     class Meta:
         model = Installment
         fields = "__all__"

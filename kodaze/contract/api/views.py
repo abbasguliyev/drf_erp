@@ -137,11 +137,14 @@ class InstallmentListCreateAPIView(generics.ListCreateAPIView):
         extra = dict()
         total_price = 0
         total_remaining_debt = 0
+
         for q in page:
             total_price += q.price
-            total_remaining_debt += q.contract.remaining_debt
-
             extra['total_price'] = total_price
+
+        unique_contracts = set(d.contract for d in page)
+        for unique_contract in unique_contracts:
+            total_remaining_debt += unique_contract.remaining_debt
             extra['total_remaining_debt'] = total_remaining_debt
 
         if page is not None:

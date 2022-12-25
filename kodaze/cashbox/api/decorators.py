@@ -30,6 +30,7 @@ def cashbox_operation_decorator(func):
             
         executor = kwargs['executor']
         # operation fieldi decoratorun yazildigi funksiyadan mutleq gonderilmelidir, INCOME ve ya EXPENSE olaraq gonderilmelidir.
+        # Eger gonderilmese default EXPENSE olaraq qebul edilecek
         try:
             operation = kwargs['operation']
         except:

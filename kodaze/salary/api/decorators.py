@@ -51,7 +51,7 @@ def add_amount_to_salary_view_decorator(func):
 
         if func.__name__ == "advancepayment_create":
             if kwargs['amount'] is None:
-                amount = (salary_view.final_salary * 15) / 100
+                amount = (salary_view.final_salary * 30) / 100
             else:
                 amount = kwargs['amount']
         elif func.__name__ == "salary_pay_create":
@@ -89,27 +89,30 @@ def delete_emp_activity_history(func):
         date = instance.salary_date
         amount = instance.amount
 
-        # if instance.is_paid == True:
-        #     raise ValidationError({"detail": "Ödənilmiş məbləği silə bilmərsiniz"})
-
         salary_view = salary_view_list().filter(employee=employee, date=f"{date.year}-{date.month}-{1}").last()
         history = employee_activity_history_list().filter(salary_view=salary_view).last()
 
         if func_name == 'advance_payment_delete':
             history.advance_payment = history.advance_payment - amount
             history.save()
+            salary_view.final_salary = salary_view.final_salary + amount
+            salary_view.save()
         if func_name == 'bonus_delete':
             history.bonus = history.bonus - amount
             history.save()
+            salary_view.final_salary = salary_view.final_salary - amount
+            salary_view.save()
         if func_name == 'salary_deduction_delete':
             history.salary_deduction = history.salary_deduction - amount
             history.save()
+            salary_view.final_salary = salary_view.final_salary + amount
+            salary_view.save()
         if func_name == 'salary_punishment_delete':
             history.salary_punishment = history.salary_punishment - amount
             history.save()
+            salary_view.final_salary = salary_view.final_salary + amount
+            salary_view.save()
         
-        salary_view.final_salary = salary_view.final_salary - amount
-        salary_view.save()
         func(*args, **kwargs)
 
     return wrapper

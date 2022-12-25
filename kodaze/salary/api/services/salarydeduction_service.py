@@ -42,4 +42,6 @@ def salary_deduction_update(instance, **data):
 
 def salary_deduction_delete(instance_list, func_name=None):
     for instance in instance_list:
+        if instance.is_paid == True:
+            continue
         salary_operation_delete(instance=instance, func_name=func_name)

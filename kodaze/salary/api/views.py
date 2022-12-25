@@ -363,10 +363,12 @@ class SalaryViewListAPIView(generics.ListAPIView):
         all_advancepayment = 0
         all_salarydeduction = 0
         all_salarypunishment = 0
+        all_final_salary = 0
         all_working_day = 0
         all_const_salary = 0
         all_sale_quantity = 0
         all_commission = 0
+
         for q in page:
             month = q.date.month
             year = q.date.year
@@ -377,15 +379,16 @@ class SalaryViewListAPIView(generics.ListAPIView):
             all_advancepayment += e_history.advance_payment
             all_salarydeduction += e_history.salary_deduction
             all_salarypunishment += e_history.salary_punishment
+            all_final_salary += q.final_salary 
             all_const_salary += q.employee.salary
             all_sale_quantity += q.sale_quantity
             all_commission += q.commission_amount
-            
+
             extra['all_bonus'] = all_bonus
             extra['all_advancepayment'] = all_advancepayment
             extra['all_salarydeduction'] = all_salarydeduction
             extra['all_salarypunishment'] = all_salarypunishment
-            extra['all_final_salary'] = q.final_salary
+            extra['all_final_salary'] = all_final_salary
             extra['all_working_day'] = all_working_day
             extra['all_const_salary'] = all_const_salary
             extra['all_sale_quantity'] = all_sale_quantity

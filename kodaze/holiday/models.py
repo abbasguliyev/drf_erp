@@ -44,7 +44,7 @@ class EmployeeHoliday(models.Model):
         )
 
 class HolidayOperation(models.Model):
-    holiday_date = models.CharField(max_length=350)
+    holiday_date = models.CharField(max_length=800)
     holding = models.BooleanField(default=False)
     company = models.ForeignKey('company.Company', on_delete=models.SET_NULL, null=True, blank=True, related_name="holiday_operations")    
     office = models.ForeignKey('company.Office', on_delete=models.SET_NULL, null=True, blank=True, related_name="holiday_operations")    
@@ -89,7 +89,7 @@ class EmployeeDayOff(models.Model):
 
 class EmployeeDayOffOperation(models.Model):
     employee = models.ManyToManyField(User)
-    day_off_date = models.CharField(max_length=350)
+    day_off_date = models.CharField(max_length=800)
     is_paid = models.BooleanField(default=False)
     
     class Meta:
