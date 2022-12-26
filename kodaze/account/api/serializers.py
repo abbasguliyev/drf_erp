@@ -134,21 +134,21 @@ class UserSerializer(DynamicFieldsCategorySerializer):
     supervisor = SupervizorSerializer(read_only=True, fields=['id', 'username', 'fullname'])
 
     company_id = serializers.PrimaryKeyRelatedField(
-        queryset=Company.objects.all(), source='company', write_only=True,
+        queryset=Company.objects.all(), source='company', write_only=True, allow_null=True
     )
     department_id = serializers.PrimaryKeyRelatedField(
-        queryset=Department.objects.all(), source='department', write_only=True
+        queryset=Department.objects.all(), source='department', write_only=True, allow_null=True
     )
     office_id = serializers.PrimaryKeyRelatedField(
-        queryset=Office.objects.select_related('company').all(), source='office', write_only=True
+        queryset=Office.objects.select_related('company').all(), source='office', write_only=True, allow_null=True
     )
 
     position_id = serializers.PrimaryKeyRelatedField(
-        queryset=Position.objects.all(), source='position', write_only=True,
+        queryset=Position.objects.all(), source='position', write_only=True, allow_null=True
     )
 
     employee_status_id = serializers.PrimaryKeyRelatedField(
-        queryset=employee_status_list(), source='employee_status', write_only=True,
+        queryset=employee_status_list(), source='employee_status', write_only=True, allow_null=True
     )
 
     user_permissions_id = serializers.PrimaryKeyRelatedField(

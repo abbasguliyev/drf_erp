@@ -20,7 +20,7 @@ def create_services_task(id):
     date_format = '%d-%m-%Y'
     for service_product in service_products_for_contract:
         service_period = service_product.service_period
-        product = service_product.product
+        product = [service_product.product]
         service_product_quantity = "1"
 
         d = pd.to_datetime(f"{contract_date.day}-{contract_date.month}-{contract_date.year}")
@@ -32,7 +32,9 @@ def create_services_task(id):
         q = 0
         while(q < instance.product_quantity):
             price = 0
-            price = product.price
+            for p in product:
+                price += p.price
+            
             if(contract_date.day < 29):
                 service_model_services.service_create(
                     contract=instance,
@@ -77,8 +79,7 @@ def create_service_payment_task(id):
 
     if int(loan_term) == 0:
         loan_term = 1
-    print(f"****************************{loan_term=}")
-    print(f"****************************{pay_method=}")
+    
     discount = instance.discount
     if discount == None:
         discount = 0

@@ -164,13 +164,12 @@ def service_update(instance, **data):
         is_done = instance.is_done
 
     product = data.get('product')
-
     product_quantity = data.get('product_quantity')
 
     if product is not None and product_quantity is None:
         raise ValidationError({'detail': 'Yeni məhsul əlavə olunarkən, sayda əlavə edilməlidir'})
     elif product_quantity is not None and product is None:
-        raise ValidationError({'detail': 'Yeni say əlavə olunub amma məhsul əlavə olunmayıb'})
+        raise ValidationError({'detail': 'Yeni say əlavə olunub, amma məhsul əlavə olunmayıb'})
     
     if product_quantity is not None:
         product_quantity_list = product_quantity.split(',')
@@ -200,7 +199,6 @@ def service_update(instance, **data):
         
         instance.price = price
         instance.remaining_payment = remaining_payment
-        instance.save()
 
         if instance.pay_method == CASH:
             service_payment = service_payments.last()
@@ -208,8 +206,14 @@ def service_update(instance, **data):
                 service_payment_update(instance=service_payment, salary_amount=remaining_payment)
         else:
             unpaid_service_payments = service_payment_list().filter(service=instance, is_done=False)
-            # for unpaid_service_payment in unpaid_service_payments:
-            #     service_payment_update(instance=unpaid_service_payment, salary_amount=)
+            for unpaid_service_payment in unpaid_service_payments:
+                price = instance.remaining_payment
+                result1 = price // instance.loan_term
+                result2 = result1 * (instance.loan_term - 1)
+                last_month = price - result2
+                # service_payment_update(instance=unpaid_service_payment, salary_amount=)
+        
+        instance.save()
 
     if is_done == True:
         instance.is_done = True
@@ -259,21 +263,20 @@ def service_payment_update(instance, **data) -> ServicePayment:
     if office is None:
         raise ValidationError({'detail': 'Əməliyyatı icra etmək üçün ofis tapılmadı, zəhmət olmasa daxil edilən məlumatların doğruluğunu yoxlayın'})
     
-    products = instance.service.product.all()
-    product_quantity = instance.service.product_quantity
-    product_quantity_list = product_quantity.split(',')
-
-    service_amount = instance.service_amount
-
-    cashbox = office_cashbox_list().filter(office=office).last()
-    cashbox.balance = cashbox.balance + service_amount
-    cashbox.save()
-
     is_done = data.get('is_done')
     if is_done is None:
         is_done = instance.is_done
 
+    service_amount = data.get('service_amount')
+    if service_amount is None:
+        service_amount = instance.service_amount
+    
+
     if is_done == True:
+        products = instance.service.product.all()
+        product_quantity = instance.service.product_quantity
+        product_quantity_list = product_quantity.split(',')
+
         warehouse = warehouse_list().filter(office=office).last()
         for i, product in enumerate(products):
             print(f"{i=}")
@@ -285,6 +288,11 @@ def service_payment_update(instance, **data) -> ServicePayment:
             instance.is_done = True
             instance.payment_date = datetime.date.today()
             instance.save()
-            
+        
+        cashbox = office_cashbox_list().filter(office=office).last()
+        cashbox.balance = cashbox.balance + service_amount
+        cashbox.save()
+
     obj = service_payment_list().filter(pk=instance.id).update(**data)
     return obj
+
