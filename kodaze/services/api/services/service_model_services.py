@@ -1,12 +1,9 @@
 import datetime
 from rest_framework.exceptions import ValidationError
 from services import INSTALLMENT, CASH
-from services.models import Service, ServicePayment
+from services.models import Service
 from services.api.selectors import service_list, service_payment_list
-from warehouse.api.selectors import warehouse_list, stock_list
-from warehouse.api.services.stock_service import reduce_product_from_stock
-from cashbox.api.selectors import office_cashbox_list
-from cashbox.api.services.cashbox_operation_services import company_cashbox_operation_create
+from services.api.services import service_payment_services
 
 def service_create(
     *, user = None,
@@ -103,24 +100,6 @@ def service_create(
 
     return obj
 
-
-def service_payment_create(
-    *, service,
-    service_amount: float = 0,
-    is_done: bool = False,
-    payment_date = None,
-) -> ServicePayment:
-    obj = ServicePayment.objects.create(
-        service=service,
-        service_amount=service_amount,
-        is_done=is_done,
-        payment_date=payment_date
-    )
-    obj.full_clean()
-    obj.save()
-
-    return obj
-
 def service_update(instance, **data):
     if instance.is_auto == True:
         if instance.contract is not None:
@@ -203,12 +182,14 @@ def service_update(instance, **data):
         if instance.pay_method == CASH:
             service_payment = service_payments.last()
             if service_payment.is_done == False:
-                service_payment_update(instance=service_payment, salary_amount=remaining_payment)
+                service_payment_services.service_payment_update(instance=service_payment, salary_amount=remaining_payment)
         else:
-            unpaid_service_payments = service_payment_list().filter(service=instance, is_done=False)
+            unpaid_service_payments = service_payment_list().filter(service=instance, is_done=False).delete()
+            paid_service_payments = service_payment_list().filter(service=instance, is_done=True)
+
             for unpaid_service_payment in unpaid_service_payments:
                 price = instance.remaining_payment
-                result1 = price // instance.loan_term
+                result1 = price // (instance.loan_term - unpaid_service_payments.count())
                 result2 = result1 * (instance.loan_term - 1)
                 last_month = price - result2
                 # service_payment_update(instance=unpaid_service_payment, salary_amount=)
@@ -216,83 +197,19 @@ def service_update(instance, **data):
         instance.save()
 
     if is_done == True:
-        instance.is_done = True
-        instance.service_date = datetime.date.today()
-        instance.save()
-
-        for service_payment in service_payments:
-            service_payment_update(instance=service_payment)
+        do_service_is_done(service=instance)
     
     obj = service_list().filter(pk=instance.id).update(**data)
     return obj
-            
-            
-def service_payment_update(instance, **data) -> ServicePayment:
-    if instance.service.is_auto == True:
-        if instance.service.contract is not None:
-            try:
-                office = instance.service.contract.office
-            except:
-                office = None
-        elif instance.service.service_creditor is not None:
-            try:
-                office = instance.service.service_creditor.office
-            except:
-                office = None
-        elif instance.service.operator is not None:
-            try:
-                office = instance.service.operator.office
-            except:
-                office = None
-        else:
-            office = None
-    else:
-        if instance.service.service_creditor is not None:
-            try:
-                office = instance.service.service_creditor.office
-            except:
-                office = None
-        elif instance.service.operator is not None:
-            try:
-                office = instance.service.operator.office
-            except:
-                office = None
-        else:
-            office = None
 
-    if office is None:
-        raise ValidationError({'detail': 'Əməliyyatı icra etmək üçün ofis tapılmadı, zəhmət olmasa daxil edilən məlumatların doğruluğunu yoxlayın'})
-    
-    is_done = data.get('is_done')
-    if is_done is None:
-        is_done = instance.is_done
+def do_service_is_done(service):
+    """
+    Servisi odenildi statusuna keciren funksiya
+    """
+    service_payments = service_payment_list().filter(service=service)
+    service.is_done = True
+    service.service_date = datetime.date.today()
+    service.save()
 
-    service_amount = data.get('service_amount')
-    if service_amount is None:
-        service_amount = instance.service_amount
-    
-
-    if is_done == True:
-        products = instance.service.product.all()
-        product_quantity = instance.service.product_quantity
-        product_quantity_list = product_quantity.split(',')
-
-        warehouse = warehouse_list().filter(office=office).last()
-        for i, product in enumerate(products):
-            print(f"{i=}")
-            print(f"{product=}")
-            stock = stock_list().filter(warehouse=warehouse, product=product).last()
-            if stock is None:
-                continue
-            reduce_product_from_stock(stock=stock, product_quantity=int(product_quantity_list[i]))
-            instance.is_done = True
-            instance.payment_date = datetime.date.today()
-            instance.save()
-        
-        cashbox = office_cashbox_list().filter(office=office).last()
-        cashbox.balance = cashbox.balance + service_amount
-        cashbox.save()
-
-    obj = service_payment_list().filter(pk=instance.id).update(**data)
-    return obj
-
+    for service_payment in service_payments:
+        service_payment_services.service_payment_update(instance=service_payment)

@@ -3,7 +3,7 @@ import pandas as pd
 from contract.models import Contract
 from django.contrib.auth import get_user_model
 from .models import Service, ServiceProductForContract
-from services.api.services import service_model_services
+from services.api.services import service_model_services, service_payment_services
 from services.api.selectors import service_list, service_product_for_contract_list
 from . import CASH, INSTALLMENT
 
@@ -105,52 +105,13 @@ def create_service_payment_task(id):
     inc_month = pd.date_range(service_date, periods=loan_term+1, freq='M')
 
     if pay_method == CASH:
-        service_model_services.service_payment_create(
+        service_payment_services.service_payment_create(
             service=instance, 
             service_amount=last_month,
             payment_date=f"{service_date.year}-{service_date.month}-{service_date.day}"
         )
     elif pay_method == INSTALLMENT:
-        j = 1
-        while(j <= int(loan_term)):
-            if(j == int(loan_term)):
-                if(service_date.day < 29):
-                    service_model_services.service_payment_create(
-                        service=instance, 
-                        service_amount=last_month,
-                        payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                    )
-                elif(service_date.day == 31 or service_date.day == 30 or service_date.day == 29):
-                    if(inc_month[j].day <= service_date.day):
-                        service_model_services.service_payment_create(
-                            service=instance, 
-                            service_amount=last_month,
-                            payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{inc_month[j].day}"
-                        )
-                    elif(inc_month[j].day > service_date.day):
-                        service_model_services.service_payment_create(
-                            service=instance, 
-                            service_amount=last_month,
-                            payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                        )
-            else:
-                if(service_date.day < 29):
-                    service_model_services.service_payment_create(
-                        service=instance, 
-                        service_amount=result1,
-                        payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                    )
-                elif(service_date.day == 31 or service_date.day == 30 or service_date.day == 29):
-                    if(inc_month[j].day <= service_date.day):
-                        service_model_services.service_payment_create(
-                            service=instance, 
-                            service_amount=result1,
-                            payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{inc_month[j].day}"
-                        )
-                    elif(inc_month[j].day > service_date.day):
-                        service_model_services.service_payment_create(
-                            service=instance, 
-                            service_amount=result1,
-                            payment_date=f"{inc_month[j].year}-{inc_month[j].month}-{service_date.day}"
-                        )
-            j += 1
+        service_payment_services.installment_service_payment_create(
+            loan_term=loan_term, service_date=service_date, inc_month=inc_month,
+            last_month=last_month, service=instance, result1=result1
+        )
