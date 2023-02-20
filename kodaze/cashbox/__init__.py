@@ -1,7 +1,0 @@
-INCOME = "MƏDAXİL"
-EXPENSE = "MƏXARİC"
-
-OPERATION_STYLE_CHOICE = [
-    (INCOME, "MƏDAXİL"),
-    (EXPENSE, "MƏXARİC"),
-]
