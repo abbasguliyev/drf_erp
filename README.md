@@ -1,7 +1,7 @@
 # DRF ERP
 
 ## Install
-git clone https://github.com/abbasguliyev/kodazeERP.git
+https://github.com/abbasguliyev/drf_erp.git
 ## Configuration
 create .env file inside src folder, then copy and paste the contents of the env file. 
 ## Run with Docker
